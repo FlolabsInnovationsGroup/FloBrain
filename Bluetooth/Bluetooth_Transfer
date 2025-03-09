@@ -61,7 +61,7 @@ void setup(){
 
 
     // Initialize BLE
-    BLEDevice::init("ESP32S3_Audio_Transfer");
+    BLEDevice::init("ESP32S3_Audio_Transfer"); //Here is where you can change the name of the device
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
 
