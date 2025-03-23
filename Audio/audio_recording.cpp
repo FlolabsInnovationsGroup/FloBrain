@@ -14,12 +14,33 @@ void setup() {
   pinMode(SD_CS_PIN, OUTPUT);
 
   // Initialize the SD card
-  if (!SD.begin(SD_CS_PIN)) {
+
+  while(!Serial);
+    if(!SD.begin(21)){
+        Serial.println("Card Mount Failed");
+        return;
+    }
+    uint8_t cardType = SD.cardType();
+
+    if(cardType == CARD_NONE){
+        Serial.println("No SD card attached");
+        return;
+    }
+
+    Serial.print("SD Card Type: ");
+    if(cardType == CARD_MMC){
+        Serial.println("MMC");
+    } else if(cardType == CARD_SD){
+        Serial.println("SDSC");
+    } else if(cardType == CARD_SDHC){
+        Serial.println("SDHC");
+    } else {
+        Serial.println("UNKNOWN");
+    }
+
+    uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+    Serial.printf("SD Card Size: %lluMB\n", cardSize);
     Serial.println("SD Card initialization failed!");
-    while (1)
-      ;
-  }
-  Serial.println("SD Card initialized.");
 
   // Initialize I2S for audio capture (16 kHz, 16-bit)
   if (!I2S.begin(I2S_PHILIPS_MODE, 16000, 16)) {
