@@ -40,15 +40,13 @@ void setup() {
 
     uint64_t cardSize = SD.cardSize() / (1024 * 1024);
     Serial.printf("SD Card Size: %lluMB\n", cardSize);
-    Serial.println("SD Card initialization failed!");
 
   // Initialize I2S for audio capture (16 kHz, 16-bit)
-  if (!I2S.begin(I2S_PHILIPS_MODE, 16000, 16)) {
-    Serial.println("I2S initialization failed!");
-    while (1)
-      ;
+  I2S.setAllPins(-1, 42, 41, -1, -1);
+  if (!I2S.begin(PDM_MONO_MODE, 16000, 16)) {
+    Serial.println("Failed to initialize I2S!");
+    while (1); // do nothing
   }
-  Serial.println("I2S Initialized.");
 }
 
 void loop() {
