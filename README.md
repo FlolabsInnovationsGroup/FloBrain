@@ -1,5 +1,17 @@
-# Caipo-flomad-labs
+# CAIPO
+CAIPO is a transcription device thought to be ergonomic and easy to use. It records audio and video of its surroundings to provide an accurate transcription of any dialogue happening in its vicinity and provide a detailed information about the recorded scene.
 
 # Bill of materials
+| Component | Reference | Internal resources | Store links |
+|-----------|-----------|--------------------|-------------|
+| Microcontroller board | Seeed Studio Xiao ESP32-S3 Sense | [Introductory software](https://github.com/FlomadLabsRD/Seeed-Studio-Xiao-ESP32-S3-Sense) | [Amazon](https://www.amazon.com/Seeed-Studio-XIAO-ESP32-Sense/dp/B0C69FFVHH/ref=sr_1_22_sspa?crid=RPA3F6MZ3AM6&dib=eyJ2IjoiMSJ9.Bbi0rItDlZp4p_vjHEq7eIEcKgl7-atHllt6tRHkHq216HDOucLBV-dAVq4pqtKFGpQH1IHx9HF3oFqXo4ILhjqrVpqxn3SZlL4bp1KTMqo19yNanTtErzT0_9JJMHciog8P15sLbmLtee0nEIeZys2OqB2EViAbmdEdc1Gg9b6UC9ba87QnePvVNyCTK9L6.pgxWLi-5dZkPG_k_jMakC0cvl1NaDyPSoZoDQGG7Cwk&dib_tag=se&keywords=esp32%2Bpower%2Bsupply&qid=1718676384&sprefix=esp32%2Bpower%2Bsupply%2Caps%2C155&sr=8-22-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9tdGY&th=1) |
+| Power Supply Distribution Board (PSDB) | Keenso0x6zgrh12c | *Not required* | [Amazon](https://www.amazon.com/Keenso-Supply-Distribution-Connection-Connectors/dp/B0BQFBM7DP/ref=sr_1_22?sr=8-22) |
+| Haptic Motor Controller | DRV2605L | *Not yet implemented* | [Amazon](https://www.amazon.com/Quality-Controller-General-DRV2605L-Generate/dp/B0B6CK4XLF/ref=sr_1_1_sspa?sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1) |
+| Class D Amplifier Breakout Interface | MAX98357 | *Not required* | [Amazon](https://www.amazon.com/Rakstore-MAX98357-MAX98357A-Amplifier-Interface/dp/B09L6VL43Q/ref=sr_1_15?sr=8-15) |
+| Thin Plastic Speaker | Adafruit 1891 | *Not required* | [Amazon](https://www.amazon.com/Speakers-Transducers-Plastic-Speaker-Wires/dp/B00N4YW7G4/ref=sr_1_1?dib=eyJ2IjoiMSJ9.iV-2gPgcTqRJ-VW6POceWkS15KXiy8dYNtHbAhtFkgmQjfxldJuIeyuhsbUccOu3Biokh6w0aCqr-LbmMSX_Ol3j9HSU_TyUK9z8Ns_tyHL1k2SB21Wit0ySpF43LdxKy856yQkQHrXNJBsp_IjI8BZNgNy-hnbnvDmomaC1BacajAp2X8lko1nFWj-CwlyVWZk_a8CrEvZNx-LZjlL_gLOOelbRSzQ1v1kpIqRLlYE.zzs3MDdakk9z4JXR-V543JXn12xn16SlgfJk_ZvYDg0&dib_tag=se&keywords=adafruit+speaker&qid=1730595791&sr=8-1) |
+| Individually Addressable Smart RGB LED | WS2812BLEDW-W100pcs | *Not required* | [Amazon](https://www.amazon.com/BTF-LIGHTING-WS2812B-Heatsink-10mm3mm-WS2811/dp/B01DC0J0WS/ref=sr_1_5?crid=27WXRQOMND7NF&dib=eyJ2IjoiMSJ9.1IpMYYKy-PwaqBnVhgqgaiT_CTifLDDTHnOBE1CAT0Jk91YvC48m9HzK-NmXNjqX7NEIxqGTutSMJhMdP1MiWPWzQa_aPB9i6JGbyveG0TzKSxdtqceDa8dX0ZJsFvTStXM_l2-NRUaymIQWBylUavU_m4_u6DJbWctBbBMEsG2PA4NLu5szrOAQ_tdO4lbEfYVzX6N9fPFqHXoXTFBjJqsDsmERVXIaO92ToH6g6Zso_PvX1mCBlwL7-jwccGMp9wECiWdoDEWdDMxJrwn5bcmxRQe0OZEk30l7nv3raZQ.2jtj14DYyMwAj5_93vXd4X8-kk4lox_pQQaY6anoN0Y&dib_tag=se&keywords=WS2812B%2BNeoPixel&qid=1730594248&sprefix=ws2812b%2Bneopixel%2Caps%2C117&sr=8-5&th=1) |
+| Mini Vibration Motors | B07Q1ZV4MJ | *Not yet implemented* | [Amazon](https://www.amazon.com/tatoko-Vibration-Button-Type-Vibrating-Appliances/dp/B07Q1ZV4MJ?content-id=amzn1.sym.4311067e-a9df-4e8a-a5ce-d6836ea1723b) |
+| Thin Film Pressure Sensor | MD30-60 | *Not required* | [Amazon](https://www.amazon.com/Pressure-Sensitivity-Sensitive-Automotive-Electronics/dp/B0BSLN4NFR?content-id=amzn1.sym.4311067e-a9df-4e8a-a5ce-d6836ea1723b) |
 
-# Running the project for the first time
+# Getting started with the firmware
+The firmware was thought to be ran using Arduino IDE since it's the best tool for the Microcontroller we're using in this version of the device.
