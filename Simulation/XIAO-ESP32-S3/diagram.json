@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "author": "Uri Shaked",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-xiao-esp32-s3", "id": "esp", "top": 96, "left": 96, "attrs": {} },
+    { "type": "wokwi-neopixel", "id": "rgb2", "top": 111.7, "left": 37.4, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:D0", "rgb2:DIN", "green", [ "h0" ] ],
+    [ "esp:3V3", "rgb2:VDD", "red", [ "h0" ] ],
+    [ "esp:GND", "rgb2:VSS", "black", [ "h0" ] ]
+  ],
+  "dependencies": { "FastLED": "*" }
+}
