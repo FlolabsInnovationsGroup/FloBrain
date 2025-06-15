@@ -1,7 +1,7 @@
 # CAIPO
-CAIPO is a transcription device thought to be ergonomic and easy to use. It records audio and video of its surroundings to provide an accurate transcription of any dialogue happening in its vicinity and provide a detailed information about the recorded scene.
+CAIPO is a transcription device thought to be ergonomic and easy to use. It records audio and video of its surroundings to provide an accurate transcription of any dialogue happening in its vicinity and provide detailed information about the recorded scene.
 
-# Bill of materials
+## Bill of materials
 | Component | Reference | Internal resources | Store links |
 |-----------|-----------|--------------------|-------------|
 | Microcontroller board | Seeed Studio Xiao ESP32-S3 Sense | [Introductory software](https://github.com/FlomadLabsRD/Seeed-Studio-Xiao-ESP32-S3-Sense) | [Amazon](https://www.amazon.com/Seeed-Studio-XIAO-ESP32-Sense/dp/B0C69FFVHH/ref=sr_1_22_sspa?crid=RPA3F6MZ3AM6&dib=eyJ2IjoiMSJ9.Bbi0rItDlZp4p_vjHEq7eIEcKgl7-atHllt6tRHkHq216HDOucLBV-dAVq4pqtKFGpQH1IHx9HF3oFqXo4ILhjqrVpqxn3SZlL4bp1KTMqo19yNanTtErzT0_9JJMHciog8P15sLbmLtee0nEIeZys2OqB2EViAbmdEdc1Gg9b6UC9ba87QnePvVNyCTK9L6.pgxWLi-5dZkPG_k_jMakC0cvl1NaDyPSoZoDQGG7Cwk&dib_tag=se&keywords=esp32%2Bpower%2Bsupply&qid=1718676384&sprefix=esp32%2Bpower%2Bsupply%2Caps%2C155&sr=8-22-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9tdGY&th=1) |
@@ -13,5 +13,10 @@ CAIPO is a transcription device thought to be ergonomic and easy to use. It reco
 | Mini Vibration Motors | B07Q1ZV4MJ | *Not yet implemented* | [Amazon](https://www.amazon.com/tatoko-Vibration-Button-Type-Vibrating-Appliances/dp/B07Q1ZV4MJ?content-id=amzn1.sym.4311067e-a9df-4e8a-a5ce-d6836ea1723b) |
 | Thin Film Pressure Sensor | MD30-60 | *Not required* | [Amazon](https://www.amazon.com/Pressure-Sensitivity-Sensitive-Automotive-Electronics/dp/B0BSLN4NFR?content-id=amzn1.sym.4311067e-a9df-4e8a-a5ce-d6836ea1723b) |
 
-# Getting started with the firmware
-The firmware was thought to be ran using Arduino IDE since it's the best tool for the Microcontroller we're using in this version of the device.
+## Getting started with the firmware
+The firmware was thought to be run using Arduino IDE, the best tool for the Microcontroller we're using in this version of the device.
+
+## Hardware Simulation
+You may sometimes need to run the source code without the hardware at hand. For those situations, we have a Wokwi simulation you can customise to your needs. All files are inside the [Simulation](https://github.com/Fiflakos/Caipo-flomad-labs/tree/main/Simulation) folder.
+
+To run the simulation, you can go directly to the [Simulation on wokwi.com](https://wokwi.com/projects/411276781876475905) or create your own by creating a XIAO-ESP32-S3 project and including the files in the folder.
