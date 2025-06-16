@@ -17,6 +17,12 @@ CAIPO is a transcription device thought to be ergonomic and easy to use. It reco
 The firmware was thought to be run using Arduino IDE, the best tool for the Microcontroller we're using in this version of the device.
 
 ## Hardware Simulation
+### Online Simulation
 You may sometimes need to run the source code without the hardware at hand. For those situations, we have a Wokwi simulation you can customise to your needs. All files are inside the [Simulation](https://github.com/Fiflakos/Caipo-flomad-labs/tree/main/Simulation) folder.
 
 To run the simulation, you can go directly to the [Simulation on wokwi.com](https://wokwi.com/projects/411276781876475905) or create your own by creating a XIAO-ESP32-S3 project and including the files in the folder.
+
+### Local Simulation
+To Simulate on your machine, you can use Wokwi with the VS code extension.
+To get started with the VS Code extension, you can check the official guide: https://docs.wokwi.com/vscode/getting-started
+
