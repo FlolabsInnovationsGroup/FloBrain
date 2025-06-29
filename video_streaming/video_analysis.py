@@ -1,5 +1,5 @@
-//This is the program to run on the local host that will act as the server
-// to capture the stream from the esp32 via the ip address
+#This is the program to run on the local host that will act as the server
+#to capture the stream from the esp32 via the ip address
 
 import cv2
 import requests
