@@ -1,0 +1,1 @@
+{"type": "library", "name": "faiss", "version": "0.0.0+20250629162944", "spec": {"owner": null, "id": null, "name": "faiss", "requirements": null, "uri": "https://github.com/facebookresearch/faiss/archive/main.zip"}}

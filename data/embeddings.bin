@@ -1,0 +1,4 @@
+[float32 x 128][float32 x 128]... (each 512 bytes = 1 embedding)
+
+import numpy as np
+np.random.rand(100, 128).astype('float32').tofile('embeddings.bin')
