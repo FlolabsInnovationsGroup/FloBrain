@@ -1,0 +1,31 @@
+Setup Instructions
+
+1. Clone the repository
+
+git clone https://github.com/FlomadLabsRD/Caipo-flomad-labs-updated.git
+cd Caipo-flomad-labs-updated
+git checkout myVideoAnalysis
+
+2. Install dependencies
+pip install -r requirements.txt
+
+3. How to Run 
+Place your video file in the root folder and update the path in the script:
+VIDEO_PATH = "test_clip.mp4"
+
+Run the script: 
+python visual_caption.py
+python llavamodelcaptions.py
+python ask.py
+
+Model Info
+Captioning model: BLIP (Salesforce) (visual_caption.py)
+Used to generate scene-level descriptions from video frames.
+Captioning Model: LLaVA-1.5-7B (Hugging Face) (llavamodelcaptions.py)
+Multimodal large language model for vision + language tasks, used here for detailed frame-level descriptions.
+Embedding model: all-MiniLM-L6-v2
+Converts captions into dense vector embeddings for semantic understanding.
+
+Indexing & Search
+FAISS (Facebook AI Similarity Search):
+Efficient library for indexing and performing similarity search on the embeddings.
