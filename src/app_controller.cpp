@@ -1,15 +1,35 @@
+// app_controller.cpp
 #include "app_controller.h"
 #include "audio/audio_record.h"
 #include "embeddings/embedding_generator.h"
 #include "vectordb/vector_store.h"
 #include "storage/file_manager.h"
+#include "transcripts_manager/transcripts_manager.h"
+#include "transcription_service/transcription_service.h"
+#include "keyword_extractor/keyword_extractor.h"
 #include "utils/logger.h"
 #include <Arduino.h>
 
 void AppController::init() {
     logger::info("Initializing AppController...");
 
-    // Mount filesystem and load saved embeddings
+    // Init Wi-Fi & transcription service
+    TranscriptionService::init("YOUR_SSID", "YOUR_PASS");
+
+    // Mount transcripts log FS
+    if (!TranscriptsManager::init()) {
+        logger::error("Failed to init TranscriptsManager");
+    } else {
+        std::vector<TranscriptEntry> history;
+        if (TranscriptsManager::loadAll(history)) {
+            logger::info("Loaded past transcripts: " + String(history.size()));
+            for (auto &e : history) {
+                logger::info("[" + String(e.timestamp) + "] " + e.text);
+            }
+        }
+    }
+
+    // Load saved embeddings
     if (FileManager::init()) {
         std::vector<VectorStore::Entry> loaded;
         if (FileManager::loadEntries(loaded)) {
@@ -18,62 +38,72 @@ void AppController::init() {
             for (auto &e : loaded) {
                 store.add(e.embedding, e.meta);
             }
-            logger::info("Loaded previous embeddings into VectorStore");
+            logger::info("Loaded previous embeddings");
         } else {
-            logger::warn("No previous embeddings loaded");
             VectorStore::getInstance().init();
         }
     } else {
-        logger::error("FileManager init failed; running in-memory only");
         VectorStore::getInstance().init();
     }
 
-    // Initialize live submodules
     AudioRecorder::init();
     EmbeddingGenerator::init();
-
     pinMode(PIN_LED_STATUS, OUTPUT);
 }
 
+bool AppController::hasNewTranscription() {
+    return !latestTranscription.isEmpty();
+}
+
+String AppController::getLatestTranscription() {
+    String t = latestTranscription;
+    latestTranscription = "";
+    return t;
+}
+
+void AppController::handleTranscriptionResult(
+    const String &text,
+    const std::vector<String> &keywords
+) {
+    uint32_t ts = millis();
+    TranscriptsManager::saveTranscription(ts, text, keywords);
+    logger::info("Saved transcription [" + String(ts) + "]: " + text);
+}
+
 void AppController::loop() {
-    unsigned long now = millis();
-    if (now - lastProcessTimeMillis < PROCESS_INTERVAL_MS) return;
-    lastProcessTimeMillis = now;
+    // 1) Check for fresh audio buffer
+    if (AudioRecorder::hasNewBuffer()) {
+        auto buf = AudioRecorder::getBuffer();
+        size_t len = buf.size() * sizeof(buf[0]);
 
-    Embedding embedding;
-    EmbeddingMetadata meta;
-    if (processAudio(embedding, meta)) {
-        handleEmbedding(embedding, meta);
-    } else {
-        logger::warn("Audio processing failed or insufficient data");
+        // 2) Transcribe via Whisper (or echo stub)
+        String text = TranscriptionService::transcribe(buf.data(), len);
+        logger::info("TranscriptionService response: " + text);
+
+        // 3) Extract keywords
+        auto keywords = KeywordExtractor::extract(text);
+        logger::info("Extracted " + String(keywords.size()) + " keywords");
+
+        // 4) Save result
+        handleTranscriptionResult(text, keywords);
     }
 }
 
-bool AppController::processAudio(Embedding &outEmbedding, EmbeddingMetadata &outMeta) {
-    std::vector<int16_t> buffer;
-    if (!AudioRecorder::record(buffer)) {
-        return false;
-    }
-    if (!EmbeddingGenerator::generate(buffer, outEmbedding, outMeta)) {
-        return false;
-    }
-    return true;
-}
+// Write files to disk
+with open(os.path.join(tm_dir, "transcripts_manager.h"), "w") as f:
+    f.write(tm_h)
+with open(os.path.join(tm_dir, "transcripts_manager.cpp"), "w") as f:
+    f.write(tm_cpp)
 
-void AppController::handleEmbedding(const Embedding &embedding, const EmbeddingMetadata &meta) {
-    auto &store = VectorStore::getInstance();
-    store.add(embedding, meta);
+with open(os.path.join(src_dir, "app_controller.cpp"), "w") as f:
+    f.write(app_controller)
 
-    // Persist immediately
-    FileManager::saveEntries(store.getEntries());
+//Display the directory tree and files for user
 
-    // Perform nearest‐neighbor search
-    auto results = store.search(embedding, VDB_K_NEIGHBORS);
-    if (!results.empty()) {
-        const auto &top = results[0];
-        logger::info("Top match: " + top.meta.label + " (dist=" + String(top.distance) + ")");
-        digitalWrite(PIN_LED_STATUS, HIGH);
-        delay(50);
-        digitalWrite(PIN_LED_STATUS, LOW);
-    }
-}
+import ace_tools as tools
+files_list = [
+    "src/transcripts_manager/transcripts_manager.h",
+    "src/transcripts_manager/transcripts_manager.cpp",
+    "src/app_controller.cpp"
+]
+tools.display_dataframe_to_user(name="Updated Code Files", dataframe=pd.DataFrame(files_list, columns=["file"]))
