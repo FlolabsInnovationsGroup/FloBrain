@@ -9,14 +9,19 @@ git checkout myVideoAnalysis
 2. Install dependencies
 pip install -r requirements.txt
 
+Callers must export HF_HUB_TOKEN (or run huggingface-cli login) to pull BLIP/LLaVA models, or else stub captions will be used.
+
 3. How to Run 
 Place your video file in the root folder and update the path in the script:
 VIDEO_PATH = "test_clip.mp4"
 
 Run the script: 
-python visual_caption.py
-python llavamodelcaptions.py
-python ask.py
+# Run with stub model (CI-safe)
+python mergeModels.py --video test_clip.mp4 --model stub
+
+# Run with real models (requires HF token & GPU)
+python mergeModels.py --model blip
+python mergeModels.py --model llava
 
 Model Info
 Captioning model: BLIP (Salesforce) (visual_caption.py)
@@ -29,3 +34,17 @@ Converts captions into dense vector embeddings for semantic understanding.
 Indexing & Search
 FAISS (Facebook AI Similarity Search):
 Efficient library for indexing and performing similarity search on the embeddings.
+
+video.mp4
+   ↓
+frames/ [frame_0000.jpg, ...]
+   ↓
+captions.json (blip | llava | stub)
+   ↓
+sentence-transformers → embeddings
+   ↓
+FAISS index
+   ↓
+ask.py  ← user question → Answer
+
+

@@ -1,4 +1,4 @@
-# ask.py
+#ask.py
 
 import faiss
 import json
@@ -24,8 +24,8 @@ def load_index_and_chunks():
 
 # --- Query FAISS ---
 def retrieve_relevant_chunks(question_embedding, index, metadata):
-    D, I = index.search(np.array([question_embedding]), TOP_K)
-    return [metadata[i]["caption"] for i in I[0]]
+    distances, indices = index.search(np.array([question_embedding]), TOP_K)
+    return [metadata[i] for i in indices[0]]
 
 # --- Use FLAN-T5 model to answer based on visual context ---
 def ask_local_model(question, context_chunks):
