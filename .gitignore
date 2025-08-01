@@ -1,1 +1,4 @@
-.vs/*
+temp_auto_push.bat
+.pio
+.gitignore
+branch_structure.json
