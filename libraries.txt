@@ -1,0 +1,2 @@
+ArduinoJson@6.21.5
+SPIFFS@2.0.0
