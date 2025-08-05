@@ -1,0 +1,15 @@
+# The official OpenAI Python library
+openai
+
+# For loading environment variables from a .env file
+python-dotenv
+
+# For robust error handling with retries
+tenacity
+
+# For running our tests
+pytest
+pytest-mock
+
+# Deepgram's official Python SDK for live stream audio
+deepgram-sdk
