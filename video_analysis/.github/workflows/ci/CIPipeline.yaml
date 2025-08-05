@@ -1,0 +1,49 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  HF_TOKEN_PRESENT: ${{ secrets.HF_TOKEN != '' }}
+
+jobs:
+  test-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install black flake8
+
+      - name: 🧹 Lint with black & flake8
+        run: |
+          black --check .
+          flake8 .
+
+      - name: 🏗️ Run pipeline with stub model
+        if: env.HF_TOKEN_PRESENT == 'false'
+        run: |
+          python build_index.py --model stub --video test_clip.mp4
+          echo "What is happening in the video?" | python ask.py
+
+      - name: 🔐 Run full pipeline with real models (requires HF token)
+        if: env.HF_TOKEN_PRESENT == 'true'
+        env:
+          HUGGINGFACE_HUB_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python build_index.py --model blip --video test_clip.mp4
+          python build_index.py --model llava --video test_clip.mp4
+          echo "What is happening in the video?" | python ask.py
