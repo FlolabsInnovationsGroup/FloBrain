@@ -43,8 +43,11 @@ openai_whisper_backend/
 │   └── audio.wav
 │
 └── services/
+│   ├── __init__.py
+│   └── whisper_service.py  # Core module for the BATCH service
+└── tests/
     ├── __init__.py
-    └── whisper_service.py  # Core module for the BATCH service
+    └── test_whisper_service.py  
 ```
 
 ## Setup and Installation
@@ -107,7 +110,7 @@ python app.py batch --file path/to/your/audio.mp3
 ### Running the Real-Time Streaming Service (Deepgram)
 This service listens to your microphone for live transcription.
 ```bash
-python live_stream_final.py
+python live_stream.py
 ```
 Speak into your microphone. When you are finished, press **Enter** in the terminal to stop the program cleanly.
 
