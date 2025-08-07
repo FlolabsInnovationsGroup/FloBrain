@@ -41,6 +41,7 @@ Hook up OpenAI Whisper API in backend/
 ├── sample_audio/
 │   └── audio.wav
 │
+<<<<<<< HEAD
 ├── services/
 │   ├── __init__.py
 │   ├── whisper_service.py  # Core module for OpenAI batch and simulated stream
@@ -51,6 +52,14 @@ Hook up OpenAI Whisper API in backend/
     ├── test_whisper_service.py  # Tests for the OpenAI services
     ├── test_deepgram_service.py # Tests for the Deepgram service
     └── test_microphone.py       # Tests for the Microphone helper class
+=======
+└── services/
+│   ├── __init__.py
+│   └── whisper_service.py  # Core module for the BATCH service
+└── tests/
+    ├── __init__.py
+    └── test_whisper_service.py  
+>>>>>>> ce33f7a64fb4160ec55559b6470bd52bdfe98afe
 ```
 
 ## Setup and Installation
@@ -109,6 +118,7 @@ python app.py batch --file path/to/your/audio.mp3
 ### Mode 2: Simulated Streaming (OpenAI)
 Emulates a live feed by recording and transcribing in chunks.
 ```bash
+<<<<<<< HEAD
 python app.py stream
 ```
 
@@ -116,6 +126,9 @@ python app.py stream
 For true, low-latency transcription from your microphone.
 ```bash
 python app.py live
+=======
+python live_stream.py
+>>>>>>> ce33f7a64fb4160ec55559b6470bd52bdfe98afe
 ```
 Speak into your microphone. When you are finished, press **Enter** in the terminal to stop the program cleanly.
 
@@ -168,5 +181,18 @@ TOTAL                            147     11    93%
 
 This project intentionally uses two different service providers to highlight the best tool for each job.
 
+<<<<<<< HEAD
 - **OpenAI's `whisper-1`** was chosen for batch processing due to its renowned accuracy, making it ideal for final recordings.
 - **Deepgram** was chosen for real-time streaming due to its superior, purpose-built WebSocket API, which provides the low latency and advanced features (`speech_final`) required for a responsive user experience.
+=======
+### Why OpenAI for Batch Transcription?
+- **World-Class Accuracy**: The `whisper-1` model is renowned for its high accuracy across a wide range of audio qualities and accents, making it ideal for processing final recordings where quality is paramount.
+- **Simplicity**: For non-real-time tasks, a simple RESTful API call is easy to implement and manage.
+
+### Why Deepgram for Real-Time Streaming?
+- **Designed for Speed**: Deepgram's platform is built from the ground up for low-latency streaming via WebSockets, which is a requirement for a true real-time experience.
+- **Advanced Streaming Features**: The API provides essential real-time features like `interim_results` and `speech_final` events, which are critical for building a responsive user interface and preventing issues like transcript repetition.
+- **Efficiency**: The WebSocket protocol maintains a persistent connection, which is far more efficient for sending a continuous stream of small audio chunks than making repeated HTTP requests.
+
+This two-service architecture demonstrates a key principle in software engineering: choosing the right tool for the specific problem you are trying to solve.
+>>>>>>> ce33f7a64fb4160ec55559b6470bd52bdfe98afe
