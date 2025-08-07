@@ -1,15 +1,18 @@
-# The official OpenAI Python library
+# For OpenAI services
 openai
+tenacity
+sounddevice
+scipy
 
-# For loading environment variables from a .env file
+# For Deepgram real-time streaming
+deepgram-sdk
+pyaudio
+
+# For loading environment variables
 python-dotenv
 
-# For robust error handling with retries
-tenacity
-
-# For running our tests
+# For testing
 pytest
 pytest-mock
+pytest-cov
 
-# Deepgram's official Python SDK for live stream audio
-deepgram-sdk
