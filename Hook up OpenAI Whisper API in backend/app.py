@@ -1,52 +1,56 @@
-# app.py
-
 import argparse
+import os
+import logging
 from dotenv import load_dotenv
 
-# --- SOLUTION ---
-# Load environment variables from .env file BEFORE importing other modules
-# that might need them.
+# Load environment variables from .env file BEFORE importing other modules.
 load_dotenv()
-# ----------------
 
-# Now, import the service module. By the time Python reads whisper_service.py,
-# the environment variables will already be loaded.
+# Import all our service functions
 from services.whisper_service import transcribe_batch, transcribe_stream
+from services.deepgram_service import transcribe_live
 
 def main():
-    parser = argparse.ArgumentParser(description="A backend service to interact with the OpenAI Whisper API.")
-    # ... (the rest of the file remains the same) ...
+    # --- Set up a standard logger ---
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s'
+    )
+    # ------------------------------------
+
+    parser = argparse.ArgumentParser(description="A backend service for OpenAI and Deepgram transcription.")
+    # Add the new 'live' mode
     parser.add_argument(
-    'mode', 
-    type=str, 
-    choices=['batch', 'stream'],  # added 'stream'
-    help="The transcription mode to run. Choose 'batch' or 'stream'."
+        'mode', type=str, choices=['batch', 'stream', 'live'],
+        help="The transcription mode to run. 'batch' (OpenAI), 'stream' (OpenAI simulated), 'live' (Deepgram real-time)."
     )
     parser.add_argument(
-        '--file', 
-        type=str, 
-        default='sample_audio/audio.wav',
+        '--file', type=str, default='sample_audio/audio.wav',
         help="Path to the audio file for batch mode."
     )
-
     args = parser.parse_args()
 
+    # --- Mode Selection Logic ---
     if args.mode == 'batch':
-        print(f"--- Running Batch Transcription for: {args.file} ---")
+        logging.info(f"--- Running OpenAI Batch Transcription for: {args.file} ---")
         segments = transcribe_batch(args.file)
-        
         if segments:
-            print("\n--- Transcription Results ---")
+            logging.info("\n--- Transcription Results ---")
             for segment in segments:
                 start_time = f"{segment['start']:.2f}"
                 end_time = f"{segment['end']:.2f}"
-                print(f"[{start_time}s - {end_time}s] {segment['text']}")
-            print("---------------------------\n")
-        elif args.mode == 'stream':
-            transcribe_stream()
+                logging.info(f"[{start_time}s - {end_time}s] {segment['text']}")
+            logging.info("---------------------------\n")
         else:
-            print("\n--- Transcription Failed ---")
-            print("Please check the logs for errors.\n")
+            logging.warning("\n--- Transcription Failed ---\n")
+
+    elif args.mode == 'stream':
+        # This is the OpenAI SIMULATED stream
+        transcribe_stream()
+
+    elif args.mode == 'live':
+        # This is the Deepgram REAL-TIME stream
+        transcribe_live()
 
 if __name__ == "__main__":
     main()
