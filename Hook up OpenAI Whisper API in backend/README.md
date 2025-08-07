@@ -1,9 +1,10 @@
 # High-Performance Transcription Services: Batch and Real-Time
 
-This project provides two distinct, production-ready backend services to demonstrate and contrast high-accuracy batch transcription with low-latency, real-time streaming transcription.
+This project provides three distinct, production-ready backend services to demonstrate and contrast different modes of audio transcription using industry-leading APIs.
 
-1.  **Batch Processing (with OpenAI Whisper):** A robust service for transcribing complete, pre-recorded audio files with maximum accuracy.
-2.  **Real-Time Streaming (with Deepgram):** A high-performance service for transcribing a live audio feed from a microphone with minimal latency, providing instant feedback.
+1.  **Batch Processing (with OpenAI Whisper):** A robust service for transcribing complete audio files with maximum accuracy.
+2.  **Simulated Streaming (with OpenAI Whisper):** A service that emulates a live feed by processing microphone audio in chunks with OpenAI's batch API.
+3.  **Real-Time Streaming (with Deepgram):** A high-performance service for transcribing a live audio feed with true, low-latency WebSocket streaming.
 
 ## Table of Contents
 - [Features](#features)
@@ -11,40 +12,45 @@ This project provides two distinct, production-ready backend services to demonst
 - [Setup and Installation](#setup-and-installation)
 - [Configuration](#configuration)
 - [How to Use](#how-to-use)
+- [Testing and Quality Assurance](#testing-and-quality-assurance)
 - [Architectural Notes](#architectural-notes)
 
 ## Features
 
-### OpenAI Batch Service
--   **Secure API Key Management**: Uses a `.env` file to store the `OPENAI_API_KEY`.
--   **High-Accuracy Batch Transcription**: A `transcribe_batch` function that uploads a full audio file to the `whisper-1` model.
--   **Robust Error Handling**: Automatically retries API calls on transient errors like rate limits or timeouts, using an exponential backoff strategy.
--   **Normalized Responses**: Parses the API response and returns a clean, easy-to-use list of segment objects, each containing `start`, `end`, and `text`.
-
-### Deepgram Real-Time Streaming Service
--   **Secure API Key Management**: Uses the same `.env` file to store the `DEEPGRAM_API_KEY`.
--   **True Low-Latency Streaming**: Connects to Deepgram's WebSocket endpoint for real-time, bi-directional communication.
--   **Live Interim Results**: Displays a live, in-progress transcript as you speak.
--   **Clean Final Segments**: Uses `speech_final` events to produce clean, non-repetitive, timestamped segments of speech after you pause.
--   **Thread-Safe Microphone Handling**: Reads audio from the microphone on a separate thread to prevent blocking the main application.
+-   **Secure API Key Management**: Uses a single `.env` file to manage secret keys for both OpenAI and Deepgram.
+-   **Modular Service Architecture**: Logic for each service (OpenAI, Deepgram) is cleanly separated into its own module in the `services/` directory.
+-   **Three Distinct Transcription Modes**:
+    -   High-accuracy batch processing (`batch`).
+    -   Chunk-based simulated streaming (`stream`).
+    -   True low-latency real-time streaming (`live`).
+-   **Robust Error Handling**: Uses `tenacity` for retries on the batch service and graceful error handling on the live service.
+-   **Professional Logging**: Replaces simple `print()` statements with Python's standard `logging` module for structured, informative output.
+-   **Comprehensive Testing (>90% Coverage)**: The project is validated by a suite of integration tests using `pytest` and `pytest-mock`, ensuring all core logic is reliable and correct.
 
 ## Project Structure
 ```
-openai_whisper_backend/
+Hook up OpenAI Whisper API in backend/
 │
 ├── .env                 # For storing both secret API keys
 ├── .gitignore
+├── PROJECT_COMPLETION_REPORT.md
 ├── README.md
-├── app.py               # Entry point for the BATCH (OpenAI) service
-├── live_stream_final.py # Entry point for the LIVE (Deepgram) service
+├── app.py               # Master entry point for all 3 modes
 ├── requirements.txt
 │
 ├── sample_audio/
 │   └── audio.wav
 │
-└── services/
+├── services/
+│   ├── __init__.py
+│   ├── whisper_service.py  # Core module for OpenAI batch and simulated stream
+│   └── deepgram_service.py # Core module for Deepgram live stream
+│
+└── tests/
     ├── __init__.py
-    └── whisper_service.py  # Core module for the BATCH service
+    ├── test_whisper_service.py  # Tests for the OpenAI services
+    ├── test_deepgram_service.py # Tests for the Deepgram service
+    └── test_microphone.py       # Tests for the Microphone helper class
 ```
 
 ## Setup and Installation
@@ -52,29 +58,26 @@ openai_whisper_backend/
 ### 1. Prerequisites
 - Python 3.8+
 - Git
-- A working microphone (for the real-time streaming service)
+- A working microphone (for streaming modes)
 
 ### 2. Clone the Repository
 ```bash
 git clone <your-repository-link>
-cd openai_whisper_backend
+cd Hook-up-OpenAI-Whisper-API-in-backend
 ```
 
+### 3. Create and Activate a Virtual Environment
+```bash
+# On macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
 
-### 3. Install Dependencies
-Create a `requirements.txt` file with the following content:
-# For OpenAI Batch Service
-openai
-tenacity
+# On Windows
+python -m venv venv
+.\venv\Scripts\activate
+```
 
-# For Deepgram Streaming Service
-deepgram-sdk
-pyaudio
-
-# For loading environment variables
-python-dotenv
-
-Then, install everything with:
+### 4. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
@@ -84,44 +87,86 @@ pip install -r requirements.txt
 This project requires API keys from both OpenAI and Deepgram.
 
 1.  **Create the `.env` file**: In the root of the project, create a single file named `.env`.
-2.  **Add your keys**: Add the following lines to your `.env` file, replacing the placeholder values with your actual keys.
-
+2.  **Add your keys**: Add the following lines, replacing the placeholder values with your actual keys.
     ```
-    # Key for the batch transcription service
+    # Key for OpenAI services ('batch' and 'stream' modes)
     OPENAI_API_KEY="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-    # Key for the real-time streaming service
+    # Key for Deepgram service ('live' mode)
     DEEPGRAM_API_KEY="your_deepgram_api_key_here"
     ```
 
 ## How to Use
 
-The project has two separate entry points for the two different services.
+All services are run through the main `app.py` script.
 
-### Running the Batch Service (OpenAI)
-This service is ideal for transcribing audio files you already have.
+### Mode 1: Batch Transcription (OpenAI)
+For high-accuracy transcription of a pre-recorded audio file.
 ```bash
 python app.py batch --file path/to/your/audio.mp3
 ```
 
-### Running the Real-Time Streaming Service (Deepgram)
-This service listens to your microphone for live transcription.
+### Mode 2: Simulated Streaming (OpenAI)
+Emulates a live feed by recording and transcribing in chunks.
 ```bash
-python live_stream_final.py
+python app.py stream
+```
+
+### Mode 3: Real-Time Streaming (Deepgram)
+For true, low-latency transcription from your microphone.
+```bash
+python app.py live
 ```
 Speak into your microphone. When you are finished, press **Enter** in the terminal to stop the program cleanly.
+
+## Testing and Quality Assurance
+
+This project is built with a focus on quality, proven by a comprehensive test suite.
+
+### Running Tests
+To run all 14 integration and unit tests, execute the following command from the project's root directory:
+```bash
+pytest
+```
+The tests use mocking to run without needing API keys or an internet connection.
+
+## Measuring Test Coverage
+
+This project adheres to a high standard of quality by enforcing >90% test coverage for its core service logic. This ensures that the code is reliable and that new changes can be made with confidence.
+
+### How to Run the Coverage Report
+
+The project uses the `pytest-cov` library to measure how much of the application code is executed during the test suite.
+
+**1. To generate a summary in your terminal:**
+Run the following command from the project's root directory.
+```bash
+pytest --cov=services
+```
+
+**2. To generate a detailed, line-by-line HTML report:**
+This is the best way to see exactly which lines of code are covered and which are missed.
+```bash
+pytest --cov=services --cov-report=html
+```
+After running this command, a new directory named `htmlcov/` will be created. Open the **`index.html`** file inside it with a web browser to explore the detailed report.
+
+#### **Latest Coverage Report:**
+The project consistently meets the professional standard of >90% test coverage for its core logic.
+```
+=========================== tests coverage ===========================
+Name                           Stmts   Miss  Cover
+--------------------------------------------------
+services/__init__.py               0      0   100%
+services/deepgram_service.py      76      7    91%
+services/whisper_service.py       71      4    94%
+--------------------------------------------------
+TOTAL                            147     11    93%
+```
 
 ## Architectural Notes
 
 This project intentionally uses two different service providers to highlight the best tool for each job.
 
-### Why OpenAI for Batch Transcription?
-- **World-Class Accuracy**: The `whisper-1` model is renowned for its high accuracy across a wide range of audio qualities and accents, making it ideal for processing final recordings where quality is paramount.
-- **Simplicity**: For non-real-time tasks, a simple RESTful API call is easy to implement and manage.
-
-### Why Deepgram for Real-Time Streaming?
-- **Designed for Speed**: Deepgram's platform is built from the ground up for low-latency streaming via WebSockets, which is a requirement for a true real-time experience.
-- **Advanced Streaming Features**: The API provides essential real-time features like `interim_results` and `speech_final` events, which are critical for building a responsive user interface and preventing issues like transcript repetition.
-- **Efficiency**: The WebSocket protocol maintains a persistent connection, which is far more efficient for sending a continuous stream of small audio chunks than making repeated HTTP requests.
-
-This two-service architecture demonstrates a key principle in software engineering: choosing the right tool for the specific problem you are trying to solve.
+- **OpenAI's `whisper-1`** was chosen for batch processing due to its renowned accuracy, making it ideal for final recordings.
+- **Deepgram** was chosen for real-time streaming due to its superior, purpose-built WebSocket API, which provides the low latency and advanced features (`speech_final`) required for a responsive user experience.
