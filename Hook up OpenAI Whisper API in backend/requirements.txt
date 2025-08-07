@@ -1,18 +1,18 @@
-# For OpenAI services
+# For OpenAI batch and simulated stream services
 openai
 tenacity
 sounddevice
 scipy
+numpy  # <-- Correctly added, thank you!
 
-# For Deepgram real-time streaming
+# For Deepgram real-time streaming service
 deepgram-sdk
 pyaudio
 
 # For loading environment variables
 python-dotenv
 
-# For testing
+# For running tests and measuring coverage
 pytest
 pytest-mock
 pytest-cov
-
