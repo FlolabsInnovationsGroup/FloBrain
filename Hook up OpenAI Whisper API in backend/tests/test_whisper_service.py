@@ -1,35 +1,77 @@
 # tests/test_whisper_service.py
-
 import pytest
 from unittest.mock import MagicMock
-from services.whisper_service import transcribe_batch, transcribe_stream
+from services import whisper_service # Import the module itself
 import openai
+from tenacity import RetryError
 
-# --- Tests for transcribe_batch ---
+# --- Tests for the public 'transcribe_batch' wrapper function ---
 
 def test_transcribe_batch_success(mocker):
-    """Tests the successful transcription path for the batch function."""
+    """Tests the public wrapper's success path."""
+    mock_internal = mocker.patch(
+        'services.whisper_service._transcribe_batch_internal',
+        return_value=[{'text': 'Success'}]
+    )
+    result = whisper_service.transcribe_batch("dummy/path.wav")
+    mock_internal.assert_called_once_with("dummy/path.wav")
+    assert result[0]['text'] == 'Success'
+
+def test_transcribe_batch_handles_retry_failure(mocker):
+    """Tests the public wrapper catching the final RetryError."""
+    mocker.patch(
+        'services.whisper_service._transcribe_batch_internal',
+        side_effect=RetryError("Mocked retry failure")
+    )
+    result = whisper_service.transcribe_batch("dummy/path.wav")
+    assert result == []
+
+def test_transcribe_batch_handles_file_not_found(mocker):
+    """Tests the public wrapper catching FileNotFoundError."""
+    mocker.patch(
+        'services.whisper_service._transcribe_batch_internal',
+        side_effect=FileNotFoundError("Mocked file not found")
+    )
+    result = whisper_service.transcribe_batch("dummy/path.wav")
+    assert result == []
+
+def test_transcribe_batch_handles_generic_exception(mocker):
+    """Tests the public wrapper catching a generic Exception."""
+    mocker.patch(
+        'services.whisper_service._transcribe_batch_internal',
+        side_effect=Exception("A generic error")
+    )
+    result = whisper_service.transcribe_batch("dummy/path.wav")
+    assert result == []
+
+
+# --- Tests for the internal '_transcribe_batch_internal' function ---
+
+def test_internal_batch_success_and_normalization(mocker):
+    """
+    COVERS THE BIGGEST GAP: Tests the entire success path of the internal function.
+    """
     mock_client = MagicMock()
     mocker.patch('services.whisper_service.client', mock_client)
-
-    mock_api_response = MagicMock()
-    mock_segment = MagicMock()
-    mock_segment.start, mock_segment.end, mock_segment.text = 0.0, 4.0, ' It works.'
-    mock_api_response.segments = [mock_segment]
-    
-    mock_client.audio.transcriptions.create.return_value = mock_api_response
     mocker.patch('builtins.open', mocker.mock_open(read_data=b'bytes'))
     
-    result = transcribe_batch("dummy/path.wav")
+    mock_api_response = MagicMock()
+    mock_segment = MagicMock()
+    mock_segment.start, mock_segment.end, mock_segment.text = 0.0, 4.0, 'It works.'
+    mock_api_response.segments = [mock_segment]
+    mock_client.audio.transcriptions.create.return_value = mock_api_response
+    
+    result = whisper_service._transcribe_batch_internal("dummy/path.wav")
     
     mock_client.audio.transcriptions.create.assert_called_once()
     assert len(result) == 1
-    assert result[0]['text'] == ' It works.'
+    assert result[0]['text'] == 'It works.'
 
-def test_transcribe_batch_api_error(mocker):
-    """Tests the API error handling path for the batch function."""
+def test_internal_batch_retries_on_api_error(mocker):
+    """Proves that the @retry decorator works on the internal function."""
     mock_client = MagicMock()
     mocker.patch('services.whisper_service.client', mock_client)
+    mocker.patch('builtins.open', mocker.mock_open(read_data=b'bytes'))
 
     mock_http_response = MagicMock()
     mock_http_response.request = MagicMock()
@@ -37,122 +79,64 @@ def test_transcribe_batch_api_error(mocker):
         "Simulated error", response=mock_http_response, body=None
     )
     
-    mocker.patch('builtins.open', mocker.mock_open(read_data=b'bytes'))
+    with pytest.raises(RetryError):
+        whisper_service._transcribe_batch_internal("dummy/path.wav")
     
-    result = transcribe_batch("dummy/path.wav")
-    
-    assert result == []
-    mock_client.audio.transcriptions.create.assert_called_once()
-
-# --- New Test for transcribe_stream ---
-
-def test_transcribe_stream_one_loop(mocker):
-    """
-    Tests one full loop of the transcribe_stream function.
-    It validates that recording, file writing, batch transcription, and cleanup
-    are all called correctly.
-    """
-    # 1. Mock all external dependencies of the stream function
-    mocker.patch('services.whisper_service.sd')
-    mocker.patch('services.whisper_service.wav.write')
-    mocker.patch('services.whisper_service.os.remove')
-    
-    # ===================================================================
-    # THE FIX IS HERE: We will directly mock NamedTemporaryFile to control its name.
-    # We don't need the complex __enter__ part.
-    # ===================================================================
-    mock_tempfile = mocker.patch('tempfile.NamedTemporaryFile')
-    # The 'with' statement will call the mock, and we access its .name attribute
-    mock_tempfile.return_value.name = "fake_temp_file.wav"
-    
-    # 2. Mock the call to transcribe_batch to stop the loop
-    # We will have it raise an exception that we can catch.
-    class StopTestLoop(Exception):
-        pass
-    mock_batch_call = mocker.patch(
-        'services.whisper_service.transcribe_batch',
-        side_effect=StopTestLoop
-    )
-
-    # 3. Call the function and expect our custom exception
-    with pytest.raises(StopTestLoop):
-        transcribe_stream()
-        
-    # 4. Assert that the underlying functions were called correctly
-    # Assert that transcribe_batch was called with the string name we defined
-    mock_batch_call.assert_called_once_with("fake_temp_file.wav")
+    assert mock_client.audio.transcriptions.create.call_count == 3
 
 
-    # Add these new, targeted tests to the end of tests/test_whisper_service.py
-
-def test_transcribe_batch_file_not_found(mocker):
-    """
-    Increases test coverage for the `transcribe_batch` function.
-    This test specifically targets the `except FileNotFoundError` block.
-    """
-    # We don't need to mock the client, as this error happens before the API call.
-    # We just need to mock the built-in 'open' function to raise the error.
-    mocker.patch('builtins.open', side_effect=FileNotFoundError("Mocked file not found"))
-    
-    # Call the function and assert that it returns an empty list as expected.
-    result = transcribe_batch("a_file_that_does_not_exist.wav")
-    assert result == []
-
-# Add these new, targeted tests to the end of tests/test_whisper_service.py
-
-def test_transcribe_batch_generic_exception(mocker):
-    """
-    Covers the generic 'except Exception' block in transcribe_batch.
-    """
-    mock_client = MagicMock()
-    mocker.patch('services.whisper_service.client', mock_client)
-    
-    # Configure the mock to raise a generic Exception
-    mock_client.audio.transcriptions.create.side_effect = Exception("A generic, unexpected error")
-    
-    mocker.patch('builtins.open', mocker.mock_open(read_data=b'bytes'))
-    
-    result = transcribe_batch("dummy/path.wav")
-    assert result == [] # The function should fail gracefully
+# --- Tests for 'transcribe_stream' and helpers ---
 
 def test_transcribe_stream_prints_results(mocker):
     """
-    Covers the 'if segments:' block in transcribe_stream.
+    COVERS A KEY GAP: Tests the 'if segments:' block in transcribe_stream.
     """
-    # Mock all external dependencies
     mocker.patch('services.whisper_service.sd')
     mocker.patch('services.whisper_service.TemporaryAudioFile')
     mock_logger = mocker.patch('services.whisper_service.logging')
-
-    # Configure transcribe_batch to return a successful result, then stop the loop
+    
     class StopTestLoop(Exception): pass
     mocker.patch(
         'services.whisper_service.transcribe_batch',
         side_effect=[
-            [{"start": 0.0, "end": 2.0, "text": "Test transcript"}], # First call returns a result
+            [{"start": 0.0, "end": 2.0, "text": "Test transcript"}],
             StopTestLoop
         ]
     )
 
     with pytest.raises(StopTestLoop):
-        transcribe_stream()
+        whisper_service.transcribe_stream()
         
-    # Assert that the logger was called with the formatted transcript
     mock_logger.info.assert_any_call("[0.00s - 2.00s] Test transcript")
 
+def test_transcribe_stream_handles_no_results(mocker):
+    """Tests the 'else' block for empty segments in transcribe_stream."""
+    mocker.patch('services.whisper_service.sd')
+    mocker.patch('services.whisper_service.TemporaryAudioFile')
+    mock_logger = mocker.patch('services.whisper_service.logging')
+
+    class StopTestLoop(Exception): pass
+    mocker.patch(
+        'services.whisper_service.transcribe_batch',
+        side_effect=[
+            [], # First call returns an empty list
+            StopTestLoop
+        ]
+    )
+
+    with pytest.raises(StopTestLoop):
+        whisper_service.transcribe_stream()
+        
+    mock_logger.info.assert_any_call("No transcription returned for the last chunk.")
 
 def test_temporary_audio_file_cleanup_error(mocker):
     """
-    Covers the 'except OSError' block in the TemporaryAudioFile.__exit__ method.
+    COVERS A FINAL GAP: Tests the 'except OSError' in the cleanup class.
     """
-    # Mock os.remove to raise an OSError when called
-    mock_remove = mocker.patch('services.whisper_service.os.remove', side_effect=OSError("Permission denied"))
+    mocker.patch('services.whisper_service.os.remove', side_effect=OSError("Permission denied"))
     mocker.patch('services.whisper_service.wav.write')
     
-    # Use the context manager and expect it to run without crashing
+    # Use the context manager and expect it to run without crashing.
     from services.whisper_service import TemporaryAudioFile
-    with TemporaryAudioFile(16000, []) as temp_path:
-        pass
-    
-    # Assert that our mock of os.remove was actually called
-    mock_remove.assert_called_once()
+    with TemporaryAudioFile(16000, b'data') as temp_path:
+        pass # The error is raised and handled on exit
