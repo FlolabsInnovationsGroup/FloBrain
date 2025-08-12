@@ -62,8 +62,18 @@ git clone <repository-link>
 cd Hook-up-OpenAI-Whisper-API-in-backend
 ```
 
+### 3. Create and Activate a Virtual Environment
+```bash
+# On macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
 
-### 3. Install Dependencies
+# On Windows
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+### 4. Install Dependencies
 Ensure your `requirements.txt` is complete and pinned, then run:
 ```bash
 pip install -r requirements.txt
