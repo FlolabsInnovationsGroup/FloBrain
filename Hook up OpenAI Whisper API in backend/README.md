@@ -90,7 +90,7 @@ This project requires API keys from both OpenAI and Deepgram.
 
 ## How to Use
 
-All services are run through the main `app.py` script, which provides three distinct modes.
+All services are run through the main `app.py` script.
 
 ### Mode 1: Batch Transcription (OpenAI)
 For high-accuracy transcription of a pre-recorded audio file.
@@ -98,23 +98,42 @@ For high-accuracy transcription of a pre-recorded audio file.
 python app.py batch --file path/to/your/audio.mp3
 ```
 
-### Mode 2: Simulated Stream (OpenAI)
-Emulates a live feed by recording and transcribing in chunks. This method has higher latency.
+### Mode 2: Streaming Transcription
+This mode transcribes live from your microphone. It is highly flexible and can be run in several ways.
+
+#### **Option A: The Interactive Way (Recommended for new users)**
+Simply run the `stream` command, and the application will prompt you to choose a provider.
 ```bash
-python app.py simulated-stream
+python app.py stream
+```
+You will then see a menu to guide your choice.
+
+#### **Option B: The Direct Flag-Based Way**
+You can bypass the interactive prompt by specifying the provider directly with the `--provider` flag.
+
+**- To run the *simulated* stream with OpenAI:**
+```bash
+python app.py stream --provider openai --duration 3
 ```
 
-### To specify a 3-second duration or more, you can change duration
+**- To run the *true, real-time* stream with Deepgram:**
+```bash
+python app.py stream --provider deepgram
+```
+
+#### **Option C: The Shortcut Commands (Recommended for power users)**
+For convenience, you can use these direct, unambiguous commands.
+
+**- To run the *simulated* stream with OpenAI:**
 ```bash
 python app.py simulated-stream --duration 3
 ```
 
-### Mode 3: Live Stream (Deepgram)
-For true, low-latency transcription from your microphone.
+**- To run the *true, real-time* stream with Deepgram:**
 ```bash
 python app.py live-stream
 ```
-For both streaming modes, press **Enter** in the terminal to stop the program cleanly.
+For all streaming methods, press **Enter** in the terminal to stop the program cleanly.
 
 ## Testing and Quality Assurance
 
