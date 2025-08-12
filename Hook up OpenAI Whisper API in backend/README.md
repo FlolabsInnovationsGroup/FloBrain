@@ -102,6 +102,10 @@ For high-accuracy transcription of a pre-recorded audio file.
 ```bash
 python app.py batch --file path/to/your/audio.mp3
 ```
+You can this command to use file ` sample_audio/audio.wav` for intial file
+```bash
+python app.py batch 
+```
 
 ### Mode 2: Streaming Transcription
 This mode transcribes live from your microphone. It is highly flexible and can be run in several ways.
@@ -118,6 +122,10 @@ You can bypass the interactive prompt by specifying the provider directly with t
 
 **- To run the *simulated* stream with OpenAI:**
 ```bash
+python app.py stream --provider openai 
+```
+Or you can change chunck duration `--duration` for simulated recording by using 
+```bash
 python app.py stream --provider openai --duration 3
 ```
 
@@ -130,6 +138,10 @@ python app.py stream --provider deepgram
 For convenience, you can use these direct, unambiguous commands.
 
 **- To run the *simulated* stream with OpenAI:**
+```bash
+python app.py simulated-stream 
+```
+Or you can change chunck duration `--duration` for simulated recording by using 
 ```bash
 python app.py simulated-stream --duration 3
 ```
@@ -145,7 +157,8 @@ For all streaming methods, press **Enter** in the terminal to stop the program c
 This project is built with a focus on quality, proven by a comprehensive test suite.
 
 ### Running Tests
-To run all integration and unit tests:```bash
+To run all integration and unit tests:
+```bash
 pytest
 ```
 ### Measuring Test Coverage
