@@ -1,0 +1,20 @@
+# File: requirements.txt
+
+# --- Core Web Framework ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# --- Data Validation and Configuration ---
+pydantic==2.10.5
+pydantic-settings==2.10.1
+
+# --- Database / ORM ---
+sqlalchemy==2.0.37
+sqlmodel==0.0.19
+
+# --- File Uploads ---
+python-multipart==0.0.20
+
+# --- AI and Media Processing ---
+openai-whisper==20250625
+ffmpeg-python==0.2.0
