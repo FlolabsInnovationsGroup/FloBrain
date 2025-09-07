@@ -1,0 +1,16 @@
+{
+  "name": "Caipo Webviewer",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": { "version": "3.11" }
+  },
+  "postCreateCommand": "pip install -r webviewer/requirements.txt",
+  "forwardPorts": [8501],
+  "portsAttributes": {
+    "8501": { "label": "Streamlit", "onAutoForward": "openPreview" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance"]
+    }
+  }
+}
