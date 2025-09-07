@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+/data/
+.idea/
+.vscode/
+caipo_prototype.db
