@@ -61,3 +61,9 @@ storage/faiss/*
 # --- Misc ---
 *.pid
 .DS_Store?
+
+# virtualenvs (anywhere)
+**/.venv/
+**/.venv*/
+venv/
+ENV/
