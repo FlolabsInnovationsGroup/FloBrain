@@ -67,3 +67,9 @@ storage/faiss/*
 **/.venv*/
 venv/
 ENV/
+
+# virtualenvs (anywhere)
+**/.venv/
+**/.venv*/
+venv/
+ENV/
