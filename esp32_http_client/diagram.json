@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "author": "PlatformIO",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ]
+  ],
+  "serialMonitor": { "display": "auto", "bits": 8, "stopBits": 1, "parity": "none" },
+  "wokwiOptions": {
+    "version": 1,
+    "wifi": {
+      "ssid": "Wokwi-GUEST",
+      "password": "",
+      "channel": 6,
+      "bssid": "42:01:02:03:04:05"
+    }
+  }
+}
