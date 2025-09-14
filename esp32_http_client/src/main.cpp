@@ -8,7 +8,7 @@ const char* password = "";
 
 // Use the HTTP versions of these URLs for reliable Wokwi simulation
 const char* testUrl = "http://httpbin.org/status/500"; 
-const char* successUrl = "http://httpbin.org/get"; // CHANGED: This URL returns a JSON payload
+const char* successUrl = "http://httpbin.org/get"; // This URL returns a JSON payload
 
 // Function prototype
 String fetchWithRetry(const char* url, int maxRetries, int initialBackoffMs);
