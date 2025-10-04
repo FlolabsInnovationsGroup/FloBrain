@@ -20,6 +20,7 @@ This implementation successfully completes and expands upon all requirements of 
 - [x] **Full Frontend Client:** A user-friendly web interface (`index.html`) is provided to register, log in, and fetch protected data.
 - [x] **CORS Handling:** The backend is configured to securely accept requests from the frontend.
 - [x] **Comprehensive Testing:** The backend includes a full suite of integration and unit tests using Jest.
+- [x] **Robust Error Handling Tests:** The test suite explicitly verifies that the API correctly rejects invalid tokens, returning `401 Unauthorized` for **expired tokens** and `400 Bad Request` for **malformed tokens**.
 - [x] **CLI for Token Generation:** A utility script is included for quickly generating tokens during development.
 
 ## Project Structure
@@ -64,14 +65,10 @@ npm install
 ```
 
 ### 3. Setup the Database
-[here is tutorial to create Database](https://dbeaver.com/2022/03/03/how-to-create-database-connection-in-dbeaver/)
+For a visual guide on connecting to a database, see this [DBeaver Tutorial](https://dbeaver.com/2022/03/03/how-to-create-database-connection-in-dbeaver/).
 
-then:
-You need to create the `users` table in your PostgreSQL database.
+Once you are connected to your database using a tool like DBeaver, pgAdmin, or the `psql` command-line interface, run the following SQL script to create the necessary `users` table:
 
-**a. Connect to your database** using a tool like DBeaver, pgAdmin, or the `psql` command-line interface.
-
-**b. Run the following SQL script** to create the table:
 ```sql
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -128,8 +125,14 @@ The "API Response" box will show the raw data returned from the server for each 
 
 ## Running Tests
 
-To run the backend test suite (both unit and integration tests), use:
+To run the backend test suite, use the following command:
 ```bash
 npm test
 ```
+The test suite covers all critical authentication logic. This includes unit tests for the JWT service and integration tests for the API endpoints. Specifically, the tests validate:
+-   Successful access to protected routes with a valid token.
+-   Rejection of requests with no token.
+-   Correct handling of **expired tokens** (returning `401 Unauthorized`).
+-   Correct handling of **malformed tokens** (returning `400 Bad Request`).
+
 **Note:** The tests do not interact with the PostgreSQL database. They test the logic in isolation.
