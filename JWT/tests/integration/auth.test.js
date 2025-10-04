@@ -3,18 +3,29 @@ const request = require('supertest');
 const app = require('../../src/app');
 const { generateToken } = require('../../src/services/jwt.service');
 
+// This tells Jest to replace the real db.service with a mock.
+// We DO NOT import the real 'db' module at the top level anymore.
+jest.mock('../../src/services/db.service');
+
 describe('Authentication Middleware', () => {
   let validToken;
   let expiredToken;
+  let db; // <--- Declare a variable to hold our mock
 
   beforeAll(() => {
-    // Generate a valid token for tests
-    validToken = generateToken({ sub: 'test-user', roles: ['user'] });
+    validToken = generateToken({ sub: 'test-user-id', roles: ['user'] });
     
-    // Generate an expired token
     const jwt = require('jsonwebtoken');
     const config = require('../../src/config');
-    expiredToken = jwt.sign({ sub: 'test-user' }, config.jwt.secret, { expiresIn: '-1s' });
+    expiredToken = jwt.sign({ sub: 'test-user-id' }, config.jwt.secret, { expiresIn: '-1s' });
+  });
+
+  // This block now sets up our db mock reliably before each test
+  beforeEach(() => {
+    // By requiring the module here, we are GUARANTEED to get the mocked version.
+    db = require('../../src/services/db.service'); 
+    // Now this will work because db.query is the Jest mock function.
+    db.query.mockClear();
   });
 
   it('should return 401 Unauthorized if no token is provided', async () => {
@@ -40,11 +51,21 @@ describe('Authentication Middleware', () => {
   });
 
   it('should allow access with a valid token', async () => {
+    const mockUser = {
+      id: 'test-user-id',
+      username: 'testuser',
+      roles: ['user'],
+      created_at: new Date().toISOString(),
+    };
+    // The `db` variable here is now correctly the mock.
+    db.query.mockResolvedValue({ rows: [mockUser] });
+
     const res = await request(app)
       .get('/api/users/profile')
       .set('Authorization', `Bearer ${validToken}`);
+      
     expect(res.statusCode).toBe(200);
     expect(res.body.message).toContain('Successfully accessed protected profile data');
-    expect(res.body.user.sub).toBe('test-user');
+    expect(res.body.user.id).toBe('test-user-id');
   });
 });

@@ -1,11 +1,1 @@
-// src/api/users/users.routes.js
-const express = require('express');
-const usersController = require('./users.controller');
-const authenticate = require('../middleware/authenticate');
-
-const router = express.Router();
-
-// This route is protected by the authenticate middleware
-router.get('/profile', authenticate, usersController.getProfile);
-
-module.exports = router;
+const express=require("express"),usersController=require("./users.controller"),authenticate=require("../middleware/authenticate"),router=express.Router();router.get("/profile",authenticate,usersController.getProfile),module.exports=router;
