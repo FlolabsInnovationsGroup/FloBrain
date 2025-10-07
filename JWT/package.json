@@ -1,28 +1,23 @@
 {
   "name": "authentication-strategy",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "CAIPO authentication service (JWT-based)",
+  "main": "src/server.js",
+  "type": "commonjs",
   "scripts": {
     "start": "node src/server.js",
-    "test": "jest",
-    "generate-token": "node src/scripts/generate-token.js"
+    "dev": "NODE_ENV=development node src/server.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js",
+    "generate-token": "node -e 'process.env.DOTENV_DISABLE_LOGS=\"true\"; require(\"dotenv\").config(); const jwt=require(\"jsonwebtoken\"); process.stdout.write(jwt.sign({sub:\"user-123\", roles:[\"admin\"]}, process.env.JWT_SECRET, {expiresIn: process.env.JWT_EXPIRES_IN || \"1h\"}));'"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3"
   },
-  "devDependencies": {
-    "jest": "^30.2.0",
-    "supertest": "^7.1.4"
-  },
-  "debug": true
+  "author": "Filip Lysak",
+  "license": "MIT"
 }

@@ -1,1 +1,17 @@
-const db=require("../../services/db.service"),getProfile=async(e,s)=>{const r=e.user.sub;try{const e=(await db.query("SELECT id, username, roles, created_at FROM users WHERE id = $1",[r])).rows[0];if(!e)return s.status(404).json({message:"User not found."});s.json({message:"Successfully accessed protected profile data.",user:e})}catch(e){s.status(500).json({message:"Internal server error."})}};module.exports={getProfile:getProfile};
+const db = require('../../services/db.service');
+
+exports.getProfile = async (req, res, next) => {
+  try {
+    const userId = req.user?.sub;
+    if (!userId) return res.status(400).json({ message: 'Bad Request: Missing sub in token.' });
+
+    const { rows } = await db.query('SELECT id, roles FROM users WHERE id = $1', [userId]);
+    if (rows.length === 0) {
+      // fallback so frontend can proceed even before seed
+      return res.status(200).json({ id: userId, roles: req.user.roles || [] });
+    }
+    return res.json(rows[0]);
+  } catch (err) {
+    next(err);
+  }
+};
