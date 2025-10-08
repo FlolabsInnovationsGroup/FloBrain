@@ -1,7 +1,7 @@
 # Express File Upload API
 
-This project is a robust prototype of an Express.js server designed to handle **audio and video file uploads**.  
-It features a professional and scalable project structure, validation for file types and size limits, and seamless integration with a **PostgreSQL** database to store file metadata.  
+This project is a robust prototype of an Express.js server designed to handle **audio and video file uploads**.
+It features a professional and scalable project structure, validation for file types and size limits, and seamless integration with a **PostgreSQL** database to store file metadata.
 Files are saved locally in the `/uploads` folder.
 
 ---
@@ -78,24 +78,26 @@ Follow these steps to get the project running on your local machine.
 git clone https://github.com/FlomadLabsRD/Caipo-flomad-labs-updated
 cd Caipo-flomad-labs-updated
 git checkout upload_API_videos_audios
-2. Install Dependencies
-Install all required npm packages listed in package.json.
+```
 
-bash
-Copy code
+### 2. Install Dependencies
+Install all required npm packages listed in `package.json`.
+
+```bash
 npm install
-3. Set Up the PostgreSQL Database
+```
+
+### 3. Set Up the PostgreSQL Database
 Open DBeaver (or your preferred SQL client) and connect to your PostgreSQL instance.
 
-Create a new database, for example file_uploads.
+Create a new database, for example `file_uploads`.
 
-The application will automatically create the required Files table when it starts for the first time.
+The application will automatically create the required `Files` table when it starts for the first time.
 
-4. Configure Environment Variables
-Create a .env file in the root directory and replace placeholders with your PostgreSQL credentials.
+### 4. Configure Environment Variables
+Create a `.env` file in the root directory and replace placeholders with your PostgreSQL credentials.
 
-env
-Copy code
+```env
 # Server Configuration
 PORT=3000
 
@@ -105,45 +107,34 @@ DATABASE_URL="postgresql://postgres@localhost:5432/file_uploads"
 # File Upload Limits
 MAX_AUDIO_SIZE=5242880 # 5MB
 MAX_VIDEO_SIZE=10485760 # 10MB
-Running the Application
+```
+
+### 5. Running the Application
 Once setup is complete, start the server:
 
-bash
-Copy code
+```bash
 npm start
-Expected output:
+```
 
-pgsql
-Copy code
+Expected output:
+```text
 PostgreSQL connection has been established successfully.
 All models were synchronized successfully.
 Server is running on port 3000
-Testing File Uploads
-Use Postman or curl to test the endpoints.
+```
 
-Upload Audio
-bash
-Copy code
+### 6. Testing File Uploads
+Use Postman or `curl` to test the endpoints.
+
+**Upload Audio**
+```bash
 curl -X POST http://localhost:3000/upload/audio \
   -F "file=@tests/audio/less5M.mp3"
-Upload Video
-bash
-Copy code
+```
+
+**Upload Video**
+```bash
 curl -X POST http://localhost:3000/upload/video \
   -F "file=@tests/video/sample.mp4"
-Uploaded files will appear in /uploads, and metadata will be stored in your PostgreSQL Files table.
-
-
----
-
-## next step
-
-
-1. Open your `README.md` in VS Code or your terminal (`nano README.md`).  
-2. Replace its content with the updated text above.  
-3. Save and push:
-
-```bash
-git add README.md
-git commit -m "📝 Updated README: local storage + PostgreSQL setup (no AWS)"
-git push origin upload_API_videos_audios
+```
+Uploaded files will appear in `/uploads`, and metadata will be stored in your PostgreSQL `Files` table.
