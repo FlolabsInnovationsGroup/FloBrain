@@ -23,7 +23,6 @@ Files are saved locally in the `/uploads` folder.
 ---
 
 The project follows a clean, modular structure to separate concerns, making it easy to navigate and extend.
-.
 
 ├── src
 │   ├── api
