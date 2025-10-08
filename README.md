@@ -22,35 +22,8 @@ Files are saved locally in the `/uploads` folder.
 
 The project follows a clean, modular structure to separate concerns, making it easy to navigate and extend.
 
-.
-├── src
-│ ├── api
-│ │ ├── controllers
-│ │ │ └── upload.controller.js
-│ │ ├── middlewares
-│ │ │ ├── errorHandler.js
-│ │ │ └── validation.js
-│ │ ├── models
-│ │ │ ├── file.model.js
-│ │ │ └── index.js
-│ │ ├── routes
-│ │ │ └── upload.routes.js
-│ │ └── services
-│ │ └── upload.service.js
-│ ├── config
-│ │ ├── database.js
-│ │ ├── index.js
-│ │ └── multer.js
-│ ├── app.js
-│ └── server.js
-├── .env
-├── .gitignore
-├── package.json
-├── README.md
-└── uploads/
 
-yaml
-Copy code
+
 
 ---
 
@@ -130,16 +103,6 @@ curl -X POST http://localhost:3000/upload/video \
   -F "file=@tests/video/sample.mp4"
 ✅ Uploaded files will appear in /uploads, and metadata will be stored in your PostgreSQL Files table.
 
-Author
-Warda Tariq
-AI/ML Developer — Flomad Labs
-GitHub: @warda-tariqq
-
-License
-MIT
-
-yaml
-Copy code
 
 ---
 
