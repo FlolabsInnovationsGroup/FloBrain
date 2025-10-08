@@ -17,46 +17,43 @@ Files are saved locally in the `/uploads` folder.
 - **Environment-Based Configuration**: Manages all sensitive data and configurations securely through a `.env` file.
 
 ---
-
-## Project Structure
-
----
+## 📁 Project Structure
 
 The project follows a clean, modular structure to separate concerns, making it easy to navigate and extend.
 
+```bash
+.
 ├── src
 │   ├── api
 │   │   ├── controllers
-│   │   │   └── upload.controller.js       # Logic for handling audio/video upload requests
+│   │   │   └── upload.controller.js         # Handles audio/video upload logic
 │   │   ├── middlewares
-│   │   │   ├── errorHandler.js            # Global error handling middleware
-│   │   │   └── validation.js              # File type/size validation logic
+│   │   │   ├── errorHandler.js              # Global error handler
+│   │   │   └── validation.js                # File type and size validation
 │   │   ├── models
-│   │   │   ├── file.model.js              # Sequelize model for the Files table
-│   │   │   └── index.js                   # Sequelize DB initialization
+│   │   │   ├── file.model.js                # Sequelize model for uploaded files
+│   │   │   └── index.js                     # Sequelize DB initialization
 │   │   ├── routes
-│   │   │   └── upload.routes.js           # Routes for /upload/audio and /upload/video
+│   │   │   └── upload.routes.js             # Defines /upload/audio & /upload/video endpoints
 │   │   └── services
-│   │       └── upload.service.js          # Handles file saving and DB storage logic
+│   │       └── upload.service.js            # Handles file saving and DB logic
 │   ├── config
-│   │   ├── database.js                    # Sequelize database config (connection setup)
-│   │   ├── index.js                       # Entry point to load configs
-│   │   └── multer.js                      # Multer configuration for file uploads
-│   ├── app.js                             # Express app setup with routes and middleware
-│   └── server.js                          # Starts the server and connects to DB
+│   │   ├── database.js                      # DB connection config (Sequelize)
+│   │   ├── index.js                         # Loads config files
+│   │   └── multer.js                        # Multer setup for uploads
+│   ├── app.js                               # Sets up Express app, routes, middleware
+│   └── server.js                            # Starts server and connects to DB
 ├── tests
-│   ├── audio                              # Test audio files for upload
-│   └── video                              # Test video files for upload
-├── uploads                                # Directory where uploaded files are stored
-├── .env                                   # Environment variables (PostgreSQL config, limits)
-├── .gitignore                             # Files and folders to ignore in Git
-├── package.json                           # Project metadata and dependencies
-├── package-lock.json                      # Dependency lock file
-├── project.tree                           # Optional: file/folder listing snapshot
-├── README.md                              # Project documentation (this file)
-
-
-
+│   ├── audio                                # Sample test audio files
+│   └── video                                # Sample test video files
+├── uploads                                  # Stores uploaded media files
+├── .env                                     # Environment variables
+├── .gitignore                               # Ignored files/folders in Git
+├── package.json                             # Project metadata and dependencies
+├── package-lock.json                        # Dependency lock file
+├── project.tree                             # (Optional) File/folder listing snapshot
+└── README.md                                # Project documentation (this file)
+```
 
 ---
 
