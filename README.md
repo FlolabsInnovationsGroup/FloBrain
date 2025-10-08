@@ -140,7 +140,7 @@ curl -X POST http://localhost:3000/upload/video \
 
 ---
 
-### ✅ Next Step
+## ✅ Next Step
 
 1. Open your `README.md` in VS Code or your terminal (`nano README.md`).  
 2. Replace its content with the updated text above.  
