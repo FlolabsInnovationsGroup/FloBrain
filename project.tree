@@ -1,0 +1,26 @@
+.
+├── src
+│   ├── api
+│   │   ├── controllers
+│   │   │   └── upload.controller.js
+│   │   ├── middlewares
+│   │   │   ├── errorHandler.js
+│   │   │   └── validation.js
+│   │   ├── models
+│   │   │   ├── file.model.js
+│   │   │   └── index.js
+│   │   ├── routes
+│   │   │   └── upload.routes.js
+│   │   └── services
+│   │       ├── s3.service.js
+│   │       └── upload.service.js
+│   ├── config
+│   │   ├── database.js
+│   │   ├── index.js
+│   │   └── multer.js
+│   ├── app.js
+│   └── server.js
+├── .env
+├── .gitignore
+├── package.json
+└── uploads/
