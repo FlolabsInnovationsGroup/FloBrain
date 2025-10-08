@@ -102,11 +102,18 @@ Create a `.env` file in the root directory and replace placeholders with your Po
 PORT=3000
 
 # Database Configuration
-DATABASE_URL="postgresql://postgres@localhost:5432/file_uploads"
+# Replace user, password, host, port, and db_name with your credentials
+DATABASE_URL="postgresql://user:password@host:port/db_name"
 
 # File Upload Limits
 MAX_AUDIO_SIZE=5242880 # 5MB
 MAX_VIDEO_SIZE=10485760 # 10MB
+
+# AWS S3 Stub Configuration (Optional)
+AWS_ACCESS_KEY_ID=access_key
+AWS_SECRET_ACCESS_KEY=secret_key
+AWS_REGION=us-east-1
+S3_BUCKET_NAME=bucket-name
 ```
 
 ### 5. Running the Application
@@ -128,13 +135,11 @@ Use Postman or `curl` to test the endpoints.
 
 **Upload Audio**
 ```bash
-curl -X POST http://localhost:3000/upload/audio \
-  -F "file=@tests/audio/less5M.mp3"
+curl -X POST http://localhost:3000/upload/audio -F "file=@tests/audio/less 5M.mp3"
 ```
 
 **Upload Video**
 ```bash
-curl -X POST http://localhost:3000/upload/video \
-  -F "file=@tests/video/sample.mp4"
+curl -X POST http://localhost:3000/upload/video -F "video=@tests/video/less 10M.mp4"
 ```
 Uploaded files will appear in `/uploads`, and metadata will be stored in your PostgreSQL `Files` table.
