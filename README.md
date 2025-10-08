@@ -135,12 +135,13 @@ bash
 Copy code
 curl -X POST http://localhost:3000/upload/video \
   -F "file=@tests/video/sample.mp4"
-✅ Uploaded files will appear in /uploads, and metadata will be stored in your PostgreSQL Files table.
+Uploaded files will appear in /uploads, and metadata will be stored in your PostgreSQL Files table.
 
 
 ---
 
-## ✅ Next Step
+## next step
+
 
 1. Open your `README.md` in VS Code or your terminal (`nano README.md`).  
 2. Replace its content with the updated text above.  
