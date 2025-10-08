@@ -5,8 +5,8 @@ const uploadAudio = async (req, res, next) => {
     const storageOption = req.body.storage || 'disk'; // 'disk' or 's3'
     const savedFile = await uploadService.handleFileUpload(req.file, storageOption);
     res.status(201).json({
-      message: 'Audio uploaded successfully!',
-      file: savedFile,
+      status: "ok",
+      file: savedFile.id,
     });
   } catch (error) {
     next(error);
@@ -18,8 +18,8 @@ const uploadVideo = async (req, res, next) => {
     const storageOption = req.body.storage || 'disk';
     const savedFile = await uploadService.handleFileUpload(req.file, storageOption);
     res.status(201).json({
-      message: 'Video uploaded successfully!',
-      file: savedFile,
+      status: "ok",
+      file: savedFile.id,
     });
   } catch (error) {
     next(error);
