@@ -21,6 +21,37 @@ Files are saved locally in the `/uploads` folder.
 ## Project Structure
 
 The project follows a clean, modular structure to separate concerns, making it easy to navigate and extend.
+.
+├── src
+│   ├── api
+│   │   ├── controllers
+│   │   │   └── upload.controller.js       # Logic for handling audio/video upload requests
+│   │   ├── middlewares
+│   │   │   ├── errorHandler.js            # Global error handling middleware
+│   │   │   └── validation.js              # File type/size validation logic
+│   │   ├── models
+│   │   │   ├── file.model.js              # Sequelize model for the Files table
+│   │   │   └── index.js                   # Sequelize DB initialization
+│   │   ├── routes
+│   │   │   └── upload.routes.js           # Routes for /upload/audio and /upload/video
+│   │   └── services
+│   │       └── upload.service.js          # Handles file saving and DB storage logic
+│   ├── config
+│   │   ├── database.js                    # Sequelize database config (connection setup)
+│   │   ├── index.js                       # Entry point to load configs
+│   │   └── multer.js                      # Multer configuration for file uploads
+│   ├── app.js                             # Express app setup with routes and middleware
+│   └── server.js                          # Starts the server and connects to DB
+├── tests
+│   ├── audio                              # Test audio files for upload
+│   └── video                              # Test video files for upload
+├── uploads                                # Directory where uploaded files are stored
+├── .env                                   # Environment variables (PostgreSQL config, limits)
+├── .gitignore                             # Files and folders to ignore in Git
+├── package.json                           # Project metadata and dependencies
+├── package-lock.json                      # Dependency lock file
+├── project.tree                           # Optional: file/folder listing snapshot
+├── README.md                              # Project documentation (this file)
 
 
 
