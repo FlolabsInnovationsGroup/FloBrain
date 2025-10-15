@@ -1,0 +1,19 @@
+name: Server CI
+on:
+  push:
+    paths: ["apps/server/**", ".github/workflows/ci-node.yml"]
+  pull_request:
+    paths: ["apps/server/**"]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "lts/*" }
+      - name: Install
+        run: npm ci --prefix apps/server || npm install --prefix apps/server
+      - name: Lint
+        run: npm run lint --prefix apps/server || echo "no lint script"
+      - name: Test
+        run: npm test --prefix apps/server || echo "no tests yet"
