@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Authentication Client</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <h1>API Client</h1>
+
+        <!-- Section for displaying messages to the user -->
+        <div id="message-area" class="message"></div>
+
+        <div class="panels">
+            <!-- Registration Panel -->
+            <section class="panel">
+                <h2>1. Register New User</h2>
+                <form id="register-form">
+                    <label for="register-username">Username:</label>
+                    <input type="text" id="register-username" required>
+                    <label for="register-password">Password:</label>
+                    <input type="password" id="register-password" required>
+                    <button type="submit">Register</button>
+                </form>
+            </section>
+
+            <!-- Login Panel -->
+            <section class="panel">
+                <h2>2. Login User</h2>
+                <form id="login-form">
+                    <label for="login-username">Username:</label>
+                    <input type="text" id="login-username" required>
+                    <label for="login-password">Password:</label>
+                    <input type="password" id="login-password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </section>
+
+            <!-- Protected Data Panel -->
+            <section class="panel">
+                <h2>3. Get Protected Data</h2>
+                <p>You must be logged in to do this.</p>
+                <button id="get-profile-button">Get My Profile</button>
+            </section>
+        </div>
+
+        <!-- Section for displaying raw API responses -->
+        <section class="response-area">
+            <h2>API Response</h2>
+            <pre id="response-output">Awaiting API call...</pre>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
