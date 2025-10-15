@@ -1,0 +1,19 @@
+{
+  "name": "CAIPO Dev",
+  "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {"version": "3.11"},
+    "ghcr.io/devcontainers/features/node:1": {"version": "lts"},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "postCreateCommand": "pip install mkdocs-material || true && cd apps/server && npm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "yzhang.markdown-all-in-one"
+      ]
+    }
+  }
+}
