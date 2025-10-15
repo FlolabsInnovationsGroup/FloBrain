@@ -1,1 +1,0 @@
-const{generateToken:generateToken}=require("../services/jwt.service"),userId=process.argv[2],rolesArg=process.argv[3];userId||process.exit(1);const payload={sub:userId,roles:rolesArg?rolesArg.split(","):[]};try{generateToken(payload)}catch(e){process.exit(1)}

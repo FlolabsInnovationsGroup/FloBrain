@@ -1,1 +1,0 @@
-const express=require("express"),authController=require("./auth.controller"),router=express.Router();router.post("/register",authController.register),router.post("/login",authController.login),module.exports=router;
