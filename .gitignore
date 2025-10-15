@@ -1,0 +1,20 @@
+# PlatformIO / Arduino
+.pio/
+.build/
+cmake-build-*/
+*.elf
+*.bin
+*.hex
+*.map
+
+# Python / Node
+__pycache__/
+*.pyc
+.env
+node_modules/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
