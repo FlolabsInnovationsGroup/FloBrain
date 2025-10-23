@@ -1,2 +1,16 @@
+<<<<<<< HEAD
 node_modules/
 #.env
+=======
+.env
+*node_modules
+*uploads/
+>>>>>>> origin/upload_API_videos_audios
+node_modules/
+.env
+.env.local
+uploads/
+logs/
+.DS_Store
+dist/
+coverage/

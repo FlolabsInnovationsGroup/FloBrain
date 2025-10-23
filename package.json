@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "core_api_layer",
   "version": "1.0.0",
   "description": "The task involves creating a core API layer with specific steps",
@@ -11,10 +12,30 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Mob-Ad19/Core_API_Layer.git"
+=======
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "pg": "^8.16.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7",
+    "uuid": "^13.0.0"
+  },
+  "name": "upload_api_videos_audios",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js"
+>>>>>>> origin/upload_API_videos_audios
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+<<<<<<< HEAD
   "bugs": {
     "url": "https://github.com/Mob-Ad19/Core_API_Layer/issues"
   },
@@ -29,4 +50,7 @@
   "devDependencies": {
     "nodemon": "^3.1.10"
   }
+=======
+  "type": "commonjs"
+>>>>>>> origin/upload_API_videos_audios
 }

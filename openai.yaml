@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: Media Upload & Embedding Search API
+  version: 1.0.0
+  description: API for uploading audio/video files and querying embedding vectors.
+
+paths:
+  /upload/audio:
+    post:
+      summary: Upload an audio file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Audio uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  file_id:
+                    type: string
+                    example: abc123
+        '400':
+          description: Invalid request payload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing audio file"
+
+  /upload/video:
+    post:
+      summary: Upload a video file
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Video uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  file_id:
+                    type: string
+                    example: xyz456
+        '400':
+          description: Invalid request payload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Missing video file"
+
+  /query/embeddings:
+    post:
+      summary: Query similar items based on an embedding vector
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - q_vector
+                - top_k
+              properties:
+                q_vector:
+                  type: string
+                  format: byte
+                  description: Base64-encoded embedding vector
+                top_k:
+                  type: integer
+                  description: Number of top results to return
+                  example: 5
+                filters:
+                  type: object
+                  properties:
+                    device_id:
+                      type: string
+                      description: Filter by device ID
+                      example: "device-001"
+                    time_range:
+                      type: array
+                      items:
+                        type: string
+                        format: date
+                      minItems: 2
+                      maxItems: 2
+                      description: Start and end dates
+                      example: ["2024-01-01", "2024-01-31"]
+      responses:
+        '200':
+          description: List of similar results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        file_id:
+                          type: string
+                          example: "abc123"
+                        score:
+                          type: number
+                          format: float
+                          example: 0.92
