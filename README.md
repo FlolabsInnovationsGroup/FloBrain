@@ -1,28 +1,280 @@
-# CAIPO
-CAIPO is a transcription device thought to be ergonomic and easy to use. It records audio and video of its surroundings to provide an accurate transcription of any dialogue happening in its vicinity and provide detailed information about the recorded scene.
+<<<<<<< HEAD
+# Core API Layer Project
 
-## Bill of materials
-| Component | Reference | Internal resources | Store links |
-|-----------|-----------|--------------------|-------------|
-| Microcontroller board | Seeed Studio Xiao ESP32-S3 Sense | [Introductory software](https://github.com/FlomadLabsRD/Seeed-Studio-Xiao-ESP32-S3-Sense) | [Amazon](https://www.amazon.com/Seeed-Studio-XIAO-ESP32-Sense/dp/B0C69FFVHH/ref=sr_1_22_sspa?crid=RPA3F6MZ3AM6&dib=eyJ2IjoiMSJ9.Bbi0rItDlZp4p_vjHEq7eIEcKgl7-atHllt6tRHkHq216HDOucLBV-dAVq4pqtKFGpQH1IHx9HF3oFqXo4ILhjqrVpqxn3SZlL4bp1KTMqo19yNanTtErzT0_9JJMHciog8P15sLbmLtee0nEIeZys2OqB2EViAbmdEdc1Gg9b6UC9ba87QnePvVNyCTK9L6.pgxWLi-5dZkPG_k_jMakC0cvl1NaDyPSoZoDQGG7Cwk&dib_tag=se&keywords=esp32%2Bpower%2Bsupply&qid=1718676384&sprefix=esp32%2Bpower%2Bsupply%2Caps%2C155&sr=8-22-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9tdGY&th=1) |
-| Power Supply Distribution Board (PSDB) | Keenso0x6zgrh12c | *Not required* | [Amazon](https://www.amazon.com/Keenso-Supply-Distribution-Connection-Connectors/dp/B0BQFBM7DP/ref=sr_1_22?sr=8-22) |
-| Haptic Motor Controller | DRV2605L | *Not yet implemented* | [Amazon](https://www.amazon.com/Quality-Controller-General-DRV2605L-Generate/dp/B0B6CK4XLF/ref=sr_1_1_sspa?sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1) |
-| Class D Amplifier Breakout Interface | MAX98357 | *Not required* | [Amazon](https://www.amazon.com/Rakstore-MAX98357-MAX98357A-Amplifier-Interface/dp/B09L6VL43Q/ref=sr_1_15?sr=8-15) |
-| Thin Plastic Speaker | Adafruit 1891 | *Not required* | [Amazon](https://www.amazon.com/Speakers-Transducers-Plastic-Speaker-Wires/dp/B00N4YW7G4/ref=sr_1_1?dib=eyJ2IjoiMSJ9.iV-2gPgcTqRJ-VW6POceWkS15KXiy8dYNtHbAhtFkgmQjfxldJuIeyuhsbUccOu3Biokh6w0aCqr-LbmMSX_Ol3j9HSU_TyUK9z8Ns_tyHL1k2SB21Wit0ySpF43LdxKy856yQkQHrXNJBsp_IjI8BZNgNy-hnbnvDmomaC1BacajAp2X8lko1nFWj-CwlyVWZk_a8CrEvZNx-LZjlL_gLOOelbRSzQ1v1kpIqRLlYE.zzs3MDdakk9z4JXR-V543JXn12xn16SlgfJk_ZvYDg0&dib_tag=se&keywords=adafruit+speaker&qid=1730595791&sr=8-1) |
-| Individually Addressable Smart RGB LED | WS2812BLEDW-W100pcs | *Not required* | [Amazon](https://www.amazon.com/BTF-LIGHTING-WS2812B-Heatsink-10mm3mm-WS2811/dp/B01DC0J0WS/ref=sr_1_5?crid=27WXRQOMND7NF&dib=eyJ2IjoiMSJ9.1IpMYYKy-PwaqBnVhgqgaiT_CTifLDDTHnOBE1CAT0Jk91YvC48m9HzK-NmXNjqX7NEIxqGTutSMJhMdP1MiWPWzQa_aPB9i6JGbyveG0TzKSxdtqceDa8dX0ZJsFvTStXM_l2-NRUaymIQWBylUavU_m4_u6DJbWctBbBMEsG2PA4NLu5szrOAQ_tdO4lbEfYVzX6N9fPFqHXoXTFBjJqsDsmERVXIaO92ToH6g6Zso_PvX1mCBlwL7-jwccGMp9wECiWdoDEWdDMxJrwn5bcmxRQe0OZEk30l7nv3raZQ.2jtj14DYyMwAj5_93vXd4X8-kk4lox_pQQaY6anoN0Y&dib_tag=se&keywords=WS2812B%2BNeoPixel&qid=1730594248&sprefix=ws2812b%2Bneopixel%2Caps%2C117&sr=8-5&th=1) |
-| Mini Vibration Motors | B07Q1ZV4MJ | *Not yet implemented* | [Amazon](https://www.amazon.com/tatoko-Vibration-Button-Type-Vibrating-Appliances/dp/B07Q1ZV4MJ?content-id=amzn1.sym.4311067e-a9df-4e8a-a5ce-d6836ea1723b) |
-| Thin Film Pressure Sensor | MD30-60 | *Not required* | [Amazon](https://www.amazon.com/Pressure-Sensitivity-Sensitive-Automotive-Electronics/dp/B0BSLN4NFR?content-id=amzn1.sym.4311067e-a9df-4e8a-a5ce-d6836ea1723b) |
+This repository serves as the foundational layer for a modern, scalable Node.js REST API. It establishes a professional project structure, standardized response contracts, and integrated API documentation out-of-the-box, providing a robust starting point for any new service.
 
-## Getting started with the firmware
-The firmware was thought to be run using Arduino IDE, the best tool for the Microcontroller we're using in this version of the device.
+## Features
 
-## Hardware Simulation
-### Online Simulation
-You may sometimes need to run the source code without the hardware at hand. For those situations, we have a Wokwi simulation you can customise to your needs. All files are inside the [Simulation](https://github.com/FlomadLabsInternational/Caipo-flomad-labs/tree/main/Simulation) folder.
+-   **Structured & Scalable:** Logical separation of concerns for API logic, middleware, and configuration.
+-   **Versioned API:** All core endpoints are nested under `/api/v1` to allow for future versions without breaking changes.
+-   **Standardized Responses:** A consistent JSON contract for all success and error responses.
+-   **Integrated Documentation:** Live, interactive API documentation powered by OpenAPI and Swagger UI.
+-   **Centralized Error Handling:** Graceful error handling that prevents stack traces from leaking.
 
-To run the simulation, you can go directly to the [Simulation on wokwi.com](https://wokwi.com/projects/411276781876475905) or create your own by creating a XIAO-ESP32-S3 project and including the files in the folder.
+---
 
-### Local Simulation
-To Simulate on your machine, you can use Wokwi with the VS code extension.
-To get started with the VS Code extension, you can check the official guide: https://docs.wokwi.com/vscode/getting-started
+## Getting Started
 
+Follow these instructions to get the project set up and running on your local machine.
+
+### Prerequisites
+
+-   [Node.js](https://nodejs.org/) (LTS version is recommended)
+-   [npm](https://www.npmjs.com/) (comes installed with Node.js)
+
+### Installation & Setup
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <your-repository-url>
+    cd core-api-project
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Configure environment variables:**
+    Create a file named `.env` in the root of the project and add the following content. This file is ignored by Git and should not contain sensitive secrets in a public repository.
+    ```env
+    PORT=3000
+    NODE_ENV=development
+    ```
+
+4.  **Start the server:**
+    ```bash
+    npm start
+    ```
+    *(Note: You may need to add `"start": "node src/server.js"` to the `scripts` section of your `package.json` file).*
+
+    You should see a confirmation message in your terminal: `API listening on http://localhost:3000`
+
+---
+
+## Project Structure
+
+The project follows a feature-oriented structure designed for maintainability and clear separation of concerns.
+
+```
+/
+├── docs/
+│   └── OpenAPI.yaml        # API specification file
+├── src/
+│   ├── api/                # All API versions and route logic
+│   │   └── v1/             # Version 1 of the API
+│   │       ├── index.js              # V1 main router
+│   │       ├── ping.routes.js        # Routes for the /ping resource
+│   │       └── system.routes.js      # Routes for healthcheck & status
+│   ├── middleware/         # Custom Express middleware
+│   │   ├── error-handler.js    # Global error handler
+│   │   └── response-shape.js   # Middleware to standardize responses
+│   ├── app.js              # Express app configuration and assembly
+│   └── server.js           # The application entry point (starts the server)
+├── .env                    # Environment variables (local only)
+├── .gitignore              # Files to be ignored by Git
+├── package.json            # Project dependencies and scripts
+└── README.md               # You are here!
+=======
+# Express File Upload API
+
+This project is a robust prototype of an Express.js server designed to handle **audio and video file uploads**.
+It features a professional and scalable project structure, validation for file types and size limits, and seamless integration with a **PostgreSQL** database to store file metadata.
+Files are saved locally in the `/uploads` folder.
+
+---
+
+## Features
+
+- **RESTful Endpoints**: Dedicated endpoints for audio (`POST /upload/audio`) and video (`POST /upload/video`).
+- **Multipart/Form-Data Handling**: Efficiently processes file uploads using `multer`.
+- **Input Validation**: Strict validation for content types (e.g., `audio/mpeg`, `video/mp4`) and configurable size limits.
+- **Database Integration**: Uses **Sequelize ORM** to connect with a **PostgreSQL** database, storing metadata for every uploaded file.
+- **File Storage**: Saves files to the local `/uploads` directory and records details in the database.
+- **Professional Structure**: Organized into controllers, services, models, and routes for maintainability and scalability.
+- **Environment-Based Configuration**: Manages all sensitive data and configurations securely through a `.env` file.
+
+---
+## 📁 Project Structure
+
+The project follows a clean, modular structure to separate concerns, making it easy to navigate and extend.
+
+```bash
+.
+├── src
+│   ├── api
+│   │   ├── controllers
+│   │   │   └── upload.controller.js         # Handles audio/video upload logic
+│   │   ├── middlewares
+│   │   │   ├── errorHandler.js              # Global error handler
+│   │   │   └── validation.js                # File type and size validation
+│   │   ├── models
+│   │   │   ├── file.model.js                # Sequelize model for uploaded files
+│   │   │   └── index.js                     # Sequelize DB initialization
+│   │   ├── routes
+│   │   │   └── upload.routes.js             # Defines /upload/audio & /upload/video endpoints
+│   │   └── services
+│   │       └── upload.service.js            # Handles file saving and DB logic
+│   ├── config
+│   │   ├── database.js                      # DB connection config (Sequelize)
+│   │   ├── index.js                         # Loads config files
+│   │   └── multer.js                        # Multer setup for uploads
+│   ├── app.js                               # Sets up Express app, routes, middleware
+│   └── server.js                            # Starts server and connects to DB
+├── tests
+│   ├── audio                                # Sample test audio files
+│   └── video                                # Sample test video files
+├── uploads                                  # Stores uploaded media files
+├── .env                                     # Environment variables
+├── .gitignore                               # Ignored files/folders in Git
+├── package.json                             # Project metadata and dependencies
+├── package-lock.json                        # Dependency lock file
+├── project.tree                             # (Optional) File/folder listing snapshot
+└── README.md                                # Project documentation (this file)
+>>>>>>> origin/upload_API_videos_audios
+```
+
+---
+
+<<<<<<< HEAD
+## API Documentation
+
+This API is documented using the **OpenAPI 3.0** standard. We use **Swagger UI** to provide live, interactive documentation where you can explore and test every endpoint directly from your browser.
+
+### How to Access the Docs
+
+1.  Ensure the server is running (`npm start`).
+2.  Open your web browser and navigate to:
+    **[`http://localhost:3000/api/docs`](http://localhost:3000/api/docs)**
+
+From this interface, you can see all available endpoints, their required parameters, and their response shapes. You can also execute requests against your live local server using the "Try it out" feature.
+
+---
+
+## API Response Contract
+
+All API responses, whether success or error, follow a standardized JSON structure to ensure consistency and predictability.
+
+### Success Response
+
+Successful requests will return a JSON object with a `success` flag set to `true` and a `data` payload.
+
+-   **Shape**: `{ "success": true, "data": {…} }`
+-   **HTTP Status**: `200 OK`
+
+**Example:**
+```json
+{
+  "success": true,
+  "data": {
+    "version": "v1",
+    "ok": true
+  }
+}
+```
+
+### Error Response
+
+Failed requests will return a JSON object with a `success` flag set to `false` and an `error` object containing details.
+
+-   **Shape**: `{ "success": false, "error": { "message": "...", "code": "..." } }`
+-   **HTTP Status**: `4xx` or `5xx` error codes.
+
+**Example (404 Not Found):**
+```json
+{
+    "success": false,
+    "error": {
+        "message": "API route not found.",
+        "code": "NOT_FOUND"
+    }
+}
+```
+=======
+## Requirements
+
+To run this project, you will need the following installed on your machine:
+
+- [Node.js](https://nodejs.org/en/) (v18.x or newer recommended)
+- [npm](https://www.npmjs.com/) (comes with Node.js)
+- [PostgreSQL](https://www.postgresql.org/download/)
+- A database management tool like [DBeaver](https://dbeaver.io/) or PgAdmin to set up and inspect the database.
+
+---
+
+## Installation and Setup
+
+Follow these steps to get the project running on your local machine.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/FlomadLabsRD/Caipo-flomad-labs-updated
+cd Caipo-flomad-labs-updated
+git checkout upload_API_videos_audios
+```
+
+### 2. Install Dependencies
+Install all required npm packages listed in `package.json`.
+
+```bash
+npm install
+```
+
+### 3. Set Up the PostgreSQL Database
+Open DBeaver (or your preferred SQL client) and connect to your PostgreSQL instance.
+
+Create a new database, for example `file_uploads`.
+
+The application will automatically create the required `Files` table when it starts for the first time.
+
+### 4. Configure Environment Variables
+Create a `.env` file in the root directory and replace placeholders with your PostgreSQL credentials.
+
+```env
+# Server Configuration
+PORT=3000
+
+# Database Configuration
+# Replace user, password, host, port, and db_name with your credentials
+DATABASE_URL="postgresql://user:password@host:port/db_name"
+
+# File Upload Limits
+MAX_AUDIO_SIZE=5242880 # 5MB
+MAX_VIDEO_SIZE=10485760 # 10MB
+
+# AWS S3 Stub Configuration (Optional)
+AWS_ACCESS_KEY_ID=access_key
+AWS_SECRET_ACCESS_KEY=secret_key
+AWS_REGION=us-east-1
+S3_BUCKET_NAME=bucket-name
+```
+
+### 5. Running the Application
+Once setup is complete, start the server:
+
+```bash
+npm start
+```
+
+Expected output:
+```text
+PostgreSQL connection has been established successfully.
+All models were synchronized successfully.
+Server is running on port 3000
+```
+
+### 6. Testing File Uploads
+Use Postman or `curl` to test the endpoints.
+
+**Upload Audio**
+```bash
+curl -X POST http://localhost:3000/upload/audio -F "file=@tests/audio/less 5M.mp3"
+```
+
+**Upload Video**
+```bash
+curl -X POST http://localhost:3000/upload/video -F "video=@tests/video/less 10M.mp4"
+```
+Uploaded files will appear in `/uploads`, and metadata will be stored in your PostgreSQL `Files` table.
+>>>>>>> origin/upload_API_videos_audios
