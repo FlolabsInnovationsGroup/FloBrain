@@ -1,34 +1,26 @@
 // src/app.js
 const express = require('express');
-const cors = require('cors');
-const yaml = require('yamljs');
-const swaggerUi = require('swagger-ui-express');
-const path = require('path');
-
-const apiV1 = require('./api/v1');
-const { success } = require('./middleware/response-shape');
-const { notFound, globalErrorHandler } = require('./middleware/error-handler');
+const authRouter = require('./api/routes/auth.routes');
+const pingRouter = require('./api/routes/ping.routes');   // <-- IMPORT PING ROUTER
+const adminRouter = require('./api/routes/admin.routes'); // <-- IMPORT ADMIN ROUTER
 
 const app = express();
 
-// Load env early (server will set process.env via dotenv in server.js)
-app.use(cors());
+// Middleware to parse JSON bodies
 app.use(express.json());
 
-// base, unversioned ping route
-app.get('/api/ping', (req, res) => success(res, { ok: true }));
+// A simple root route to confirm the server is running
+app.get('/api/v1/ping', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Pong!',
+  });
+});
 
-// versioned routes
-app.use('/api/v1', apiV1);
+// Mount the routers
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1', pingRouter);     // <-- USE PING ROUTER
+app.use('/api/v1/admin', adminRouter); // <-- USE ADMIN ROUTER
 
-// OpenAPI/Swagger UI
-const swaggerDocument = yaml.load(path.join(__dirname, '../docs/OpenAPI.yaml'));
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// unknown /api/* -> 404 standard error shape
-app.use('/api', notFound);
-
-// global error handler
-app.use(globalErrorHandler);
 
 module.exports = app;

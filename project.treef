@@ -1,17 +1,28 @@
-├── docs/
-│   └── OpenAPI.yaml
-├── src/
-│   ├── api/
-│   │   └── v1/
-│   │       ├── index.js
-│   │       ├── ping.routes.js
-│   │       └── system.routes.js
-│   ├── middleware/
-│   │   ├── error-handler.js
-│   │   └── response-shape.js
-│   ├── app.js
-│   └── server.js
-├── .env
-├── .gitignore
-├── package.json
-└── README.md
+├── .env                  # Environment variables (JWT_SECRET, JWT_EXPIRES_IN, etc.)
+├── .gitignore            # Git ignore file
+├── package.json          # Project dependencies and scripts
+└── src/                  # Source code
+    ├── api/              # API-related files (routes, middleware)
+    │   ├── middlewares/  # Express middlewares
+    │   │   ├── auth.middleware.js    # Authentication middleware (verifies JWT)
+    │   │   └── role.middleware.js    # Role-based authorization middleware
+    │   └── routes/       # API routes definitions
+    │       ├── auth.routes.js        # Routes for /api/v1/auth (register, login)
+    │       ├── admin.routes.js       # Routes for /api/v1/admin (admin-only endpoints)
+    │       └── ping.routes.js        # Protected sample route (/api/v1/ping-protected)
+    ├── config/           # Configuration files
+    │   └── db.config.js  # Database connection setup
+    ├── controllers/      # Route handlers (business logic)
+    │   ├── auth.controller.js    # Logic for user registration and login
+    │   └── ping.controller.js    # Logic for the protected ping routes
+    ├── models/           # Database models/schemas
+    │   └── user.model.js         # User model (email, password, full_name, role, status)
+    ├── services/         # Reusable services
+    │   └── token.service.js      # Centralized JWT generation utility
+    ├── app.js            # Express application setup and main entry point
+    └── server.js         # Server initialization (listens on PORT)
+└── tests/                # Automated tests
+    ├── integration/      # Integration tests
+    │   └── auth.test.js  # Tests for the full authentication flow
+    └── unit/             # Unit tests
+        └── token.service.test.js # Tests for the JWT generation utility
