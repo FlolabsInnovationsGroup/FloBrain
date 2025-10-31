@@ -5,7 +5,8 @@ import { upload, getOne, list, patch, hardDelete } from '../controllers/mediaCon
 
 // DEV-ONLY auth stub; replace with real JWT later
 const requireAuth = (req: any, _res: any, next: any) => {
-  if (!req.user?.id) req.user = { id: 'dev_user' };
+  const dev = process.env.DEV_USER_ID || 'dev_user';
+  if (!req.user?.id) req.user = { id: dev };
   next();
 };
 
@@ -15,4 +16,5 @@ mediaRouter.get('/api/v1/media/:id', requireAuth, getOne);
 mediaRouter.get('/api/v1/media', requireAuth, list);
 mediaRouter.patch('/api/v1/media/:id', requireAuth, patch);
 mediaRouter.delete('/api/v1/media/:id', requireAuth, hardDelete);
+
 export { errorHandler };

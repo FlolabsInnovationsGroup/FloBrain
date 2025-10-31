@@ -1,3 +1,4 @@
+if (process.env.LEGACY_MODELS_DISABLE==="1"){module.exports={};return;}
 const { sequelize } = require('../../config/database');
 const FileModel = require('./file.model');
 
