@@ -2,9 +2,9 @@ require('dotenv').config();
 
 module.exports = {
   port: process.env.PORT || 3000,
-  
-  databaseUrl: process.env.DATABASE_URL, 
-  
+
+  databaseUrl: process.env.DATABASE_URL,
+
   maxAudioSize: parseInt(process.env.MAX_AUDIO_SIZE),
   maxVideoSize: parseInt(process.env.MAX_VIDEO_SIZE),
   aws: {

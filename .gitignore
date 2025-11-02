@@ -1,24 +1,8 @@
-# PlatformIO / Arduino
-.pio/
-.build/
-cmake-build-*/
-*.elf
-*.bin
-*.hex
-*.map
-
-# Python / Node
-__pycache__/
-*.pyc
-.env
 node_modules/
-
-# OS / Editor
+.env
+.env.local
+uploads/
+logs/
 .DS_Store
-Thumbs.db
-.vscode/
-.idea/
-**/.env
-**/node_modules
-
-/uploads
+dist/
+coverage/
