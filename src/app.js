@@ -1,62 +1,49 @@
-<<<<<<< HEAD
-// src/app.js
-const express = require('express');
-const cors = require('cors');
-const yaml = require('yamljs');
-const swaggerUi = require('swagger-ui-express');
-const path = require('path');
-
-const apiV1 = require('./api/v1');
-const { success } = require('./middleware/response-shape');
-const { notFound, globalErrorHandler } = require('./middleware/error-handler');
+const express = require("express");
+const { TodoCreateSchema, TodoIdParamSchema } = require("./schemas/todo.schema");
+const { validate } = require("./utils/validate");
 
 const app = express();
-
-// Load env early (server will set process.env via dotenv in server.js)
-app.use(cors());
 app.use(express.json());
 
-// base, unversioned ping route
-app.get('/api/ping', (req, res) => success(res, { ok: true }));
+// in-memory store for demo/tests
+const store = new Map();
+let nextId = 1;
 
-// versioned routes
-app.use('/api/v1', apiV1);
+app.get("/health", (_, res) => res.json({ ok: true }));
 
-// OpenAPI/Swagger UI
-const swaggerDocument = yaml.load(path.join(__dirname, '../docs/OpenAPI.yaml'));
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// POST /todos -> create
+app.post("/todos", (req, res, next) => {
+  try {
+    const body = validate(TodoCreateSchema, req.body);
+    const id = String(nextId++);
+    const todo = { id, ...body };
+    store.set(id, todo);
+    res.status(201).json(todo);
+  } catch (e) {
+    next(e);
+  }
+});
 
-// unknown /api/* -> 404 standard error shape
-app.use('/api', notFound);
+// GET /todos/:id -> read
+app.get("/todos/:id", (req, res, next) => {
+  try {
+    const params = validate(TodoIdParamSchema, req.params);
+    const todo = store.get(params.id);
+    if (!todo) return res.status(404).json({ error: "Not found" });
+    res.json(todo);
+  } catch (e) {
+    next(e);
+  }
+});
 
-// global error handler
-app.use(globalErrorHandler);
+// simple error handler for validation
+app.use((err, _req, res, _next) => {
+  if (err && err.status === 400) {
+    return res.status(400).json(err.payload || { error: "Bad Request" });
+  }
+  // fallback
+  console.error(err);
+  res.status(500).json({ error: "Internal Server Error" });
+});
 
 module.exports = app;
-=======
-const express = require('express');
-const { connectDB } = require('./config/database');
-const { syncDb } = require('./api/models');
-const uploadRoutes = require('./api/routes/upload.routes');
-const errorHandler = require('./api/middlewares/errorHandler');
-
-const app = express();
-
-// Connect to Database and Sync Models
-connectDB();
-syncDb();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Serve static files from the 'uploads' directory
-app.use('/uploads', express.static('uploads'));
-
-// Routes
-app.use('/upload', uploadRoutes);
-
-// Error Handling Middleware
-app.use(errorHandler);
-
-module.exports = app;
->>>>>>> origin/upload_API_videos_audios

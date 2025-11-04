@@ -4,22 +4,33 @@
   "description": "Media Handling API for upload, list, get, patch, and delete of audio, video, and image files",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --runInBand",
     "start": "node src/server.js",
     "dev": "LEGACY_MODELS_DISABLE=1 ts-node-dev --respawn --transpile-only src/media-index.ts",
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "dependencies": {
     "aws-sdk": "^2.1692.0",
-    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "multer": "^2.0.2",
-    "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@jest/globals": "^30.2.0",
+    "@types/express": "^5.0.5",
+    "@types/jest": "^30.0.0",
+    "@types/multer": "^2.0.0",
+    "@types/supertest": "^6.0.3",
+    "dotenv": "^17.2.3",
+    "jest": "^30.2.0",
+    "pg": "^8.16.3",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.5",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
   },
@@ -27,4 +38,3 @@
   "keywords": [],
   "license": "ISC"
 }
-
