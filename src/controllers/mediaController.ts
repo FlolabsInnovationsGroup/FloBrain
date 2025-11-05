@@ -7,6 +7,8 @@ import { makeRelativePathBase, joinRepoPath } from '../utils/paths';
 import { safeWriteFile, safeDelete } from '../utils/files';
 import { ALLOWED_AUDIO, ALLOWED_IMAGE, ALLOWED_VIDEO } from '../env';
 import { canTransition, ProcessingStatus } from '../utils/status';
+import { callAi } from '../clients/aiClient';
+import { sequelize } from '../sequelize';
 
 function bad(status: number, message: string) { const e: any = new Error(message); e.status = status; return e; }
 function allowedFor(fam: 'audio'|'video'|'image') {
@@ -60,9 +62,16 @@ export async function upload(req: Request, res: Response) {
     });
     console.log('[UPLOAD]', JSON.stringify({ user_id: userId, device_id, media_type, size: file.size, final_path: relativePath }));
     return res.status(201).json({ success: true, data: {
-      id: row.get('id'), media_type: row.get('media_type'), timestamp: row.get('timestamp'),
-      file_path: row.get('file_path'), file_size: row.get('file_size'), format: row.get('format'),
-      device_id: row.get('device_id'), tags: row.get('tags'), processing_status: row.get('processing_status'),
+      id: row.get('id'),
+      user_id: row.get('user_id'),
+      media_type: row.get('media_type'), 
+      timestamp: row.get('timestamp'),
+      file_path: row.get('file_path'), 
+      file_size: row.get('file_size'), 
+      format: row.get('format'),
+      device_id: row.get('device_id'), 
+      tags: row.get('tags'), 
+      processing_status: row.get('processing_status'),
     }});
   } catch (err) {
     await safeDelete(onDisk);

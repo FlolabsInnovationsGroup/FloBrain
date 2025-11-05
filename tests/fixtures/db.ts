@@ -36,9 +36,9 @@ export async function seedBasic() {
   `);
 
   await tryQuery(`
-    INSERT INTO media (id, user_id, media_type, status) VALUES
-      (1, 1, 'audio', 'pending_processing'),
-      (2, 1, 'image', 'pending_processing')
+    INSERT INTO media (id, user_id, media_type, processing_status, timestamp, file_path, file_size, format) VALUES
+      (1, 1, 'audio', 'pending_processing', NOW(), '/uploads/test/media_1.mp3', 100, 'mp3'),
+      (2, 1, 'image', 'pending_processing', NOW(), '/uploads/test/media_2.png', 200, 'png')
   `);
 }
 
