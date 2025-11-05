@@ -1,305 +1,292 @@
-# JWT Authentication & Authorization API
+# Robust Error Handling & Logging in Node.js
 
-A robust backend service built with Node.js, Express, and PostgreSQL that provides a complete and secure authentication and authorization solution using JSON Web Tokens (JWT). This project includes user registration, login, password hashing, role-based access control, and a full suite of integration and unit tests.
+This project is a comprehensive showcase of a production-grade error handling, observability, security, and reliability system for an Express.js application. It is designed to be a robust foundation for building scalable and maintainable web services, ensuring that all errors are handled gracefully, all events are logged structurually, and the service is resilient against common threats.
 
-## Table of Contents
+## Core Features
 
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Database Setup](#database-setup)
-- [Running the Application](#running-the-application)
-- [Running Tests](#running-tests)
-- [API Contract](#api-contract)
-  - [Authentication Routes](#authentication-routes)
-  - [Protected Routes](#protected-routes)
-- [Manual Testing with cURL](#manual-testing-with-curl)
-- [License](#license)
+This project implements a wide range of best practices for modern web services:
 
-## Features
+#### Observability & Error Handling
+-   **Structured JSON Logging:** All log output is in single-line JSON format using `pino` for high performance and easy parsing by log aggregators (like Datadog, Splunk, or the ELK stack).
+-   **Request Correlation:** Every request is assigned a unique `request_id`, included in all log lines and API responses for seamless end-to-end tracing.
+-   **Centralized Error Handling:** A single, global error handling middleware catches all exceptions, guaranteeing consistent and safe error responses.
+-   **Standardized JSON Error Responses:** All API errors return a predictable JSON object, preventing stack traces or sensitive information from being leaked to the client.
+-   **Custom Error Taxonomy:** A clear set of custom error classes (`NotFoundError`, `ValidationError`, etc.) maps directly to HTTP status codes, making the codebase declarative and easy to reason about.
+-   **Async Context for Logging:** Uses Node.js's `AsyncLocalStorage` to provide request-specific context (like the logger) to deep service layers without prop-drilling.
 
--   **User Registration:** Securely register new users with password hashing via **bcrypt**.
--   **User Login:** Authenticate users and issue stateless **JSON Web Tokens (JWT)**.
--   **Protected Routes:** Middleware to protect routes, requiring a valid JWT.
--   **Role-Based Access Control (RBAC):** Middleware to restrict access based on user roles (`user`, `admin`).
--   **PostgreSQL Integration:** Uses **Sequelize** as an ORM for stable and secure database interactions.
--   **Database Migrations:** Manage database schema changes professionally with Sequelize Migrations.
--   **Database Seeding:** Populate the database with test data for a consistent development and testing environment.
--   **Comprehensive Testing:** Unit and integration tests written with **Jest** and **Supertest**.
+#### Reliability & Performance
+-   **Graceful Shutdown:** The server correctly handles termination signals (`SIGINT`, `SIGTERM`) to finish in-progress requests and close database connections before exiting.
+-   **Database Performance Monitoring:** Includes a wrapper for database queries that automatically logs any query exceeding a configurable threshold (e.g., 200ms).
+-   **Efficient Database Pooling:** Manages PostgreSQL connections efficiently using a connection pool.
+
+#### Security & Validation
+-   **Schema-Driven Input Validation:** Utilizes `Zod` to enforce strict validation schemas on all incoming request bodies, preventing invalid data before it hits business logic.
+-   **Configurable Rate Limiting:** Protects against DoS and brute-force attacks using `express-rate-limit`, with separate configurable limits for general API use and sensitive endpoints.
+-   **Automatic PII Redaction in Logs:** The logger is configured to automatically find and censor sensitive fields (`password`, `email`, `authorization`, etc.) in any object it logs, preventing accidental PII leaks.
+-   **Secure Password Hashing:** Uses `bcrypt` to securely hash and store user passwords, never storing them in plaintext.
+-   **Security Headers:** Leverages `helmet` to apply essential security headers (like CSP, HSTS) to all responses, mitigating common web vulnerabilities.
 
 ## Project Structure
 
+The project follows a feature-oriented structure designed for scalability and separation of concerns.
+
 ```
 .
-├── config/              # Sequelize CLI configuration
-├── migrations/          # Database migration files
-├── models/              # Sequelize auto-generated index file
-├── seeders/             # Database seeder files
-├── src/                 # Main application source code
-│   ├── api/             # Routes, middlewares
-│   ├── controllers/     # Request handlers (business logic)
-│   ├── models/          # Sequelize model definitions
-│   ├── services/        # Reusable services (e.g., JWT generation)
-│   ├── app.js           # Express app setup
-│   └── server.js        # Server entry point
-├── tests/               # Test files (unit and integration)
-├── .env                 # Environment variables (private)
-├── jest.config.js       # Jest configuration
-└── package.json         # Project dependencies and scripts
+├── .env
+├── .gitignore
+├── README.md
+├── package.json
+├── src/
+│   ├── app.js                    # Main application entry point & middleware wiring
+│   ├── config/
+│   │   └── index.js              # Loads and exports configuration from .env
+│   ├── controllers/
+│   │   ├── media.controller.js
+│   │   └── user.controller.js      # Handles business logic for API routes
+│   ├── middleware/
+│   │   ├── errorHandler.js
+│   │   ├── notFoundHandler.js
+│   │   ├── requestCorrelator.js
+│   │   ├── requestLogger.js
+│   │   └── validate.js             # Reusable Zod validation middleware
+│   ├── routes/
+│   │   ├── index.js
+│   │   ├── media.routes.js
+│   │   └── user.routes.js          # Route definitions
+│   ├── services/
+│   │   ├── db.js
+│   │   ├── logger.js
+│   │   ├── real-db-connection.js
+│   │   └── request-context.js      # AsyncLocalStorage setup
+│   ├── utils/
+│   │   └── customErrors.js         # Custom error class definitions
+│   └── validators/
+│       ├── media.validator.js
+│       └── user.validator.js       # Zod schema definitions
+└── logs/
+    └── .gitkeep
 ```
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed on your local machine:
--   [Node.js](https://nodejs.org/) (v18.x or later recommended)
--   [npm](https://www.npmjs.com/) (comes with Node.js)
--   [PostgreSQL](https://www.postgresql.org/)
--   A database management tool like [DBeaver](https://dbeaver.io/) or [pgAdmin](https://www.pgadmin.org/) (recommended)
+-   [Node.js](https://nodejs.org/) (LTS version, e.g., 18.x or later)
+-   [npm](https://www.npmjs.com/)
+-   A running **PostgreSQL** instance.
+-   A database management tool like [DBeaver](https://dbeaver.io/) to set up the initial schema.
 
-## Installation
+## Setup & Installation
 
-1.  **Clone the repository:**
-    ```bash
-    git clone <your-repository-url>
-    cd <repository-name>
-    ```
+**1. Clone the repository:**
+```bash
+git clone <your-repo-url>
+cd <your-repo-name>
+```
 
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
+**2. Install dependencies:**
+```bash
+npm install
+```
 
-3.  **Create the environment file:**
-    Create a file named `.env` in the root of the project and add the following variables.
+**3. Configure Environment Variables:**
+Create a `.env` file in the project root. Copy the contents below and replace the `DATABASE_URL` with your actual PostgreSQL connection string.
 
-    ```env
-    # .env.example
-    
-    # Server Configuration
-    PORT=3000
-    
-    # Database Connection URL
-    # Format: postgresql://<user>:<password>@<host>:<port>/<database_name>
-    DATABASE_URL="postgresql://postgres:1234@localhost:5432/postgres"
-    
-    # JWT Configuration
-    JWT_SECRET="your_super_secret_and_long_random_string_here"
-    JWT_EXPIRES_IN="1h"
-    ```
-    **Important:** Replace `DATABASE_URL` with your actual database connection string and `JWT_SECRET` with a long, unique, and random string.
+```env
+# Logging Configuration
+# If LOG_DEST=stdout, logs appear in the console.
+# If LOG_DEST=file, logs are written to ./logs/app.log.
+LOG_LEVEL=info
+LOG_DEST=stdout
+LOG_SAMPLING_DEBUG=0
 
-## Database Setup
+# General Rate Limiting (for all API routes)
+API_RATE_LIMIT_WINDOW_MS=900000    # 15 minutes
+MAX_REQUESTS_PER_WINDOW=200
 
-1.  **Ensure your PostgreSQL server is running.**
+# Stricter Upload Rate Limiting
+UPLOAD_RATE_LIMIT_WINDOW_MS=3600000 # 1 hour
+MAX_UPLOADS_PER_WINDOW=20
 
-2.  **Run the database migrations:**
-    This command will create the `Users` table and the `SequelizeMeta` table in your database.
-    ```bash
-    npm run db:migrate
-    ```
+# Request/Response Configuration
+REQUEST_ID_HEADER=X-Request-ID
+ERROR_RESPONSE_INCLUDE_TRACE=false
 
-3.  **Run the database seeders:**
-    This will populate the `Users` table with initial data for testing (one `user` and one `admin`).
-    ```bash
-    npm run db:seed:all
-    ```
+# Database Connection
+DATABASE_URL="postgresql://postgres:1234@localhost:5432/postgres"
+```
+
+**4. Set Up the Database Schema:**
+Open your database tool (e.g., DBeaver) and run the following script to create the required `users` table with the correct schema.
+
+```sql
+-- Drop the table if it exists to ensure a clean setup
+DROP TABLE IF EXISTS users;
+
+-- Recreate the table with the new 'password' column
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  quota INT DEFAULT 100,
+  -- Password column stores the bcrypt hash, which is longer than a normal password
+  password VARCHAR(255) NOT NULL
+);
+
+-- Insert a sample user for the media upload endpoint to interact with
+INSERT INTO users (id, email, password, quota) VALUES (1, 'testuser@example.com', 'placeholder_hash', 100);
+```
 
 ## Running the Application
 
--   **Development Mode:**
-    Starts the server with `nodemon`, which will automatically restart on file changes.
-    ```bash
-    npm run dev
-    ```
-    The server will be available at `http://localhost:3000`.
-
--   **Production Mode:**
-    Starts the server in a standard Node.js process.
-    ```bash
-    npm start
-    ```
-
-## Running Tests
-
-This project uses Jest for testing. The test suite covers both unit tests for isolated services and integration tests for the full API flow.
-```bash
-npm test
-```
-
-## API Contract
-
-All requests and responses use the JSON format. The standard success/error envelope is used.
-
-### Authentication Routes
-
-#### `POST /api/v1/auth/register`
-Registers a new user.
--   **Access:** `Public`
--   **Request Body:**
-    ```json
-    {
-      "email": "testuser@example.com",
-      "password": "strongpassword123",
-      "full_name": "Test User"
-    }
-    ```
--   **Success Response (201 Created):**
-    ```json
-    {
-      "success": true,
-      "data": {
-        "token": "<jwt_token>",
-        "user": {
-          "id": "...",
-          "email": "testuser@example.com",
-          "role": "user"
-        }
-      }
-    }
-    ```
--   **Error Responses:** `400 Bad Request` (missing fields), `409 Conflict` (email already exists).
-
----
-
-#### `POST /api/v1/auth/login`
-Authenticates a user and returns a new JWT.
--   **Access:** `Public`
--   **Request Body:**
-    ```json
-    {
-      "email": "testuser@example.com",
-      "password": "strongpassword123"
-    }
-    ```
--   **Success Response (200 OK):**
-    ```json
-    {
-      "success": true,
-      "data": {
-        "token": "<jwt_token>",
-        "user": {
-          "id": "...",
-          "email": "testuser@example.com",
-          "role": "user"
-        }
-      }
-    }
-    ```
--   **Error Responses:** `401 Unauthorized` (invalid credentials).
-
-### Protected Routes
-
-All protected routes require an `Authorization` header in the following format:
-`Authorization: Bearer <jwt_token>`
-
----
-
-#### `GET /api/v1/ping-protected`
-A sample route to check if a user is authenticated.
--   **Access:** `Authenticated (user or admin)`
--   **Success Response (200 OK):**
-    ```json
-    {
-      "success": true,
-      "message": "Pong!",
-      "data": {
-        "user_id": "..."
-      }
-    }
-    ```
--   **Error Responses:** `401 Unauthorized` (token missing or invalid).
-
----
-
-#### `GET /api/v1/admin/ping`
-A sample route to check if a user has the `admin` role.
--   **Access:** `Admin Only`
--   **Success Response (200 OK):**
-    ```json
-    {
-      "success": true,
-      "message": "Pong from Admin Route!",
-      "data": {
-        "user_id": "...",
-        "message": "Access granted to admin."
-      }
-    }
-    ```
--   **Error Responses:** `401 Unauthorized` (token missing or invalid), `403 Forbidden` (user is not an admin).
-
-## Manual Testing with cURL
-
-After setting up the database and running the seeders, you can test the full authentication flow using `curl`.
-
-**1. Register a New User**
-First, test the registration endpoint to create a brand new user.
+To start the server, run the following command. The application will be available at `http://localhost:3000`.
 
 ```bash
-curl -X POST http://localhost:3000/api/v1/auth/register \
--H "Content-Type: application/json" \
--d '{
-  "email": "newuser123@example.com",
-  "password": "password123",
-  "full_name": "New Test User"
-}'
+npm start
 ```
-> **Expected Result:** A `201 Created` response with a token for the new user. You can verify in your database that this user was added to the `Users` table.
 
 ---
 
-**2. Login as a Standard User**
-The seeders create a user with the email `test@example.com` and password `password123`.
+## API Endpoints & Comprehensive Testing
 
+This section provides `curl` commands to test all major features.
+
+### User Management (`/api/v1/users`)
+
+#### Test 1.1: Successful User Creation
+**Action:** Create a new user with valid data.
 ```bash
-curl -X POST http://localhost:3000/api/v1/auth/login \
--H "Content-Type: application/json" \
--d '{
-  "email": "test@example.com",
-  "password": "password123"
-}'
+curl -i -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"email":"alice@example.com", "password":"MySecurePassword123"}' \
+  http://localhost:3000/api/v1/users
 ```
-> **Action:** Copy the `token` from the response.
+**Expected Result:**
+-   **Status:** `201 Created`
+-   **Response Body:** A success message with the user's ID and email.
+-   **Server Log:** A log line showing the request body with `email` and `password` fields `[REDACTED]`.
+-   **Database:** The `users` table contains the new user with a hashed password.
 
----
-
-**3. Test Protected Routes (as User)**
-Replace `<USER_TOKEN>` with the token you copied from the login step.
-
--   **Access a general protected route (Expect 200 OK):**
-    ```bash
-    curl http://localhost:3000/api/v1/ping-protected -H "Authorization: Bearer <USER_TOKEN>"
-    ```
-
--   **Attempt to access an admin route (Expect 403 Forbidden):**
-    ```bash
-    curl http://localhost:3000/api/v1/admin/ping -H "Authorization: Bearer <USER_TOKEN>"
-    ```
-
----
-
-**4. Login as an Admin User**
-The seeders create an admin with the email `admin@example.com` and password `adminpassword`.
-
+#### Test 1.2: Validation Failure (Short Password)
+**Action:** Attempt to create a user with a password that is too short.
 ```bash
-curl -X POST http://localhost:3000/api/v1/auth/login \
--H "Content-Type: application/json" \
--d '{
-  "email": "admin@example.com",
-  "password": "adminpassword"
-}'
+curl -i -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"email":"bob@example.com", "password":"short"}' \
+  http://localhost:3000/api/v1/users
 ```
-> **Action:** Copy the new `token` from the response.
+**Expected Result:**
+-   **Status:** `400 Bad Request`
+-   **Response Body:** An error object with `code: "VALIDATION_FAILED"` and a message like "Password must be at least 8 characters long".
+
+#### Test 1.3: Conflict Failure (Duplicate Email)
+**Action:** Attempt to create a user with an email that already exists.
+```bash
+curl -i -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"email":"alice@example.com", "password":"AnotherPassword123"}' \
+  http://localhost:3000/api/v1/users
+```
+**Expected Result:**
+-   **Status:** `409 Conflict`
+-   **Response Body:** An error object with `code: "USER_CONFLICT"` and a message "A user with this email already exists."
 
 ---
 
-**5. Test Admin Route (as Admin)**
-Replace `<ADMIN_TOKEN>` with the new token.
+### Media Management (`/api/v1/media`)
 
--   **Access an admin route (Expect 200 OK):**
-    ```bash
-    curl http://localhost:3000/api/v1/admin/ping -H "Authorization: Bearer <ADMIN_TOKEN>"
+#### Test 2.1: Successful Media Upload
+**Action:** Simulate a successful file upload by an authenticated user.
+```bash
+curl -i -X POST \
+  -H "Authorization: Bearer fake-token" \
+  -H "Content-Type: application/json" \
+  -d '{"filename":"my-vacation-photo.jpg"}' \
+  http://localhost:3000/api/v1/media/upload
+```
+**Expected Result:**
+-   **Status:** `202 Accepted`
+-   **Database:** The `quota` for the user with `id = 1` will be decremented.
+
+#### Test 2.2: Rate Limiting Failure
+**Action:** Set `MAX_UPLOADS_PER_WINDOW=2` in your `.env` and restart the server. Run the successful upload command 3 times in a row.
+```bash
+# Run this command 3 times
+curl -i -X POST \
+  -H "Authorization: Bearer fake-token" \
+  -H "Content-Type: application/json" \
+  -d '{"filename":"test.jpg"}' \
+  http://localhost:3000/api/v1/media/upload
+```
+**Expected Result:**
+-   The first two requests will return `202 Accepted`.
+-   The third request will return **`429 Too Many Requests`** with `code: "TOO_MANY_REQUESTS"`.
+
+---
+
+### Server Operations
+
+#### Test 3.1: Graceful Shutdown
+**Action:** In the terminal where the server is running, press `Ctrl+C`.
+**Expected Result:**
+-   The server does not exit instantly. Instead, it logs a clean shutdown sequence:
     ```
-## License
+    {"level":"info",...,"msg":"Shutdown signal received. Starting graceful shutdown."}
+    {"level":"info",...,"msg":"HTTP server closed. No longer accepting new connections."}
+    {"level":"info",...,"msg":"Closing database connection pool."}
+    {"level":"info",...,"msg":"Database pool closed. Exiting process."}
+    ```
+## API Response Guide
 
-This project is licensed under the MIT License.
+The API adheres to a standardized response format for all requests. This ensures that clients can handle responses in a consistent and predictable manner.
+
+### Success Responses
+
+All successful responses will have a root-level `success` key set to `true` and a `status` code in the `2xx` range. The body will vary by endpoint but will typically include a `message` or a `data` object.
+
+**Example: `202 Accepted` from `POST /api/v1/media/upload`**
+
+```json
+{
+  "success": true,
+  "message": "Media accepted for processing and user quota updated.",
+  "request_id": "2fd2c193-1492-4c2b-8452-d213ed84a143"
+}
+```
+
+### Error Responses
+
+All error responses will have a root-level `success` key set to `false` and a `status` code in the `4xx` or `5xx` range. The body will always contain a nested `error` object with a machine-readable `code`.
+
+**Standard Error Structure:**
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "<ERROR_CODE>",
+    "message": "<A clean, user-friendly message>",
+    "request_id": "<The request correlation ID>"
+  }
+}
+```
+
+### Common Error Codes
+
+The following table details the most common error codes returned by the API.
+
+| Error Code | HTTP Status | Default Message | Cause |
+| :--- | :--- | :--- | :--- |
+| `VALIDATION_FAILED` | 400 | Validation failed | A required field is missing or a value is in an invalid format. |
+| `VALIDATION_BODY` | 400 | Malformed JSON in request body | The request body is not valid JSON. |
+| `AUTH_MISSING` | 401 | Missing or invalid credentials | The `Authorization` header is missing, invalid, or expired. |
+| `FORBIDDEN` | 403 | You do not have permission to perform this action | The user is authenticated but is not authorized for the specific resource. |
+| `NOT_FOUND` | 404 | The requested resource was not found | A specific entity (e.g., a user or media file) does not exist. |
+| `ROUTE_NOT_FOUND` | 404 | The requested route does not exist | The requested API endpoint (e.g., `/api/v1/nonexistent`) does not exist. |
+| `CONFLICT` | 409 | A conflict occurred with the current state of the resource | The request could not be completed due to a conflict (e.g., creating a resource that already exists). |
+| `MEDIA_TOO_LARGE`| 413 | The request payload is larger than the server is willing to process | The request body or uploaded file exceeds the configured size limit. |
+| `INTERNAL_SERVER_ERROR`| 500 | An unexpected internal error occurred | A generic server error. The cause has been logged, but details are not exposed to the client. |
+| `AI_TIMEOUT` | 503 | The service is temporarily unavailable | A downstream dependency, like an AI service, failed to respond in time. |
+
+## Logging
+
+-   If `LOG_DEST=stdout`, all logs will appear in the console where you ran `npm start`.
+-   If `LOG_DEST=file`, logs will be written to `./logs/app.log`, with automatic rotation.
+-   **Key Fields:** Pay attention to `request_id` to trace a single request's journey and `error_code` in error logs to quickly identify issues.
