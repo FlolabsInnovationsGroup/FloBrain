@@ -1,7 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../sequelize';
 
-export const MediaRecording = sequelize.define('media_recordings', {
+export const MediaRecording = sequelize.define('media', {
   id:                { type: DataTypes.TEXT, primaryKey: true },
   user_id:           { type: DataTypes.TEXT, allowNull: false },
   device_id:         { type: DataTypes.TEXT, allowNull: true },

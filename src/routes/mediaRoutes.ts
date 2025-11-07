@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { uploadSingle } from '../middleware/upload';
 import { errorHandler } from '../middleware/errors';
-import { upload, getOne, list, patch, hardDelete } from '../controllers/mediaController';
+import { upload, getOne, list, patch, hardDelete} from '../controllers/mediaController';
 
 // DEV-ONLY auth stub; replace with real JWT later
 const requireAuth = (req: any, _res: any, next: any) => {
   const dev = process.env.DEV_USER_ID || 'dev_user';
-  if (!req.user?.id) req.user = { id: dev };
+  if (!req.user?.id) req.user = { id: 1 }; // default dev user
   next();
 };
 
