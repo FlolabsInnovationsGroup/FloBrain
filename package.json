@@ -9,7 +9,7 @@
     "dev": "LEGACY_MODELS_DISABLE=1 ts-node-dev --respawn --transpile-only src/media-index.ts",
     "build": "tsc -p tsconfig.json",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage --runInBand"
   },
   "dependencies": {
     "aws-sdk": "^2.1692.0",

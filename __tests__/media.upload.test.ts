@@ -1,11 +1,10 @@
+import path from "path";
+import fs from "fs";
+import request from "supertest";
 // Silence console.log during tests
 const originalLog = console.log;
 beforeAll(() => { console.log = () => {}; });
 afterAll(() => { console.log = originalLog; });
-
-import path from "path";
-import fs from "fs";
-import request from "supertest";
 
 // Put uploads in a temp folder during tests
 process.env.UPLOAD_DIR = path.join(process.cwd(), "__tests__", "tmp-uploads");
@@ -21,7 +20,7 @@ afterAll(() => {
   fs.rmSync(process.env.UPLOAD_DIR!, { recursive: true, force: true });
 });
 
-describe.skip("POST /uploads", () => {
+describe("POST /uploads", () => {
   it("201 accepts file + valid fields", async () => {
     const file = path.join(__dirname, "fixtures", "tiny.png");
     const res = await request(app)
@@ -34,7 +33,7 @@ describe.skip("POST /uploads", () => {
     expect(res.body.user_id).toBe("user_1");
     expect(res.body.media_type).toBe("image");
     expect(res.body.size).toBeGreaterThan(0);
-    expect(res.body.final_path).toContain("__tests__/tmp-uploads");
+    expect(res.body.final_path).toContain(path.join("__tests__", "tmp-uploads"));
     expect(fs.existsSync(res.body.final_path)).toBe(true);
   });
 
