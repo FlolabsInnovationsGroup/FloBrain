@@ -1,3 +1,4 @@
+nano README.md
 # CAIPO Backend
 
 CAIPO Backend provides secure media ingestion APIs, request validation, and AI orchestration (transcription, detection, segmentation). It stores metadata in PostgreSQL and integrates with AI services.
