@@ -9,4 +9,9 @@ module.exports = {
   coverageThreshold: { global: { lines: 70, statements: 70 } },
   moduleFileExtensions: ["ts", "js", "json"],
   setupFiles: ["<rootDir>/tests/setup/env.ts"],
+  setupFilesAfterEnv: [
+    "<rootDir>/tests/setup/jest.setup.ts", 
+    "<rootDir>/tests/setup/db.ts"           
+  ],
+
 };
