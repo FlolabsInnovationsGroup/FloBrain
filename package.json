@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --runInBand",
-    "start": "node src/server.js",
-    "dev": "LEGACY_MODELS_DISABLE=1 ts-node-dev --respawn --transpile-only src/media-index.ts",
-    "build": "tsc -p tsconfig.json",
+    "start": "node api.js && node src/server.js",
+    "dev": "node api.js && LEGACY_MODELS_DISABLE=1 ts-node-dev --respawn --transpile-only src/media-index.ts",
+    "build": "node api.js && tsc -p tsconfig.json",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage --runInBand"
   },
