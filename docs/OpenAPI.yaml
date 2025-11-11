@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  title: FlomadLabs Core API
+  version: "1.0.0"
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/ping:
+    get:
+      summary: Base ping
+      responses:
+        '200':
+          description: OK
+  /api/v1/ping:
+    get:
+      summary: V1 ping
+      responses:
+        '200':
+          description: OK
+  /api/v1/healthcheck:
+    get:
+      summary: Healthcheck
+      responses:
+        '200':
+          description: OK
+  /api/v1/status:
+    get:
+      summary: Status
+      responses:
+        '200':
+          description: OK

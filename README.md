@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CAIPO
 CAIPO is a transcription device thought to be ergonomic and easy to use. It records audio and video of its surroundings to provide an accurate transcription of any dialogue happening in its vicinity and provide detailed information about the recorded scene.
 
@@ -25,4 +26,30 @@ To run the simulation, you can go directly to the [Simulation on wokwi.com](http
 ### Local Simulation
 To Simulate on your machine, you can use Wokwi with the VS code extension.
 To get started with the VS Code extension, you can check the official guide: https://docs.wokwi.com/vscode/getting-started
+=======
+nano README.md
+# CAIPO Backend
+
+CAIPO Backend provides secure media ingestion APIs, request validation, and AI orchestration (transcription, detection, segmentation). It stores metadata in PostgreSQL and integrates with AI services.
+
+## Tech stack
+- Node.js (Express)
+- PostgreSQL
+- Zod (validation)
+- Jest (tests)
+- Swagger/OpenAPI + Postman
+
+## Quick start
+```bash
+npm install
+cp .env.example .env
+createdb flolabs_dev || true
+createdb flolabs_test || true
+npm run migrate
+npm run seed
+npm run dev
+
+npm run seed
+npm run dev
+>>>>>>> main
 
