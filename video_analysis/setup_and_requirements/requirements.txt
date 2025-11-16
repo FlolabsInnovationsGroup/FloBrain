@@ -1,7 +1,0 @@
-moviepy
-pillow
-tqdm
-torch
-transformers
-sentence-transformers
-faiss-cpu
