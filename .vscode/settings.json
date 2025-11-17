@@ -1,3 +1,7 @@
 {
+<<<<<<< HEAD
     "C_Cpp.errorSquiggles": "enabled"
+=======
+    "git.ignoreLimitWarning": true
+>>>>>>> origin/feature/media-api
 }
