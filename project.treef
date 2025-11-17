@@ -1,17 +1,21 @@
-├── docs/
-│   └── OpenAPI.yaml
-├── src/
-│   ├── api/
-│   │   └── v1/
-│   │       ├── index.js
-│   │       ├── ping.routes.js
-│   │       └── system.routes.js
-│   ├── middleware/
-│   │   ├── error-handler.js
-│   │   └── response-shape.js
-│   ├── app.js
-│   └── server.js
-├── .env
-├── .gitignore
-├── package.json
-└── README.md
+...
+    ├── src/
+    │    ├── features/
+    │    │   └── ai-pipeline/
+    │    │       ├── ai.controller.ts   # Handles incoming HTTP requests and responses.
+    │    │       ├── ai.service.ts      # Contains the core orchestration logic (job plans, retries, persistence).
+    │    │       ├── ai.routes.ts       # Defines the API endpoints (/process, /results).
+    │    │       └── ai.types.ts        # Holds TypeScript interfaces for our data models (e.g., Media, AIResult).
+    │    ├── services/
+    │    │   └── aiServiceAdapter.ts    # A dedicated client for communicating with the external AI service.
+    │    ├── config/
+    │    │   └── ai.config.ts         # Loads, validates, and exposes AI-related environment variables.
+    │    ├── utils/
+    │    │   └── logger.ts            # A utility for our structured logging.
+    │    └──  app.ts                     # Your main application file where we will mount the routes.
+    ├── .env
+    ├── .gitignore
+    ├── package.json
+    ├── project.treef
+    ├── README.md
+    └──tsconfig.json

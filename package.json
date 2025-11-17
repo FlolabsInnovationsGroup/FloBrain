@@ -1,43 +1,24 @@
 {
-  "name": "upload_api_videos_audios",
+  "name": "ai-pipeline-project",
   "version": "1.0.0",
-  "description": "Media Handling API for upload, list, get, patch, and delete of audio, video, and image files",
-  "main": "index.js",
+  "description": "",
+  "main": "dist/app.js",
   "scripts": {
-    "test": "jest --runInBand",
-    "start": "node src/server.js",
-    "dev": "LEGACY_MODELS_DISABLE=1 ts-node-dev --respawn --transpile-only src/media-index.ts",
-    "build": "tsc -p tsconfig.json",
-    "test:watch": "jest --watch",
-    "coverage": "jest --coverage --runInBand"
+    "start": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.1692.0",
-    "express": "^5.1.0",
-    "file-type": "^16.5.4",
-    "luxon": "^3.7.2",
-    "multer": "^2.0.2",
-    "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.7",
-    "uuid": "^13.0.0",
-    "zod": "^4.1.12"
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
   },
   "devDependencies": {
-    "@jest/globals": "^30.2.0",
     "@types/express": "^5.0.5",
-    "@types/file-type": "^10.6.0",
-    "@types/jest": "^30.0.0",
-    "@types/multer": "^2.0.0",
-    "@types/supertest": "^6.0.3",
-    "dotenv": "^17.2.3",
-    "jest": "^30.2.0",
-    "pg": "^8.16.3",
-    "supertest": "^7.1.4",
-    "ts-jest": "^29.4.5",
+    "@types/node": "^24.10.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
-  },
-  "type": "commonjs",
-  "keywords": [],
-  "license": "ISC"
+  }
 }

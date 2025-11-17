@@ -1,20 +1,18 @@
 import express from 'express';
-import { mediaRouter, errorHandler } from './routes/mediaRoutes';
-import { sequelize } from './sequelize';
-import { da } from 'zod/v4/locales';
+// Make sure to import the new router
+import { aiPipelineRouter } from './features/ai-pipeline/ai.routes'; 
+
 const app = express();
 app.use(express.json());
-app.get('/api/v1/ping', (req, res) => {
-  res.status(200).json({ ok: true });
+
+// ... your other middleware and routes
+
+// Add the AI pipeline routes under the specified path
+app.use('/api/v1/ai', aiPipelineRouter);
+
+// ... your error handling and server startup logic
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
-app.get('/api/v1/health', async (req, res) => {
-  try {
-    await sequelize.authenticate();
-    res.status(200).json({ status: 'ok', database: 'connected' });
-  } catch (error) {
-    res.status(500).json({ status: 'error', database: 'disconnected', message: error.message });
-  }
-});
-app.use(mediaRouter);
-app.use(errorHandler);
-export { app };
