@@ -1,4 +1,6 @@
 import axios from "axios";
+import { store } from "../store/store";
+import { setError, setLoading } from "../store/slices/appSlice";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -18,20 +20,31 @@ const processQueue = (error: any, token: string | null = null) => {
 
 export const axiosClient = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // if your backend uses cookies
+  withCredentials: true, // if backend uses cookies
 });
 
-axiosClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+axiosClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    store.dispatch(setLoading(true));
+    return config;
+  }, (error) => {
+    store.dispatch(setLoading(false));
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 axiosClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    store.dispatch(setLoading(false));
+    store.dispatch(setError(null)); // Clear any previous errors
+    return response;
+  },
   async (error) => {
+    store.dispatch(setLoading(false));
     const originalRequest = error.config as any;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -66,13 +79,17 @@ axiosClient.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         localStorage.removeItem("accessToken");
+        store.dispatch(setError("Session expired. Please login again."));
         window.location.href = "/login";
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
-
+    // Handle other errors
+    const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+    store.dispatch(setError(errorMessage));
+    
     return Promise.reject(error);
   }
 );

@@ -48,10 +48,6 @@ const authSlice = createSlice({
       localStorage.removeItem('accessToken');
       state.user = null;
       state.isAuthenticated = false;
-      state.loading = false;
-    },
-    setAuthLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
     },
     clearAuthError: (state) => {
       // Handle auth-specific errors if needed
@@ -105,5 +101,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setAuthLoading } = authSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

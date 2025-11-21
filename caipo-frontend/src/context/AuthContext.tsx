@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect } from "react";
-import { useAppSelector, useAppDispatch } from "../store/hooks";
-import { loginUser, registerUser, checkAuth, logout, setAuthLoading } from "../store/slices/authSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { checkAuth, loginUser, registerUser, logout } from "../store/slices/authSlice";
 import { User } from "../types/auth";
 
 type AuthContextType = {
@@ -15,18 +15,11 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.user);
-  const loading = useAppSelector((state) => state.auth.loading);
+  const { user, loading } = useAppSelector((state) => state.auth);
 
-  // Check if user is already logged in (token exists) on mount
+  // Check if user is already logged in (token exists)
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      dispatch(checkAuth());
-    } else {
-      // If no token, set loading to false without making API call
-      dispatch(setAuthLoading(false));
-    }
+    dispatch(checkAuth());
   }, [dispatch]);
 
   const login = async (email: string, password: string) => {
