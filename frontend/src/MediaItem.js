@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { processMedia } from './mediaService';
 
 function MediaItem({ media, onDelete, onEdit }) {
   const [showSummary, setShowSummary] = useState(false);
@@ -7,6 +8,18 @@ function MediaItem({ media, onDelete, onEdit }) {
     const newName = prompt("Enter the new file name:", media.name);
     if (newName && newName.trim() !== '') {
       onEdit(media.id, newName);
+    }
+  };
+
+  const handleProcessClick = async () => {
+    alert(`Requesting AI processing for media ID: ${media.id}`);
+    try {
+      const response = await processMedia(media.id);
+      alert('Processing started successfully! (Check backend console)');
+      console.log(response.data);
+    } catch (error) {
+      alert('Failed to start processing. (Check backend console)');
+      console.error(error);
     }
   };
 
@@ -58,7 +71,7 @@ function MediaItem({ media, onDelete, onEdit }) {
       </div>
 
       {/* Actions Column */}
-      <div style={{ marginLeft: '15px' }}>
+      <div style={{ marginLeft: '15px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
         <button onClick={handleEditClick}>Edit</button>
         <button
           style={{ marginLeft: '5px' }}
@@ -66,6 +79,7 @@ function MediaItem({ media, onDelete, onEdit }) {
         >
           Delete
         </button>
+        <button onClick={handleProcessClick} style={{backgroundColor: '#a5d6a7'}}>Process AI</button>
       </div>
     </li>
   );

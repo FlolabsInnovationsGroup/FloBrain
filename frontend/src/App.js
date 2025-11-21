@@ -5,7 +5,7 @@ import './App.css';
 
 const mockApiData = [
   {
-    id: 1,
+    id: 'owned_image_1',
     name: 'mountain_trip.jpg',
     type: 'image',
     createdAt: '2023-10-28T10:00:00Z',
@@ -13,7 +13,7 @@ const mockApiData = [
     aiSummary: 'Simulated transcription: "Photo of a snowy mountain under a blue sky. The composition is centered on the main peak, with trees visible in the foreground."'
   },
   {
-    id: 2,
+    id: 'owned_audio_1',
     name: 'final_podcast_episode.mp3',
     type: 'audio',
     createdAt: '2023-10-26T15:30:00Z',
@@ -22,7 +22,7 @@ const mockApiData = [
     aiSummary: 'Simulated transcription: "Hello and welcome to this final episode. Today, we will talk about the future of technology and artificial intelligence..."'
   },
   {
-    id: 3,
+    id: 'owned_image_2',
     name: 'company_logo.png',
     type: 'image',
     createdAt: '2023-11-01T12:00:00Z',
