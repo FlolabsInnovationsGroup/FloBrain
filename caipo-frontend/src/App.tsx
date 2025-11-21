@@ -10,13 +10,16 @@ import Dashboard from "./pages/Dashboard";
 import Recordings from "./pages/Recordings";
 import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
+import GlobalError from "./components/GlobalError";
+import GlobalLoading from "./components/GlobalLoading";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Toaster position="top-right" />
-
+        <GlobalError />
+        <GlobalLoading />
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
