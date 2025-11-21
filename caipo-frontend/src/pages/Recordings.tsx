@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { axiosClient } from "../api/axiosClient";
+import { useAppSelector, useAppDispatch } from "../store/hooks";
+import { setLoading, setError } from "../store/slices/appSlice";
 
 type Recording = {
   id: string;
@@ -8,15 +10,23 @@ type Recording = {
 
 const Recordings: React.FC = () => {
   const [recordings, setRecordings] = useState<Recording[]>([]);
-  const [loading, setLoading] = useState(false);
+  const loading = useAppSelector((state) => state.app.loading);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setLoading(true);
+    dispatch(setLoading(true));
 
     axiosClient
       .get("/api/recordings")
-      .then((res) => setRecordings(res.data))
-      .finally(() => setLoading(false));
+      .then((res) => {
+        setRecordings(res.data);
+        dispatch(setError(null));
+      })
+      .catch((err) => {
+        const errorMsg = err.response?.data?.message || "Failed to load recordings";
+        dispatch(setError(errorMsg));
+      })
+      .finally(() => dispatch(setLoading(false)));
   }, []);
 
   if (loading) return <p>Loading recordings...</p>;
