@@ -34,7 +34,15 @@ const createMockAxiosInstance = () => {
           processedConfig = handler.onFulfilled(processedConfig) || processedConfig;
         } catch (e) {
           if (handler.onRejected) {
-            return Promise.reject(handler.onRejected(e));
+            try {
+              const result = handler.onRejected(e);
+              if (result && typeof result.then === 'function') {
+                return result;
+              }
+              return Promise.reject(result || e);
+            } catch (rejectError) {
+              return Promise.reject(rejectError);
+            }
           }
           return Promise.reject(e);
         }
@@ -300,6 +308,89 @@ describe('axiosClient', () => {
       expect(results[0].data.success).toBe(true);
       expect(results[1].data.success).toBe(true);
       expect(mockAxiosPost).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reject queued requests when refresh fails', async () => {
+      localStorageMock.setItem('accessToken', 'old-token');
+      
+      let callCount = 0;
+      const mockAdapter = jest.fn((config) => {
+        callCount++;
+        if (callCount <= 2) {
+          return Promise.reject({ response: { status: 401 }, config: { url: `/api/test${callCount}`, headers: {}, _retry: false } });
+        }
+        return Promise.resolve({ data: { success: true }, status: 200, statusText: 'OK', headers: {}, config });
+      });
+      
+      (axiosClient.defaults as any).adapter = mockAdapter;
+      
+      let refreshResolve: any;
+      const refreshPromise = new Promise((resolve) => { refreshResolve = resolve; });
+      (mockAxiosPost as jest.Mock).mockImplementation(() => refreshPromise.then(() => Promise.reject(new Error('Refresh failed'))));
+
+      const promise1 = axiosClient.get('/api/test1');
+      await new Promise(resolve => setTimeout(resolve, 10));
+      const promise2 = axiosClient.get('/api/test2');
+
+      refreshResolve();
+      
+      await expect(promise1).rejects.toBeDefined();
+      await expect(promise2).rejects.toBeDefined();
+      expect(mockAxiosPost).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle queued request failure after receiving token', async () => {
+      localStorageMock.setItem('accessToken', 'old-token');
+      
+      let callCount = 0;
+      const mockAdapter = jest.fn((config) => {
+        callCount++;
+        if (callCount === 1) {
+          return Promise.reject({ response: { status: 401 }, config: { url: '/api/test', headers: {}, _retry: false } });
+        }
+        if (callCount === 2) {
+          return Promise.reject({ response: { status: 500 }, config: { url: '/api/test', headers: {}, _retry: false } });
+        }
+        return Promise.resolve({ data: { success: true }, status: 200, statusText: 'OK', headers: {}, config });
+      });
+      
+      (axiosClient.defaults as any).adapter = mockAdapter;
+      (mockAxiosPost as jest.Mock).mockResolvedValueOnce({ data: { accessToken: 'new-token' } });
+
+      await expect(axiosClient.get('/api/test')).rejects.toBeDefined();
+      
+      expect(mockAxiosPost).toHaveBeenCalledWith(
+        expect.stringContaining('/api/auth/refresh'),
+        {},
+        { withCredentials: true }
+      );
+    });
+  });
+
+  describe('Request Interceptor Error Handler', () => {
+    it('should handle errors in request interceptor', async () => {
+      const mockAdapter = jest.fn(() => 
+        Promise.resolve({ data: { success: true }, status: 200, statusText: 'OK', headers: {}, config: { headers: {} } })
+      );
+      (axiosClient.defaults as any).adapter = mockAdapter;
+
+      (mockDispatch as jest.Mock).mockImplementation((action) => {
+        if (action.type === setLoading(true).type) {
+          throw new Error('Request interceptor error');
+        }
+        return action;
+      });
+
+      let errorCaught = false;
+      try {
+        await axiosClient.get('/api/test');
+      } catch (error: any) {
+        errorCaught = true;
+        expect(error.message).toBe('Request interceptor error');
+      }
+      
+      expect(errorCaught).toBe(true);
+      expect(mockDispatch).toHaveBeenCalledWith(setLoading(false));
     });
   });
 });

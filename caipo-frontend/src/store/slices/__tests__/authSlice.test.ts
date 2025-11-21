@@ -1,4 +1,4 @@
-import authReducer, { logout, checkAuth, loginUser, registerUser } from '../authSlice';
+import authReducer, { logout, checkAuth, loginUser, registerUser, clearAuthError } from '../authSlice';
 import { axiosClient } from '../../../api/axiosClient';
 import { User } from '../../../types/auth';
 
@@ -50,8 +50,8 @@ describe('authSlice', () => {
 
   describe('logout', () => {
     it('should clear user and set isAuthenticated to false', () => {
-      const stateWithUser: typeof initialState = {
-        user: { id: '1', email: 'test@example.com' },
+      const stateWithUser = {
+        user: { id: '1', email: 'test@example.com' } as User,
         loading: false,
         isAuthenticated: true,
       };
@@ -61,6 +61,20 @@ describe('authSlice', () => {
       expect(result.user).toBe(null);
       expect(result.isAuthenticated).toBe(false);
       expect(localStorageMock.getItem('accessToken')).toBe(null);
+    });
+  });
+
+  describe('clearAuthError', () => {
+    it('should execute clearAuthError reducer', () => {
+      const state = {
+        user: { id: '1', email: 'test@example.com' } as User,
+        loading: false,
+        isAuthenticated: true,
+      };
+      const action = clearAuthError();
+      const result = authReducer(state, action);
+      
+      expect(result).toEqual(state);
     });
   });
 
@@ -86,8 +100,8 @@ describe('authSlice', () => {
 
     it('should handle rejected state', () => {
       localStorageMock.setItem('accessToken', 'old-token');
-      const stateWithUser: typeof initialState = {
-        user: { id: '1', email: 'test@example.com' },
+      const stateWithUser = {
+        user: { id: '1', email: 'test@example.com' } as User,
         loading: true,
         isAuthenticated: true,
       };

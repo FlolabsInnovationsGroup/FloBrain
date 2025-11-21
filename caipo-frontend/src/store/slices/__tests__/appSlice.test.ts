@@ -78,5 +78,35 @@ describe('appSlice', () => {
       expect(result.globalLoading).toBe(true);
     });
   });
+
+  describe('All reducers coverage', () => {
+    it('should execute all reducer code paths', () => {
+      let state: ReturnType<typeof appReducer> = initialState;
+
+      state = appReducer(state, setLoading(true));
+      expect(state.loading).toBe(true);
+      expect(state.error).toBe(null);
+      expect(state.globalLoading).toBe(false);
+
+      state = appReducer(state, setLoading(false));
+      expect(state.loading).toBe(false);
+
+      state = appReducer(state, setError('Test error'));
+      expect(state.error).toBe('Test error');
+
+      state = appReducer(state, setError(null));
+      expect(state.error).toBe(null);
+
+      state = appReducer(state, setGlobalLoading(true));
+      expect(state.globalLoading).toBe(true);
+
+      state = appReducer(state, setGlobalLoading(false));
+      expect(state.globalLoading).toBe(false);
+
+      state = appReducer(state, setError('Another error'));
+      state = appReducer(state, clearError());
+      expect(state.error).toBe(null);
+    });
+  });
 });
 
