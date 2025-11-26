@@ -1,24 +1,11 @@
-import { Router, Request, Response, NextFunction } from 'express';
+// src/features/ai-pipeline/ai.routes.ts
+
+import { Router, Request, Response } from 'express';
 import { aiController } from './ai.controller';
+// Import the centralized authentication middleware
+import { isAuthenticated } from '../../middleware/isAuthenticated';
 
 const router = Router();
-
-/**
- * Placeholder Authentication Middleware.
- * In a real application, this would verify a JWT, session, or API key.
- * It should attach the authenticated user object to the request.
- */
-const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
-  console.log('Authenticating request...');
-  // For demonstration, we'll attach a mock user object.
-  // @ts-ignore
-  req.user = { id: 'mock_user_id' }; 
-  
-  // In a real scenario, if authentication fails:
-  // return res.status(401).json({ message: 'Unauthorized' });
-
-  next();
-};
 
 /**
  * @route   POST /api/v1/ai/process/:mediaId
@@ -28,7 +15,7 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 router.post(
   '/process/:mediaId',
   isAuthenticated,
-  (req: Request, res: Response) => aiController.processMedia(req, res)
+  aiController.processMedia
 );
 
 /**
@@ -39,7 +26,7 @@ router.post(
 router.get(
   '/results/:mediaId',
   isAuthenticated,
-  (req: Request, res: Response) => aiController.getResults(req, res)
+  aiController.getResults
 );
 
 export const aiPipelineRouter = router;
