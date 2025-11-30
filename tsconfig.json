@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es6",                          /* Specify ECMAScript target version */
-    "module": "commonjs",                     /* Specify module code generation */
-    "rootDir": "./src",                       /* Specify the root directory of input files */
-    "outDir": "./dist",                       /* Redirect output structure to the directory */
-    "strict": true,                           /* Enable all strict type-checking options */
-    "esModuleInterop": true,                  /* Enables emit interoperability between CommonJS and ES Modules */
-    "skipLibCheck": true,                     /* Skip type checking of declaration files */
-    "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file */
+    "target": "es6",                          
+    "module": "commonjs",                     
+    "rootDir": "./",                       
+    "outDir": "./dist",                       
+    "strict": true,                           
+    "esModuleInterop": true, 
+    "allowJs": true,                 
+    "skipLibCheck": true,                     
+    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],                    /* Specifies which files to include in compilation */
-  "exclude": ["node_modules", "**/*.spec.ts"] /* Excludes files from compilation */
+  "include": ["src/**/*"],                    
+  "exclude": ["node_modules"] 
 }
