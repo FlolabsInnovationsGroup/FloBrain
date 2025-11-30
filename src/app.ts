@@ -1,6 +1,7 @@
 import express from 'express';
 // Make sure to import the new router
 import { aiPipelineRouter } from './features/ai-pipeline/ai.routes'; 
+import models from '../models';
 
 const app = express();
 app.use(express.json());
@@ -12,7 +13,5 @@ app.use('/api/v1/ai', aiPipelineRouter);
 
 // ... your error handling and server startup logic
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+export default app;

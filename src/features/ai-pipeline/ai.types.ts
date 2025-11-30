@@ -7,9 +7,9 @@ export type JobStatus = 'done' | 'error' | 'skipped';
 
 export interface MediaRecording {
   id: string;
-  user_id: string;
-  media_type: 'audio' | 'video' | 'image';
-  processing_status: ProcessingStatus;
+  userId: string;
+  mediaType: 'audio' | 'video' | 'image';
+  processingStatus: ProcessingStatus;
   transcription?: string;
   summary?: string;
   tags?: string[];
