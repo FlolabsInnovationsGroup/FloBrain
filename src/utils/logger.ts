@@ -1,24 +1,20 @@
-import { JobType } from "../features/ai-pipeline/ai.types";
+// src/utils/logger.ts
 
-interface LogParams {
-  mediaId: string;
-  job: JobType;
-  attempt: number;
-  status: 'ok' | 'fail';
-  latencyMs?: number;
-  error?: string;
-}
+import pino from 'pino';
 
-/**
- * Logs a single, structured line for an AI job attempt.
- */
-export const logAiJob = (params: LogParams): void => {
-  const { mediaId, job, attempt, status, latencyMs, error } = params;
+// Configure Pino logger
+const logger = pino({
+  level: process.env.LOG_LEVEL || 'info', // Default to 'info' level
+  transport: process.env.NODE_ENV !== 'production' 
+    ? {
+        target: 'pino-pretty', // Use pino-pretty in development
+        options: {
+          colorize: true,
+          translateTime: 'SYS:yyyy-mm-dd HH:MM:ss',
+          ignore: 'pid,hostname',
+        },
+      }
+    : undefined, // Use default JSON output in production
+});
 
-  const latencyStr = latencyMs !== undefined ? latencyMs.toString() : '-';
-  const errorMsg = error ? `"${error}"` : '-';
-
-  console.log(
-    `ai_job media_id=${mediaId} job=${job} attempt=${attempt} status=${status} latency_ms=${latencyStr} error=${errorMsg}`
-  );
-};
+export default logger;

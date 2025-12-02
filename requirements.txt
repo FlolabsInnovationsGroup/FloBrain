@@ -7,3 +7,8 @@ python-multipart
 sqlalchemy
 # Add whisper when you get to that task
 # openai-whisper
+openai
+elevenlabs
+faiss-cpu
+numpy
+python-dotenv
