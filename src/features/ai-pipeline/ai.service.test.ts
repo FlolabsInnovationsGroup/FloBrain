@@ -23,11 +23,20 @@ jest.mock('./ai.mock.processor', () => ({
   },
 }));
 
+// Mock the configuration to ensure consistent behavior regardless of env vars
+jest.mock('../../config/ai.config', () => ({
+  AI_CONFIG: {
+    allowedTasks: ['transcription', 'summary', 'tags', 'embedding'],
+    maxRetries: 1,
+    retryBackoffMs: 0,
+  },
+}));
+
 const MockedMediaRecording = (models as any).MediaRecording;
 
 // --- TEST SUITE ---
 describe('AiService - Unit Tests', () => {
-  
+
   let runOrchestrationSpy: jest.SpyInstance;
 
   // Before each test, clear all mocks and prevent the real orchestration from running.
@@ -53,10 +62,10 @@ describe('AiService - Unit Tests', () => {
         processingStatus: 'pending_processing',
       };
       MockedMediaRecording.findOne.mockResolvedValue(mockMedia);
-      
+
       // Act
       const result = await aiService.startProcessing('audio1', 'user1');
-      
+
       // Assert
       expect(result.plan).toEqual(['transcription', 'summary', 'tags', 'embedding']);
     });
@@ -70,10 +79,10 @@ describe('AiService - Unit Tests', () => {
         processingStatus: 'pending_processing',
       };
       MockedMediaRecording.findOne.mockResolvedValue(mockMedia);
-      
+
       // Act
       const result = await aiService.startProcessing('image1', 'user1');
-      
+
       // Assert
       expect(result.plan).toEqual(['tags', 'embedding']);
     });
@@ -85,7 +94,8 @@ describe('AiService - Unit Tests', () => {
       MockedMediaRecording.findOne.mockResolvedValue(null);
 
       // Act & Assert: Expect the promise to be rejected with the specific error.
-      await expect(aiService.startProcessing('not-found-id', 'user1')).rejects.toThrow('MediaNotFound');
+      // Updated to match the actual error message thrown by the service
+      await expect(aiService.startProcessing('not-found-id', 'user1')).rejects.toThrow('Media not found or you do not have permission to access it.');
     });
 
     it('should throw "AlreadyProcessing" error if media is already in a "processing" state', async () => {
@@ -99,7 +109,8 @@ describe('AiService - Unit Tests', () => {
       MockedMediaRecording.findOne.mockResolvedValue(mockMedia);
 
       // Act & Assert
-      await expect(aiService.startProcessing('audio1', 'user1')).rejects.toThrow('AlreadyProcessing');
+      // Updated to match the actual error message thrown by the service
+      await expect(aiService.startProcessing('audio1', 'user1')).rejects.toThrow('Media is already being processed.');
     });
   });
 });

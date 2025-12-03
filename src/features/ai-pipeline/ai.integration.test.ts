@@ -1,5 +1,11 @@
 // Fichier: src/features/ai-pipeline/ai.integration.test.ts
 
+// Set environment variables BEFORE imports so config loads correctly
+process.env.AI_TASKS_ALLOWED = 'transcription,summary,tags,embedding';
+process.env.AI_JOB_TIMEOUT_MS = '5000';
+process.env.AI_MAX_RETRIES = '1';
+process.env.AI_RETRY_BACKOFF_MS = '100';
+
 import request from 'supertest';
 import app from '../../app';
 import models from '../../../models';
@@ -25,7 +31,7 @@ describe('AI Pipeline Integration Tests', () => {
   it('should accept a media file for processing, run the mock AI pipeline, and update the database correctly', async () => {
     // 1. ARRANGE: Create a test record in the database.
     const testMedia = await MediaRecordingModel.create({
-      userId: 'mock_user_id',
+      userId: 'mock_user_id_123',
       mediaType: 'audio',
       processingStatus: 'pending_processing',
       path: 'test/audio.mp3',
@@ -47,7 +53,7 @@ describe('AI Pipeline Integration Tests', () => {
     // 5. ASSERT (Final State): Verify that the record in the database has been updated by the pipeline.
     const rawUpdatedMedia = await MediaRecordingModel.findByPk(testMedia.id);
     expect(rawUpdatedMedia).not.toBeNull();
-    
+
     const updatedMedia = rawUpdatedMedia.get({ plain: true });
     expect(updatedMedia.processingStatus).toBe('processed');
     expect(updatedMedia.transcription).toContain('This is a sample transcript');

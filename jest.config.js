@@ -15,5 +15,5 @@ module.exports = {
   moduleFileExtensions: ["ts", "js", "json"],
 
   // Ignore les dossiers qui cassent Jest
-  testPathIgnorePatterns: ["/node_modules/", "/dist/", "/migrations/", "/seeders/"]
+  testPathIgnorePatterns: ["/node_modules/", "/dist/", "/migrations/", "/seeders/", "/caipo-frontend/"]
 };
