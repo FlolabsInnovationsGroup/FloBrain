@@ -5,265 +5,171 @@ import {
   MediaRecording,
   JobType,
   ProcessingStatus,
-  AiServiceSuccessResponse,
   AiResult,
 } from './ai.types';
 
-// --- DATABASE MOCKS (Replace with your actual database client/repository) ---
-// This is a placeholder to simulate database interactions.
+// ---- DB MOCK ----
 const db = {
   getMediaById: async (id: string, userId: string): Promise<MediaRecording | null> => {
-    console.log(`[DB MOCK] Fetching media ${id} for user ${userId}`);
-    
-    if (id === 'owned_audio_1') {
-      // Find the real status from our "database" or assume it's re-processable
-      return { id, user_id: userId, media_type: 'audio', processing_status: 'error', tags: ['initial'] };
-    }
-    if (id === 'owned_image_1') {
-      return { id, user_id: userId, media_type: 'image', processing_status: 'pending_processing' };
-    }
-    if (id === 'processing_media_1') {
-      return { id, user_id: userId, media_type: 'audio', processing_status: 'processing' };
-    }    
-    return null;
+    return {
+      id,
+      user_id: userId,
+      media_type: 'audio',
+      processing_status: 'pending_processing',
+      path: 'http://localhost:8000/sample.wav'
+    };
   },
-  updateMediaStatus: async (id: string, status: ProcessingStatus): Promise<void> => {
-    console.log(`[DB MOCK] Updating media ${id} status to ${status}`);
+
+  updateMediaStatus: async (id: string, status: ProcessingStatus) => {
+    console.log(`[DB] media ${id} → status ${status}`);
   },
-  createAiResult: async (result: Omit<AiResult, 'id' | 'created_at'>): Promise<void> => {
-    console.log(`[DB MOCK] Creating AI result for media ${result.media_id}, job ${result.job_type}, status ${result.status}`);
+
+  updateMediaData: async (id: string, data: Partial<MediaRecording>) => {
+    console.log(`[DB] media ${id} update`, data);
   },
-  updateMediaData: async (id: string, data: Partial<MediaRecording>): Promise<void> => {
-    console.log(`[DB MOCK] Updating media ${id} with data:`, data);
-  },
+
+  createAiResult: async (result: Omit<AiResult, 'id' | 'created_at'>) => {
+    console.log(`[DB] AI result`, result);
+  }
 };
-// --- END DATABASE MOCKS ---
+// ------------------
 
 class AiService {
-  /**
-   * Public entry point to start the AI processing pipeline for a given media item.
-   * This method performs initial checks and then starts the orchestration.
-   * Note: This is designed to be "fire-and-forget" from the controller's perspective.
-   */
-  public async startProcessing(mediaId: string, userId: string): Promise<{ plan: JobType[] }> {
+
+  public async startProcessing(mediaId: string, userId: string) {
     const media = await db.getMediaById(mediaId, userId);
+    if (!media) throw new Error("MediaNotFound");
 
-    if (!media) {
-      // Rule: Caller must own :mediaId
-      throw new Error('MediaNotFound'); // We will map this to a 404 in the controller
-    }
+    const plan = this._createJobPlan(media);
+    this._runOrchestration(media, plan);
 
-    if (media.processing_status === 'processing') {
-      // Rule: Idempotency check
-      throw new Error('AlreadyProcessing'); // Map to 409
-    }
-
-    if (media.processing_status !== 'pending_processing' && media.processing_status !== 'error') {
-      // Rule: Allow re-processing only from pending or error states
-      throw new Error('InvalidInitialStatus'); // Map to 400 or 409
-    }
-
-    const jobPlan = this._createJobPlan(media);
-    
-    // Start orchestration asynchronously. The controller will respond with 202 Accepted immediately.
-    this._runOrchestration(media, jobPlan).catch(err => {
-        // We already log the specific job failure, so this is just to acknowledge the halt.
-        console.log(`[AI PIPELINE INFO] Orchestration for media ${media.id} was intentionally halted due to a job failure.`);
-    });
-    return { plan: jobPlan };
+    return { plan };
   }
 
-  /**
-   * The main orchestration flow that executes jobs sequentially.
-   */
-private async _runOrchestration(media: MediaRecording, plan: JobType[]): Promise<void> {
-    await db.updateMediaStatus(media.id, 'processing');
-    
+
+  private async _runOrchestration(media: MediaRecording, plan: JobType[]) {
+    await db.updateMediaStatus(media.id, "processing");
     let transcriptionText: string | undefined = undefined;
 
     try {
-        for (const jobType of plan) {
-            const jobResult = await this._executeJobWithRetries(media, jobType, transcriptionText);
-            
-            if (jobType === 'transcription' && jobResult.success) {
-                transcriptionText = (jobResult.data as { text: string }).text;
-            }
+      for (const jobType of plan) {
+        const result = await this._executeJobWithRetries(media, jobType, transcriptionText);
+
+        if (jobType === "transcription" && result.success) {
+          transcriptionText = result.data.text;
         }
+      }
 
-        // If all jobs in the plan succeeded
-        await db.updateMediaStatus(media.id, 'processed');
+      await db.updateMediaStatus(media.id, "processed");
 
-    }  catch (error: any) {
-        // A job failed permanently. The failure is already recorded in the DB.
-        // The orchestration stops, and the media status is already 'error'.
-        console.log(`[AI PIPELINE HALTED] Media ${media.id} failed processing. Reason: ${error.message}`);
+    } catch (err: any) {
+      await db.updateMediaStatus(media.id, "error");
     }
   }
 
-  /**
-   * Executes a single job with the configured retry policy.
-   */
-  private async _executeJobWithRetries(
-    media: MediaRecording,
-    jobType: JobType,
-    transcriptionText: string | undefined
-  ): Promise<{ success: true, data: any } | { success: false, error: string }> {
-    const maxAttempts = 1 + AI_CONFIG.maxRetries;
 
-    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-      const startTime = Date.now();
+  private async _executeJobWithRetries(media: MediaRecording, jobType: JobType, transcriptionText?: string) {
+    const attempts = 1 + AI_CONFIG.maxRetries;
+
+    for (let attempt = 1; attempt <= attempts; attempt++) {
       try {
         const result = await this._performSingleJobAttempt(media, jobType, transcriptionText);
-        const latencyMs = Date.now() - startTime;
-        
-        logAiJob({ mediaId: media.id, job: jobType, attempt, status: 'ok', latencyMs });
-        
+
         await this._persistJobSuccess(media, jobType, result);
 
         return { success: true, data: result };
 
-      } catch (error: any) {
-        const latencyMs = Date.now() - startTime;
-        const errorMessage = error.message || 'Unknown error';
-        
-        logAiJob({ mediaId: media.id, job: jobType, attempt, status: 'fail', latencyMs, error: errorMessage });
-        
-        if (attempt === maxAttempts) {
-          // This was the final attempt, persist failure and re-throw to stop the chain
-          await this._persistJobFailure(media.id, jobType, errorMessage);
-          throw new Error(`Job ${jobType} failed after ${maxAttempts} attempts: ${errorMessage}`);
-        }
+      } catch (err: any) {
 
-        // Wait before the next retry
-        await new Promise(resolve => setTimeout(resolve, AI_CONFIG.retryBackoffMs));
+        if (attempt === attempts) {
+          await this._persistJobFailure(media.id, jobType, err.message);
+          throw err;
+        }
       }
     }
-    // This line should be unreachable, but placates TypeScript
-    throw new Error('Exited retry loop unexpectedly');
+
+    return { success: false, error: "unreachable" };
   }
 
-  /**
-   * Performs a single attempt to call the external AI service for a given job.
-   */
-  private async _performSingleJobAttempt(
-    media: MediaRecording,
-    jobType: JobType,
-    transcriptionText: string | undefined,
-  ): Promise<any> {
 
-    // Rule: Skip transcription for images.
-    if (jobType === 'transcription' && media.media_type === 'image') {
-        // This case is filtered out by _createJobPlan, but this is a defensive check.
-        return { text: '', model_name: 'skipped', model_version: 'n/a', latency_ms: 0 };
-    }
+  private async _performSingleJobAttempt(media: MediaRecording, jobType: JobType, transcriptionText?: string) {
 
-    switch(jobType) {
-        case 'transcription':
-            // Rule: Handle non-executable transcription.
-            // For this sprint, we assume it's not possible to get a public URL.
-            throw new Error("Media not readable by AI service");
-            // const mediaUrl = `http://my-temp-url-provider.com/${media.path}`;
-            // return aiServiceAdapter.transcription({ media_url: mediaUrl });
+    switch (jobType) {
 
-        case 'summary':
-            if (!transcriptionText) throw new Error("Summary requires transcription text, which is missing.");
-            return aiServiceAdapter.summary({ text: transcriptionText });
+      case "transcription":
+        return aiServiceAdapter.transcription({
+          media_url: media.path!
+        });
 
-        case 'tags':
-            const contextForTags = this._getContextText(media, transcriptionText);
-            return aiServiceAdapter.tags({ text: contextForTags });
+      case "summary":
+        return aiServiceAdapter.summary({ text: transcriptionText! });
 
-        case 'embedding':
-            const contextForEmbedding = this._getContextText(media, transcriptionText);
-            return aiServiceAdapter.embedding({ text: contextForEmbedding });
+      case "tags":
+        return aiServiceAdapter.tags({
+          text: transcriptionText ?? ""
+        });
 
-        default:
-            throw new Error(`Unsupported job type: ${jobType}`);
+      case "embedding":
+        return aiServiceAdapter.embedding({
+          text: transcriptionText ?? ""
+        });
+
+      default:
+        throw new Error(`Unknown job: ${jobType}`);
     }
   }
 
-  /**
-   * Persistence logic for a successful job.
-   */
-  private async _persistJobSuccess(media: MediaRecording, jobType: JobType, result: any): Promise<void> {
-    const dataToUpdate: Partial<MediaRecording> = {};
-    
-    switch(jobType) {
-        case 'transcription':
-            dataToUpdate.transcription = result.text;
-            break;
-        case 'summary':
-            dataToUpdate.summary = result.summary;
-            break;
-        case 'tags':
-            // Rule: Union-merge, deduplicate, lowercase, sort
-            const existingTags = media.tags || [];
-            const newTags = result.tags.map((t: string) => t.toLowerCase());
-            const merged = [...new Set([...existingTags, ...newTags])].sort();
-            dataToUpdate.tags = merged;
-            break;
-        case 'embedding':
-            dataToUpdate.embedding_vector = result.vector;
-            break;
+
+  private async _persistJobSuccess(media: MediaRecording, jobType: JobType, result: any) {
+    const toUpdate: Partial<MediaRecording> = {};
+
+    if (jobType === "transcription") {
+      toUpdate.transcription = result.text;
+      toUpdate.transcript_segments = result.segments;
+      toUpdate.language = result.language;
+      toUpdate.duration_seconds = result.duration_seconds;
+      toUpdate.word_count = result.word_count;
     }
 
-    // Update the media record with the new data
-    await db.updateMediaData(media.id, dataToUpdate);
+    if (jobType === "summary") {
+      toUpdate.summary = result.summary;
+    }
 
-    // Record the audit trail
+    if (jobType === "tags") {
+      toUpdate.tags = result.tags;
+    }
+
+    if (jobType === "embedding") {
+      toUpdate.embedding_vector = result.vector;
+    }
+
+    await db.updateMediaData(media.id, toUpdate);
+
     await db.createAiResult({
-        media_id: media.id,
-        job_type: jobType,
-        status: 'done',
-        model_name: result.model_name,
-        model_version: result.model_version,
-        latency_ms: result.latency_ms
+      media_id: media.id,
+      job_type: jobType,
+      status: "done",
+      model_name: result.model_name,
+      model_version: result.model_version,
+      latency_ms: result.latency_ms,
     });
   }
 
-  /**
-   * Persistence logic for a failed job after all retries.
-   */
-  private async _persistJobFailure(mediaId: string, jobType: JobType, errorMessage: string): Promise<void> {
-    // Record the audit trail for the failure
+
+  private async _persistJobFailure(mediaId: string, jobType: JobType, message: string) {
     await db.createAiResult({
-        media_id: mediaId,
-        job_type: jobType,
-        status: 'error',
-        error_message: errorMessage,
+      media_id: mediaId,
+      job_type: jobType,
+      status: "error",
+      error_message: message
     });
-    // Set the overall media status to error
-    await db.updateMediaStatus(mediaId, 'error');
   }
 
-  /**
-   * Creates the ordered list of jobs to be executed.
-   */
+
   private _createJobPlan(media: MediaRecording): JobType[] {
-    // Start with the full, fixed sequence
-    let plan: JobType[] = ['transcription', 'summary', 'tags', 'embedding'];
-
-    // Rule: If media_type is image, skip transcription and summary
-    if (media.media_type === 'image') {
-      plan = plan.filter(job => job !== 'transcription' && job !== 'summary');
-    }
-
-    // Further filter by tasks allowed in .env for system-wide control
-    return plan.filter(job => AI_CONFIG.allowedTasks.includes(job));
-  }
-
-  /**
-   * Generates fallback text from media metadata when transcription is not available.
-   */
-  private _getContextText(media: MediaRecording, transcriptionText?: string): string {
-    if (transcriptionText) {
-      return transcriptionText;
-    }
-    // Rule: Fallback text context
-    const tags = (media.tags || []).join(', ');
-    const timestamp = (media.created_at || new Date()).toISOString();
-    return `Media type: ${media.media_type}. Format: ${media.format}. Tags: ${tags}. Timestamp: ${timestamp}. File path: ${media.path}`;
+    return ["transcription", "summary", "tags", "embedding"];
   }
 }
 
 export const aiService = new AiService();
+
