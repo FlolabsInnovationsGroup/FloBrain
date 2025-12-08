@@ -13,6 +13,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import GlobalError from "./components/GlobalError";
 import GlobalLoading from "./components/GlobalLoading";
 
+import AgentChat from "./pages/AgentChat";
+import MediaUpload from "./pages/MediaUpload";
+
 function App() {
   return (
     <AuthProvider>
@@ -40,6 +43,24 @@ function App() {
             element={
               <ProtectedRoute>
                 <Recordings />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/agent"
+            element={
+              <ProtectedRoute>
+                <AgentChat />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/upload"
+            element={
+              <ProtectedRoute>
+                <MediaUpload />
               </ProtectedRoute>
             }
           />
