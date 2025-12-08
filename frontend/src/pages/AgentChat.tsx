@@ -63,34 +63,64 @@ const AgentChat: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: 20, maxWidth: 800, margin: "0 auto" }}>
-            <h2>Agent Chat</h2>
-            <div style={{ border: "1px solid #ccc", padding: 20, height: 400, overflowY: "auto", marginBottom: 20 }}>
-                {history.map((msg, idx) => (
-                    <div key={idx} style={{ marginBottom: 15, textAlign: msg.type === "user" ? "right" : "left" }}>
-                        <div style={{ display: "inline-block", padding: 10, borderRadius: 8, background: msg.type === "user" ? "#e3f2fd" : "#f5f5f5" }}>
-                            <strong>{msg.type === "user" ? "You" : "Agent"}:</strong>
-                            <p style={{ margin: "5px 0" }}>{msg.content.response_text || msg.content}</p>
-                            {msg.content.audio_content && (
-                                <audio controls src={`data:audio/mpeg;base64,${msg.content.audio_content}`} />
-                            )}
+        <div style={{ padding: 40, maxWidth: 900, margin: "0 auto" }}>
+            <header style={{ marginBottom: 40 }}>
+                <a href="/dashboard" style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>&larr; Back to Dashboard</a>
+                <h2 style={{ fontSize: "2rem", marginTop: 10 }}>Agent Chat</h2>
+            </header>
+
+            <div className="glass-panel" style={{ height: 500, display: "flex", flexDirection: "column" }}>
+                <div style={{ flex: 1, overflowY: "auto", marginBottom: 20, paddingRight: 10 }}>
+                    {history.length === 0 && (
+                        <div style={{ textAlign: "center", color: "var(--text-secondary)", marginTop: 100 }}>
+                            <p>Start a conversation with the AI Agent.</p>
+                            <p style={{ fontSize: "0.9rem" }}>Try "Help me plan a marketing campaign" or "Summarize this text"</p>
                         </div>
-                    </div>
-                ))}
-                {loading && <p>Agent is thinking...</p>}
-            </div>
-            <div style={{ display: "flex", gap: 10 }}>
-                <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                    style={{ flex: 1, padding: 10 }}
-                    placeholder="Ask something..."
-                />
-                <button onClick={handleSend} style={{ padding: "10px 20px" }} disabled={loading}>
-                    Send
-                </button>
+                    )}
+                    {history.map((msg, idx) => (
+                        <div key={idx} style={{ marginBottom: 20, textAlign: msg.type === "user" ? "right" : "left" }}>
+                            <div style={{
+                                display: "inline-block",
+                                padding: "12px 18px",
+                                borderRadius: 12,
+                                background: msg.type === "user" ? "var(--accent-blue)" : "rgba(255,255,255,0.1)",
+                                color: "white",
+                                maxWidth: "80%"
+                            }}>
+                                <strong style={{ display: "block", fontSize: "0.8rem", marginBottom: 5, opacity: 0.7 }}>
+                                    {msg.type === "user" ? "You" : "Agent"}
+                                </strong>
+                                <p style={{ margin: 0, lineHeight: 1.5 }}>{msg.content.response_text || msg.content}</p>
+                                {msg.content.audio_content && (
+                                    <div style={{ marginTop: 10 }}>
+                                        <audio controls src={`data:audio/mpeg;base64,${msg.content.audio_content}`} style={{ width: "100%" }} />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                    {loading && (
+                        <div style={{ textAlign: "left" }}>
+                            <span style={{ display: "inline-block", padding: "10px 20px", background: "rgba(255,255,255,0.05)", borderRadius: 20, fontSize: "0.9rem", color: "var(--text-secondary)" }}>
+                                Agent is thinking...
+                            </span>
+                        </div>
+                    )}
+                </div>
+
+                <div style={{ display: "flex", gap: 10, borderTop: "1px solid var(--glass-border)", paddingTop: 20 }}>
+                    <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyPress={(e) => e.key === "Enter" && handleSend()}
+                        style={{ flex: 1 }}
+                        placeholder="Type your message..."
+                    />
+                    <button onClick={handleSend} className="btn-primary" disabled={loading}>
+                        Send
+                    </button>
+                </div>
             </div>
         </div>
     );
