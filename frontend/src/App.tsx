@@ -31,47 +31,27 @@ function App() {
 
           <Route
             path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
+            element={<Dashboard />}
           />
 
           <Route
             path="/recordings"
-            element={
-              <ProtectedRoute>
-                <Recordings />
-              </ProtectedRoute>
-            }
+            element={<Recordings />}
           />
 
           <Route
             path="/agent"
-            element={
-              <ProtectedRoute>
-                <AgentChat />
-              </ProtectedRoute>
-            }
+            element={<AgentChat />}
           />
 
           <Route
             path="/upload"
-            element={
-              <ProtectedRoute>
-                <MediaUpload />
-              </ProtectedRoute>
-            }
+            element={<MediaUpload />}
           />
 
           <Route
             path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
+            element={<Profile />}
           />
         </Routes>
       </BrowserRouter>
