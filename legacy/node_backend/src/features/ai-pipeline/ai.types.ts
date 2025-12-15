@@ -1,20 +1,41 @@
 // We define our data structures here for type safety and consistency.
 // These are based on the database schema described in the task.
 
-export type ProcessingStatus = 'pending_processing' | 'processing' | 'processed' | 'error';
+export type ProcessingStatus =
+  | 'pending_processing'
+  | 'processing'
+  | 'processed'
+  | 'error';
+
 export type JobType = 'transcription' | 'summary' | 'tags' | 'embedding';
 export type JobStatus = 'done' | 'error' | 'skipped';
+
+// Segments for time-stamped transcription
+export interface TranscriptSegment {
+  start: number; // seconds
+  end: number;   // seconds
+  text: string;
+}
 
 export interface MediaRecording {
   id: string;
   user_id: string;
   media_type: 'audio' | 'video' | 'image';
   processing_status: ProcessingStatus;
+
+  // AI outputs:
   transcription?: string;
   summary?: string;
   tags?: string[];
   embedding_vector?: number[];
-  // Assuming these fields also exist for context building
+
+  // Extra transcription metadata:
+  transcript_segments?: TranscriptSegment[];
+  language?: string;
+  duration_seconds?: number;
+  word_count?: number;
+
+  // Context fields:
   path?: string;
   format?: string;
   created_at?: Date;
@@ -47,14 +68,20 @@ export interface TranscriptionBody {
   language?: string;
   sample_rate?: number;
 }
+
 export interface TranscriptionResponse extends AiServiceSuccessResponse {
   text: string;
+  segments?: TranscriptSegment[];
+  language?: string;
+  duration_seconds?: number;
+  word_count?: number;
 }
 
 // Summary
 export interface SummaryBody {
   text: string;
 }
+
 export interface SummaryResponse extends AiServiceSuccessResponse {
   summary: string;
 }
@@ -64,6 +91,7 @@ export interface TagsBody {
   text?: string;
   media_metadata?: Record<string, any>;
 }
+
 export interface TagsResponse extends AiServiceSuccessResponse {
   tags: string[];
 }
@@ -72,6 +100,8 @@ export interface TagsResponse extends AiServiceSuccessResponse {
 export interface EmbeddingBody {
   text: string;
 }
+
 export interface EmbeddingResponse extends AiServiceSuccessResponse {
   vector: number[];
 }
+
