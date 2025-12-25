@@ -1,8 +1,44 @@
+"use client"
+import { ReactFlow } from "@xyflow/react";
+import { useCallback, useEffect, useState } from "react";
+import {  defaultEdgeOptions, nodeTypes } from "./flowSettings";
+import { edgeType, nodeType } from "@/types/MemoryNode";
+import { useMemoryNodes } from "./hooks/useMemoryNodes";
+
 export default function Memory() {
+  const [nodes, setNodes] = useState<nodeType[]>([]);
+  const [edges, setEdges] = useState<edgeType[]>([]);
+  
+  const onSetNodes = useCallback((nodes: nodeType[]) => {
+    if (nodes) setNodes(nodes);
+  }, []);
+  
+  const onSetEdges = useCallback((edges: edgeType[]) => {
+    if (edges) setEdges(edges);
+  }, []);
+  
+  const {getNodesAndEdges} = useMemoryNodes({onSetNodes, onSetEdges});
+
+  useEffect(()=>{
+    getNodesAndEdges();
+  },[getNodesAndEdges]);
+  
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold text-[var(--color-memory)]">Universal Memory</h1>
-      <p className="mt-4 text-zinc-400">Retrieving data blocks...</p>
+    <main >
+      <div className="w-[100vw] h-[100vh]">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          defaultEdgeOptions={defaultEdgeOptions}
+          nodesConnectable={false} 
+          elementsSelectable={false} 
+          nodesDraggable={false}
+          fitView
+          fitViewOptions={{ padding: 0.5 }}
+          minZoom={0.1}
+        />
+      </div>
     </main>
   );
 }
