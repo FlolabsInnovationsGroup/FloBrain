@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@xyflow/react": "^12.10.0",
     "clsx": "^2.1.1",
+    "d3-force": "^3.0.0",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.561.0",
     "next": "16.0.10",
@@ -19,6 +21,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/d3-force": "^3.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
