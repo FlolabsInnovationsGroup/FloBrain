@@ -1,10 +1,10 @@
-
-from fastapi import APIRouter, HTTPException
-from caipo_backend.app.models.schemas import ChatRequest, ChatResponse
-from caipo_backend.app.services import vector_db, llm, synthesis
+from fastapi import APIRouter
+from app.models.schemas import ChatRequest, ChatResponse
+from app.services import vector_db, llm, synthesis
 import base64
 
 router = APIRouter()
+
 
 @router.post("/", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -14,7 +14,7 @@ async def chat(request: ChatRequest):
         # In a real app, we would fetch the actual text from a DB using idx
         # For now, we just log it or use a placeholder if we don't have the text mapping
         # The prototype read from 'transcripts.txt'. Let's assume we don't have that yet or it's empty.
-        context = "" 
+        context = ""
         # TODO: Implement text retrieval from ID
     except Exception as e:
         print(f"Vector search failed: {e}")

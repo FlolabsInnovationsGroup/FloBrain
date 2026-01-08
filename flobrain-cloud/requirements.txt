@@ -12,6 +12,7 @@ elevenlabs
 faiss-cpu
 numpy
 python-dotenv
+tenacity
 
 # Dev / CI
 pytest

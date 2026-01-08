@@ -1,9 +1,13 @@
-
 import logging
-import os
 from openai import OpenAI, OpenAIError
-from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception_type, RetryError
-from caipo_backend.app.core.config import settings
+from tenacity import (
+    retry,
+    wait_exponential,
+    stop_after_attempt,
+    retry_if_exception_type,
+    RetryError,
+)
+from app.core.config import settings
 
 # Initialize client
 client = None
@@ -15,14 +19,13 @@ if settings.OPENAI_API_KEY:
 else:
     logging.warning("OPENAI_API_KEY not set. Transcription service will not work.")
 
-RETRYABLE_EXCEPTIONS = (
-    OpenAIError,
-)
+RETRYABLE_EXCEPTIONS = (OpenAIError,)
+
 
 @retry(
     retry=retry_if_exception_type(RETRYABLE_EXCEPTIONS),
     wait=wait_exponential(multiplier=1, min=2, max=10),
-    stop=stop_after_attempt(3)
+    stop=stop_after_attempt(3),
 )
 def _transcribe_file_internal(file_path: str) -> dict:
     if not client:
@@ -33,10 +36,11 @@ def _transcribe_file_internal(file_path: str) -> dict:
             model="whisper-1",
             file=audio_file,
             response_format="verbose_json",
-            timestamp_granularities=["segment"]
+            timestamp_granularities=["segment"],
         )
-    
+
     return response.model_dump()
+
 
 def transcribe_audio(file_path: str) -> dict:
     """

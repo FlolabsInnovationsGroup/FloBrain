@@ -1,10 +1,13 @@
-
-import os
 from elevenlabs.client import ElevenLabs
-from caipo_backend.app.core.config import settings
+from app.core.config import settings
 import logging
 
-client = ElevenLabs(api_key=settings.ELEVENLABS_API_KEY) if settings.ELEVENLABS_API_KEY else None
+client = (
+    ElevenLabs(api_key=settings.ELEVENLABS_API_KEY)
+    if settings.ELEVENLABS_API_KEY
+    else None
+)
+
 
 def synthesize_speech(text: str, voice_id="JBFqnCBsd6RMkjVDRZzb"):
     if not client:
@@ -16,7 +19,7 @@ def synthesize_speech(text: str, voice_id="JBFqnCBsd6RMkjVDRZzb"):
             text=text,
             voice_id=voice_id,
             model_id="eleven_multilingual_v2",
-            output_format="mp3_44100_128"
+            output_format="mp3_44100_128",
         )
         return audio
     except Exception as e:

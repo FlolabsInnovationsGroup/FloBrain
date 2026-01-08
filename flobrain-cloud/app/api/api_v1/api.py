@@ -1,6 +1,5 @@
-
 from fastapi import APIRouter
-from caipo_backend.app.api.api_v1.endpoints import audio, chat
+from app.api.api_v1.endpoints import audio, chat
 
 api_router = APIRouter()
 
