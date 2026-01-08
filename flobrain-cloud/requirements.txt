@@ -12,3 +12,10 @@ elevenlabs
 faiss-cpu
 numpy
 python-dotenv
+
+# Dev / CI
+pytest
+ruff
+mypy
+black
+httpx
