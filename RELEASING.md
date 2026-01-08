@@ -2,7 +2,7 @@
 
 We use semantic versioning (e.g., `v1.2.0`) to tag releases.
 
-## 📦 How to Cut a Release
+## How to Cut a Release
 
 1.  **Ensure `development` is Stable**
     *   Verify all features for the release are merged.
@@ -30,7 +30,7 @@ We use semantic versioning (e.g., `v1.2.0`) to tag releases.
     *   `git merge main`
     *   `git push origin development`
 
-## 🏷 Versioning Scheme
+## Versioning Scheme
 *   **Major (X.y.z)**: Breaking changes.
 *   **Minor (x.Y.z)**: New features (backwards compatible).
 *   **Patch (x.y.Z)**: Bug fixes.
