@@ -77,3 +77,30 @@ Since we use **Next.js + Tailwind**, we have two paths to mobile:
 
 - **Bug Report**: Use `.github/ISSUE_TEMPLATE/bug_report.yml`. Be specific!
 - **Tasks**: Use `.github/ISSUE_TEMPLATE/task.yml` for small units of work.
+
+## 6. QA & Observability Strategy (Recommended) 🧪
+
+As the project grows, manual testing won't be enough. Here is the recommended "Next Level" QA stack:
+
+### A. End-to-End (E2E) Testing
+**Tool: Playwright**
+- **Why**: It allows you to script real user scenarios (e.g., "User logs in, clicks upload, sees success message"). It runs in a real browser (Headless Chrome/Safari/Firefox).
+- **Setup**: Install inside `flobrain-website`.
+- **Benefit**: Catches regressions that unit tests miss (e.g., "Button is covered by a modal").
+
+### B. Visual Regression Testing
+**Tool: Chromatic (or Percy)**
+- **Why**: Even if code works, the UI might look broken (e.g., CSS shifted).
+- **How**: It takes screenshots of every component/page on every PR and compares them to the "master" version. You get an alert if pixels change.
+- **Benefit**: Zero "surprise" UI breakages.
+
+### C. Error Tracking
+**Tool: Sentry**
+- **Why**: When users hit errors in production, you need to know *exactly* what happened (stack trace, user actions, device info).
+- **Setup**: One SDK for Next.js, one for FastAPI.
+- **Benefit**: Fix bugs before users even complain.
+
+### D. API Integration Testing
+**Tool: Pytest (Expanded)**
+- **Why**: Mocking is great, but you need to test the *real* database and *real* external APIs (or realistic mocks of them).
+- **Action**: Create a `tests/integration` folder in `flobrain-cloud` that spins up a test DB.
