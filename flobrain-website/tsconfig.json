@@ -19,8 +19,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/app/*": ["./src/app/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/styles/*": ["./src/styles/*"]
     }
+
   },
   "include": [
     "next-env.d.ts",
