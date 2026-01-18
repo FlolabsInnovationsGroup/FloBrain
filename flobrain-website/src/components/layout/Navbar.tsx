@@ -19,6 +19,7 @@ export default function Navbar() {
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
+              <Link href="/" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Home</Link>
               <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Dashboard</Link>
               <Link href="/brain" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Brain</Link>
               <Link href="/memory" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Memory</Link>
