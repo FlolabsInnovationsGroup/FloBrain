@@ -2,19 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, BrainCircuit } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import FlolabsLogo from '../../../assets/images/flolabs-logo.svg'
+import Image from "next/image";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="w-full border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
+    <nav className="w-full backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl tracking-tighter">
-              <BrainCircuit className="text-[var(--color-brain)]" />
-              <span>CAIPO</span>
+            <Link href="/" className="flex items-center gap-8 font-bold text-xl tracking-tighter">
+              <Image 
+                    src={FlolabsLogo} 
+                    alt="FloLabs' logo" 
+                />
+              <span className="bg-gradient-to-r from-[#610081] to-[#702ACD] bg-clip-text text-transparent text-[35px]">FLOBRAIN</span>
             </Link>
           </div>
           <div className="hidden md:block">
