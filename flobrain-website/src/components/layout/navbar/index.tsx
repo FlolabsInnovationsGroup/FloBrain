@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import FlolabsLogo from '../../../assets/images/flolabs-logo.svg'
+import FlolabsLogo from "../../../../assets/images/flolabs-logo.svg";
 import Image from "next/image";
 
 export default function Navbar() {
