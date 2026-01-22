@@ -6,8 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "typecheck": "tsc --noEmit",
+    "check-all": "npm run typecheck && npm run lint && npm run format:check"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -29,6 +33,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "jsdom": "^27.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.7.4",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.0.17"
