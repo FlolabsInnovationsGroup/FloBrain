@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, Cpu, Layers, MessageSquare, ChevronLeft, ChevronRight, Sparkles, Terminal } from 'lucide-react';
+import { Activity, Cpu, Layers, ChevronLeft, ChevronRight, Sparkles, Terminal } from 'lucide-react';
 
 // --- SUB-COMPONENT: STREAMING TEXT (GPT-STYLE) ---
 const StreamingText = ({ text }: { text: string }) => {
@@ -32,13 +32,13 @@ const StreamingText = ({ text }: { text: string }) => {
 };
 
 export default function Brain() {
-  // Requirement: Brain state (idle, processing)
+ 
   const [brainState, setBrainState] = useState<'idle' | 'processing'>('idle');
   
-  // Requirement: Switching between views (Context vs Activity)
+  
   const [rightPanelView, setRightPanelView] = useState<'context' | 'activity'>('context');
   
-  // Requirement: Expand/collapse panels with springs
+  
   const [leftPanelExpanded, setLeftPanelExpanded] = useState(true);
   const [rightPanelExpanded, setRightPanelExpanded] = useState(true);
 
@@ -184,11 +184,11 @@ export default function Brain() {
                     exit={{ opacity: 0, x: -10 }}
                     className="min-h-[140px]"
                   >
-                    <p className="text-[10px] font-mono text-blue-500/60 mb-4 tracking-widest uppercase">// Live_Stream</p>
+                    <p className="text-[10px] font-mono text-blue-500/60 mb-4 tracking-widest uppercase">{"\u002F\u002F"}Live_Stream</p>
                     {brainState === 'processing' ? (
                       <StreamingText text="Interpreting local hardware signals... Synchronizing with caipo-robotics module... Context window expanding to include environmental variables... Neural pathways optimized." />
                     ) : (
-                      <p className="text-xs italic opacity-50 font-light font-mono text-slate-500">// Waiting for system trigger...</p>
+                      <p className="text-xs italic opacity-50 font-light font-mono text-slate-500">{"\u002F\u002F"}Waiting for system trigger...</p>
                     )}
                   </motion.div>
                 ) : (
@@ -199,7 +199,7 @@ export default function Brain() {
                     exit={{ opacity: 0, x: -10 }}
                     className="min-h-[140px]"
                   >
-                    <p className="text-[10px] font-mono text-emerald-500/60 mb-4 tracking-widest uppercase">// System_Logs</p>
+                    <p className="text-[10px] font-mono text-emerald-500/60 mb-4 tracking-widest uppercase">{"\u002F\u002F"}System_Logs</p>
                     <div className="space-y-3 text-[10px] font-mono text-slate-500 uppercase">
                       <p className="flex justify-between"><span>CPU_Usage</span> <span className="text-slate-300">12.4%</span></p>
                       <p className="flex justify-between"><span>Memory_Link</span> <span className="text-emerald-400">Stable</span></p>
