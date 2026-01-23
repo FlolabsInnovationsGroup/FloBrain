@@ -1,7 +1,14 @@
-import { HomePage } from "./home";
+import { redirect } from 'next/navigation';
+import { HomePage } from "./home"; 
 
 export default function Home() {
-  return (
-    <HomePage />
-  );
+  const userLogged = false; 
+
+  if (userLogged) {
+    
+    redirect('/home'); 
+  }
+
+  
+  return <HomePage />;
 }
