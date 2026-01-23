@@ -1,8 +1,8 @@
-export default function Brain() {
+export default function BrainPlaceholder() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold text-[var(--color-brain)]">Brain Interface</h1>
-      <p className="mt-4 text-zinc-400">Loading neural pathways...</p>
-    </main>
+    <div>
+      
+      <p className="text-slate-600 text-[10px] mt-2">PROJECT: BRAIN_CHAT_INTERFACE</p>
+    </div>
   );
 }
