@@ -1,10 +1,10 @@
-//import {
-//  Dialog,
- // DialogContent,
- // DialogDescription,
-  //DialogHeader,
-  //DialogTitle,
-//} from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/layout/dialog";
 
 interface MemoryNodeDetailsDialogProps {
     open: boolean;
@@ -13,19 +13,16 @@ interface MemoryNodeDetailsDialogProps {
 }
 export const MemoryNodeDetailsDialog = ({open, setOpen, description}: MemoryNodeDetailsDialogProps) => {
     return (
-  //      <Dialog open={open} onOpenChange={setOpen}>
-    //    <DialogContent className="bg-black text-white">
-      //      <DialogHeader>
-        //    <DialogTitle >Memory node</DialogTitle>
-          //  <DialogDescription>
-            //    {description}
-            //</DialogDescription>
-           // </DialogHeader>
-       // </DialogContent>
-        //</Dialog>
-        <div>
-oi
-        </div>
+        <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="bg-black text-white">
+            <DialogHeader>
+            <DialogTitle >Memory node</DialogTitle>
+            <DialogDescription>
+                {description}
+            </DialogDescription>
+            </DialogHeader>
+        </DialogContent>
+        </Dialog>
     )
 }
 
