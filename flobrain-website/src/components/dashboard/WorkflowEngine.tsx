@@ -11,7 +11,7 @@ export default function WorkflowEngine() {
       <div className="mb-3">
         <h3 className="text-lg font-medium text-zinc-300 mb-3">Recent Errors</h3>
 
-        {errors.map((error) => (
+        {errors.map((error: { id: number; title: string; description: string; timestamp: string }) => (
           <div
             key={error.id}
             className={`rounded-lg p-4 ${error.id !== errors.length ? "mb-3" : ""}`}

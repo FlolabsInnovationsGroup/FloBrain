@@ -47,7 +47,7 @@ export default function MemoryActivity() {
         <div className="text-sm text-zinc-300 mb-3">Memory Usage Heatmap (Last 7 Days)</div>
         <div className="rounded-lg p-4">
           <div className="flex flex-col gap-1.5">
-            {heatmapDays.map((day, dayIndex) => (
+            {heatmapDays.map((day: string, dayIndex: number) => (
               <div key={day} className="flex items-center">
                 <span
                   className="text-xs text-zinc-400 flex-shrink-0"
@@ -87,7 +87,7 @@ export default function MemoryActivity() {
             className="flex justify-between text-xs text-zinc-400 mt-3"
             style={{ marginLeft: "35px" }}
           >
-            {timeLabels.map((label, index) => (
+            {timeLabels.map((label: string, index: number) => (
               <span key={index}>{label}</span>
             ))}
           </div>
