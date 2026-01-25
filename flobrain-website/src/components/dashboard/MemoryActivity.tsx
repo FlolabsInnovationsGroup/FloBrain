@@ -1,30 +1,31 @@
-import Link from 'next/link';
-import { Activity, TrendingUp } from 'lucide-react';
-import { memoryActivityData } from '@/data/dashboardData';
+import Link from "next/link";
+import { Activity, TrendingUp } from "lucide-react";
+import { memoryActivityData } from "@/data/dashboardData";
 
 export default function MemoryActivity() {
-  const { chunksCreated, heatmapDays, heatmapHours, heatmapColors, timeLabels } = memoryActivityData;
+  const { chunksCreated, heatmapDays, heatmapHours, heatmapColors, timeLabels } =
+    memoryActivityData;
 
   return (
-    <div 
+    <div
       className="rounded-2xl p-8 border border-white/10"
-      style={{ 
-        width: '680px',
-        height: '508px',
-        background: '#FCFCFC29',
-        borderRadius: '16px'
+      style={{
+        width: "680px",
+        height: "508px",
+        background: "#FCFCFC29",
+        borderRadius: "16px",
       }}
     >
       <h2 className="text-xl font-semibold mb-6">Memory Activity</h2>
 
       {/* Memory Chunks Created */}
       <Link href={chunksCreated.link} className="block mb-6">
-        <div 
+        <div
           className="rounded-lg p-4 hover:brightness-110 active:brightness-105 transition-all cursor-pointer"
           style={{
-            background: '#F3CEFF85',
-            borderRadius: '8px',
-            height: '108px'
+            background: "#F3CEFF85",
+            borderRadius: "8px",
+            height: "108px",
           }}
         >
           <div className="flex items-start gap-2 mb-2">
@@ -48,22 +49,31 @@ export default function MemoryActivity() {
           <div className="flex flex-col gap-1.5">
             {heatmapDays.map((day, dayIndex) => (
               <div key={day} className="flex items-center">
-                <span className="text-xs text-zinc-400 flex-shrink-0" style={{ width: '35px', textAlign: 'left' }}>{day}</span>
+                <span
+                  className="text-xs text-zinc-400 flex-shrink-0"
+                  style={{ width: "35px", textAlign: "left" }}
+                >
+                  {day}
+                </span>
                 <div className="flex gap-1.5">
                   {Array.from({ length: heatmapHours }).map((_, hourIndex) => {
                     // Simulate heatmap data
                     const intensity = Math.random();
-                    const color = intensity > 0.6 ? heatmapColors.high : 
-                                 intensity > 0.3 ? heatmapColors.medium : heatmapColors.low;
+                    const color =
+                      intensity > 0.6
+                        ? heatmapColors.high
+                        : intensity > 0.3
+                          ? heatmapColors.medium
+                          : heatmapColors.low;
                     return (
-                      <div 
+                      <div
                         key={`${dayIndex}-${hourIndex}`}
                         className="flex-shrink-0"
                         style={{
-                          width: '18px',
-                          height: '18px',
-                          borderRadius: '5px',
-                          background: color
+                          width: "18px",
+                          height: "18px",
+                          borderRadius: "5px",
+                          background: color,
                         }}
                         title={`${day} ${hourIndex}:00`}
                       />
@@ -73,7 +83,10 @@ export default function MemoryActivity() {
               </div>
             ))}
           </div>
-          <div className="flex justify-between text-xs text-zinc-400 mt-3" style={{ marginLeft: '35px' }}>
+          <div
+            className="flex justify-between text-xs text-zinc-400 mt-3"
+            style={{ marginLeft: "35px" }}
+          >
             {timeLabels.map((label, index) => (
               <span key={index}>{label}</span>
             ))}

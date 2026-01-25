@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import SystemHealth from '@/components/dashboard/SystemHealth';
-import MemoryActivity from '@/components/dashboard/MemoryActivity';
-import WorkflowEngine from '@/components/dashboard/WorkflowEngine';
-import DashboardSkeleton from '@/components/dashboard/DashboardSkeleton';
+import { useState, useEffect } from "react";
+import SystemHealth from "@/components/dashboard/SystemHealth";
+import MemoryActivity from "@/components/dashboard/MemoryActivity";
+import WorkflowEngine from "@/components/dashboard/WorkflowEngine";
+import DashboardSkeleton from "@/components/dashboard/DashboardSkeleton";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +19,10 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <main className="min-h-screen text-white p-8" style={{ background: 'linear-gradient(116.21deg, #290036 -1.81%, #070014 100%)' }}>
+    <main
+      className="min-h-screen text-white p-8"
+      style={{ background: "linear-gradient(116.21deg, #290036 -1.81%, #070014 100%)" }}
+    >
       <div className="max-w-7xl mx-auto">
         {isLoading ? (
           <DashboardSkeleton />
@@ -28,7 +31,9 @@ export default function Dashboard() {
             {/* Header */}
             <div className="mb-8">
               <h1 className="text-4xl font-bold mb-2">SYSTEM DASHBOARD</h1>
-              <p className="text-zinc-400">Monitor your system health, workflows, and AI model performance</p>
+              <p className="text-zinc-400">
+                Monitor your system health, workflows, and AI model performance
+              </p>
             </div>
 
             {/* Top Section - System Health & Memory Activity */}
