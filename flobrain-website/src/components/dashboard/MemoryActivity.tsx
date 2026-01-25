@@ -1,6 +1,22 @@
 import Link from "next/link";
 import { Activity, TrendingUp } from "lucide-react";
-import { memoryActivityData } from "@/data/dashboardData";
+
+ const memoryActivityData = {
+  chunksCreated: {
+    count: "1,247",
+    percentage: "+23%",
+    isPositive: true,
+    link: "/memory",
+  },
+  heatmapDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+  heatmapHours: 24,
+  heatmapColors: {
+    high: "#FFEA00",
+    medium: "#FFF583",
+    low: "#D9D9D9",
+  },
+  timeLabels: ["12am", "6am", "12pm", "6pm", "11pm"],
+};
 
 export default function MemoryActivity() {
   const { chunksCreated, heatmapDays, heatmapHours, heatmapColors, timeLabels } =

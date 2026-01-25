@@ -1,5 +1,22 @@
 import { AlertCircle } from "lucide-react";
-import { workflowEngineData } from "@/data/dashboardData";
+
+
+const workflowEngineData = {
+  errors: [
+    {
+      id: 1,
+      title: "Sentiment Analysis",
+      description: "Model timeout after 30s - retrying with fallback",
+      timestamp: "5 minutes ago",
+    },
+    {
+      id: 2,
+      title: "Image Recognition",
+      description: "Invalid image format - preprocessing failed",
+      timestamp: "12 minutes ago",
+    },
+  ],
+};
 
 export default function WorkflowEngine() {
   const { errors } = workflowEngineData;

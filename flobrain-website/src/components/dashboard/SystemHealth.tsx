@@ -1,8 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
 import { TrendingUp } from "lucide-react";
-import { systemHealthData } from "@/data/dashboardData";
 
+
+const systemHealthData = {
+  brainStatus: {
+    status: "Online",
+    statusColor: "#045900",
+    link: "/brain",
+  },
+  connectedDevices: 12,
+  totalTokens: {
+    count: "2,847,392",
+    percentage: "+18%",
+    isPositive: true,
+  },
+};
 export default function SystemHealth() {
   const { brainStatus, connectedDevices, totalTokens } = systemHealthData;
 
