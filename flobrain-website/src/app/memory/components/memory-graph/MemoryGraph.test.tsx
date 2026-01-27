@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { MemoryGraph } from "./MemoryGraph";
+import { MemoryGraph } from "./index";
 
 vi.mock('../mockData', () => ({
     memoryNodes: [
