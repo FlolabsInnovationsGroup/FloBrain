@@ -32,7 +32,7 @@ export const MemoryFilter = ({
       {/* Search Bar */}
       <div className="w-full max-w-2xl mb-6">
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#4c1d95]/30 to-[#7c3aed]/30 backdrop-blur-sm rounded-2xl border border-[#6b21a8]/40 pointer-events-none"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#4c1d95]/30 to-[#7c3aed]/30 backdrop-blur-sm rounded-2xl border border-[#6b21a8]/40 pointer-events-none" />
           <input
             type="text"
             placeholder="Search memories (type keywords)"
@@ -47,8 +47,8 @@ export const MemoryFilter = ({
             strokeWidth="2"
             viewBox="0 0 24 24"
           >
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
           </svg>
         </div>
       </div>
@@ -68,7 +68,7 @@ export const MemoryFilter = ({
             strokeWidth="2"
             className="group-hover:scale-110 transition-transform"
           >
-            <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3"></polygon>
+            <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46 22,3" />
           </svg>
           Advanced filters
         </button>

@@ -15,7 +15,7 @@ vi.mock('../../mockData', () => ({
 
 // Mock next/dynamic to return the mock component directly
 vi.mock("next/dynamic", () => ({
-  default: (fn: any) => {
+  default: (_fn: any) => {
     // Return a mock component that simulates ForceGraph2D
     return (props: any) => {
       return (

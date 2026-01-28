@@ -1,10 +1,11 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { MemoryNodeDetailsDialog } from "./index";
 
+
 // Mock the dialog components
 vi.mock("@/components/layout/dialog", () => ({
-  Dialog: ({ children, open, onOpenChange }: any) => {
+  Dialog: ({ children, open }: any) => {
     return open ? <div data-testid="dialog-mock">{children}</div> : null;
   },
   DialogContent: ({ children, className }: any) => (
@@ -23,6 +24,7 @@ vi.mock("@/components/layout/dialog", () => ({
   ),
 }));
 
+
 describe("MemoryNodeDetailsDialog Component", () => {
   it("should not render when open is false", () => {
     const setOpen = vi.fn();
@@ -38,6 +40,7 @@ describe("MemoryNodeDetailsDialog Component", () => {
     expect(dialog).toBeNull();
   });
 
+
   it("should render when open is true", () => {
     const setOpen = vi.fn();
     render(
@@ -52,6 +55,7 @@ describe("MemoryNodeDetailsDialog Component", () => {
     expect(dialog).toBeDefined();
   });
 
+
   it("should display the correct title", () => {
     const setOpen = vi.fn();
     render(
@@ -65,6 +69,7 @@ describe("MemoryNodeDetailsDialog Component", () => {
     const title = screen.getByTestId("dialog-title");
     expect(title.textContent).toBe("Memory node");
   });
+
 
   it("should display the provided description", () => {
     const setOpen = vi.fn();
@@ -81,6 +86,7 @@ describe("MemoryNodeDetailsDialog Component", () => {
     expect(descriptionElement.textContent).toBe(description);
   });
 
+
   it("should handle null description", () => {
     const setOpen = vi.fn();
     render(
@@ -94,6 +100,7 @@ describe("MemoryNodeDetailsDialog Component", () => {
     const descriptionElement = screen.getByTestId("dialog-description");
     expect(descriptionElement).toBeDefined();
   });
+
 
   it("should apply the correct className to DialogContent", () => {
     const setOpen = vi.fn();

@@ -68,28 +68,28 @@ export default function Memory() {
         <div className="font-medium text-[#000000] mb-3">Memory Types</div>
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-[#3b82f6] rounded-full shadow-sm shadow-[#3b82f6]/30"></div>
+            <div className="w-3 h-3 bg-[#3b82f6] rounded-full shadow-sm shadow-[#3b82f6]/30" />
             <div className="flex flex-col leading-tight">
               <span className="text-[#000000]">Chunks</span>
               <span className="text-[#000000] text-xs">Raw information & notes</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-[#a78bfa] rounded-full shadow-sm shadow-[#a78bfa]/30"></div>
+            <div className="w-3 h-3 bg-[#a78bfa] rounded-full shadow-sm shadow-[#a78bfa]/30" />
             <div className="flex flex-col leading-tight">
               <span className="text-[#000000]">Summaries</span>
               <span className="text-[#000000] text-xs">Condensed overviews</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-[#10b981] rounded-full shadow-sm shadow-[#10b981]/30"></div>
+            <div className="w-3 h-3 bg-[#10b981] rounded-full shadow-sm shadow-[#10b981]/30" />
             <div className="flex flex-col leading-tight">
               <span className="text-[#000000]">Interactions</span>
               <span className="text-[#000000] text-xs">Questions & feedback</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-3 h-3 bg-[#fbbf24] rounded-full shadow-sm shadow-[#fbbf24]/30"></div>
+            <div className="w-3 h-3 bg-[#fbbf24] rounded-full shadow-sm shadow-[#fbbf24]/30" />
             <div className="flex flex-col leading-tight">
               <span className="text-[#000000]">Workflows</span>
               <span className="text-[#000000] text-xs">Automated results</span>
@@ -118,9 +118,8 @@ export default function Memory() {
             </p>
             {/* Speech bubble arrow */}
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
-              <div className="border-8 border-transparent border-t-[#a78bfa]"></div>
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full">
-              </div>
+              <div className="border-8 border-transparent border-t-[#a78bfa]" />
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full" />
             </div>
           </div>
         </div>
