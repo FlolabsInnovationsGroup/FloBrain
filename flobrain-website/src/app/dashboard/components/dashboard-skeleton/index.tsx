@@ -1,4 +1,4 @@
-export default function DashboardSkeleton() {
+export const DashboardSkeleton = () => {
   return (
     <div className="animate-pulse">
       {/* Header Skeleton */}
@@ -146,4 +146,4 @@ export default function DashboardSkeleton() {
       </div>
     </div>
   );
-}
+};

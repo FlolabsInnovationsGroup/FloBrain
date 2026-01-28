@@ -1,6 +1,5 @@
 import { AlertCircle } from "lucide-react";
 
-
 const workflowEngineData = {
   errors: [
     {
@@ -18,7 +17,7 @@ const workflowEngineData = {
   ],
 };
 
-export default function WorkflowEngine() {
+export const WorkflowEngine = () => {
   const { errors } = workflowEngineData;
 
   return (
@@ -49,4 +48,4 @@ export default function WorkflowEngine() {
       </div>
     </div>
   );
-}
+};

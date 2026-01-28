@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Activity, TrendingUp } from "lucide-react";
 
- const memoryActivityData = {
+const memoryActivityData = {
   chunksCreated: {
     count: "1,247",
     percentage: "+23%",
@@ -18,7 +18,7 @@ import { Activity, TrendingUp } from "lucide-react";
   timeLabels: ["12am", "6am", "12pm", "6pm", "11pm"],
 };
 
-export default function MemoryActivity() {
+export const MemoryActivity = () => {
   const { chunksCreated, heatmapDays, heatmapHours, heatmapColors, timeLabels } =
     memoryActivityData;
 
@@ -111,4 +111,4 @@ export default function MemoryActivity() {
       </div>
     </div>
   );
-}
+};

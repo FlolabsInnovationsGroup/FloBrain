@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import SystemHealth from "@/components/dashboard/SystemHealth";
-import MemoryActivity from "@/components/dashboard/MemoryActivity";
-import WorkflowEngine from "@/components/dashboard/WorkflowEngine";
-import DashboardSkeleton from "@/components/dashboard/DashboardSkeleton";
+import { SystemHealth } from "./components/system-health";
+import { MemoryActivity } from "./components/memory-activity";
+import { WorkflowEngine } from "./components/workflow-engine";
+import { DashboardSkeleton } from "./components/dashboard-skeleton";
 
 export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);

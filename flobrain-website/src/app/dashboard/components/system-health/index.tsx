@@ -1,7 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
-import { TrendingUp } from "lucide-react";
-
+import { TrendingUp, CircleCheck, Server, Brain } from "lucide-react";
 
 const systemHealthData = {
   brainStatus: {
@@ -16,7 +14,8 @@ const systemHealthData = {
     isPositive: true,
   },
 };
-export default function SystemHealth() {
+
+export const SystemHealth = () => {
   const { brainStatus, connectedDevices, totalTokens } = systemHealthData;
 
   return (
@@ -41,11 +40,11 @@ export default function SystemHealth() {
           }}
         >
           <div className="flex items-center gap-3">
-            <Image src="/brain.svg" alt="Brain" width={20} height={20} className="w-5 h-5" />
+            <Brain className="w-5 h-5 text-purple-700" />
             <span className="text-zinc-900 font-medium">Brain Status</span>
           </div>
           <div className="font-semibold flex gap-1" style={{ color: brainStatus.statusColor }}>
-            <Image src="/right.svg" alt="Brain" width={20} height={20} className="w-5 h-5" />
+            <CircleCheck className="w-5 h-5" />
             {brainStatus.status}
           </div>
         </div>
@@ -60,7 +59,7 @@ export default function SystemHealth() {
         }}
       >
         <div className="flex items-center gap-3">
-          <Image src="/device.svg" alt="Device" width={20} height={20} className="w-5 h-5" />
+          <Server className="w-5 h-5 text-purple-700" />
           <span className="text-zinc-900 font-medium">Connected Devices</span>
         </div>
         <span className="text-2xl font-bold text-zinc-900">{connectedDevices}</span>
@@ -84,4 +83,4 @@ export default function SystemHealth() {
       </div>
     </div>
   );
-}
+};
