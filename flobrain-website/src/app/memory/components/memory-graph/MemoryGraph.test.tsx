@@ -52,19 +52,40 @@ describe("MemoryGraph Component", () => {
 
   it("should render the graph container", () => {
     const onOpenDialog = vi.fn();
-    render(<MemoryGraph onOpenMemoryNodeDialog={onOpenDialog} />);
+    const setGraphActive = vi.fn();
+    render(
+      <MemoryGraph 
+        onOpenMemoryNodeDialog={onOpenDialog} 
+        graphActive={false}
+        setGraphActive={setGraphActive}
+      />
+    );
     expect(screen.getByTestId("force-graph-mock")).toBeDefined();
   });
 
   it("should pass the correct data to the graph", () => {
     const onOpenDialog = vi.fn();
-    render(<MemoryGraph onOpenMemoryNodeDialog={onOpenDialog} />);
+    const setGraphActive = vi.fn();
+    render(
+      <MemoryGraph 
+        onOpenMemoryNodeDialog={onOpenDialog}
+        graphActive={false}
+        setGraphActive={setGraphActive}
+      />
+    );
     expect(screen.getByTestId("node-count").textContent).toBe("2");
   });
 
-  it("should call onOpenMemoryNodeDialog when a node is clicked", () => {
+  it("should call onOpenMemoryNodeDialog when a node is clicked and graph is active", () => {
     const onOpenDialog = vi.fn();
-    render(<MemoryGraph onOpenMemoryNodeDialog={onOpenDialog} />);
+    const setGraphActive = vi.fn();
+    render(
+      <MemoryGraph 
+        onOpenMemoryNodeDialog={onOpenDialog}
+        graphActive={true}
+        setGraphActive={setGraphActive}
+      />
+    );
 
     const simulateButton = screen.getByTestId("simulate-node-click");
     fireEvent.click(simulateButton);
@@ -76,9 +97,33 @@ describe("MemoryGraph Component", () => {
     }));
   });
 
+  it("should not call onOpenMemoryNodeDialog when graph is inactive", () => {
+    const onOpenDialog = vi.fn();
+    const setGraphActive = vi.fn();
+    render(
+      <MemoryGraph 
+        onOpenMemoryNodeDialog={onOpenDialog}
+        graphActive={false}
+        setGraphActive={setGraphActive}
+      />
+    );
+
+    const simulateButton = screen.getByTestId("simulate-node-click");
+    fireEvent.click(simulateButton);
+
+    expect(onOpenDialog).not.toHaveBeenCalled();
+  });
+
   it("should handle window resize events", () => {
     const onOpenDialog = vi.fn();
-    render(<MemoryGraph onOpenMemoryNodeDialog={onOpenDialog} />);
+    const setGraphActive = vi.fn();
+    render(
+      <MemoryGraph 
+        onOpenMemoryNodeDialog={onOpenDialog}
+        graphActive={false}
+        setGraphActive={setGraphActive}
+      />
+    );
 
     act(() => {
       global.innerWidth = 500;
@@ -86,5 +131,51 @@ describe("MemoryGraph Component", () => {
     });
 
     expect(screen.getByTestId("force-graph-mock")).toBeDefined();
+  });
+
+  it("should display correct message when graph is inactive", () => {
+    const onOpenDialog = vi.fn();
+    const setGraphActive = vi.fn();
+    const { container } = render(
+      <MemoryGraph 
+        onOpenMemoryNodeDialog={onOpenDialog}
+        graphActive={false}
+        setGraphActive={setGraphActive}
+      />
+    );
+
+    expect(container.textContent).toContain("Click inside the border to interact with the graph");
+  });
+
+  it("should display correct message when graph is active", () => {
+    const onOpenDialog = vi.fn();
+    const setGraphActive = vi.fn();
+    const { container } = render(
+      <MemoryGraph 
+        onOpenMemoryNodeDialog={onOpenDialog}
+        graphActive={true}
+        setGraphActive={setGraphActive}
+      />
+    );
+
+    expect(container.textContent).toContain("Click outside the graph to navigate the memory page");
+  });
+
+  it("should call setGraphActive when clicking graph area while inactive", () => {
+    const onOpenDialog = vi.fn();
+    const setGraphActive = vi.fn();
+    const { container } = render(
+      <MemoryGraph 
+        onOpenMemoryNodeDialog={onOpenDialog}
+        graphActive={false}
+        setGraphActive={setGraphActive}
+      />
+    );
+
+    const graphBorder = container.querySelector('div[class*="border-4"]');
+    if (graphBorder) {
+      fireEvent.click(graphBorder);
+      expect(setGraphActive).toHaveBeenCalledWith(true);
+    }
   });
 });
