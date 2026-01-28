@@ -40,7 +40,7 @@ export default function Memory() {
 
   return (
     <main 
-      className="flex min-h-screen flex-col items-start justify-start  p-12 bg-gradient-to-br from-[#1a0033] via-[#2a1a4a] to-[#0f0f23]"
+      className="flex min-h-screen flex-col items-start justify-start p-12 bg-gradient-to-br from-[#1a0033] via-[#2a1a4a] to-[#0f0f23]"
       onClick={handlePageClick}
     >
       {/* Memory Filter Component */}
@@ -58,57 +58,59 @@ export default function Memory() {
         onClearFilters={clearFilters}
       />
 
-      <div className="flex items-end gap-4 w-full max-w-screen">
-        {/* Memory Types Legend */}
+      {/* Main Content: Labels and Graph */}
+      <div className="flex flex-col lg:flex-row lg:items-end gap-4 w-full max-w-full">
+        {/* Memory Types Legend - 20% width on large screens, full width on small */}
         <div 
-          className="w-1/5 flex-shrink-0 bg-[#e194ff]/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-[#4c1d95]/50 shadow-2xl text-sm"
+          className="w-full lg:w-1/5 flex-shrink-0 bg-[#e194ff]/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-[#4c1d95]/50 shadow-2xl text-sm"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="font-medium text-[#000000] mb-3">Memory Types</div>
-          <div className="space-y-2">
+          {/* Grid layout: 2 columns on small screens, 1 column on large screens */}
+          <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-2 lg:space-y-0">
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-[#3b82f6] rounded-full shadow-sm shadow-[#3b82f6]/30"></div>
+              <div className="w-3 h-3 bg-[#3b82f6] rounded-full shadow-sm shadow-[#3b82f6]/30 flex-shrink-0"></div>
               <div className="flex flex-col leading-tight">
                 <span className="text-[#000000]">Chunks</span>
                 <span className="text-[#000000] text-xs">Raw information & notes</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-[#a78bfa] rounded-full shadow-sm shadow-[#a78bfa]/30"></div>
+              <div className="w-3 h-3 bg-[#a78bfa] rounded-full shadow-sm shadow-[#a78bfa]/30 flex-shrink-0"></div>
               <div className="flex flex-col leading-tight">
                 <span className="text-[#000000]">Summaries</span>
                 <span className="text-[#000000] text-xs">Condensed overviews</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-[#10b981] rounded-full shadow-sm shadow-[#10b981]/30"></div>
+              <div className="w-3 h-3 bg-[#10b981] rounded-full shadow-sm shadow-[#10b981]/30 flex-shrink-0"></div>
               <div className="flex flex-col leading-tight">
                 <span className="text-[#000000]">Interactions</span>
                 <span className="text-[#000000] text-xs">Questions & feedback</span>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-3 h-3 bg-[#fbbf24] rounded-full shadow-sm shadow-[#fbbf24]/30"></div>
+              <div className="w-3 h-3 bg-[#fbbf24] rounded-full shadow-sm shadow-[#fbbf24]/30 flex-shrink-0"></div>
               <div className="flex flex-col leading-tight">
                 <span className="text-[#000000]">Workflows</span>
                 <span className="text-[#000000] text-xs">Automated results</span>
               </div>
             </div>
-            <div className="mt-4 pt-3 border-t border-[#4c1d95]/60">
-              <div className="flex items-center gap-3">
-                <span className="text-[#000000] text-xs">Node size represents relevance score</span>
-              </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-[#4c1d95]/60">
+            <div className="flex items-center gap-3">
+              <span className="text-[#000000] text-xs">Node size represents relevance score</span>
             </div>
           </div>
         </div>
 
-        {/* Memory Graph Container */}
+        {/* Memory Graph Container - 80% width on large screens, full width on small */}
         <div 
-          className="flex-1 flex flex-col items-center justify-center relative h-[600px]"
+          className="w-full lg:w-4/5 flex flex-col items-center justify-center h-[60vh] min-h-0"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Speech Bubble - Outside the graph */}
-          <div className="mb-4 z-10">
+          {/* Speech Bubble */}
+          <div className="mb-4 flex-shrink-0">
             <div className="relative bg-white px-4 py-2 rounded-lg shadow-lg border-2 border-[#a78bfa]">
               <p className="text-sm font-medium text-gray-800 whitespace-nowrap">
                 {graphActive 
@@ -118,14 +120,12 @@ export default function Memory() {
               {/* Speech bubble arrow */}
               <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
                 <div className="border-8 border-transparent border-t-[#a78bfa]"></div>
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full">
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Memory Graph */}
-          <div className="w-full flex-1">
+          {/* Memory Graph - with fixed height calculation */}
+          <div className="w-full h-[calc(60vh-4rem)] overflow-hidden">
             <MemoryGraph 
               onOpenMemoryNodeDialog={onOpenMemoryNodeDialog}
               graphActive={graphActive}
