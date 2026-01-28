@@ -46,7 +46,7 @@ describe("MemoryActivity Component", () => {
   });
 
   it("should render heatmap with 7 rows (days)", () => {
-    const { container } = render(<MemoryActivity />);
+    render(<MemoryActivity />);
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     days.forEach((day) => {
       expect(screen.getByText(day)).toBeDefined();
