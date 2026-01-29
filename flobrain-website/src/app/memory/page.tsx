@@ -108,21 +108,7 @@ export default function Memory() {
         className="flex-1 flex flex-col items-center justify-center relative h-[600px]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Speech Bubble - Outside the graph */}
-        <div className="mb-4 z-10">
-          <div className="relative bg-white px-4 py-2 rounded-lg shadow-lg border-2 border-[#a78bfa]">
-            <p className="text-sm font-medium text-gray-800 whitespace-nowrap">
-              {graphActive 
-                ? "Click outside the graph to navigate the memory page" 
-                : "Click inside the border to interact with the graph"}
-            </p>
-            {/* Speech bubble arrow */}
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-px">
-              <div className="border-8 border-transparent border-t-[#a78bfa]" />
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-full" />
-            </div>
-          </div>
-        </div>
+        
 
         {/* Memory Graph */}
         <div className="w-full flex-1">

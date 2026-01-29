@@ -16,7 +16,7 @@ interface MemoryGraphProps {
 
 export const MemoryGraph = ({onOpenMemoryNodeDialog, graphActive, setGraphActive}: MemoryGraphProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const graphRef = useRef<any>(null);
+    
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
     useEffect(() => {
@@ -56,6 +56,14 @@ export const MemoryGraph = ({onOpenMemoryNodeDialog, graphActive, setGraphActive
             className="w-full h-full relative"
             onClick={handleOutsideClick}
         >
+            {/* Instruction Message */}
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-black/50 text-white px-4 py-2 rounded-lg text-sm">
+                {graphActive 
+                    ? "Click outside the graph to navigate the memory page"
+                    : "Click inside the border to interact with the graph"
+                }
+            </div>
+
             {/* Graph Container with Border */}
             <div 
                 className={`w-full h-full border-4 rounded-xl transition-all duration-300 ${
@@ -70,7 +78,6 @@ export const MemoryGraph = ({onOpenMemoryNodeDialog, graphActive, setGraphActive
                     style={{ pointerEvents: graphActive ? 'auto' : 'none' }}
                 >
                     <ForceGraph2D
-                        ref={graphRef}
                         graphData={{nodes: memoryNodes, links: memoryLinks}}
                         width={dimensions.width}
                         height={dimensions.height}
@@ -99,13 +106,15 @@ export const MemoryGraph = ({onOpenMemoryNodeDialog, graphActive, setGraphActive
                             const nodeX = node.x??0;
                             const nodeY = node.y??0;
 
-                            bckgDimensions &&
-                                ctx.fillRect(
+                            if (bckgDimensions) {
+                            ctx.fillRect(
                                 nodeX - bckgDimensions[0] / 2,
                                 nodeY - bckgDimensions[1] / 2,
                                 bckgDimensions[0],
                                 bckgDimensions[1]
-                                )
+                            );
+                        }
+
                         }}
                         linkColor={() => "#ffffff"}
                         backgroundColor="rgba(0,0,0,0)"

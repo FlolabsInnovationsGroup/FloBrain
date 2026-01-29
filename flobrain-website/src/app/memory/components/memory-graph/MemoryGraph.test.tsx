@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { MemoryGraph } from "./index";
+import React from "react";
 
 // Mock the data
 vi.mock('../../mockData', () => ({
@@ -13,11 +14,23 @@ vi.mock('../../mockData', () => ({
   ]
 }));
 
+// Define proper types for mock props
+interface MockForceGraphProps {
+  graphData: {
+    nodes: Array<{ id: string; name: string; group: number }>;
+    links: Array<{ source: string; target: string }>;
+  };
+  width: number;
+  height: number;
+  onNodeClick?: (node: { id: string; name: string }) => void;
+  [key: string]: unknown;
+}
+
 // Mock next/dynamic to return the mock component directly
 vi.mock("next/dynamic", () => ({
-  default: (_fn: any) => {
+  default: <T,>(_fn: () => Promise<T>) => {
     // Return a mock component that simulates ForceGraph2D
-    return (props: any) => {
+    return (props: MockForceGraphProps) => {
       return (
         <div data-testid="force-graph-mock">
           <button
@@ -133,21 +146,7 @@ describe("MemoryGraph Component", () => {
     expect(screen.getByTestId("force-graph-mock")).toBeDefined();
   });
 
-  it("should display correct message when graph is inactive", () => {
-    const onOpenDialog = vi.fn();
-    const setGraphActive = vi.fn();
-    const { container } = render(
-      <MemoryGraph 
-        onOpenMemoryNodeDialog={onOpenDialog}
-        graphActive={false}
-        setGraphActive={setGraphActive}
-      />
-    );
-
-    expect(container.textContent).toContain("Click inside the border to interact with the graph");
-  });
-
-  it("should display correct message when graph is active", () => {
+  it("should apply active border styling when graph is active", () => {
     const onOpenDialog = vi.fn();
     const setGraphActive = vi.fn();
     const { container } = render(
@@ -158,7 +157,25 @@ describe("MemoryGraph Component", () => {
       />
     );
 
-    expect(container.textContent).toContain("Click outside the graph to navigate the memory page");
+    const graphBorder = container.querySelector('div[class*="border-4"]');
+    expect(graphBorder).toBeTruthy();
+    expect(graphBorder?.className).toContain('border-[#a78bfa]');
+  });
+
+  it("should apply inactive border styling when graph is inactive", () => {
+    const onOpenDialog = vi.fn();
+    const setGraphActive = vi.fn();
+    const { container } = render(
+      <MemoryGraph 
+        onOpenMemoryNodeDialog={onOpenDialog}
+        graphActive={false}
+        setGraphActive={setGraphActive}
+      />
+    );
+
+    const graphBorder = container.querySelector('div[class*="border-4"]');
+    expect(graphBorder).toBeTruthy();
+    expect(graphBorder?.className).toContain('border-[#4c1d95]/50');
   });
 
   it("should call setGraphActive when clicking graph area while inactive", () => {
