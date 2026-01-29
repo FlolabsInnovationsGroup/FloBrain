@@ -107,13 +107,13 @@ export const MemoryGraph = ({onOpenMemoryNodeDialog, graphActive, setGraphActive
                             const nodeY = node.y??0;
 
                             if (bckgDimensions) {
-                            ctx.fillRect(
-                                nodeX - bckgDimensions[0] / 2,
-                                nodeY - bckgDimensions[1] / 2,
-                                bckgDimensions[0],
-                                bckgDimensions[1]
-                            );
-                        }
+                                ctx.fillRect(
+                                    nodeX - bckgDimensions[0] / 2,
+                                    nodeY - bckgDimensions[1] / 2,
+                                    bckgDimensions[0],
+                                    bckgDimensions[1]
+                                );
+                            }
 
                         }}
                         linkColor={() => "#ffffff"}

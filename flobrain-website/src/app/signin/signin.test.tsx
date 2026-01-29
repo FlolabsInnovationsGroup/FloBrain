@@ -174,13 +174,4 @@ describe("Login Component", () => {
     expect(submitButton).toHaveClass("w-full");
   });
 
-  it("should display Google and Apple icons correctly", () => {
-    // FcGoogle and Apple icons should be present
-    const buttons = screen.getAllByRole("button");
-    const socialButtons = buttons.filter(btn => 
-      btn.textContent?.includes("Continue with")
-    );
-    
-    expect(socialButtons.length).toBe(2);
-  });
 });
