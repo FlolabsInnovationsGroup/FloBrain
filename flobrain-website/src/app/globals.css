@@ -3,21 +3,13 @@
 @tailwind utilities;
 
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Site Background and Text */
-  --background: #09090b; /* Zinc 950 (Dark) */
-  --foreground: #fafafa; /* Zinc 50 (Light) */
-
-  /* Your Brand Colors */
+  
   --color-brain: #a855f7; /* Purple */
-  --color-memory: #10b981; /* Green */
-}
-
-body {
-  color: var(--foreground);
-  background: linear-gradient(to bottom right, #290036, #070014);
-  min-height: 100vh; 
-  background-attachment: fixed;
-  font-family: Arial, Helvetica, sans-serif;
+  --color-memory: #000000; /* Black */
+  --radius:
 }
