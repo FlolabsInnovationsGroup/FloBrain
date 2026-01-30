@@ -14,19 +14,20 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "plugins": [{ "name": "next" }],
     "paths": {
       "@/app/*": ["./src/app/*"],
       "@/components/*": ["./src/components/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/styles/*": ["./src/styles/*"],
       "@/*": ["./src/*"]
-    }
-
+    },
+    "types": [
+      "node",
+      "vitest",
+      "@testing-library/jest-dom",
+      "@testing-library/jest-dom/matchers"
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -35,7 +36,12 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",
-    "src/declarations.d.ts"
+    "src/declarations.d.ts",
+    "vitest.setup.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "cypress",
+    "cypress.config.ts"
+  ]
 }
