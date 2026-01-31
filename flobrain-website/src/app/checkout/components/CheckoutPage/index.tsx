@@ -235,7 +235,7 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
               {/* Features Included */}
               <div className="mb-6">
                 <h4 className="text-sm font-medium text-white mb-3">
-                  What's included:
+                  What is included:
                 </h4>
                 <ul className="space-y-2">
                   {selectedPlan.features.slice(0, 5).map((feature, idx) => (

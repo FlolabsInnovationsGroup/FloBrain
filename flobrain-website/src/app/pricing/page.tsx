@@ -149,7 +149,7 @@ export default function Pricing() {
     // This will be called from the popup for free/custom plans
     if (selectedTier?.price === "Free") {
       // Activate free plan
-      console.log("Activating free plan:", selectedTier?.name);
+      console.warn("Activating free plan:", selectedTier?.name);
       // Call your API to activate the plan
       setIsPopupOpen(false);
     }

@@ -108,7 +108,7 @@ export default function PlanUpgradePopup({
         {selectedPlan.price !== "Free" && selectedPlan.price !== "Custom" && (
           <div className="mb-6">
             <p className="text-[#a1a1aa] text-sm mb-3">
-              You'll be redirected to complete your billing information and payment.
+              You will be redirected to complete your billing information and payment.
             </p>
           </div>
         )}

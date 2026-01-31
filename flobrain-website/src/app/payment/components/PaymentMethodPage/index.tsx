@@ -80,14 +80,14 @@ function PaymentMethodForm() {
       }
 
       // Here you would send paymentMethod.id to your backend
-      console.log("Payment Method ID:", paymentMethod?.id);
+      console.warn("Payment Method ID:", paymentMethod?.id);
 
       // Simulate successful payment
       setPaymentSuccess(true);
       setTimeout(() => {
         router.push("/dashboard");
       }, 2000);
-    } catch (err) {
+    } catch (_err) {
       setError("An unexpected error occurred");
       setIsProcessing(false);
     }
