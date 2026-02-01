@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,5 +19,10 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom gradient radial background */
+.bg-gradient-radial {
+  background: radial-gradient(circle at center, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
 }
