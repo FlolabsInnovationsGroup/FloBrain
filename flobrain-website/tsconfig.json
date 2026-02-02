@@ -24,9 +24,8 @@
     },
     "types": [
       "node",
-      "vitest",
-      "@testing-library/jest-dom",
-      "@testing-library/jest-dom/matchers"
+      "jest",
+      "@testing-library/jest-dom"
     ]
   },
   "include": [
