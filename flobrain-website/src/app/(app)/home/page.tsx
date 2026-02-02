@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, Cpu, Layers, ChevronLeft, ChevronRight, Sparkles, Terminal } from 'lucide-react';
 
 // --- SUB-COMPONENT: STREAMING TEXT (GPT-STYLE) ---
+
 const StreamingText = ({ text }: { text: string }) => {
   const [displayedText, setDisplayedText] = useState("");
   

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { MemoryGraph } from "./components/memory-graph/";
+import { MemoryGraph } from "./components/memory-graph";
 import { MemoryNodeDetailsDialog } from "./components/memory-node-details-dialog";
 import { MemoryFilter } from "./components/memory-filter";
-import { memoryNode } from "../../types/MemoryNodes";
+import { memoryNode } from "../../../types/MemoryNodes";
 
 export default function Memory() {
   const [selectedNode, setSelectedNode] = useState<memoryNode | null>(null);
