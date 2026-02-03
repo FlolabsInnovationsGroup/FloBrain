@@ -32,6 +32,7 @@ export default function Navbar() {
               <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Dashboard</Link>
               <Link href="/brain" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Brain</Link>
               <Link href="/memory" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Memory</Link>
+              <Link href="/pricing" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Pricing</Link>
             </div>
             
             {/* Auth Buttons */}
