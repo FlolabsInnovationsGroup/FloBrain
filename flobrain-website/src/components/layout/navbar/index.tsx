@@ -33,6 +33,7 @@ export default function Navbar() {
               <Link href="/brain" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Brain</Link>
               <Link href="/memory" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Memory</Link>
               <Link href="/pricing" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Pricing</Link>
+              <Link href="/profile" className="text-zinc-400 hover:text-white transition-colors text-sm font-medium">Profile</Link>
             </div>
             
             {/* Auth Buttons */}
@@ -69,6 +70,7 @@ export default function Navbar() {
             <Link href="/dashboard" className="block px-3 py-2 text-zinc-300 hover:text-white" onClick={() => setIsOpen(false)}>Dashboard</Link>
             <Link href="/brain" className="block px-3 py-2 text-zinc-300 hover:text-white" onClick={() => setIsOpen(false)}>Brain</Link>
             <Link href="/memory" className="block px-3 py-2 text-zinc-300 hover:text-white" onClick={() => setIsOpen(false)}>Memory</Link>
+            <Link href="/profile" className="block px-3 py-2 text-zinc-300 hover:text-white" onClick={() => setIsOpen(false)}>Profile</Link>
             
             {/* Mobile Auth Links */}
             <div className="border-t border-zinc-700 pt-2 mt-2">
