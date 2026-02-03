@@ -266,15 +266,16 @@ export default function BrainPage() {
           onExportChat={handleExportChat}
        />
 
-       <div className="flex flex-1 flex-col min-w-0">
-          {/* Toggle button when sidebar is closed */}
+       <div className="flex flex-1 flex-col min-w-0 relative">
+          {/* HAMBURGER MENU BUTTON - ALIGNED WITH SIDEBAR TOP */}
           {!isSidebarOpen && (
-            <div className="absolute top-4 left-4 z-50">
+            <div className="fixed top-6 left-4 z-[9999]">
                <button 
                  onClick={toggleSidebar}
-                 className="p-2 bg-white/5 hover:bg-white/10 rounded-md transition-colors"
+                 className="p-2 hover:bg-white/10 rounded-lg transition-all"
+                 title="Open Sidebar"
                >
-                 <Menu size={20} className="text-white" />
+                 <Menu size={24} className="text-white" />
                </button>
             </div>
           )}
