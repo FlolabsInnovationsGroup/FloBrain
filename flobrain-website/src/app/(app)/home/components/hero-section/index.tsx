@@ -1,7 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import Image from "next/image";
-import brainImage from '../../../../../assets/images/brain.svg'
-
+import brainImage from "@/assets/images/brain.svg";
 export const HeroSection = ()  => {
     return (
         <div  className="w-full px-[179px] py-[150px] flex flex-row items-center justify-between ">
