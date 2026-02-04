@@ -37,29 +37,34 @@ export default function Navbar() {
             </Link>
           </div>
           
-          {/* RIGHT: Conditional Navigation */}
+    {/* RIGHT: Conditional Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             
-            {/* LOGGED IN VIEW: Only show Home, Dashboard, Brain if inside the app */}
+            {/* LOGGED IN VIEW: Only show app links if inside the app */}
             {isAppRoute ? (
               <div className="flex items-baseline space-x-6 text-zinc-400">
                 <Link href="/home" className="hover:text-white transition-colors text-sm font-medium">Home</Link>
                 <Link href="/dashboard" className="hover:text-white transition-colors text-sm font-medium">Dashboard</Link>
                 <Link href="/brain" className="hover:text-white transition-colors text-sm font-medium">Brain</Link>
-                {/* You could add a 'Sign Out' button here later */}
+                <Link href="/memory" className="hover:text-white transition-colors text-sm font-medium">Memory</Link>
               </div>
             ) : (
-              /* LOGGED OUT VIEW: Only show Sign In and Register on the landing page */
-              <div className="flex items-center gap-4">
-                <Link href="/signin" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
-                  Sign In
+              /* LOGGED OUT VIEW: Show Auth buttons + Pricing on landing page */
+              <div className="flex items-center gap-6">
+                <Link href="/pricing" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+                  Pricing
                 </Link>
-                <Link 
-                  href="/register" 
-                  className="px-5 py-2.5 text-sm font-semibold bg-[#9333ea] text-white rounded-xl hover:bg-[#a855f7] transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)]"
-                >
-                  Register
-                </Link>
+                <div className="flex items-center gap-4">
+                  <Link href="/signin" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
+                    Sign In
+                  </Link>
+                  <Link 
+                    href="/register" 
+                    className="px-5 py-2.5 text-sm font-semibold bg-[#9333ea] text-white rounded-xl hover:bg-[#a855f7] transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)]"
+                  >
+                    Register
+                  </Link>
+                </div>
               </div>
             )}
           </div>
