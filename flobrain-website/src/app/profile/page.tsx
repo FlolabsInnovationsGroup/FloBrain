@@ -4,8 +4,8 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import ProfileSettings from "./components/ProfileSettings";
 import AccountSecuritySettings from "./components/AccountSecuritySettings";
-import NotificationsSettings from "./components/NotificationsSettings";
-import HelpSettings from "./components/HelpSettings";
+// import NotificationsSettings from "./components/NotificationsSettings";
+// import HelpSettings from "./components/HelpSettings";
 
 type SettingsTab = "profile" | "account" | "notifications" | "help";
 
@@ -116,9 +116,9 @@ export default function SettingsPage() {
 
           {/* Content Area */}
           <div className="flex-1 p-8 overflow-y-auto">
-            {/* {activeTab === "profile" && <ProfileSettings />}
+            {activeTab === "profile" && <ProfileSettings />}
             {activeTab === "account" && <AccountSecuritySettings />}
-            {activeTab === "notifications" && <NotificationsSettings />}
+            {/*{activeTab === "notifications" && <NotificationsSettings />}
             {activeTab === "help" && <HelpSettings />} */}
           </div>
         </div>
