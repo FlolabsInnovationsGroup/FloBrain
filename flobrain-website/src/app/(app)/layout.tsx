@@ -1,5 +1,3 @@
-import Footer from "@/components/layout/footer";
-
 export default function AppLayout({
   children,
 }: {
@@ -11,7 +9,6 @@ export default function AppLayout({
       <main className="flex-1"> 
         {children}
       </main>
-      <Footer />
     </>
   );
 }
