@@ -1,0 +1,64 @@
+# ================================
+# Python
+# ================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+
+# Virtual environments
+*venv/
+.env/
+.env.*
+flobrain-backend-venv/
+
+# ================================
+# Django
+# ================================
+*.log
+local_settings.py
+db.sqlite3
+dummy.sqlite3
+staticfiles/
+media/
+
+# Django migrations (keep __init__.py)
+migrations/
+!migrations/__init__.py
+
+# ================================
+# SQLAlchemy / Alembic
+# ================================
+alembic/versions/*.pyc
+
+# ================================
+# Docker
+# ================================
+*.pid
+docker-data/
+postgres_data/
+.env.docker
+
+# ================================
+# IDE / Editor
+# ================================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ================================
+# OS
+# ================================
+.DS_Store
+Thumbs.db
+
+# ================================
+# Test / Coverage
+# ================================
+.coverage
+htmlcov/
+.pytest_cache/
