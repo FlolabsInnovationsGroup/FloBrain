@@ -1,15 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
+import Link from "next/link";
 
 export default function ProfileSettings() {
   const [formData, setFormData] = useState({
     fullName: "John Doe",
     email: "john.doe@example.com",
-    bio: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const currentPlan = {
+    name: "Developer",
+    price: "Free",
+    period: "",
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -51,19 +57,29 @@ export default function ProfileSettings() {
         />
       </div>
 
-      <div>
-        <label htmlFor="bio" className="block text-white text-sm font-medium mb-2">
-          Bio
-        </label>
-        <textarea
-          id="bio"
-          name="bio"
-          value={formData.bio}
-          onChange={handleChange}
-          placeholder="Tell us a little about yourself..."
-          rows={4}
-          className="w-full px-4 py-3 bg-indigo-950/50 border border-purple-500/30 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-purple-500/60 resize-none"
-        />
+      {/* Current Plan Section (replaces Bio) */}
+      <div className="rounded-xl border border-purple-500/30 bg-indigo-950/50 p-4">
+        <h3 className="text-lg font-semibold text-white mb-2">Current Plan</h3>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <p className="text-white font-medium">
+              {currentPlan.name}{" "}
+              <span className="text-sm text-white/70">
+                {currentPlan.price}
+                {currentPlan.period && <span>{currentPlan.period}</span>}
+              </span>
+            </p>
+            <p className="text-xs text-white/60 mt-1">
+              Manage your subscription and upgrade your plan at any time.
+            </p>
+          </div>
+          <Link
+            href="/pricing"
+            className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-[#8b5cf6] to-[#c084fc] text-white text-sm font-medium hover:shadow-lg hover:shadow-[#8b5cf6]/40 transition-all"
+          >
+            Change plan
+          </Link>
+        </div>
       </div>
 
       <button
