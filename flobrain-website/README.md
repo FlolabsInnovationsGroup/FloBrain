@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## to add new components from shadcn/ui
+
+npx shadcn@latest add "component name"
+example :   npx shadcn@latest add card
+            npx shadcn@latest add button
+
+
 ## Getting Started
 
 First, run the development server:

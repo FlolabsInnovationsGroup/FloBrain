@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/navbar"; // Import it here
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,11 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
-        <div className="min-h-screen"> 
-          {children}
+        <div className="min-h-screen flex flex-col">
+          <Navbar /> {/* Now it will show on the landing page! */}
+          <div className="flex-1">
+            {children}
+          </div>
         </div>
-        <Footer/>
       </body>
     </html>
   );
