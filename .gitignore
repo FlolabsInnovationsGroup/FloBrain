@@ -1,3 +1,14 @@
 __pycache__/
 db.sqlite3
 .env
+# Node + project ignores
+node_modules/
+.env
+.env.*
+.vscode/
+dist/
+coverage/
+logs/
+*.log
+.DS_Store
+
