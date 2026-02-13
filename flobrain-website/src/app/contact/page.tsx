@@ -9,7 +9,7 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 relative">
       {/* Soft glowing vignette */}
-      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-purple-900/20"></div>
+      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-purple-900/20" />
 
       {/* Navigation */}
       <nav className="relative z-10 w-full border-b border-white/10 backdrop-blur-md sticky top-0">
@@ -271,7 +271,7 @@ export default function Contact() {
       <footer className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-white/60 text-sm">© 2026 FloLabs Brain. All rights reserved.</p>
+            <p className="text-white/60 text-sm">&copy; 2026 FloLabs Brain. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Privacy</a>
               <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Terms</a>
