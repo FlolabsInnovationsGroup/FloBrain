@@ -147,7 +147,6 @@ export default function BillingSettings() {
             type="button"
             onClick={() => {
               // TODO: Call API to downgrade
-              // eslint-disable-next-line no-alert
               if (confirm("Are you sure you want to downgrade to the Developer plan?")) {
                 console.warn("Downgrading plan to Developer");
               }
@@ -160,7 +159,6 @@ export default function BillingSettings() {
             type="button"
             onClick={() => {
               // TODO: Call API to cancel subscription
-              // eslint-disable-next-line no-alert
               if (
                 confirm(
                   "Are you sure you want to cancel your subscription? Your access will remain until the end of the current billing period."

@@ -3,8 +3,8 @@ import { describe, it, expect, vi } from "vitest";
 import Navbar from ".";
 
 vi.mock("next/image", () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  default: (props: any) => <img alt="" {...props} data-testid="mock-hero-image" />
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @next/next/no-img-element
+  default: (props: any) => <img alt="" {...props} data-testid="mock-hero-image" />,
 }));
 
 

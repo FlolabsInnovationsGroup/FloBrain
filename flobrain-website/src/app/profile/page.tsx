@@ -16,12 +16,13 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
   const [isOpen, setIsOpen] = useState(true);
   const [isMenuVisible, setIsMenuVisible] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < MOBILE_BREAKPOINT : false
+  );
 
   // Auto-hide menu when viewport shrinks to mobile; auto-show when expanding to desktop
   useEffect(() => {
     let wasMobile = window.innerWidth < MOBILE_BREAKPOINT;
-    setIsMobile(wasMobile);
 
     const handleResize = () => {
       const mobile = window.innerWidth < MOBILE_BREAKPOINT;

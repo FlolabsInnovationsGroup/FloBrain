@@ -6,7 +6,7 @@ describe("ProfileSettings Component", () => {
   beforeEach(() => {
     // Mock window.confirm
     vi.spyOn(window, 'confirm').mockImplementation(() => false);
-    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -82,7 +82,7 @@ describe("ProfileSettings Component", () => {
 
   it("should log deletion when user confirms delete", () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true);
-    const consoleSpy = vi.spyOn(console, 'log');
+    const consoleSpy = vi.spyOn(console, 'warn');
     
     render(<ProfileSettings />);
     
@@ -94,7 +94,7 @@ describe("ProfileSettings Component", () => {
 
   it("should not log deletion when user cancels confirmation", () => {
     vi.spyOn(window, 'confirm').mockReturnValue(false);
-    const consoleSpy = vi.spyOn(console, 'log');
+    const consoleSpy = vi.spyOn(console, 'warn');
     
     render(<ProfileSettings />);
     
