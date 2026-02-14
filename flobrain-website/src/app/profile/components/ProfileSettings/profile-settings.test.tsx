@@ -19,7 +19,8 @@ describe("ProfileSettings Component", () => {
     
     expect(screen.getByLabelText(/full name/i)).toBeDefined();
     expect(screen.getByLabelText(/email address/i)).toBeDefined();
-    expect(screen.getByLabelText(/bio/i)).toBeDefined();
+    expect(screen.getByRole("heading", { name: /current plan/i })).toBeDefined();
+    expect(screen.getByRole("link", { name: /change plan/i })).toBeDefined();
     expect(screen.getByRole('button', { name: /delete account/i })).toBeDefined();
   });
 
@@ -51,25 +52,24 @@ describe("ProfileSettings Component", () => {
     expect(emailInput.value).toBe('jane.smith@example.com');
   });
 
-  it("should update bio field when user types", () => {
+  it("should display current plan information", () => {
     render(<ProfileSettings />);
     
-    const bioTextarea = screen.getByLabelText(/bio/i) as HTMLTextAreaElement;
-    fireEvent.change(bioTextarea, { target: { value: 'Software engineer with passion for AI' } });
-    
-    expect(bioTextarea.value).toBe('Software engineer with passion for AI');
+    expect(screen.getByText(/developer/i)).toBeDefined();
+    expect(screen.getByText(/free/i)).toBeDefined();
   });
 
-  it("should display bio placeholder text when empty", () => {
+  it("should navigate user to pricing page when clicking change plan link", () => {
     render(<ProfileSettings />);
     
-    const bioTextarea = screen.getByPlaceholderText(/tell us a little about yourself/i);
-    expect(bioTextarea).toBeDefined();
+    const changePlanLink = screen.getByRole("link", { name: /change plan/i }) as HTMLAnchorElement;
+    expect(changePlanLink).toBeDefined();
+    expect(changePlanLink.getAttribute("href")).toBe("/pricing");
   });
 
   it("should show confirmation dialog when delete account is clicked", () => {
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
-    
+
     render(<ProfileSettings />);
     
     const deleteButton = screen.getByRole('button', { name: /delete account/i });
@@ -81,7 +81,7 @@ describe("ProfileSettings Component", () => {
   });
 
   it("should log deletion when user confirms delete", () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
     const consoleSpy = vi.spyOn(console, 'log');
     
     render(<ProfileSettings />);
@@ -93,7 +93,7 @@ describe("ProfileSettings Component", () => {
   });
 
   it("should not log deletion when user cancels confirmation", () => {
-    const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
     const consoleSpy = vi.spyOn(console, 'log');
     
     render(<ProfileSettings />);

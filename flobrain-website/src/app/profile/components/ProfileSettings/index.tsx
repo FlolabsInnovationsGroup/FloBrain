@@ -21,7 +21,7 @@ export default function ProfileSettings() {
 
   const handleDeleteAccount = () => {
     if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      console.log("Deleting account...");
+      console.warn("Deleting account...");
     }
   };
 
