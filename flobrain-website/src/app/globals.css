@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,8 +10,19 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  
+
   --color-brain: #a855f7; /* Purple */
   --color-memory: #000000; /* Black */
-  --radius:
+  --radius: 0.5rem;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom gradient radial background */
+.bg-gradient-radial {
+  background: radial-gradient(circle at center, rgba(147, 51, 234, 0.1) 0%, transparent 70%);
 }

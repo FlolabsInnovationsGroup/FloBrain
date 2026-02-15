@@ -1,3 +1,6 @@
+__pycache__/
+db.sqlite3
+.env
 # Node + project ignores
 node_modules/
 .env
@@ -8,3 +11,4 @@ coverage/
 logs/
 *.log
 .DS_Store
+
