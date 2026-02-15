@@ -17,7 +17,10 @@ const StreamingText = ({ text }: { text: string }) => {
       i++;
       if (i >= text.length) clearInterval(interval);
     }, 30); 
-    return () => clearInterval(interval);
+    
+    return () => {
+      clearInterval(interval);
+    };
   }, [text]);
 
   return (
@@ -33,7 +36,6 @@ const StreamingText = ({ text }: { text: string }) => {
 };
 
 export default function Brain() {
- 
   const [brainState, setBrainState] = useState<'idle' | 'processing'>('idle');
   
   

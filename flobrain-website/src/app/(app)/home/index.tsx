@@ -1,3 +1,5 @@
+"use client";
+
 import { ApplicationsCard } from "./components/applications-card";
 import { FeaturesCard } from "./components/features-card";
 import { FooterBanner } from "./components/footer-banner";
@@ -8,6 +10,7 @@ import { applications, features } from "./constants";
  * It is rendered at the root "/" when userLogged is false.
  */
 export default function HomePage() {
+
   return (
     <main className="w-full h-full flex flex-col items-center">
       {/* 1. Hero Section */}
