@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Menu } from 'lucide-react';
 import type { ChatHistory, Folder, Message } from '@/types/chat';
 import Sidebar from './components/Sidebar/index';
@@ -15,12 +15,15 @@ export default function BrainPage() {
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Store pending message to send after chat creation
+  const pendingMessageRef = useRef<{ text: string; image?: string } | null>(null);
 
   const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
 
 
   // Handle new chat
-  const handleNewChat = () => {
+  const handleNewChat = useCallback(() => {
     const newChatId = Date.now();
     const newChat: ChatHistory = {
       id: newChatId,
@@ -36,16 +39,71 @@ export default function BrainPage() {
       ]
     };
     
-    setChatHistory([newChat, ...chatHistory]);
+    setChatHistory(prev => [newChat, ...prev]);
     setCurrentChatId(newChatId);
     setMessages(newChat.messages);
-  };
+  }, []);
+
+  // Effect to send pending message after chat is created
+  useEffect(() => {
+    if (currentChatId && pendingMessageRef.current) {
+      const { text, image } = pendingMessageRef.current;
+      pendingMessageRef.current = null;
+      
+      // Send the message
+      const messageId = `msg-${Date.now()}`;
+      const userMessage: Message = {
+        id: messageId,
+        type: 'user',
+        text,
+        image,
+        timestamp: new Date(),
+      };
+
+      const newMessages = [...messages, userMessage];
+      setMessages(newMessages);
+
+      // Update chat history
+      setChatHistory(prev => prev.map(chat => 
+        chat.id === currentChatId
+          ? { 
+              ...chat, 
+              messages: newMessages,
+              title: chat.title === 'New Chat' ? text.slice(0, 30) + (text.length > 30 ? '...' : '') : chat.title
+            }
+          : chat
+      ));
+
+      // Simulate AI response
+      setIsLoading(true);
+      setTimeout(() => {
+        const aiMessage: Message = {
+          id: `msg-${Date.now()}-ai`,
+          type: 'assistant',
+          text: `I understand you're asking about "${text}". This is a demo response. Connect to a real AI API for actual responses!`,
+          timestamp: new Date(),
+        };
+
+        const updatedMessages = [...newMessages, aiMessage];
+        setMessages(updatedMessages);
+
+        setChatHistory(prev => prev.map(chat => 
+          chat.id === currentChatId
+            ? { ...chat, messages: updatedMessages }
+            : chat
+        ));
+
+        setIsLoading(false);
+      }, 1000);
+    }
+  }, [currentChatId, messages]);
 
   // Handle sending messages
   const handleSendMessage = useCallback(async (text: string, image?: string) => {
     if (!currentChatId) {
+      // Store message to send after chat creation
+      pendingMessageRef.current = { text, image };
       handleNewChat();
-      setTimeout(() => handleSendMessage(text, image), 100);
       return;
     }
 
@@ -93,7 +151,7 @@ export default function BrainPage() {
 
       setIsLoading(false);
     }, 1000);
-  }, [currentChatId, messages]);
+  }, [currentChatId, messages, handleNewChat]);
 
   // Handle loading a chat
   const handleLoadChat = (id: number) => {

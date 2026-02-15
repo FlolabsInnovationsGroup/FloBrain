@@ -2,6 +2,7 @@
 
 import { useState, KeyboardEvent, useRef } from 'react';
 import { Mic, MicOff, Image as ImageIcon, X } from 'lucide-react';
+import Image from 'next/image';
 
 interface ChatInputProps {
   onSendMessage: (text: string, image?: string) => void;
@@ -50,9 +51,10 @@ export default function ChatInput({ onSendMessage, disabled = false }: ChatInput
         };
 
         mediaRecorder.onstop = async () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+new Blob(audioChunks, { type: 'audio/webm' });
           
           // Use Web Speech API for speech-to-text
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
           
           if (SpeechRecognition) {
@@ -60,6 +62,7 @@ export default function ChatInput({ onSendMessage, disabled = false }: ChatInput
             recognition.continuous = false;
             recognition.interimResults = false;
             
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             recognition.onresult = (event: any) => {
               const transcript = event.results[0][0].transcript;
               setInputValue(prev => prev + ' ' + transcript);
@@ -107,9 +110,11 @@ export default function ChatInput({ onSendMessage, disabled = false }: ChatInput
         {/* Image Preview */}
         {imagePreview && (
           <div className="mb-3 relative inline-block">
-            <img 
+            <Image 
               src={imagePreview} 
               alt="Upload preview" 
+              width={200}
+              height={128}
               className="max-h-32 rounded-lg border border-white/20"
             />
             <button

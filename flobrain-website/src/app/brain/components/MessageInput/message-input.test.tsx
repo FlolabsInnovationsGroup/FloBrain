@@ -3,7 +3,6 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ChatInput from '../MessageInput';
-import MessageInput from '../MessageInput';
 
 // Mock the lucide-react icons
 jest.mock('lucide-react', () => ({
@@ -146,14 +145,14 @@ describe('ChatInput Component', () => {
       const file = new File(['image content'], 'test.png', { type: 'image/png' });
       Object.defineProperty(fileInput, 'files', { value: [file] });
 
-      // Mock FileReader
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      global.FileReader = jest.fn().mockImplementation(() => ({
-        readAsDataURL: jest.fn(function() {
-          this.onloadend?.();
-        }),
-        result: 'data:image/png;base64,test',
-      })) as any;
+     // Mock FileReader
+global.FileReader = jest.fn().mockImplementation(() => ({
+  readAsDataURL: jest.fn(function(this: { onloadend?: () => void }) {
+    this.onloadend?.();
+  }),
+  result: 'data:image/png;base64,test',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+})) as any;
 
       fireEvent.change(fileInput);
 

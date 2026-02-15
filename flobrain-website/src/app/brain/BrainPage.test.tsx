@@ -8,7 +8,7 @@ import BrainPage from './page'; // Adjust path if your file is named page.tsx or
 // This isolates the test and avoids errors from missing context or complex child logic.
 
 jest.mock('./components/Sidebar', () => {
-  return function MockSidebar({ isOpen, onToggle }: any) {
+  return function MockSidebar({ isOpen, onToggle }: { isOpen: boolean; onToggle: () => void }) {
     return (
       <div data-testid="sidebar">
         <span>Sidebar is {isOpen ? 'Open' : 'Closed'}</span>
@@ -19,7 +19,7 @@ jest.mock('./components/Sidebar', () => {
 });
 
 jest.mock('./components/Header', () => {
-  return function MockNavbar({ isSidebarOpen, onToggleSidebar }: any) {
+  return function MockNavbar({ isSidebarOpen, onToggleSidebar }: { isSidebarOpen: boolean; onToggleSidebar: () => void }) {
     return (
       <nav data-testid="navbar">
         <span>Nav thinks sidebar is {isSidebarOpen ? 'Open' : 'Closed'}</span>

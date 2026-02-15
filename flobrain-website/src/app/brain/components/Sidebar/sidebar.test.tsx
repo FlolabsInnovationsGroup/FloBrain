@@ -140,7 +140,7 @@ describe('Sidebar Component', () => {
       // The action buttons are initially hidden (opacity-0)
       // They appear on group hover (opacity-0 group-hover:opacity-100)
       // In tests, we can simulate hover by directly triggering mouse events
-      const chatItem = screen.getByText('First Chat').closest('.group');
+      const _chatItem = screen.getByText('First Chat').closest('.group');
       // The buttons should be in the DOM even if not visible
       expect(screen.getAllByTestId('edit-icon').length).toBeGreaterThan(0);
     });
@@ -312,7 +312,7 @@ describe('Sidebar Component', () => {
       // Find folder delete button
       const folderItems = screen.getAllByText('Work');
       const workFolder = folderItems[0];
-      const folderContainer = workFolder.closest('.group');
+      const _folderContainer = workFolder.closest('.group');
       
       // The delete button should be within the folder container
       const deleteButtons = screen.getAllByTestId('trash-icon');

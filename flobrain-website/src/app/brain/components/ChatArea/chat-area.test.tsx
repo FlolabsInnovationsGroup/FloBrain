@@ -2,15 +2,15 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import ChatArea from '../ChatArea'; // Adjust path if necessary
+import ChatArea from '.'; // Adjust path if necessary
 import type { Message } from '@/types/chat';
 
 // Mock the SVG imports
 jest.mock('@/assets/flolabs-logo.svg', () => 'div');
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => (
-    <img src={src} alt={alt} {...props} />
+  default: ({ src: _src, alt }: { src: string; alt?: string }) => (
+    <div data-testid="next-image" role="img" aria-label={alt || 'image'} />
   ),
 }));
 
