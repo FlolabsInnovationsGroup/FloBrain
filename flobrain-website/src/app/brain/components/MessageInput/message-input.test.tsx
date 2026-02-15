@@ -3,6 +3,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ChatInput from '../MessageInput';
+import MessageInput from '../MessageInput';
 
 // Mock the lucide-react icons
 jest.mock('lucide-react', () => ({
@@ -146,6 +147,7 @@ describe('ChatInput Component', () => {
       Object.defineProperty(fileInput, 'files', { value: [file] });
 
       // Mock FileReader
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       global.FileReader = jest.fn().mockImplementation(() => ({
         readAsDataURL: jest.fn(function() {
           this.onloadend?.();
@@ -163,10 +165,7 @@ describe('ChatInput Component', () => {
     test('sends message with image', () => {
       render(<ChatInput onSendMessage={mockOnSendMessage} />);
       
-      // Simulate image preview already set
-      const { rerender } = render(<ChatInput onSendMessage={mockOnSendMessage} />);
-      
-      // We'll directly test the send functionality with image
+      // This test is incomplete - just skip the invalid rerender line
       const sendButton = screen.getByRole('button', { name: /send/i });
       fireEvent.click(sendButton);
 
@@ -176,9 +175,6 @@ describe('ChatInput Component', () => {
 
     test('removes image preview when X button is clicked', () => {
       render(<ChatInput onSendMessage={mockOnSendMessage} />);
-      
-      // Simulate having an image preview
-      const { rerender } = render(<ChatInput onSendMessage={mockOnSendMessage} />);
       
       // The remove button should remove the image
       const removeButton = screen.queryByRole('button', { name: /remove/i });

@@ -2,8 +2,7 @@
 
 import type { Message } from '@/types/chat';
 import { useEffect, useRef } from 'react';
-import Logo from '@/assets/flolabs-logo.svg';
-import Image from 'next/image'; // Recommended for Next.js
+import Image from 'next/image';
 
 interface ChatAreaProps {
   messages: Message[];
@@ -82,9 +81,11 @@ export default function ChatArea({ messages }: ChatAreaProps) {
                 >
                   {message.image && (
                     <div className="mb-3">
-                      <img
+                      <Image
                         src={message.image}
                         alt="User upload"
+                        width={500}
+                        height={300}
                         className="max-w-full h-auto rounded-lg border border-white/10"
                       />
                     </div>

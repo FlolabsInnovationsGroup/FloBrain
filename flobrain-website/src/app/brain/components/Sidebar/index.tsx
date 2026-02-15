@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { ChatHistory, Folder } from '@/types/chat';
 import { Trash2, Edit2, Download, FolderPlus, ChevronDown, ChevronRight, Folder as FolderIcon, FolderInput } from 'lucide-react';
-import { Menu } from 'lucide-react';
 
 interface SidebarProps {
   isOpen: boolean;

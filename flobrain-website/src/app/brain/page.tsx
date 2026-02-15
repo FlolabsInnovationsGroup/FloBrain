@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Menu } from 'lucide-react';
 import type { ChatHistory, Folder, Message } from '@/types/chat';
 import Sidebar from './components/Sidebar/index';
@@ -18,10 +18,6 @@ export default function BrainPage() {
 
   const toggleSidebar = () => setIsSidebarOpen(prev => !prev);
 
-  // Get current chat
-  const getCurrentChat = () => {
-    return chatHistory.find(chat => chat.id === currentChatId);
-  };
 
   // Handle new chat
   const handleNewChat = () => {
@@ -46,16 +42,16 @@ export default function BrainPage() {
   };
 
   // Handle sending messages
-  const handleSendMessage = async (text: string, image?: string) => {
+  const handleSendMessage = useCallback(async (text: string, image?: string) => {
     if (!currentChatId) {
       handleNewChat();
       setTimeout(() => handleSendMessage(text, image), 100);
       return;
     }
 
-    // Add user message
+    const messageId = `msg-${Date.now()}`;
     const userMessage: Message = {
-      id: `msg-${Date.now()}`,
+      id: messageId,
       type: 'user',
       text,
       image,
@@ -97,7 +93,7 @@ export default function BrainPage() {
 
       setIsLoading(false);
     }, 1000);
-  };
+  }, [currentChatId, messages]);
 
   // Handle loading a chat
   const handleLoadChat = (id: number) => {
