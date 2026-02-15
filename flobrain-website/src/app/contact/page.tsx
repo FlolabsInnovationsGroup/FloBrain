@@ -86,7 +86,7 @@ export default function Contact() {
               <div className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-xl p-8 shadow-lg">
                 <h2 className="text-xl font-bold text-white mb-6">Get in Touch</h2>
                 <p className="text-white/60 text-sm mb-6">
-                  Fill out the form below and we'll respond within 24 hours.
+                  Fill out the form below and we&apos;ll respond within 24 hours.
                 </p>
 
                 <form className="space-y-6">

@@ -5,7 +5,8 @@ import { HeroSection } from '.';
 vi.mock("next/image", () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   default: (props: any) => {
-    return <img {...props} />;
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img {...props} alt={props.alt ?? ""} />;
   },
 }));
 
