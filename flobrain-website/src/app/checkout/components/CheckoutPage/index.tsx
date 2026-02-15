@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, CreditCard, Shield, ArrowLeft } from "lucide-react";
+import { Lock, CreditCard, Shield, ArrowLeft, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface CheckoutPageProps {
@@ -23,19 +23,30 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
     vatId: "",
   });
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  // Validate billing info
-  if (!termsAccepted) return;
-  
-  // Pass billing info to payment page via sessionStorage or state management
-  sessionStorage.setItem('billingInfo', JSON.stringify(billingInfo));
-  
-  // Navigate to payment method page
-  router.push(`/payment?plan=${selectedPlan.name}&price=${selectedPlan.price}`);
-};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate billing info
+    if (!termsAccepted) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate validation/processing
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Pass billing info to payment page via sessionStorage or state management
+      sessionStorage.setItem('billingInfo', JSON.stringify(billingInfo));
+      
+      // Navigate to payment method page
+      router.push(`/payment?plan=${selectedPlan.name}&price=${selectedPlan.price}`);
+    } catch (error) {
+      console.error('Checkout error:', error);
+      setIsSubmitting(false);
+    }
+  };
 
 
   return (
@@ -190,15 +201,24 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={!termsAccepted}
+                disabled={!termsAccepted || isSubmitting}
                 className={`w-full py-4 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
-                  termsAccepted
+                  termsAccepted && !isSubmitting
                     ? "bg-gradient-to-r from-[#8b5cf6] to-[#c084fc] text-white hover:shadow-lg hover:shadow-[#8b5cf6]/50"
                     : "bg-[#3a3a52] text-[#6b6b7a] cursor-not-allowed"
                 }`}
               >
-                Continue to payment
-                <CreditCard className="w-5 h-5" />
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Continue to payment
+                    <CreditCard className="w-5 h-5" />
+                  </>
+                )}
               </button>
             </form>
           </div>

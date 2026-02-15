@@ -1,10 +1,39 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Brain, Send, Mail, Users, Newspaper, ExternalLink, Github, MessageCircle, Activity, FileText, Menu, X } from 'lucide-react';
+import { Brain, Send, Mail, Users, Newspaper, ExternalLink, Github, MessageCircle, Activity, FileText, Menu, X, Loader2 } from 'lucide-react';
 
 export default function Contact() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    company: '',
+    message: ''
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Handle success (could show toast/notification)
+      setFormData({ fullName: '', email: '', company: '', message: '' });
+    } catch (error) {
+      // Handle error
+      console.error('Form submission error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 relative">
@@ -89,41 +118,71 @@ export default function Contact() {
                   Fill out the form below and we'll respond within 24 hours.
                 </p>
 
-                <form className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <input
                       type="text"
+                      name="fullName"
                       placeholder="Full Name"
-                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07]"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isSubmitting}
+                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
                     <input
                       type="email"
+                      name="email"
                       placeholder="Work Email"
-                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07]"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isSubmitting}
+                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
                     <input
                       type="text"
+                      name="company"
                       placeholder="Company Type"
-                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07]"
+                      value={formData.company}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isSubmitting}
+                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
                     <textarea
+                      name="message"
                       placeholder="Message"
                       rows={6}
-                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] resize-none"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isSubmitting}
+                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg border border-purple-400/20"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-purple-600/50 disabled:to-purple-700/50 disabled:cursor-not-allowed text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg border border-purple-400/20"
                   >
-                    Send Message
-                    <Send size={20} />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={20} className="animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        Send Message
+                        <Send size={20} />
+                      </>
+                    )}
                   </button>
                 </form>
 

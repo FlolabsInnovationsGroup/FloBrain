@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { FcGoogle } from 'react-icons/fc'; <FcGoogle size={24} />
-import { Mail, Lock, EyeOff, Eye, Apple } from "lucide-react";
+import { Mail, Lock, EyeOff, Eye, Apple, Loader2 } from "lucide-react";
 import { Button } from "@/components/layout/button";
 import { Input } from "@/components/layout/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/layout/card";
@@ -13,6 +13,22 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Handle successful sign in (redirect, etc.)
+    } catch (error) {
+      console.error('Sign in error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-purple-950 via-zinc-950 to-purple-900 flex items-center justify-center p-4 sm:p-8 lg:p-24">
@@ -29,6 +45,7 @@ export default function Login() {
           </CardHeader>
 
           <CardContent className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Input */}
             <div className="space-y-2">
               <Label htmlFor="email" className="text-white font-medium">
@@ -43,6 +60,8 @@ export default function Login() {
                   className="pl-10 bg-white/10 border-white/30 text-white placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:border-transparent h-12"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isSubmitting}
+                  required
                 />
               </div>
             </div>
@@ -61,6 +80,8 @@ export default function Login() {
                   className="pl-10 pr-12 bg-white/10 border-white/30 text-white placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:border-transparent h-12"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={isSubmitting}
+                  required
                 />
                 <Button
                   type="button"
@@ -68,6 +89,7 @@ export default function Login() {
                   size="sm"
                   className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-zinc-400 hover:text-white hover:bg-white/10"
                   onClick={() => setShowPassword(!showPassword)}
+                  disabled={isSubmitting}
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </Button>
@@ -85,9 +107,21 @@ export default function Login() {
             </div>
 
             {/* Sign In Button */}
-            <Button className="w-full h-12 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-lg shadow-xl">
-              Sign In →
+            <Button 
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full h-12 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white font-semibold text-lg shadow-xl"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign In →'
+              )}
             </Button>
+            </form>
 
             {/* Divider */}
             <div className="flex items-center space-x-2">
