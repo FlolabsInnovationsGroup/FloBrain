@@ -32,22 +32,20 @@ export default function PlanUpgradePopup({
   const isUpgrade = currentPlan.name !== selectedPlan.name;
 
   const handleConfirmAction = async () => {
-    try {
-      if (selectedPlan.price === "Free") {
-        onConfirm();
-        onClose();
-      } else if (selectedPlan.price === "Custom") {
-        router.push("/contact-sales");
-      } else {
-        // Close popup first for better UX
-        onClose();
-        // Then navigate
-        router.push(
-          `/checkout?plan=${encodeURIComponent(selectedPlan.name)}&price=${encodeURIComponent(selectedPlan.price)}&period=${encodeURIComponent(selectedPlan.period || "/month")}`
-        );
-      }
-    } catch (error) {
-      console.error("Navigation error:", error);
+  try {
+    if (selectedPlan.price === "Free") {
+      onConfirm();
+      onClose();
+    } else if (selectedPlan.price === "Custom") {
+      router.push('/contact');
+    } else {
+      // Close popup first for better UX
+      onClose();
+      // Then navigate
+      router.push(`/checkout?plan=${encodeURIComponent(selectedPlan.name)}&price=${encodeURIComponent(selectedPlan.price)}&period=${encodeURIComponent(selectedPlan.period || '/month')}`);
+    }
+  } catch (error) {
+    console.error("Navigation error:", error);
     }
   };
 

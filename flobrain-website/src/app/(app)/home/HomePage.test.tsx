@@ -27,7 +27,7 @@ vi.mock("./constants", () => ({
 }));
 
 vi.mock("next/image", () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @next/next/no-img-element
   default: (props: any) => <img alt="" {...props} />,
 }));
 

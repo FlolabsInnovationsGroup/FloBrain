@@ -201,7 +201,7 @@ describe("PlanUpgradePopup Component", () => {
     const contactSalesButton = screen.getByText("Contact Sales");
     await fireEvent.click(contactSalesButton);
 
-    expect(mockPush).toHaveBeenCalledWith("/contact-sales");
+    expect(mockPush).toHaveBeenCalledWith("/contact");
   });
 
   it("should display payment method message for paid plans", () => {
