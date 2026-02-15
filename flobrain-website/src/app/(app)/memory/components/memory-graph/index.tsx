@@ -2,7 +2,7 @@
 import dynamic from "next/dynamic";
 import { memoryLinks, memoryNodes } from '../../mockData';
 import { useEffect, useRef, useState } from "react";
-import { memoryNode } from "../../../../types/MemoryNodes";
+import { memoryNode } from "../../../../../types/MemoryNodes";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ssr: false,
