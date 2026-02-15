@@ -3,19 +3,27 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import CheckoutPage from "./components/CheckoutPage";
-
+import { getPlanByName } from "../pricing/plans";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const planName = searchParams.get("plan") || "Pro";
-  const planPrice = searchParams.get("price") || "$ 49";
-  const planPeriod = searchParams.get("period") || "/month"; 
-  
+  const planPrice = searchParams.get("price");
+  const planPeriod = searchParams.get("period");
+
+  const planDefinition = getPlanByName(planName);
+
   const selectedPlan = {
-    name: planName,
-    price: planPrice,
-    period: planPeriod, 
-    features: [
+    name: planDefinition?.name ?? planName,
+    price: planPrice || planDefinition?.monthlyPrice || "Custom",
+    period:
+      planPeriod ??
+      (planDefinition?.monthlyPrice &&
+      planDefinition.monthlyPrice !== "Free" &&
+      planDefinition.monthlyPrice !== "Custom"
+        ? "/month"
+        : ""),
+    features: planDefinition?.features ?? [
       "Unlimited workflows/automations",
       "Priority email support",
       "Advanced monitoring",

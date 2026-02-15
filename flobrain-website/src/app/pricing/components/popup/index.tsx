@@ -38,7 +38,7 @@ export default function PlanUpgradePopup({
       onConfirm();
       onClose();
     } else if (selectedPlan.price === "Custom") {
-      router.push('/contact-sales');
+      router.push('/contact');
     } else {
       // Close popup first for better UX
       onClose();
