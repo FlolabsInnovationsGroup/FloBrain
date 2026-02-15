@@ -42,12 +42,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/10 mb-6">
             <AlertTriangle className="w-8 h-8 text-red-400" />
           </div>
-          
+
           <h3 className="text-xl font-semibold text-white mb-2">Something went wrong</h3>
           <p className="text-sm text-white/60 max-w-md mb-6">
             An error occurred while rendering this component.
           </p>
-          
+
           {this.state.error && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6 max-w-md">
               <p className="text-sm text-red-300 font-mono text-left break-words">
@@ -55,7 +55,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               </p>
             </div>
           )}
-          
+
           <button
             onClick={this.handleReset}
             className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all"

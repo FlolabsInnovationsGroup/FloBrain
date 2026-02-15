@@ -1,30 +1,44 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Brain, Send, Mail, Users, Newspaper, ExternalLink, Github, MessageCircle, Activity, FileText, Menu, X, Loader2 } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  Brain,
+  Send,
+  Mail,
+  Users,
+  Newspaper,
+  ExternalLink,
+  Github,
+  MessageCircle,
+  Activity,
+  FileText,
+  Menu,
+  X,
+  Loader2,
+} from "lucide-react";
 
 export default function Contact() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    company: '',
-    message: ''
+    fullName: "",
+    email: "",
+    company: "",
+    message: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       // Handle success (could show toast/notification)
-      setFormData({ fullName: '', email: '', company: '', message: '' });
+      setFormData({ fullName: "", email: "", company: "", message: "" });
     } catch (error) {
       // Handle error
-      console.error('Form submission error:', error);
+      console.error("Form submission error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -32,7 +46,7 @@ export default function Contact() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -51,9 +65,21 @@ export default function Contact() {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#" className="text-white/80 hover:text-white transition-colors text-sm font-medium">Home</a>
-              <a href="#" className="text-white/80 hover:text-white transition-colors text-sm font-medium">Pricing</a>
-              <a href="#" className="text-purple-400 font-medium text-sm">Contact</a>
+              <a
+                href="#"
+                className="text-white/80 hover:text-white transition-colors text-sm font-medium"
+              >
+                Home
+              </a>
+              <a
+                href="#"
+                className="text-white/80 hover:text-white transition-colors text-sm font-medium"
+              >
+                Pricing
+              </a>
+              <a href="#" className="text-purple-400 font-medium text-sm">
+                Contact
+              </a>
               <button className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
                 Sign in
               </button>
@@ -77,14 +103,38 @@ export default function Contact() {
           {isMenuOpen && (
             <div className="md:hidden bg-black/80 backdrop-blur-md border-t border-white/10">
               <div className="px-4 py-6 space-y-4">
-                <a href="#" className="block text-white/80 hover:text-white transition-colors text-sm font-medium" onClick={() => setIsMenuOpen(false)}>Home</a>
-                <a href="#" className="block text-white/80 hover:text-white transition-colors text-sm font-medium" onClick={() => setIsMenuOpen(false)}>Pricing</a>
-                <a href="#" className="block text-purple-400 font-medium text-sm" onClick={() => setIsMenuOpen(false)}>Contact</a>
+                <a
+                  href="#"
+                  className="block text-white/80 hover:text-white transition-colors text-sm font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </a>
+                <a
+                  href="#"
+                  className="block text-white/80 hover:text-white transition-colors text-sm font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Pricing
+                </a>
+                <a
+                  href="#"
+                  className="block text-purple-400 font-medium text-sm"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Contact
+                </a>
                 <div className="flex flex-col space-y-3 pt-4">
-                  <button className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors" onClick={() => setIsMenuOpen(false)}>
+                  <button
+                    className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     Sign in
                   </button>
-                  <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors" onClick={() => setIsMenuOpen(false)}>
+                  <button
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     Register
                   </button>
                 </div>
@@ -101,7 +151,8 @@ export default function Contact() {
             Scale Your AI Intelligence
           </h1>
           <p className="text-base md:text-lg text-white/70 max-w-2xl leading-relaxed">
-            Connect with our engineering team to integrate FloLabs Brain into your workflow, or reach out to sales for enterprise solutions and partnerships.
+            Connect with our engineering team to integrate FloLabs Brain into your workflow, or
+            reach out to sales for enterprise solutions and partnerships.
           </p>
         </div>
       </section>
@@ -115,7 +166,7 @@ export default function Contact() {
               <div className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-xl p-8 shadow-lg">
                 <h2 className="text-xl font-bold text-white mb-6">Get in Touch</h2>
                 <p className="text-white/60 text-sm mb-6">
-                  Fill out the form below and we'll respond within 24 hours.
+                  Fill out the form below and we&apos;ll respond within 24 hours.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -196,7 +247,9 @@ export default function Contact() {
             <div className="space-y-8">
               {/* Direct Contact */}
               <div>
-                <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-wider">Direct Contact</h3>
+                <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-wider">
+                  Direct Contact
+                </h3>
                 <div className="space-y-4">
                   {/* Technical Support */}
                   <div className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 shadow-xl group hover:bg-white/10 transition-all duration-200">
@@ -209,8 +262,13 @@ export default function Contact() {
                       </div>
                       <div className="flex-1">
                         <h4 className="font-semibold text-white mb-2">Technical Support</h4>
-                        <p className="text-white/70 text-sm mb-3">For developers integrating the SDK</p>
-                        <a href="mailto:support@flolabs.ai" className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors">
+                        <p className="text-white/70 text-sm mb-3">
+                          For developers integrating the SDK
+                        </p>
+                        <a
+                          href="mailto:support@flolabs.ai"
+                          className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
+                        >
                           support@flolabs.ai
                         </a>
                       </div>
@@ -229,7 +287,10 @@ export default function Contact() {
                       <div className="flex-1">
                         <h4 className="font-semibold text-white mb-2">Partnerships</h4>
                         <p className="text-white/70 text-sm mb-3">For device manufacturers</p>
-                        <a href="mailto:partners@flolabs.ai" className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors">
+                        <a
+                          href="mailto:partners@flolabs.ai"
+                          className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
+                        >
                           partners@flolabs.ai
                         </a>
                       </div>
@@ -248,7 +309,10 @@ export default function Contact() {
                       <div className="flex-1">
                         <h4 className="font-semibold text-white mb-2">Press / Media</h4>
                         <p className="text-white/70 text-sm mb-3">Media inquiries and press kit</p>
-                        <a href="mailto:press@flolabs.ai" className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors">
+                        <a
+                          href="mailto:press@flolabs.ai"
+                          className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
+                        >
                           press@flolabs.ai
                         </a>
                       </div>
@@ -259,7 +323,9 @@ export default function Contact() {
 
               {/* Developer Resources */}
               <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
-                <h3 className="text-2xl font-bold text-white mb-6 uppercase tracking-wider">Developer Resources</h3>
+                <h3 className="text-2xl font-bold text-white mb-6 uppercase tracking-wider">
+                  Developer Resources
+                </h3>
 
                 <div className="space-y-3">
                   {/* API Documentation */}
@@ -273,7 +339,10 @@ export default function Contact() {
                         <p className="text-white/60 text-xs">Complete integration guides</p>
                       </div>
                     </div>
-                    <ExternalLink className="text-white/40 group-hover:text-white/60 transition-colors" size={16} />
+                    <ExternalLink
+                      className="text-white/40 group-hover:text-white/60 transition-colors"
+                      size={16}
+                    />
                   </div>
 
                   {/* System Status */}
@@ -289,7 +358,10 @@ export default function Contact() {
                         </span>
                       </div>
                     </div>
-                    <ExternalLink className="text-white/40 group-hover:text-white/60 transition-colors" size={16} />
+                    <ExternalLink
+                      className="text-white/40 group-hover:text-white/60 transition-colors"
+                      size={16}
+                    />
                   </div>
 
                   {/* GitHub */}
@@ -303,7 +375,10 @@ export default function Contact() {
                         <p className="text-white/60 text-xs">Open source SDKs</p>
                       </div>
                     </div>
-                    <ExternalLink className="text-white/40 group-hover:text-white/60 transition-colors" size={16} />
+                    <ExternalLink
+                      className="text-white/40 group-hover:text-white/60 transition-colors"
+                      size={16}
+                    />
                   </div>
 
                   {/* Discord Community */}
@@ -317,7 +392,10 @@ export default function Contact() {
                         <p className="text-white/60 text-xs">Join 5,000+ developers</p>
                       </div>
                     </div>
-                    <ExternalLink className="text-white/40 group-hover:text-white/60 transition-colors" size={16} />
+                    <ExternalLink
+                      className="text-white/40 group-hover:text-white/60 transition-colors"
+                      size={16}
+                    />
                   </div>
                 </div>
               </div>
@@ -332,9 +410,15 @@ export default function Contact() {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-white/60 text-sm">&copy; 2026 FloLabs Brain. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Privacy</a>
-              <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Terms</a>
-              <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">Security</a>
+              <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">
+                Privacy
+              </a>
+              <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">
+                Terms
+              </a>
+              <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">
+                Security
+              </a>
             </div>
           </div>
         </div>

@@ -10,17 +10,10 @@ interface NoPermissionStateProps {
   };
 }
 
-export const NoPermissionState = ({ 
-  title = "No Permission", 
+export const NoPermissionState = ({
+  title = "No Permission",
   description = "You don't have permission to access this resource. Contact your administrator if you believe this is an error.",
-  action
+  action,
 }: NoPermissionStateProps) => {
-  return (
-    <EmptyState
-      icon={ShieldOff}
-      title={title}
-      description={description}
-      action={action}
-    />
-  );
+  return <EmptyState icon={ShieldOff} title={title} description={description} action={action} />;
 };

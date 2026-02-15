@@ -27,27 +27,26 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate billing info
     if (!termsAccepted) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Simulate validation/processing
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
       // Pass billing info to payment page via sessionStorage or state management
-      sessionStorage.setItem('billingInfo', JSON.stringify(billingInfo));
-      
+      sessionStorage.setItem("billingInfo", JSON.stringify(billingInfo));
+
       // Navigate to payment method page
       router.push(`/payment?plan=${selectedPlan.name}&price=${selectedPlan.price}`);
     } catch (error) {
-      console.error('Checkout error:', error);
+      console.error("Checkout error:", error);
       setIsSubmitting(false);
     }
   };
-
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#1a0033] via-[#2a1a4a] to-[#0f0f23] p-8">
@@ -65,12 +64,8 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
           {/* Left Column - Billing Information */}
           <div>
             <div className="mb-8">
-              <h1 className="text-4xl font-bold text-white mb-2">
-                Complete your purchase
-              </h1>
-              <p className="text-[#a1a1aa]">
-                Enter your billing details to get started
-              </p>
+              <h1 className="text-4xl font-bold text-white mb-2">Complete your purchase</h1>
+              <p className="text-[#a1a1aa]">Enter your billing details to get started</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -91,9 +86,7 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
                       type="email"
                       required
                       value={billingInfo.email}
-                      onChange={(e) =>
-                        setBillingInfo({ ...billingInfo, email: e.target.value })
-                      }
+                      onChange={(e) => setBillingInfo({ ...billingInfo, email: e.target.value })}
                       placeholder="you@example.com"
                       className="w-full px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg text-white placeholder-[#6b6b7a] focus:outline-none focus:border-[#8b5cf6] focus:ring-1 focus:ring-[#8b5cf6] transition-colors"
                     />
@@ -101,16 +94,12 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
 
                   {/* Full Name */}
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">
-                      Full name *
-                    </label>
+                    <label className="block text-sm font-medium text-white mb-2">Full name *</label>
                     <input
                       type="text"
                       required
                       value={billingInfo.fullName}
-                      onChange={(e) =>
-                        setBillingInfo({ ...billingInfo, fullName: e.target.value })
-                      }
+                      onChange={(e) => setBillingInfo({ ...billingInfo, fullName: e.target.value })}
                       placeholder="John Doe"
                       className="w-full px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg text-white placeholder-[#6b6b7a] focus:outline-none focus:border-[#8b5cf6] focus:ring-1 focus:ring-[#8b5cf6] transition-colors"
                     />
@@ -124,9 +113,7 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
                     <input
                       type="text"
                       value={billingInfo.company}
-                      onChange={(e) =>
-                        setBillingInfo({ ...billingInfo, company: e.target.value })
-                      }
+                      onChange={(e) => setBillingInfo({ ...billingInfo, company: e.target.value })}
                       placeholder="Your company name"
                       className="w-full px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg text-white placeholder-[#6b6b7a] focus:outline-none focus:border-[#8b5cf6] focus:ring-1 focus:ring-[#8b5cf6] transition-colors"
                     />
@@ -134,15 +121,11 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
 
                   {/* Country */}
                   <div>
-                    <label className="block text-sm font-medium text-white mb-2">
-                      Country *
-                    </label>
+                    <label className="block text-sm font-medium text-white mb-2">Country *</label>
                     <select
                       required
                       value={billingInfo.country}
-                      onChange={(e) =>
-                        setBillingInfo({ ...billingInfo, country: e.target.value })
-                      }
+                      onChange={(e) => setBillingInfo({ ...billingInfo, country: e.target.value })}
                       className="w-full px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg text-white focus:outline-none focus:border-[#8b5cf6] focus:ring-1 focus:ring-[#8b5cf6] transition-colors"
                     >
                       <option value="United States">United States</option>
@@ -164,9 +147,7 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
                     <input
                       type="text"
                       value={billingInfo.vatId}
-                      onChange={(e) =>
-                        setBillingInfo({ ...billingInfo, vatId: e.target.value })
-                      }
+                      onChange={(e) => setBillingInfo({ ...billingInfo, vatId: e.target.value })}
                       placeholder="EU123456789"
                       className="w-full px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg text-white placeholder-[#6b6b7a] focus:outline-none focus:border-[#8b5cf6] focus:ring-1 focus:ring-[#8b5cf6] transition-colors"
                     />
@@ -226,43 +207,30 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
           {/* Right Column - Order Summary */}
           <div>
             <div className="bg-[#1a1a2e]/80 backdrop-blur-sm border border-[#4c1d95]/50 rounded-2xl p-6 sticky top-8">
-              <h2 className="text-xl font-semibold text-white mb-6">
-                Order Summary
-              </h2>
+              <h2 className="text-xl font-semibold text-white mb-6">Order Summary</h2>
 
               {/* Plan Details */}
               <div className="mb-6 pb-6 border-b border-[#4c1d95]/30">
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h3 className="text-lg font-semibold text-white">
-                      {selectedPlan.name} Plan
-                    </h3>
+                    <h3 className="text-lg font-semibold text-white">{selectedPlan.name} Plan</h3>
                     <p className="text-sm text-[#a1a1aa] mt-1">
                       Billed {selectedPlan.period === "/month" ? "monthly" : "annually"}
                     </p>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-white">
-                      {selectedPlan.price}
-                    </div>
-                    <div className="text-sm text-[#a1a1aa]">
-                      {selectedPlan.period}
-                    </div>
+                    <div className="text-2xl font-bold text-white">{selectedPlan.price}</div>
+                    <div className="text-sm text-[#a1a1aa]">{selectedPlan.period}</div>
                   </div>
                 </div>
               </div>
 
               {/* Features Included */}
               <div className="mb-6">
-                <h4 className="text-sm font-medium text-white mb-3">
-                  What is included:
-                </h4>
+                <h4 className="text-sm font-medium text-white mb-3">What is included:</h4>
                 <ul className="space-y-2">
                   {selectedPlan.features.slice(0, 5).map((feature, idx) => (
-                    <li
-                      key={idx}
-                      className="text-sm text-[#a1a1aa] flex items-start gap-2"
-                    >
+                    <li key={idx} className="text-sm text-[#a1a1aa] flex items-start gap-2">
                       <div className="w-1 h-1 rounded-full bg-[#8b5cf6] mt-2 flex-shrink-0" />
                       {feature}
                     </li>

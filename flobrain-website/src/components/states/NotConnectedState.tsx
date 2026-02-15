@@ -10,17 +10,10 @@ interface NotConnectedStateProps {
   };
 }
 
-export const NotConnectedState = ({ 
-  title = "Not Connected", 
+export const NotConnectedState = ({
+  title = "Not Connected",
   description = "Unable to establish connection. Please check your network and try again.",
-  action
+  action,
 }: NotConnectedStateProps) => {
-  return (
-    <EmptyState
-      icon={WifiOff}
-      title={title}
-      description={description}
-      action={action}
-    />
-  );
+  return <EmptyState icon={WifiOff} title={title} description={description} action={action} />;
 };

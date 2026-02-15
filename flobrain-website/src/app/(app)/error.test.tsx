@@ -27,7 +27,7 @@ describe("Error Component", () => {
   it("should call reset function when Try Again is clicked", () => {
     const { getByText } = render(<ErrorPage error={mockError} reset={mockReset} />);
     const tryAgainButton = getByText("Try Again");
-    
+
     fireEvent.click(tryAgainButton);
     expect(mockReset).toHaveBeenCalledTimes(1);
   });

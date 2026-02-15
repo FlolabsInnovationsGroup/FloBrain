@@ -10,17 +10,10 @@ interface NoDataStateProps {
   };
 }
 
-export const NoDataState = ({ 
-  title = "No Data Available", 
+export const NoDataState = ({
+  title = "No Data Available",
   description = "There's nothing to display here yet. Start by adding some data.",
-  action
+  action,
 }: NoDataStateProps) => {
-  return (
-    <EmptyState
-      icon={Database}
-      title={title}
-      description={description}
-      action={action}
-    />
-  );
+  return <EmptyState icon={Database} title={title} description={description} action={action} />;
 };

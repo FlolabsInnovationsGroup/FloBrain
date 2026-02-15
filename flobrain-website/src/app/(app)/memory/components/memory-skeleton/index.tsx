@@ -12,20 +12,23 @@ export const MemorySkeleton = () => {
       {/* Main Content: Legend and Graph */}
       <div className="flex flex-col lg:flex-row lg:items-center gap-4 w-full">
         {/* Memory Types Legend Skeleton */}
-        <div 
-          className="w-full lg:w-1/5 flex-shrink-0 bg-[#e194ff]/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-[#4c1d95]/50 shadow-2xl"
-        >
+        <div className="w-full lg:w-1/5 flex-shrink-0 bg-[#e194ff]/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-[#4c1d95]/50 shadow-2xl">
           <div className="h-5 bg-[#4c1d95]/40 rounded w-32 mb-3 animate-pulse" />
           <div className="grid grid-cols-2 lg:grid-cols-1 gap-3 lg:gap-2">
             {/* Memory Type Items */}
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={`legend-${index}`} className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
-                  index === 0 ? "bg-[#3b82f6]" :
-                  index === 1 ? "bg-[#a78bfa]" :
-                  index === 2 ? "bg-[#10b981]" :
-                  "bg-[#fbbf24]"
-                }`} />
+                <div
+                  className={`w-3 h-3 rounded-full flex-shrink-0 ${
+                    index === 0
+                      ? "bg-[#3b82f6]"
+                      : index === 1
+                        ? "bg-[#a78bfa]"
+                        : index === 2
+                          ? "bg-[#10b981]"
+                          : "bg-[#fbbf24]"
+                  }`}
+                />
                 <div className="flex flex-col leading-tight flex-1">
                   <div className="h-4 bg-[#4c1d95]/40 rounded w-20 mb-1 animate-pulse" />
                   <div className="h-3 bg-[#4c1d95]/30 rounded w-full animate-pulse" />
@@ -46,7 +49,7 @@ export const MemorySkeleton = () => {
               <div className="text-center space-y-4">
                 <div className="h-8 bg-white/10 rounded w-64 mx-auto animate-pulse" />
                 <div className="h-4 bg-white/5 rounded w-48 mx-auto animate-pulse" />
-                
+
                 {/* Simulated Graph Nodes */}
                 <div className="relative w-[600px] h-[400px] mx-auto mt-8">
                   {Array.from({ length: 8 }).map((_, index) => {
@@ -60,15 +63,18 @@ export const MemorySkeleton = () => {
                       { top: "75%", left: "25%" },
                       { top: "80%", left: "80%" },
                     ];
-                    
+
                     return (
                       <div
                         key={`node-${index}`}
                         className={`absolute rounded-full ${
-                          index % 4 === 0 ? "bg-[#3b82f6]/50" :
-                          index % 4 === 1 ? "bg-[#a78bfa]/50" :
-                          index % 4 === 2 ? "bg-[#10b981]/50" :
-                          "bg-[#fbbf24]/50"
+                          index % 4 === 0
+                            ? "bg-[#3b82f6]/50"
+                            : index % 4 === 1
+                              ? "bg-[#a78bfa]/50"
+                              : index % 4 === 2
+                                ? "bg-[#10b981]/50"
+                                : "bg-[#fbbf24]/50"
                         }`}
                         style={{
                           top: positions[index].top,

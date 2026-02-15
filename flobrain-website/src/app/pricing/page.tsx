@@ -26,7 +26,7 @@ export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
-  
+
   const currentPlan = {
     name: "Developer",
     price: "Free",
@@ -227,10 +227,10 @@ export default function Pricing() {
                   index === 0
                     ? "bg-[#3b82f6]/20"
                     : index === 1
-                    ? "bg-[#a78bfa]/20"
-                    : index === 2
-                    ? "bg-[#f97316]/20"
-                    : "bg-[#64748b]/20"
+                      ? "bg-[#a78bfa]/20"
+                      : index === 2
+                        ? "bg-[#f97316]/20"
+                        : "bg-[#64748b]/20"
                 }`}
               >
                 <div
@@ -238,10 +238,10 @@ export default function Pricing() {
                     index === 0
                       ? "bg-[#3b82f6]"
                       : index === 1
-                      ? "bg-[#a78bfa]"
-                      : index === 2
-                      ? "bg-[#f97316]"
-                      : "bg-[#64748b]"
+                        ? "bg-[#a78bfa]"
+                        : index === 2
+                          ? "bg-[#f97316]"
+                          : "bg-[#64748b]"
                   }`}
                 />
               </div>
@@ -299,9 +299,7 @@ export default function Pricing() {
               <div className="space-y-3 flex-grow">
                 <div className="text-white font-medium text-sm mb-3">{tier.apiCallsLimit}</div>
                 <div className="text-white font-medium text-sm mb-3">{tier.deviceLimit}</div>
-                <div className="text-white font-medium text-sm mb-4">
-                  {tier.memoryStorageLimit}
-                </div>
+                <div className="text-white font-medium text-sm mb-4">{tier.memoryStorageLimit}</div>
 
                 {tier.features.map((feature, featureIndex) => (
                   <div key={featureIndex} className="flex items-start gap-2">

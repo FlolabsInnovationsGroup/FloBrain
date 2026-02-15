@@ -10,7 +10,6 @@ import { applications, features } from "./constants";
  * It is rendered at the root "/" when userLogged is false.
  */
 export default function HomePage() {
-
   return (
     <main className="w-full h-full flex flex-col items-center">
       {/* 1. Hero Section */}
@@ -24,7 +23,7 @@ export default function HomePage() {
         <p className="text-[20px] text-center text-zinc-400 mb-12">
           Everything you need to own an intelligent, context-aware virtual assistant
         </p>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-[50px] mt-[50px]">
           {features.map((feature) => (
             <FeaturesCard {...feature} key={feature.id} />
@@ -38,8 +37,8 @@ export default function HomePage() {
           Every Where, All At Once
         </h1>
         <p className="text-[20px] text-center text-zinc-400 mx-auto w-[80%] md:w-[60%] mb-12">
-          FloBrain seamlessly integrates with wearables, mobile apps, web platforms, 
-          robotics, IoT devices, and enterprise systems—all through a unified API
+          FloBrain seamlessly integrates with wearables, mobile apps, web platforms, robotics, IoT
+          devices, and enterprise systems—all through a unified API
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-[50px] mt-[50px]">

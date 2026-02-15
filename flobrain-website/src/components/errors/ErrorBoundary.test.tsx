@@ -27,7 +27,7 @@ describe("ErrorBoundary Component", () => {
         <ThrowError shouldThrow={false} />
       </ErrorBoundary>
     );
-    
+
     expect(getByText("No error")).toBeDefined();
   });
 
@@ -37,7 +37,7 @@ describe("ErrorBoundary Component", () => {
         <ThrowError shouldThrow={true} />
       </ErrorBoundary>
     );
-    
+
     expect(getByText("Something went wrong")).toBeDefined();
   });
 
@@ -47,7 +47,7 @@ describe("ErrorBoundary Component", () => {
         <ThrowError shouldThrow={true} />
       </ErrorBoundary>
     );
-    
+
     expect(getByText("Test error")).toBeDefined();
   });
 
@@ -57,7 +57,7 @@ describe("ErrorBoundary Component", () => {
         <ThrowError shouldThrow={true} />
       </ErrorBoundary>
     );
-    
+
     expect(getByText("Custom fallback")).toBeDefined();
   });
 
@@ -67,7 +67,7 @@ describe("ErrorBoundary Component", () => {
         <ThrowError shouldThrow={true} />
       </ErrorBoundary>
     );
-    
+
     expect(getByText("Try Again")).toBeDefined();
   });
 });

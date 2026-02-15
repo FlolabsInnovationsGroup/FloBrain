@@ -4,17 +4,16 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import CheckoutPage from "./components/CheckoutPage";
 
-
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const planName = searchParams.get("plan") || "Pro";
   const planPrice = searchParams.get("price") || "$ 49";
-  const planPeriod = searchParams.get("period") || "/month"; 
-  
+  const planPeriod = searchParams.get("period") || "/month";
+
   const selectedPlan = {
     name: planName,
     price: planPrice,
-    period: planPeriod, 
+    period: planPeriod,
     features: [
       "Unlimited workflows/automations",
       "Priority email support",

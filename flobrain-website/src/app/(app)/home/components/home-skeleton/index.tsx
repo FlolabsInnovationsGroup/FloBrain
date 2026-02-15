@@ -14,7 +14,7 @@ export const HomeSkeleton = () => {
             <div className="h-3 bg-white/30 rounded w-40 animate-pulse" />
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-slate-800">
           <div className="w-2 h-2 rounded-full bg-emerald-500" />
           <div className="h-2 bg-white/20 rounded w-24 animate-pulse" />
@@ -28,7 +28,7 @@ export const HomeSkeleton = () => {
             <Layers size={14} className="text-blue-500/70" />
             <div className="h-3 bg-white/20 rounded w-48 animate-pulse" />
           </div>
-          
+
           <div className="space-y-8">
             {/* Workflow Steps */}
             {Array.from({ length: 3 }).map((_, index) => (
@@ -47,14 +47,14 @@ export const HomeSkeleton = () => {
         <main className="flex-1 flex items-center justify-center relative">
           {/* Large Circle */}
           <div className="relative">
-            <div 
+            <div
               className="rounded-full border border-white/10 bg-slate-900/20 flex items-center justify-center"
               style={{ width: "400px", height: "400px" }}
             >
               <div className="text-center space-y-6">
                 {/* Heartbeat Icon */}
                 <Activity size={48} className="text-blue-400/50 mx-auto" />
-                
+
                 {/* Core Idle Text */}
                 <div className="h-6 bg-white/20 rounded w-40 mx-auto animate-pulse" />
               </div>

@@ -2,11 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FcGoogle } from 'react-icons/fc'; <FcGoogle size={24} />
+import { FcGoogle } from "react-icons/fc";
+<FcGoogle size={24} />;
 import { Mail, Lock, EyeOff, Eye, Apple, Loader2 } from "lucide-react";
 import { Button } from "@/components/layout/button";
 import { Input } from "@/components/layout/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/layout/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/layout/card";
 import { Label } from "@/components/layout/label";
 
 export default function Login() {
@@ -18,13 +25,13 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       // Handle successful sign in (redirect, etc.)
     } catch (error) {
-      console.error('Sign in error:', error);
+      console.error("Sign in error:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -46,81 +53,81 @@ export default function Login() {
 
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Input */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-white font-medium">
-                Email
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  className="pl-10 bg-white/10 border-white/30 text-white placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:border-transparent h-12"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isSubmitting}
-                  required
-                />
+              {/* Email Input */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-white font-medium">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    className="pl-10 bg-white/10 border-white/30 text-white placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:border-transparent h-12"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isSubmitting}
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Password Input */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-white font-medium">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  className="pl-10 pr-12 bg-white/10 border-white/30 text-white placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:border-transparent h-12"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isSubmitting}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-zinc-400 hover:text-white hover:bg-white/10"
-                  onClick={() => setShowPassword(!showPassword)}
-                  disabled={isSubmitting}
+              {/* Password Input */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-white font-medium">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    className="pl-10 pr-12 bg-white/10 border-white/30 text-white placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:border-transparent h-12"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isSubmitting}
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0 text-zinc-400 hover:text-white hover:bg-white/10"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isSubmitting}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Forgot Password */}
+              <div className="flex items-center justify-end">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-purple-300 hover:text-purple-200 transition-colors"
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </Button>
+                  Forgot password?
+                </Link>
               </div>
-            </div>
 
-            {/* Forgot Password */}
-            <div className="flex items-center justify-end">
-              <Link
-                href="/forgot-password"
-                className="text-sm text-purple-300 hover:text-purple-200 transition-colors"
+              {/* Sign In Button */}
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full h-12 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white font-semibold text-lg shadow-xl"
               >
-                Forgot password?
-              </Link>
-            </div>
-
-            {/* Sign In Button */}
-            <Button 
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full h-12 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white font-semibold text-lg shadow-xl"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign In →'
-              )}
-            </Button>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  "Sign In →"
+                )}
+              </Button>
             </form>
 
             {/* Divider */}
@@ -150,7 +157,7 @@ export default function Login() {
 
             {/* Register Link */}
             <p className="text-center text-sm text-zinc-400">
-              Don&apos;t have an account?{" "}  {/* or "Don't have an account?" with &apos; */}
+              Don&apos;t have an account? {/* or "Don't have an account?" with &apos; */}
               <Link
                 href="/register"
                 className="text-purple-300 hover:text-purple-200 font-medium transition-colors"

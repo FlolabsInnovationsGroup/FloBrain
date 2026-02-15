@@ -10,7 +10,7 @@ export default function BrainPlaceholder() {
         description="The AI brain chat interface is currently under development. Check back soon for intelligent conversations and context-aware interactions."
         action={{
           label: "View Dashboard",
-          onClick: () => window.location.href = "/dashboard"
+          onClick: () => (window.location.href = "/dashboard"),
         }}
       />
     </div>
