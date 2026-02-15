@@ -149,7 +149,7 @@ export default function Pricing() {
       <div className="text-center mt-8">
         <p className="text-[#a1a1aa] text-sm">
           Need help choosing?{" "}
-          <a href="#" className="text-[#8b5cf6] hover:underline font-medium">
+          <a href="/contact" className="text-[#8b5cf6] hover:underline font-medium">
             Contact our sales team
           </a>
         </p>
