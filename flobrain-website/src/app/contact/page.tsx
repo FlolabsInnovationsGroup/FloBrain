@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-  Brain,
   Send,
   Mail,
   Users,
@@ -12,13 +11,10 @@ import {
   MessageCircle,
   Activity,
   FileText,
-  Menu,
-  X,
   Loader2,
 } from "lucide-react";
 
 export default function Contact() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -53,96 +49,6 @@ export default function Contact() {
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 relative">
       {/* Soft glowing vignette */}
       <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-purple-900/20" />
-
-      {/* Navigation */}
-      <nav className="relative z-10 w-full border-b border-white/10 backdrop-blur-md sticky top-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <Brain className="text-purple-400" size={32} />
-              <span className="text-purple-400 font-bold text-xl tracking-tight">FLOBRAIN</span>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <a
-                href="#"
-                className="text-white/80 hover:text-white transition-colors text-sm font-medium"
-              >
-                Home
-              </a>
-              <a
-                href="#"
-                className="text-white/80 hover:text-white transition-colors text-sm font-medium"
-              >
-                Pricing
-              </a>
-              <a href="#" className="text-purple-400 font-medium text-sm">
-                Contact
-              </a>
-              <button className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
-                Sign in
-              </button>
-              <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
-                Register
-              </button>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-white/80 hover:text-white p-2"
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <div className="md:hidden bg-black/80 backdrop-blur-md border-t border-white/10">
-              <div className="px-4 py-6 space-y-4">
-                <a
-                  href="#"
-                  className="block text-white/80 hover:text-white transition-colors text-sm font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Home
-                </a>
-                <a
-                  href="#"
-                  className="block text-white/80 hover:text-white transition-colors text-sm font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Pricing
-                </a>
-                <a
-                  href="#"
-                  className="block text-purple-400 font-medium text-sm"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Contact
-                </a>
-                <div className="flex flex-col space-y-3 pt-4">
-                  <button
-                    className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Sign in
-                  </button>
-                  <button
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Register
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <section className="relative z-10 pt-16 pb-12">
@@ -403,26 +309,6 @@ export default function Contact() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-white/10 bg-black/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-white/60 text-sm">&copy; 2026 FloLabs Brain. All rights reserved.</p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">
-                Privacy
-              </a>
-              <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">
-                Terms
-              </a>
-              <a href="#" className="text-white/60 hover:text-white text-sm transition-colors">
-                Security
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

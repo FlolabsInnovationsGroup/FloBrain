@@ -116,9 +116,15 @@ export default function Navbar() {
               <Link href="/brain" className="block text-zinc-300" onClick={() => setIsOpen(false)}>
                 Brain
               </Link>
+              <Link href="/memory" className="block text-zinc-300" onClick={() => setIsOpen(false)}>
+                Memory
+              </Link>
             </>
           ) : (
             <div className="flex flex-col gap-3">
+              <Link href="/pricing" className="text-zinc-300" onClick={() => setIsOpen(false)}>
+                Pricing
+              </Link>
               <Link href="/signin" className="text-zinc-300" onClick={() => setIsOpen(false)}>
                 Sign In
               </Link>
