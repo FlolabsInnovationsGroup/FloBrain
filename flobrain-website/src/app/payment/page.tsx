@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PaymentMethodPage from "./components/PaymentMethodPage";
 
-export default function PaymentMethod() {
+function PaymentContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -23,4 +23,12 @@ export default function PaymentMethod() {
   }, [searchParams, router]);
 
   return <PaymentMethodPage />;
+}
+
+export default function PaymentMethod() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentContent />
+    </Suspense>
+  );
 }
