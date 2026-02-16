@@ -25,7 +25,7 @@ backend/
 
 This is the Django + PostgreSQL backend for the FloBrain application. It is fully containerized using Docker to ensure a consistent development environment.
 
-## Quick Start Guide
+## Quick Start Guide (After clone github repo)
 
 **Prerequisites:**
 * Docker Desktop (installed and running)
