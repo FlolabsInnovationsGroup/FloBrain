@@ -55,8 +55,6 @@ vi.mock("lucide-react", () => ({
   Check: () => <div data-testid="check-icon" />,
 }));
 
-
-
 describe("PaymentMethodPage Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -87,20 +85,19 @@ describe("PaymentMethodPage Component", () => {
     expect(screen.getByText("Mastercard")).toBeInTheDocument();
   });
 
-  
-
   it("should show processing state when submitting payment", async () => {
     mockElements.getElement.mockReturnValue({});
-    mockStripe.createPaymentMethod.mockImplementation(() =>
-      new Promise((resolve) =>
-        setTimeout(() => resolve({ paymentMethod: { id: "pm_123" } }), 100)
-      )
+    mockStripe.createPaymentMethod.mockImplementation(
+      () =>
+        new Promise((resolve) =>
+          setTimeout(() => resolve({ paymentMethod: { id: "pm_123" } }), 100)
+        )
     );
 
     render(<PaymentMethodPage />);
 
-    const submitButton = screen.getByRole("button", { 
-      name: /complete payment/i 
+    const submitButton = screen.getByRole("button", {
+      name: /complete payment/i,
     });
     await fireEvent.click(submitButton);
 
@@ -117,8 +114,8 @@ describe("PaymentMethodPage Component", () => {
 
     render(<PaymentMethodPage />);
 
-    const submitButton = screen.getByRole("button", { 
-      name: /complete payment/i 
+    const submitButton = screen.getByRole("button", {
+      name: /complete payment/i,
     });
     await fireEvent.click(submitButton);
 
@@ -142,8 +139,8 @@ describe("PaymentMethodPage Component", () => {
 
     render(<PaymentMethodPage />);
 
-    const submitButton = screen.getByRole("button", { 
-      name: /complete payment/i 
+    const submitButton = screen.getByRole("button", {
+      name: /complete payment/i,
     });
     await fireEvent.click(submitButton);
 
@@ -157,8 +154,8 @@ describe("PaymentMethodPage Component", () => {
 
     render(<PaymentMethodPage />);
 
-    const submitButton = screen.getByRole("button", { 
-      name: /complete payment/i 
+    const submitButton = screen.getByRole("button", {
+      name: /complete payment/i,
     });
     await fireEvent.click(submitButton);
 

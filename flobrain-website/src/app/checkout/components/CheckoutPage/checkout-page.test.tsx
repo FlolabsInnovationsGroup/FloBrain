@@ -75,7 +75,7 @@ describe("CheckoutPage Component", () => {
     render(<CheckoutPage selectedPlan={mockSelectedPlan} />);
 
     const countrySelect = screen.getByRole("combobox");
-    
+
     await fireEvent.change(countrySelect, { target: { value: "Lebanon" } });
 
     expect(countrySelect).toHaveValue("Lebanon");
@@ -96,8 +96,8 @@ describe("CheckoutPage Component", () => {
   it("should disable submit button when terms are not accepted", () => {
     render(<CheckoutPage selectedPlan={mockSelectedPlan} />);
 
-    const submitButton = screen.getByRole("button", { 
-      name: /continue to payment/i 
+    const submitButton = screen.getByRole("button", {
+      name: /continue to payment/i,
     });
 
     expect(submitButton).toBeDisabled();
@@ -108,8 +108,8 @@ describe("CheckoutPage Component", () => {
     render(<CheckoutPage selectedPlan={mockSelectedPlan} />);
 
     const termsCheckbox = screen.getByRole("checkbox");
-    const submitButton = screen.getByRole("button", { 
-      name: /continue to payment/i 
+    const submitButton = screen.getByRole("button", {
+      name: /continue to payment/i,
     });
 
     await fireEvent.click(termsCheckbox);
@@ -122,8 +122,8 @@ describe("CheckoutPage Component", () => {
 
     const emailInput = screen.getByPlaceholderText("you@example.com");
     const nameInput = screen.getByPlaceholderText("John Doe");
-    const submitButton = screen.getByRole("button", { 
-      name: /continue to payment/i 
+    const submitButton = screen.getByRole("button", {
+      name: /continue to payment/i,
     });
 
     await fireEvent.change(emailInput, { target: { value: "test@example.com" } });
@@ -140,8 +140,8 @@ describe("CheckoutPage Component", () => {
     const emailInput = screen.getByPlaceholderText("you@example.com");
     const nameInput = screen.getByPlaceholderText("John Doe");
     const termsCheckbox = screen.getByRole("checkbox");
-    const submitButton = screen.getByRole("button", { 
-      name: /continue to payment/i 
+    const submitButton = screen.getByRole("button", {
+      name: /continue to payment/i,
     });
 
     await fireEvent.change(emailInput, { target: { value: "test@example.com" } });
@@ -152,16 +152,14 @@ describe("CheckoutPage Component", () => {
     await waitFor(() => {
       const storedData = sessionStorage.getItem("billingInfo");
       expect(storedData).toBeDefined();
-      
+
       if (storedData) {
         const parsedData = JSON.parse(storedData);
         expect(parsedData.email).toBe("test@example.com");
         expect(parsedData.fullName).toBe("John Smith");
       }
 
-      expect(mockPush).toHaveBeenCalledWith(
-        expect.stringContaining("/payment?plan=Pro&price=$49")
-      );
+      expect(mockPush).toHaveBeenCalledWith(expect.stringContaining("/payment?plan=Pro&price=$49"));
     });
   });
 
@@ -180,7 +178,7 @@ describe("CheckoutPage Component", () => {
 
     expect(screen.getByText("Order Summary")).toBeInTheDocument();
     expect(screen.getByText("What is included:")).toBeInTheDocument();
-    
+
     mockSelectedPlan.features.slice(0, 5).forEach((feature) => {
       expect(screen.getByText(feature)).toBeInTheDocument();
     });
@@ -198,8 +196,8 @@ describe("CheckoutPage Component", () => {
     const emailInput = screen.getByPlaceholderText("you@example.com");
     const nameInput = screen.getByPlaceholderText("John Doe");
     const termsCheckbox = screen.getByRole("checkbox");
-    const submitButton = screen.getByRole("button", { 
-      name: /continue to payment/i 
+    const submitButton = screen.getByRole("button", {
+      name: /continue to payment/i,
     });
 
     await fireEvent.change(emailInput, { target: { value: "test@example.com" } });

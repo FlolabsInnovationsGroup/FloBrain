@@ -18,7 +18,6 @@ interface PlanUpgradePopupProps {
   onConfirm: () => void;
 }
 
-
 export default function PlanUpgradePopup({
   isOpen,
   onClose,
@@ -27,7 +26,7 @@ export default function PlanUpgradePopup({
   onConfirm,
 }: PlanUpgradePopupProps) {
   const router = useRouter();
-  
+
   if (!isOpen) return null;
 
   const isUpgrade = currentPlan.name !== selectedPlan.name;
@@ -38,7 +37,7 @@ export default function PlanUpgradePopup({
       onConfirm();
       onClose();
     } else if (selectedPlan.price === "Custom") {
-      router.push('/contact-sales');
+      router.push('/contact');
     } else {
       // Close popup first for better UX
       onClose();
@@ -46,18 +45,14 @@ export default function PlanUpgradePopup({
       router.push(`/checkout?plan=${encodeURIComponent(selectedPlan.name)}&price=${encodeURIComponent(selectedPlan.price)}&period=${encodeURIComponent(selectedPlan.period || '/month')}`);
     }
   } catch (error) {
-    console.error('Navigation error:', error);
-  }
-};
-
+    console.error("Navigation error:", error);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <div className="relative bg-[#1a1a2e] border border-[#4c1d95]/50 rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
@@ -70,17 +65,13 @@ export default function PlanUpgradePopup({
         </button>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-white mb-6">
-          Confirm changes
-        </h2>
+        <h2 className="text-2xl font-bold text-white mb-6">Confirm changes</h2>
 
         {/* Current Plan */}
         <div className="mb-4">
           <div className="flex items-center justify-between p-4 bg-[#2a1a4a]/30 rounded-lg border border-[#4c1d95]/30">
             <span className="text-white font-medium capitalize">{currentPlan.name}</span>
-            <span className="text-[#a1a1aa] text-sm">
-              {currentPlan.price}
-            </span>
+            <span className="text-[#a1a1aa] text-sm">{currentPlan.price}</span>
           </div>
         </div>
 
@@ -117,7 +108,8 @@ export default function PlanUpgradePopup({
         {selectedPlan.price === "Custom" && (
           <div className="mb-6">
             <p className="text-[#a1a1aa] text-sm mb-3">
-              Our sales team will contact you to discuss custom pricing and features for your organization.
+              Our sales team will contact you to discuss custom pricing and features for your
+              organization.
             </p>
           </div>
         )}
@@ -134,7 +126,11 @@ export default function PlanUpgradePopup({
             onClick={handleConfirmAction}
             className="flex-1 py-3 rounded-lg font-medium transition-all duration-300 bg-gradient-to-r from-[#8b5cf6] to-[#c084fc] text-white hover:shadow-lg hover:shadow-[#8b5cf6]/50"
           >
-            {selectedPlan.price === "Free" ? "Activate" : selectedPlan.price === "Custom" ? "Contact Sales" : "Continue"}
+            {selectedPlan.price === "Free"
+              ? "Activate"
+              : selectedPlan.price === "Custom"
+                ? "Contact Sales"
+                : "Continue"}
           </button>
         </div>
       </div>
