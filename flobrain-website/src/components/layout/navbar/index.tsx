@@ -15,22 +15,22 @@ export default function Navbar() {
     <nav className="w-full backdrop-blur-md sticky top-0 z-50 border-b border-zinc-800/50 bg-[#020617]/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          
           {/* LEFT: Logo (Always visible) */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center gap-4">
-              <Image 
-                src={FlolabsLogo} 
-                alt="Logo" 
+              <Image
+                src={FlolabsLogo}
+                alt="Logo"
                 className="h-8 w-auto"
+                priority
               />
               <span className="bg-gradient-to-r from-[#610081] to-[#702ACD] bg-clip-text text-transparent text-[28px] font-bold tracking-tighter">
                 FLOBRAIN
               </span>
             </Link>
           </div>
-          
-    {/* RIGHT: Conditional Navigation */}
+
+          {/* RIGHT: Conditional Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {!isLoading && isAuthenticated ? (
               /* LOGGED IN: App links (Sign Out is in Profile) */
@@ -46,11 +46,17 @@ export default function Navbar() {
             ) : (
               /* LOGGED OUT: Pricing + Sign In / Register */
               <div className="flex items-center gap-6">
-                <Link href="/pricing" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+                <Link
+                  href="/pricing"
+                  className="text-sm font-medium text-zinc-400 hover:text-white transition-colors"
+                >
                   Pricing
                 </Link>
                 <div className="flex items-center gap-4">
-                  <Link href="/signin" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
+                  <Link
+                    href="/signin"
+                    className="text-sm font-medium text-zinc-300 hover:text-white transition-colors"
+                  >
                     Sign In
                   </Link>
                   <Link
@@ -86,8 +92,19 @@ export default function Navbar() {
             </>
           ) : (
             <div className="flex flex-col gap-3">
-              <Link href="/signin" className="text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
-              <Link href="/register" className="bg-[#9333ea] text-white p-3 rounded-lg text-center" onClick={() => setIsOpen(false)}>Register</Link>
+              <Link href="/pricing" className="text-zinc-300" onClick={() => setIsOpen(false)}>
+                Pricing
+              </Link>
+              <Link href="/signin" className="text-zinc-300" onClick={() => setIsOpen(false)}>
+                Sign In
+              </Link>
+              <Link
+                href="/register"
+                className="bg-[#9333ea] text-white p-3 rounded-lg text-center"
+                onClick={() => setIsOpen(false)}
+              >
+                Register
+              </Link>
             </div>
           )}
         </div>

@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  CreditCard,
-  Lock,
-  ArrowLeft,
-  AlertCircle,
-  Check,
-} from "lucide-react";
+import { CreditCard, Lock, ArrowLeft, AlertCircle, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import {
@@ -67,11 +61,10 @@ function PaymentMethodForm() {
 
     try {
       // Create payment method
-      const { error: stripeError, paymentMethod } =
-        await stripe.createPaymentMethod({
-          type: "card",
-          card: cardElement,
-        });
+      const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
+        type: "card",
+        card: cardElement,
+      });
 
       if (stripeError) {
         setError(stripeError.message || "An error occurred");
@@ -109,9 +102,7 @@ function PaymentMethodForm() {
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Card Number */}
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
-          Card number *
-        </label>
+        <label className="block text-sm font-medium text-white mb-2">Card number *</label>
         <div className="px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg focus-within:border-[#8b5cf6] focus-within:ring-1 focus-within:ring-[#8b5cf6] transition-colors">
           <CardNumberElement options={CARD_ELEMENT_OPTIONS} />
         </div>
@@ -120,24 +111,18 @@ function PaymentMethodForm() {
       {/* Expiry and CVC */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-white mb-2">
-            Expiry date *
-          </label>
+          <label className="block text-sm font-medium text-white mb-2">Expiry date *</label>
           <div className="px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg focus-within:border-[#8b5cf6] focus-within:ring-1 focus-within:ring-[#8b5cf6] transition-colors">
             <CardExpiryElement options={CARD_ELEMENT_OPTIONS} />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-white mb-2">
-            CVC *
-          </label>
+          <label className="block text-sm font-medium text-white mb-2">CVC *</label>
           <div className="px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg focus-within:border-[#8b5cf6] focus-within:ring-1 focus-within:ring-[#8b5cf6] transition-colors">
             <CardCvcElement options={CARD_ELEMENT_OPTIONS} />
           </div>
-          <p className="text-xs text-[#a1a1aa] mt-1">
-            Last 3 digits on back of card
-          </p>
+          <p className="text-xs text-[#a1a1aa] mt-1">Last 3 digits on back of card</p>
         </div>
       </div>
 
@@ -204,12 +189,8 @@ export default function PaymentMethodPage() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Add payment method
-          </h1>
-          <p className="text-[#a1a1aa]">
-            Enter your card details to complete your subscription
-          </p>
+          <h1 className="text-4xl font-bold text-white mb-2">Add payment method</h1>
+          <p className="text-[#a1a1aa]">Enter your card details to complete your subscription</p>
         </div>
 
         {/* Payment Form Card */}
@@ -244,8 +225,8 @@ export default function PaymentMethodPage() {
         {/* Additional Info */}
         <div className="mt-6 text-center">
           <p className="text-sm text-[#a1a1aa]">
-            By providing your card information, you allow FloBrain to charge your
-            card for future payments in accordance with their terms.
+            By providing your card information, you allow FloBrain to charge your card for future
+            payments in accordance with their terms.
           </p>
         </div>
       </div>

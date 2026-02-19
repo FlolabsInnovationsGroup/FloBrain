@@ -22,13 +22,17 @@ describe("DashboardSkeleton Component", () => {
 
   it("should render System Health skeleton section", () => {
     const { container } = render(<DashboardSkeleton />);
-    const systemHealthSkeleton = container.querySelector('[style*="width: 680px"][style*="height: 430px"]');
+    const systemHealthSkeleton = container.querySelector(
+      '[style*="width: 680px"][style*="height: 430px"]'
+    );
     expect(systemHealthSkeleton).toBeDefined();
   });
 
   it("should render Memory Activity skeleton section", () => {
     const { container } = render(<DashboardSkeleton />);
-    const memoryActivitySkeleton = container.querySelector('[style*="width: 680px"][style*="height: 508px"]');
+    const memoryActivitySkeleton = container.querySelector(
+      '[style*="width: 680px"][style*="height: 508px"]'
+    );
     expect(memoryActivitySkeleton).toBeDefined();
   });
 

@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProviderWrapper>
+<AuthProviderWrapper>
           <div className="min-h-screen flex flex-col">
             <Navbar />
             <div className="flex-1">{children}</div>

@@ -4,14 +4,12 @@ import { MemoryGraph } from "./index";
 import React from "react";
 
 // Mock the data
-vi.mock('../../mockData', () => ({
+vi.mock("../../mockData", () => ({
   memoryNodes: [
-    { id: '1', name: 'Node A', group: 1 },
-    { id: '2', name: 'Node B', group: 2 }
+    { id: "1", name: "Node A", group: 1 },
+    { id: "2", name: "Node B", group: 2 },
   ],
-  memoryLinks: [
-    { source: '1', target: '2' }
-  ]
+  memoryLinks: [{ source: "1", target: "2" }],
 }));
 
 // Define proper types for mock props
@@ -37,7 +35,7 @@ vi.mock("next/dynamic", () => ({
             data-testid="simulate-node-click"
             onClick={() => {
               if (props.onNodeClick) {
-                props.onNodeClick({ id: '1', name: 'Node A' });
+                props.onNodeClick({ id: "1", name: "Node A" });
               }
             }}
           >
@@ -47,7 +45,7 @@ vi.mock("next/dynamic", () => ({
         </div>
       );
     };
-  }
+  },
 }));
 
 describe("MemoryGraph Component", () => {
@@ -67,8 +65,8 @@ describe("MemoryGraph Component", () => {
     const onOpenDialog = vi.fn();
     const setGraphActive = vi.fn();
     render(
-      <MemoryGraph 
-        onOpenMemoryNodeDialog={onOpenDialog} 
+      <MemoryGraph
+        onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
       />
@@ -80,7 +78,7 @@ describe("MemoryGraph Component", () => {
     const onOpenDialog = vi.fn();
     const setGraphActive = vi.fn();
     render(
-      <MemoryGraph 
+      <MemoryGraph
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
@@ -93,7 +91,7 @@ describe("MemoryGraph Component", () => {
     const onOpenDialog = vi.fn();
     const setGraphActive = vi.fn();
     render(
-      <MemoryGraph 
+      <MemoryGraph
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={true}
         setGraphActive={setGraphActive}
@@ -104,17 +102,19 @@ describe("MemoryGraph Component", () => {
     fireEvent.click(simulateButton);
 
     expect(onOpenDialog).toHaveBeenCalledTimes(1);
-    expect(onOpenDialog).toHaveBeenCalledWith(expect.objectContaining({
-      id: '1',
-      name: 'Node A'
-    }));
+    expect(onOpenDialog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: "1",
+        name: "Node A",
+      })
+    );
   });
 
   it("should not call onOpenMemoryNodeDialog when graph is inactive", () => {
     const onOpenDialog = vi.fn();
     const setGraphActive = vi.fn();
     render(
-      <MemoryGraph 
+      <MemoryGraph
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
@@ -131,7 +131,7 @@ describe("MemoryGraph Component", () => {
     const onOpenDialog = vi.fn();
     const setGraphActive = vi.fn();
     render(
-      <MemoryGraph 
+      <MemoryGraph
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
@@ -140,7 +140,7 @@ describe("MemoryGraph Component", () => {
 
     act(() => {
       global.innerWidth = 500;
-      global.dispatchEvent(new Event('resize'));
+      global.dispatchEvent(new Event("resize"));
     });
 
     expect(screen.getByTestId("force-graph-mock")).toBeDefined();
@@ -150,7 +150,7 @@ describe("MemoryGraph Component", () => {
     const onOpenDialog = vi.fn();
     const setGraphActive = vi.fn();
     const { container } = render(
-      <MemoryGraph 
+      <MemoryGraph
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={true}
         setGraphActive={setGraphActive}
@@ -159,14 +159,14 @@ describe("MemoryGraph Component", () => {
 
     const graphBorder = container.querySelector('div[class*="border-4"]');
     expect(graphBorder).toBeTruthy();
-    expect(graphBorder?.className).toContain('border-[#a78bfa]');
+    expect(graphBorder?.className).toContain("border-[#a78bfa]");
   });
 
   it("should apply inactive border styling when graph is inactive", () => {
     const onOpenDialog = vi.fn();
     const setGraphActive = vi.fn();
     const { container } = render(
-      <MemoryGraph 
+      <MemoryGraph
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
@@ -175,14 +175,14 @@ describe("MemoryGraph Component", () => {
 
     const graphBorder = container.querySelector('div[class*="border-4"]');
     expect(graphBorder).toBeTruthy();
-    expect(graphBorder?.className).toContain('border-[#4c1d95]/50');
+    expect(graphBorder?.className).toContain("border-[#4c1d95]/50");
   });
 
   it("should call setGraphActive when clicking graph area while inactive", () => {
     const onOpenDialog = vi.fn();
     const setGraphActive = vi.fn();
     const { container } = render(
-      <MemoryGraph 
+      <MemoryGraph
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}

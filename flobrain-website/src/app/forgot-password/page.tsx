@@ -44,7 +44,7 @@ export default function ForgotPassword() {
             </p>
           </div>
 
-          {isSubmitted ? (
+{isSubmitted ? (
             <>
               <div className="rounded-lg bg-green-100 border border-green-200 p-4 text-center">
                 <p className="text-green-800 text-sm">

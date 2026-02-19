@@ -88,13 +88,10 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              
               <Label htmlFor="password" className="text-zinc-800 font-medium">
                 Password
               </Label>
-
               <div className="relative">
-                
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
                 <Input
                   id="password"

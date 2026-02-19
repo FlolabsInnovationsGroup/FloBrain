@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:15
+    container_name: flobrain_backend_db
+    restart: always
+    environment:
+      - POSTGRES_DB=flobrain_db
+      - POSTGRES_USER=flo_user
+      - POSTGRES_PASSWORD=flo_password
+    volumes:
+      - postgres_data:/var/lib/postgresql
+  
+  web:
+    build: .
+    container_name: flobrain_backend_django
+    restart: always
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app  # This syncs the local folder to the container
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_NAME=flobrain_db
+      - DB_USER=flo_user
+      - DB_PASS=flo_password
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
+volumes:
+  postgres_data:
