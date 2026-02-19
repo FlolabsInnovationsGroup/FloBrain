@@ -1,10 +1,17 @@
 /**
- * Flobrain Core API client (auth endpoints).
+ * Flobrain API client (Axios-based).
  * Base URL: NEXT_PUBLIC_API_URL (e.g. http://127.0.0.1:8000)
+ * Use api.* for auth; use apiClient + useQuery/useMutation for other collections.
  */
 
-const getBaseUrl = () =>
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "http://127.0.0.1:8000";
+import { apiClient, getApiBaseUrl } from "./axios";
+
+export type ApiResult<T> = {
+  data?: T;
+  error?: string;
+  details?: unknown;
+  status: number;
+};
 
 function formatDetails(details: unknown): string | undefined {
   if (details == null) return undefined;
@@ -19,55 +26,63 @@ function formatDetails(details: unknown): string | undefined {
   return String(details);
 }
 
+function normalizeError(err: unknown): ApiResult<never> {
+  if (err && typeof err === "object" && "response" in err) {
+    const ax = err as { response?: { data?: unknown; status?: number }; message?: string };
+    const status = ax.response?.status ?? 0;
+    const data = ax.response?.data;
+    let error = "Request failed";
+    let details: unknown;
+    if (data && typeof data === "object") {
+      const obj = data as Record<string, unknown>;
+      error = (obj.error as string) ?? error;
+      details = obj.details;
+      const formatted = formatDetails(details);
+      if (formatted) error = `${error}. ${formatted}`;
+    } else if (ax.message) {
+      error = ax.message;
+      details = ax.message;
+    }
+    return { error, details, status };
+  }
+  const message = err instanceof Error ? err.message : "Network error";
+  return {
+    error:
+      "Could not reach server. Check that the backend is running and the URL is correct.",
+    details: message,
+    status: 0,
+  };
+}
+
 export const api = {
   get baseUrl() {
-    return getBaseUrl();
+    return getApiBaseUrl();
   },
 
+  /**
+   * Low-level request. Prefer auth methods or React Query for specific endpoints.
+   */
   async request<T>(
     path: string,
-    options: RequestInit & { json?: object } = {}
-  ): Promise<{ data?: T; error?: string; details?: unknown; status: number }> {
-    const { json, ...init } = options;
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      ...(init.headers as Record<string, string>),
-    };
-    const body = json !== undefined ? JSON.stringify(json) : init.body;
-    let res: Response;
+    options: { method?: string; json?: object } = {}
+  ): Promise<ApiResult<T>> {
+    const { method = "GET", json } = options;
     try {
-      res = await fetch(`${getBaseUrl()}${path}`, { ...init, headers, body });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Network error";
+      const res = await apiClient.request<T>({
+        url: path,
+        method,
+        data: json,
+      });
       return {
-        error: "Could not reach server. Check that the backend is running and the URL is correct.",
-        details: message,
-        status: 0,
+        data: res.data,
+        status: res.status,
       };
+    } catch (err) {
+      return normalizeError(err) as ApiResult<T>;
     }
-    let data: T | undefined;
-    let error: string | undefined;
-    let details: unknown;
-    const text = await res.text();
-    if (text) {
-      try {
-        const parsed = JSON.parse(text) as Record<string, unknown>;
-        data = parsed as T;
-        if (!res.ok) {
-          error = (parsed.error as string) ?? "Request failed";
-          details = parsed.details;
-          const formatted = formatDetails(details);
-          if (formatted) error = `${error}. ${formatted}`;
-        }
-      } catch {
-        if (!res.ok) error = text || "Request failed";
-      }
-    }
-    if (!res.ok && !error) error = res.statusText || "Request failed";
-    return { data: res.ok ? data : undefined, error, details, status: res.status };
   },
 
-  // --- Auth ---
+  // --- Auth (used by AuthContext; other data can use useQuery/useMutation + apiClient) ---
 
   async signIn(email: string, password: string) {
     return this.request<{
@@ -80,7 +95,12 @@ export const api = {
     });
   },
 
-  async register(body: { name: string; email: string; password: string; phone?: string }) {
+  async register(body: {
+    name: string;
+    email: string;
+    password: string;
+    phone?: string;
+  }) {
     return this.request<{
       access_token: string;
       refresh_token: string;
@@ -105,3 +125,6 @@ export const api = {
     });
   },
 };
+
+// Re-export for team: use apiClient for custom requests + React Query
+export { apiClient } from "./axios";
