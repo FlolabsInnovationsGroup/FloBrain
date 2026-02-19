@@ -1,11 +1,17 @@
 __pycache__/
 db.sqlite3
 .env
+
+# Python venv (flobrain-core)
+flobrain-core/.venv/
+
+# Editor / IDE
+.vscode/
+
 # Node + project ignores
 node_modules/
 .env
 .env.*
-.vscode/
 dist/
 coverage/
 logs/
