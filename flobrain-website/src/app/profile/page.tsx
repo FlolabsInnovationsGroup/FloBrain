@@ -1,18 +1,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CreditCard, Menu, PanelLeftClose, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CreditCard, Menu, PanelLeftClose, X, User, Shield, Bell, HelpCircle, LogOut } from "lucide-react";
 import ProfileSettings from "./components/ProfileSettings";
 import AccountSecuritySettings from "./components/AccountSecuritySettings";
 import NotificationsSettings from "./components/NotificationsSettings";
 import HelpSettings from "./components/HelpSettings";
 import BillingSettings from "./components/BillingSettings";
+import { useAuth } from "@/contexts/AuthContext";
 
 const MOBILE_BREAKPOINT = 768;
 
 type SettingsTab = "profile" | "account" | "notifications" | "billing" | "help";
 
+const navItems: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
+  { id: "profile", label: "Profile", icon: <User className="w-5 h-5" /> },
+  { id: "account", label: "Account & Security", icon: <Shield className="w-5 h-5" /> },
+  { id: "notifications", label: "Notifications", icon: <Bell className="w-5 h-5" /> },
+  { id: "billing", label: "Billing", icon: <CreditCard className="w-5 h-5" /> },
+  { id: "help", label: "Help", icon: <HelpCircle className="w-5 h-5" /> },
+];
+
 export default function SettingsPage() {
+  const router = useRouter();
+  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
   const [isOpen, setIsOpen] = useState(true);
   const [isMenuVisible, setIsMenuVisible] = useState(true);
@@ -20,7 +32,6 @@ export default function SettingsPage() {
     typeof window !== "undefined" ? window.innerWidth < MOBILE_BREAKPOINT : false
   );
 
-  // Auto-hide menu when viewport shrinks to mobile; auto-show when expanding to desktop
   useEffect(() => {
     let wasMobile = window.innerWidth < MOBILE_BREAKPOINT;
 
@@ -28,9 +39,9 @@ export default function SettingsPage() {
       const mobile = window.innerWidth < MOBILE_BREAKPOINT;
       setIsMobile(mobile);
       if (mobile && !wasMobile) {
-        setIsMenuVisible(false); // narrowed to mobile → hide
+        setIsMenuVisible(false);
       } else if (!mobile && wasMobile) {
-        setIsMenuVisible(true); // expanded to desktop → show
+        setIsMenuVisible(true);
       }
       wasMobile = mobile;
     };
@@ -40,191 +51,112 @@ export default function SettingsPage() {
 
   const handleClose = () => {
     setIsOpen(false);
-    // Navigate back or close the modal
     window.history.back();
   };
 
-  const handleLogout = () => {
-    // Implement logout logic
-    console.warn("Logging out...");
+  const handleLogout = async () => {
+    await logout();
+    setIsOpen(false);
+    router.push("/");
   };
 
   const renderNav = () => (
-    <nav className="space-y-2">
-      <button
-        onClick={() => {
-          setActiveTab("profile");
-          if (isMobile) setIsMenuVisible(false);
-        }}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-          activeTab === "profile"
-            ? "bg-purple-700/50 text-white"
-            : "text-white/70 hover:text-white hover:bg-purple-800/30"
-        }`}
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-          />
-        </svg>
-        Profile
-      </button>
-
-      <button
-        onClick={() => {
-          setActiveTab("account");
-          if (isMobile) setIsMenuVisible(false);
-        }}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-          activeTab === "account"
-            ? "bg-purple-700/50 text-white"
-            : "text-white/70 hover:text-white hover:bg-purple-800/30"
-        }`}
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-          />
-        </svg>
-        Account & Security
-      </button>
-
-      <button
-        onClick={() => {
-          setActiveTab("notifications");
-          if (isMobile) setIsMenuVisible(false);
-        }}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-          activeTab === "notifications"
-            ? "bg-purple-700/50 text-white"
-            : "text-white/70 hover:text-white hover:bg-purple-800/30"
-        }`}
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-          />
-        </svg>
-        Notifications
-      </button>
-
-      <button
-        onClick={() => {
-          setActiveTab("billing");
-          if (isMobile) setIsMenuVisible(false);
-        }}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-          activeTab === "billing"
-            ? "bg-purple-700/50 text-white"
-            : "text-white/70 hover:text-white hover:bg-purple-800/30"
-        }`}
-      >
-        <CreditCard className="w-5 h-5" />
-        Billing
-      </button>
-
-      <button
-        onClick={() => {
-          setActiveTab("help");
-          if (isMobile) setIsMenuVisible(false);
-        }}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-          activeTab === "help"
-            ? "bg-purple-700/50 text-white"
-            : "text-white/70 hover:text-white hover:bg-purple-800/30"
-        }`}
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        Help
-      </button>
+    <nav className="space-y-1">
+      {navItems.map((item) => (
+        <button
+          key={item.id}
+          onClick={() => {
+            setActiveTab(item.id);
+            if (isMobile) setIsMenuVisible(false);
+          }}
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-r-lg transition-colors text-left ${
+            activeTab === item.id
+              ? "bg-[#3D2C4D] text-white"
+              : "text-white/80 hover:text-white hover:bg-purple-900/40"
+          }`}
+        >
+          {item.icon}
+          <span>{item.label}</span>
+        </button>
+      ))}
     </nav>
   );
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md px-4 py-6 sm:px-6">
-      <div className="relative w-full max-w-4xl bg-gradient-to-br from-purple-900/95 to-indigo-950/95 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-        {/* Close Button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
-        >
-          <X size={24} />
-        </button>
-
-        {/* Menu toggle: hide when visible, open when hidden */}
-        <button
-          type="button"
-          onClick={() => setIsMenuVisible(!isMenuVisible)}
-          className="absolute top-6 left-6 text-white/80 hover:text-white transition-colors inline-flex items-center justify-center rounded-full p-1.5 bg-purple-900/60 border border-purple-500/40"
-          aria-label={isMenuVisible ? "Hide menu" : "Show menu"}
-        >
-          {isMenuVisible ? (
-            <PanelLeftClose size={20} />
-          ) : (
-            <Menu size={20} />
-          )}
-        </button>
-
-          <div className="flex flex-1 min-h-[500px]">
-          {/* Sidebar (desktop) */}
+    /* Grey blurred overlay */
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-400/30 backdrop-blur-xl p-4">
+      {/* Fixed % dimensions - does not change when switching tabs */}
+      <div
+        className="relative flex flex-col rounded-2xl shadow-2xl overflow-hidden"
+        style={{ width: "85%", maxWidth: "900px", height: "90vh" }}
+      >
+        <div className="flex flex-1 min-h-0 bg-[#2E1E3A]">
+          {/* Left Navigation - ~1/3 width */}
           <div
-            className={`hidden ${isMenuVisible ? "md:flex" : ""} w-66 bg-purple-900/50 backdrop-blur-md p-6 flex-col justify-between`}
+            className={`${isMenuVisible ? "flex" : "hidden"} md:flex md:w-1/3 min-w-[220px] flex-col bg-[#2E1E3A] border-r border-purple-900/30`}
           >
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-8">Settings</h2>
-              {renderNav()}
+            <div className="p-6 flex-1 flex flex-col min-h-0">
+              <h2 className="text-xl font-bold text-white mb-4">Settings</h2>
+              <div className="h-px bg-white/20 mb-4" />
+              <div className="flex-1 overflow-y-auto">{renderNav()}</div>
+              <div className="pt-4 mt-4 border-t border-white/10">
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-[#E07A5F] hover:bg-[#d96b4f] text-white font-medium transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Logout
+                </button>
+              </div>
             </div>
-
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-900/20 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
-              Logout
-            </button>
           </div>
 
-          {/* Content Area - extra left padding to clear menu icon */}
-          <div className="flex-1 pt-6 pr-6 sm:pr-8 pb-6 sm:pb-8 pl-14 sm:pl-16 overflow-y-auto">
-            {activeTab === "profile" && <ProfileSettings />}
-            {activeTab === "account" && <AccountSecuritySettings />}
-            {activeTab === "notifications" && <NotificationsSettings />}
+          {/* Right Content - ~2/3 width */}
+          <div className="flex-1 flex flex-col min-w-0 bg-[#281C30]">
+            <div className="flex items-center justify-between px-6 py-6 border-b border-white/10 shrink-0">
+              <h2 className="text-xl font-bold text-white">
+                {activeTab === "profile" && "Profile Settings"}
+                {activeTab === "account" && "Account & Security"}
+                {activeTab === "notifications" && "Notifications"}
+                {activeTab === "billing" && "Billing"}
+                {activeTab === "help" && "Help"}
+              </h2>
+              <button
+                onClick={handleClose}
+                className="text-white/70 hover:text-white transition-colors p-1 -m-1"
+                aria-label="Close"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 min-h-0">
+              {activeTab === "profile" && <ProfileSettings />}
+              {activeTab === "account" && <AccountSecuritySettings />}
+              {activeTab === "notifications" && <NotificationsSettings />}
               {activeTab === "billing" && <BillingSettings />}
-            {activeTab === "help" && <HelpSettings />}
+              {activeTab === "help" && <HelpSettings />}
+            </div>
           </div>
         </div>
 
+        {/* Mobile menu toggle */}
+        <button
+          type="button"
+          onClick={() => setIsMenuVisible(!isMenuVisible)}
+          className="absolute top-5 left-5 z-30 text-white/80 hover:text-white md:hidden inline-flex items-center justify-center rounded-full p-2 bg-white/10"
+          aria-label={isMenuVisible ? "Hide menu" : "Show menu"}
+        >
+          {isMenuVisible ? <PanelLeftClose size={20} /> : <Menu size={20} />}
+        </button>
+
         {/* Mobile nav overlay */}
-        {isMenuVisible && (
-          <div className="absolute inset-0 z-20 bg-gradient-to-br from-purple-950/95 to-indigo-950/95 md:hidden">
-            <div className="flex flex-col h-full p-6">
-              <div className="flex items-center justify-between mb-6">
+        {isMenuVisible && isMobile && (
+          <div className="absolute inset-0 z-20 bg-[#2E1E3A] md:hidden flex flex-col">
+            <div className="p-6 flex flex-col h-full">
+              <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-white">Settings</h2>
                 <button
                   type="button"
@@ -235,24 +167,20 @@ export default function SettingsPage() {
                   <X size={22} />
                 </button>
               </div>
+              <div className="h-px bg-white/20 mb-4" />
               <div className="flex-1 overflow-y-auto">{renderNav()}</div>
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsMenuVisible(false);
-                }}
-                className="mt-6 flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-900/20 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  />
-                </svg>
-                Logout
-              </button>
+              <div className="pt-4 mt-4 border-t border-white/10">
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuVisible(false);
+                  }}
+                  className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-[#E07A5F] hover:bg-[#d96b4f] text-white font-medium transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
         )}
