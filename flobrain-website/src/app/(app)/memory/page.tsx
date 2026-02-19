@@ -10,7 +10,7 @@ export default function Memory() {
   const [selectedNode, setSelectedNode] = useState<memoryNode | null>(null);
   const [openMemoryNodeDialog, setOpenMemoryNodeDialog] = useState<boolean>(false);
   const [graphActive, setGraphActive] = useState<boolean>(false);
-  
+
   // Filter states
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,7 +39,7 @@ export default function Memory() {
   };
 
   return (
-    <main 
+    <main
       className="flex min-h-screen flex-col items-start justify-start p-12 bg-gradient-to-br from-[#1a0033] via-[#2a1a4a] to-[#0f0f23]"
       onClick={handlePageClick}
     >
@@ -61,7 +61,7 @@ export default function Memory() {
       {/* Main Content: Labels and Graph */}
       <div className="flex flex-col lg:flex-row lg:items-center gap-4 w-full">
         {/* Memory Types Legend */}
-        <div 
+        <div
           className="w-full lg:w-1/5 flex-shrink-0 bg-[#e194ff]/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-[#4c1d95]/50 shadow-2xl text-sm"
           onClick={(e) => e.stopPropagation()}
         >
@@ -97,20 +97,20 @@ export default function Memory() {
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-[#4c1d95]/60">
-            <span className="text-[#000000] text-xs block">Node size represents relevance score</span>
+            <span className="text-[#000000] text-xs block">
+              Node size represents relevance score
+            </span>
           </div>
         </div>
 
         {/* Memory Graph Container */}
-        <div 
+        <div
           className="w-full lg:w-4/5 flex flex-col items-center justify-center h-[60vh] min-h-0"
           onClick={(e) => e.stopPropagation()}
         >
-         
-
           {/* Memory Graph */}
           <div className="w-full h-[calc(60vh-5rem)] overflow-hidden rounded-xl border-4 border-[#4c1d95]/50">
-            <MemoryGraph 
+            <MemoryGraph
               onOpenMemoryNodeDialog={onOpenMemoryNodeDialog}
               graphActive={graphActive}
               setGraphActive={setGraphActive}
@@ -118,7 +118,7 @@ export default function Memory() {
           </div>
         </div>
       </div>
-      
+
       {/* Memory Node Details Dialog */}
       <MemoryNodeDetailsDialog
         open={openMemoryNodeDialog}

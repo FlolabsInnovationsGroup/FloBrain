@@ -5,7 +5,13 @@ import Link from "next/link";
 import { Mail, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/layout/button";
 import { Input } from "@/components/layout/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/layout/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/layout/card";
 import { Label } from "@/components/layout/label";
 
 export default function ForgotPassword() {
@@ -41,8 +47,8 @@ export default function ForgotPassword() {
               <>
                 <div className="rounded-lg bg-green-500/10 border border-green-500/30 p-4 text-center">
                   <p className="text-green-400 text-sm">
-                    Check your inbox at <span className="font-medium text-white">{email}</span> for a
-                    password reset link.
+                    Check your inbox at <span className="font-medium text-white">{email}</span> for
+                    a password reset link.
                   </p>
                 </div>
                 <Link href="/signin" className="block">

@@ -7,55 +7,53 @@ vi.mock("next/image", () => ({
   default: (props: any) => <img alt="" {...props} data-testid="mock-hero-image" />,
 }));
 
-
 vi.mock("../../../../assets/images/flolabs-logo.svg", () => ({
-    default: "logo-mock"
+  default: "logo-mock",
 }));
 
 describe("Navbar Component", () => {
-    
-    it("should render the logo and brand name", () => {
-        render(<Navbar />);
-        expect(screen.getByAltText("FloLabs' logo")).toBeDefined();
-        expect(screen.getByText("FLOBRAIN")).toBeDefined();
-    });
+  it("should render the logo and brand name", () => {
+    render(<Navbar />);
+    expect(screen.getByAltText("FloLabs' logo")).toBeDefined();
+    expect(screen.getByText("FLOBRAIN")).toBeDefined();
+  });
 
-    it("should render desktop navigation links", () => {
-        render(<Navbar />);
-        const dashboardLink = screen.getByRole("link", { name: "Dashboard" });
-        const brainLink = screen.getByRole("link", { name: "Brain" });
-        
-        expect(dashboardLink).toBeDefined();
-        expect(brainLink).toBeDefined();
-        expect(dashboardLink.getAttribute("href")).toBe("/dashboard");
-    });
+  it("should render desktop navigation links", () => {
+    render(<Navbar />);
+    const dashboardLink = screen.getByRole("link", { name: "Dashboard" });
+    const brainLink = screen.getByRole("link", { name: "Brain" });
 
-    it("should toggle mobile menu when hamburger button is clicked", () => {
-        render(<Navbar />);
-        
-        const toggleButton = screen.getByRole("button");
-        const dashboardLinksBefore = screen.getAllByText("Dashboard");
-        expect(dashboardLinksBefore).toHaveLength(1); 
+    expect(dashboardLink).toBeDefined();
+    expect(brainLink).toBeDefined();
+    expect(dashboardLink.getAttribute("href")).toBe("/dashboard");
+  });
 
-        fireEvent.click(toggleButton);
+  it("should toggle mobile menu when hamburger button is clicked", () => {
+    render(<Navbar />);
 
-        const dashboardLinksAfter = screen.getAllByText("Dashboard");
-        expect(dashboardLinksAfter).toHaveLength(2);
-    });
+    const toggleButton = screen.getByRole("button");
+    const dashboardLinksBefore = screen.getAllByText("Dashboard");
+    expect(dashboardLinksBefore).toHaveLength(1);
 
-    it("should close mobile menu when a link is clicked", () => {
-        render(<Navbar />);
-        
-        const toggleButton = screen.getByRole("button");
-        fireEvent.click(toggleButton);
+    fireEvent.click(toggleButton);
 
-        const mobileLinks = screen.getAllByText("Dashboard");
-        expect(mobileLinks).toHaveLength(2);
+    const dashboardLinksAfter = screen.getAllByText("Dashboard");
+    expect(dashboardLinksAfter).toHaveLength(2);
+  });
 
-        const mobileDashboardLink = mobileLinks[1]; 
-        fireEvent.click(mobileDashboardLink);
+  it("should close mobile menu when a link is clicked", () => {
+    render(<Navbar />);
 
-        const finalLinks = screen.getAllByText("Dashboard");
-        expect(finalLinks).toHaveLength(1);
-    });
+    const toggleButton = screen.getByRole("button");
+    fireEvent.click(toggleButton);
+
+    const mobileLinks = screen.getAllByText("Dashboard");
+    expect(mobileLinks).toHaveLength(2);
+
+    const mobileDashboardLink = mobileLinks[1];
+    fireEvent.click(mobileDashboardLink);
+
+    const finalLinks = screen.getAllByText("Dashboard");
+    expect(finalLinks).toHaveLength(1);
+  });
 });

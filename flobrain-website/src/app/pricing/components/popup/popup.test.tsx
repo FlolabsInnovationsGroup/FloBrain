@@ -75,7 +75,6 @@ describe("PlanUpgradePopup Component", () => {
     expect(screen.getByText("Developer")).toBeInTheDocument();
     expect(screen.getByText("Pro")).toBeInTheDocument();
     expect(screen.getAllByText("$49").length).toBeGreaterThan(0);
-
   });
 
   it("should show upgrade arrow when upgrading", () => {
@@ -122,8 +121,9 @@ describe("PlanUpgradePopup Component", () => {
       />
     );
 
-    const backdrop = screen.getByText("Confirm changes").parentElement?.parentElement?.previousSibling;
-    
+    const backdrop =
+      screen.getByText("Confirm changes").parentElement?.parentElement?.previousSibling;
+
     if (backdrop) {
       await fireEvent.click(backdrop as Element);
       expect(mockOnClose).toHaveBeenCalled();
@@ -182,9 +182,7 @@ describe("PlanUpgradePopup Component", () => {
     await fireEvent.click(continueButton);
 
     expect(mockOnClose).toHaveBeenCalled();
-    expect(mockPush).toHaveBeenCalledWith(
-      expect.stringContaining("/checkout?plan=Pro&price=")
-    );
+    expect(mockPush).toHaveBeenCalledWith(expect.stringContaining("/checkout?plan=Pro&price="));
   });
 
   it("should navigate to contact sales for custom/enterprise plans", async () => {

@@ -28,7 +28,7 @@ export default function Pricing() {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
-  
+
   const currentPlan = {
     name: "Developer",
     price: "Free",
