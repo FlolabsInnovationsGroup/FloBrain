@@ -39,7 +39,7 @@ export function MetricsChart() {
             tick={{ fill: "#a1a1aa", fontSize: 11 }}
             axisLine={{ stroke: chartColors.grid }}
             tickLine={{ stroke: chartColors.grid }}
-            tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+            tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`}
           />
           <Tooltip
             contentStyle={{

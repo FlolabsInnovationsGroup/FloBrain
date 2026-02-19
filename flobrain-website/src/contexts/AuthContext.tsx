@@ -65,9 +65,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const stored = getStoredAuth();
-    setUserId(stored?.userId ?? null);
-    setIsLoading(false);
+    const id = setTimeout(() => {
+      const stored = getStoredAuth();
+      setUserId(stored?.userId ?? null);
+      setIsLoading(false);
+    }, 0);
+    return () => clearTimeout(id);
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {

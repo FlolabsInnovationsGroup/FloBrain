@@ -1,13 +1,26 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Register from "./page";
+import { AuthProvider } from "@/contexts/AuthContext";
 
-// Mock Next.js router
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+}));
+
 vi.mock("next/link", () => ({
   default: ({ children, href }: { children: React.ReactNode; href: string }) => (
     <a href={href}>{children}</a>
   ),
 }));
+
+function renderWithAuth(ui: React.ReactElement) {
+  return render(<AuthProvider>{ui}</AuthProvider>);
+}
 
 describe("Register Component", () => {
   beforeEach(() => {
@@ -15,10 +28,10 @@ describe("Register Component", () => {
   });
 
   it("should render all form fields correctly", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
-    expect(screen.getByText("Create Account")).toBeInTheDocument();
-    expect(screen.getByText("Sign up for free to get started with FLOBRAIN")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Create Account" })).toBeInTheDocument();
+    expect(screen.getByText("FloBrain")).toBeInTheDocument();
     expect(screen.getByLabelText("Full Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getAllByLabelText("Password")[0]).toBeInTheDocument();
@@ -26,14 +39,14 @@ describe("Register Component", () => {
   });
 
   it("should render social login buttons", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     expect(screen.getByText("Continue with Google")).toBeInTheDocument();
     expect(screen.getByText("Continue with Apple")).toBeInTheDocument();
   });
 
   it("should update name input value when user types", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const nameInput = screen.getByPlaceholderText("Enter your full name");
     fireEvent.change(nameInput, { target: { value: "John Doe" } });
@@ -42,7 +55,7 @@ describe("Register Component", () => {
   });
 
   it("should update email input value when user types", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const emailInput = screen.getByPlaceholderText("Enter your email");
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
@@ -51,7 +64,7 @@ describe("Register Component", () => {
   });
 
   it("should update password input value when user types", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const passwordInput = screen.getByPlaceholderText("Create a password");
     fireEvent.change(passwordInput, { target: { value: "password123" } });
@@ -60,7 +73,7 @@ describe("Register Component", () => {
   });
 
   it("should update confirm password input value when user types", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const confirmPasswordInput = screen.getByPlaceholderText("Confirm your password");
     fireEvent.change(confirmPasswordInput, { target: { value: "password123" } });
@@ -69,7 +82,7 @@ describe("Register Component", () => {
   });
 
   it("should toggle password visibility when eye icon is clicked", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const passwordInput = screen.getByPlaceholderText("Create a password");
     const toggleButtons = screen.getAllByRole("button");
@@ -89,7 +102,7 @@ describe("Register Component", () => {
   });
 
   it("should toggle confirm password visibility when eye icon is clicked", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const confirmPasswordInput = screen.getByPlaceholderText("Confirm your password");
     const toggleButtons = screen.getAllByRole("button");
@@ -109,54 +122,23 @@ describe("Register Component", () => {
     }
   });
 
-  it("should render terms and conditions checkbox", () => {
-    render(<Register />);
-
-    const checkbox = screen.getByRole("checkbox");
-    expect(checkbox).toBeInTheDocument();
-    expect(screen.getByText(/I agree to the/i)).toBeInTheDocument();
-  });
-
-  it("should check/uncheck terms checkbox when clicked", () => {
-    render(<Register />);
-
-    const checkbox = screen.getByRole("checkbox") as HTMLInputElement;
-    expect(checkbox.checked).toBe(false);
-
-    fireEvent.click(checkbox);
-    expect(checkbox.checked).toBe(true);
-
-    fireEvent.click(checkbox);
-    expect(checkbox.checked).toBe(false);
-  });
-
-  it("should render links to terms and privacy policy", () => {
-    render(<Register />);
-
-    const termsLink = screen.getByText("Terms of Service");
-    const privacyLink = screen.getByText("Privacy Policy");
-
-    expect(termsLink).toHaveAttribute("href", "/terms");
-    expect(privacyLink).toHaveAttribute("href", "/privacy");
-  });
-
   it("should render sign in link", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
-    const signInLink = screen.getByText("Sign in here");
+    const signInLink = screen.getByText("Login");
     expect(signInLink).toHaveAttribute("href", "/signin");
     expect(screen.getByText("Already have an account?")).toBeInTheDocument();
   });
 
   it("should render create account button", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const submitButton = screen.getByRole("button", { name: /Create Account/i });
     expect(submitButton).toBeInTheDocument();
   });
 
   it("should handle all inputs filled correctly", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const nameInput = screen.getByPlaceholderText("Enter your full name");
     const emailInput = screen.getByPlaceholderText("Enter your email");
@@ -174,22 +156,22 @@ describe("Register Component", () => {
     expect(confirmPasswordInput).toHaveValue("SecurePass123!");
   });
 
-  it("should have proper styling classes for glass morphism effect", () => {
-    const { container } = render(<Register />);
+  it("should have proper styling for auth card", () => {
+    const { container } = renderWithAuth(<Register />);
 
-    const card = container.querySelector(".bg-white\\/5");
+    const card = container.querySelector(".rounded-2xl");
     expect(card).toBeInTheDocument();
-    expect(card).toHaveClass("backdrop-blur-xl");
+    expect(card?.className).toContain("CABEE8");
   });
 
   it("should render divider text correctly", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
-    expect(screen.getByText("or continue with")).toBeInTheDocument();
+    expect(screen.getByText("Or continue with")).toBeInTheDocument();
   });
 
   it("should display icons for form inputs", () => {
-    const { container } = render(<Register />);
+    const { container } = renderWithAuth(<Register />);
 
     // Check for Mail, Lock, and User icons (lucide-react)
     const mailIcon = container.querySelector("svg");
@@ -197,7 +179,7 @@ describe("Register Component", () => {
   });
 
   it("should handle empty form submission", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const submitButton = screen.getByRole("button", { name: /Create Account/i });
     fireEvent.click(submitButton);
