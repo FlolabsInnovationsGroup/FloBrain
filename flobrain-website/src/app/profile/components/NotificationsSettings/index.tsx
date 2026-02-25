@@ -22,28 +22,24 @@ export default function NotificationsSettings() {
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-3xl font-bold text-white">Notifications</h2>
-
-      <div className="space-y-4">
-        {settings.map((setting) => (
-          <div
-            key={setting.id}
-            className="flex items-center justify-between p-4 bg-indigo-950/30 border border-purple-500/20 rounded-lg"
+    <div className="space-y-4">
+      {settings.map((setting) => (
+        <div
+          key={setting.id}
+          className="flex items-center justify-between p-4 bg-[#281C30] border border-zinc-500/50 rounded-lg"
+        >
+          <span className="text-white font-medium">{setting.label}</span>
+          <select
+            value={setting.value}
+            onChange={(e) => handleSettingChange(setting.id, e.target.value as NotificationOption)}
+            className="px-4 py-2 bg-[#281C30] border border-zinc-500/50 rounded-lg text-white focus:outline-none focus:border-zinc-400/70 cursor-pointer"
           >
-            <span className="text-white font-medium">{setting.label}</span>
-            <select
-              value={setting.value}
-              onChange={(e) => handleSettingChange(setting.id, e.target.value as NotificationOption)}
-              className="px-4 py-2 bg-indigo-950/50 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-500/60 cursor-pointer"
-            >
               <option value="push">Push</option>
               <option value="email">Email</option>
               <option value="off">Off</option>
             </select>
-          </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -14,10 +14,11 @@ export default function AccountSecuritySettings() {
     setPasswords({ ...passwords, [e.target.name]: e.target.value });
   };
 
+  const inputClass =
+    "w-full px-4 py-3 bg-[#281C30] border border-zinc-500/50 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-400/70";
+
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold text-white">Account & Security</h2>
-
       <div>
         <label htmlFor="currentPassword" className="block text-white text-sm font-medium mb-2">
           Current Password
@@ -29,7 +30,7 @@ export default function AccountSecuritySettings() {
           value={passwords.current}
           onChange={handlePasswordChange}
           placeholder="Enter current password"
-          className="w-full px-4 py-3 bg-indigo-950/50 border border-purple-500/30 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-purple-500/60"
+          className={inputClass}
         />
       </div>
 
@@ -44,7 +45,7 @@ export default function AccountSecuritySettings() {
           value={passwords.new}
           onChange={handlePasswordChange}
           placeholder="Enter new password"
-          className="w-full px-4 py-3 bg-indigo-950/50 border border-purple-500/30 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-purple-500/60"
+          className={inputClass}
         />
       </div>
 
@@ -59,15 +60,15 @@ export default function AccountSecuritySettings() {
           value={passwords.confirm}
           onChange={handlePasswordChange}
           placeholder="Confirm new password"
-          className="w-full px-4 py-3 bg-indigo-950/50 border border-purple-500/30 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-purple-500/60"
+          className={inputClass}
         />
       </div>
 
-      <div className="border-t border-purple-500/30 pt-6">
+      <div className="border-t border-zinc-500/30 pt-6">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-white font-semibold text-lg">Two-Factor Authentication (2FA)</h3>
-            <p className="text-white/60 text-sm mt-1">Add an extra layer of security to your account</p>
+            <p className="text-zinc-400 text-sm mt-1">Add an extra layer of security to your account</p>
           </div>
           <button
             onClick={() => setTwoFactorEnabled(!twoFactorEnabled)}

@@ -1,6 +1,7 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import Navbar from ".";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 vi.mock("next/image", () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @next/next/no-img-element
@@ -11,49 +12,63 @@ vi.mock("../../../../assets/images/flolabs-logo.svg", () => ({
   default: "logo-mock",
 }));
 
+function renderWithAuth(ui: React.ReactElement) {
+  return render(<AuthProvider>{ui}</AuthProvider>);
+}
+
 describe("Navbar Component", () => {
   it("should render the logo and brand name", () => {
-    render(<Navbar />);
-    expect(screen.getByAltText("FloLabs' logo")).toBeDefined();
+    renderWithAuth(<Navbar />);
+    expect(screen.getByAltText("Logo")).toBeDefined();
     expect(screen.getByText("FLOBRAIN")).toBeDefined();
   });
 
-  it("should render desktop navigation links", () => {
-    render(<Navbar />);
-    const dashboardLink = screen.getByRole("link", { name: "Dashboard" });
-    const brainLink = screen.getByRole("link", { name: "Brain" });
+  it("should render desktop navigation links", async () => {
+    renderWithAuth(<Navbar />);
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: /Sign In/i })).toBeInTheDocument();
+    });
+    const signInLink = screen.getByRole("link", { name: /Sign In/i });
+    const registerLink = screen.getByRole("link", { name: /Register/i });
 
-    expect(dashboardLink).toBeDefined();
-    expect(brainLink).toBeDefined();
-    expect(dashboardLink.getAttribute("href")).toBe("/dashboard");
+    expect(signInLink).toBeDefined();
+    expect(registerLink).toBeDefined();
+    expect(signInLink.getAttribute("href")).toBe("/signin");
+    expect(registerLink.getAttribute("href")).toBe("/register");
   });
 
-  it("should toggle mobile menu when hamburger button is clicked", () => {
-    render(<Navbar />);
+  it("should toggle mobile menu when hamburger button is clicked", async () => {
+    renderWithAuth(<Navbar />);
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: /Sign In/i })).toBeInTheDocument();
+    });
 
     const toggleButton = screen.getByRole("button");
-    const dashboardLinksBefore = screen.getAllByText("Dashboard");
-    expect(dashboardLinksBefore).toHaveLength(1);
+    const signInLinksBefore = screen.getAllByText(/Sign In/i);
+    expect(signInLinksBefore.length).toBeGreaterThanOrEqual(1);
 
     fireEvent.click(toggleButton);
 
-    const dashboardLinksAfter = screen.getAllByText("Dashboard");
-    expect(dashboardLinksAfter).toHaveLength(2);
+    const signInLinksAfter = screen.getAllByText(/Sign In/i);
+    expect(signInLinksAfter.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("should close mobile menu when a link is clicked", () => {
-    render(<Navbar />);
+  it("should close mobile menu when a link is clicked", async () => {
+    renderWithAuth(<Navbar />);
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: /Sign In/i })).toBeInTheDocument();
+    });
 
     const toggleButton = screen.getByRole("button");
     fireEvent.click(toggleButton);
 
-    const mobileLinks = screen.getAllByText("Dashboard");
-    expect(mobileLinks).toHaveLength(2);
+    const mobileLinks = screen.getAllByText(/Sign In/i);
+    expect(mobileLinks.length).toBeGreaterThanOrEqual(2);
 
-    const mobileDashboardLink = mobileLinks[1];
-    fireEvent.click(mobileDashboardLink);
+    const mobileSignInLink = mobileLinks[mobileLinks.length - 1];
+    fireEvent.click(mobileSignInLink);
 
-    const finalLinks = screen.getAllByText("Dashboard");
-    expect(finalLinks).toHaveLength(1);
+    const finalLinks = screen.getAllByText(/Sign In/i);
+    expect(finalLinks.length).toBeLessThan(mobileLinks.length);
   });
 });

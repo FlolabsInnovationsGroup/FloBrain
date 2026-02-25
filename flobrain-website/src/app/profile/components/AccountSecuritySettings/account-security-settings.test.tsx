@@ -113,14 +113,6 @@ describe("AccountSecuritySettings Component", () => {
     expect(screen.getByPlaceholderText(/confirm new password/i)).toBeDefined();
   });
 
-  it("should render Account & Security heading", () => {
-    render(<AccountSecuritySettings />);
-    
-    const heading = screen.getByRole('heading', { name: /account & security/i });
-    expect(heading).toBeDefined();
-    expect(heading.tagName).toBe('H2');
-  });
-
   it("should render 2FA as a subheading", () => {
     render(<AccountSecuritySettings />);
     
