@@ -25,7 +25,6 @@ interface PricingTier {
 }
 
 export default function Pricing() {
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
 
@@ -36,9 +35,8 @@ export default function Pricing() {
   };
 
   const pricingTiers: PricingTier[] = PLANS.map((plan) => {
-    const { price, period } = getPlanPrice(plan, billingCycle);
+    const { price, period } = getPlanPrice(plan, "monthly");
 
-    // Button styles/text are view-specific
     let buttonText = "Start Free Trial";
     let buttonVariant: "outline" | "primary" = "outline";
 
@@ -48,6 +46,9 @@ export default function Pricing() {
     } else if (plan.id === "pro") {
       buttonText = "Start Free Trial";
       buttonVariant = "primary";
+    } else if (plan.id === "business") {
+      buttonText = "Start Free Trial";
+      buttonVariant = "outline";
     } else if (plan.id === "enterprise") {
       buttonText = "Contact Sales";
       buttonVariant = "outline";
@@ -60,16 +61,12 @@ export default function Pricing() {
       price,
       period,
       devices: plan.devices,
-      cpuCores: plan.cpuCores,
+      calls: plan.calls,
       memory: plan.memory,
-      storage: plan.storage,
+      workflows: plan.workflows,
       buttonText,
       buttonVariant,
-      apiCallsLimit: plan.apiCallsLimit,
-      deviceLimit: plan.deviceLimit,
-      memoryStorageLimit: plan.memoryStorageLimit,
       features: plan.features,
-      inheritsFromPlan: getInheritsLabel(plan.inheritsFrom),
     };
   });
 
