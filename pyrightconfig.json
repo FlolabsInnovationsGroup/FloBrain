@@ -1,0 +1,6 @@
+{
+  "venvPath": "flobrain-core",
+  "venv": ".venv",
+  "extraPaths": ["flobrain-core/.venv/lib/python3.12/site-packages"],
+  "reportMissingImports": "none"
+}

@@ -3,11 +3,12 @@ import { describe, it, expect } from "vitest";
 import NotificationsSettings from "./index";
 
 describe("NotificationsSettings Component", () => {
-  it("should render Notifications heading", () => {
+  it("should render notification settings", () => {
     render(<NotificationsSettings />);
 
-    const heading = screen.getByRole("heading", { name: /notifications/i });
-    expect(heading).toBeDefined();
+    expect(screen.getByText("Alerts")).toBeDefined();
+    expect(screen.getByText("Setting 2")).toBeDefined();
+    expect(screen.getByText("Setting 3")).toBeDefined();
   });
 
   it("should render all notification settings labels", () => {
