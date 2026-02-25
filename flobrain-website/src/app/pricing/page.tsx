@@ -3,31 +3,12 @@
 import { useState } from "react";
 import PlanUpgradePopup from "./components/popup";
 import PricingCard from "./components/PricingCard";
-import { PLANS, type BillingCycle, getPlanPrice, getInheritsLabel } from "./plans";
-
-interface PricingTier {
-  name: string;
-  badge?: string;
-  description: string;
-  price: string;
-  period: string;
-  devices: string;
-  cpuCores: string;
-  memory: string;
-  storage: string;
-  buttonText: string;
-  buttonVariant: "outline" | "primary";
-  apiCallsLimit: string;
-  deviceLimit: string;
-  memoryStorageLimit: string;
-  features: string[];
-  inheritsFromPlan?: string;
-}
+import { PLANS, getPlanPrice, getInheritsLabel } from "./plans";
+import type { PricingCardTier } from "./components/PricingCard";
 
 export default function Pricing() {
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<PricingTier | null>(null);
+  const [selectedTier, setSelectedTier] = useState<PricingCardTier | null>(null);
 
   const currentPlan = {
     name: "Developer",
@@ -35,105 +16,54 @@ export default function Pricing() {
     period: "",
   };
 
-  const pricingTiers: PricingTier[] = PLANS.map((plan) => {
-    const { price, period } = getPlanPrice(plan, billingCycle);
-
-    // Button styles/text are view-specific
-    let buttonText = "Start Free Trial";
-    let buttonVariant: "outline" | "primary" = "outline";
-
-    if (plan.id === "developer") {
-      buttonText = "Start using";
-      buttonVariant = "outline";
-    } else if (plan.id === "pro") {
-      buttonText = "Start Free Trial";
-      buttonVariant = "primary";
-    } else if (plan.id === "enterprise") {
-      buttonText = "Contact Sales";
-      buttonVariant = "outline";
-    }
-
+  const pricingTiers: PricingCardTier[] = PLANS.map((plan) => {
+    const { price, period, priceSuffix } = getPlanPrice(plan, "monthly");
     return {
       name: plan.name,
       badge: plan.badge,
       description: plan.description,
       price,
       period,
+      priceSuffix,
       devices: plan.devices,
-      cpuCores: plan.cpuCores,
+      calls: plan.calls,
       memory: plan.memory,
-      storage: plan.storage,
-      buttonText,
-      buttonVariant,
-      apiCallsLimit: plan.apiCallsLimit,
-      deviceLimit: plan.deviceLimit,
-      memoryStorageLimit: plan.memoryStorageLimit,
+      workflows: plan.workflows,
+      buttonText: plan.buttonText,
+      isPrimary: plan.id === "pro",
       features: plan.features,
       inheritsFromPlan: getInheritsLabel(plan.inheritsFrom),
     };
   });
 
-  const handlePlanClick = (tier: PricingTier) => {
+  const handlePlanClick = (tier: PricingCardTier) => {
     setSelectedTier(tier);
     setIsPopupOpen(true);
   };
 
   const handleConfirm = () => {
-    // This will be called from the popup for free/custom plans
     if (selectedTier?.price === "Free") {
-      // Activate free plan
-      console.warn("Activating free plan:", selectedTier?.name);
-      // Call your API to activate the plan
       setIsPopupOpen(false);
     }
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 md:p-12 bg-gradient-to-br from-[#1a0033] via-[#2a1a4a] to-[#0f0f23]">
+    <main className="flex min-h-screen flex-col items-center justify-start p-8 md:p-12 bg-gradient-to-b from-[#0f0a1a] via-[#1a0f2e] to-[#0f0a1a]">
       {/* Header */}
       <div className="text-center mb-12 max-w-3xl">
-        <h1 className="text-5xl md:text-6xl font-bold mb-4">
-          <span className="text-white">Pricing Built for</span>
-          <br />
-          <span className="bg-gradient-to-r from-[#a78bfa] via-[#c084fc] to-[#e879f9] bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <span className="text-white">Pricing Built for </span>
+          <span className="bg-gradient-to-r from-[#e879f9] via-[#c084fc] to-[#a78bfa] bg-clip-text text-transparent">
             Every Stage of Growth
           </span>
         </h1>
-        <p className="text-[#a1a1aa] text-lg mt-6">
-          From individual user to enterprise teams, FloBrain scales with you.
-          <br />
-          Start free and upgrade as you grow.
+        <p className="text-zinc-400 text-lg mt-4">
+          From individual user to enterprise teams, FloBrain scales with you. Start free and upgrade
+          as you grow.
         </p>
       </div>
 
-      {/* Billing Toggle */}
-      <div className="mb-12 flex items-center gap-4 bg-[#1a1a2e]/50 backdrop-blur-sm rounded-full p-2 border border-[#4c1d95]/50">
-        <button
-          onClick={() => setBillingCycle("monthly")}
-          className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-            billingCycle === "monthly"
-              ? "bg-[#8b5cf6] text-white shadow-lg"
-              : "text-[#a1a1aa] hover:text-white"
-          }`}
-        >
-          Monthly
-        </button>
-        <button
-          onClick={() => setBillingCycle("annual")}
-          className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-            billingCycle === "annual"
-              ? "bg-[#8b5cf6] text-white shadow-lg"
-              : "text-[#a1a1aa] hover:text-white"
-          }`}
-        >
-          Annual
-          <span className="ml-2 text-xs bg-[#10b981]/20 text-[#10b981] px-2 py-0.5 rounded-full">
-            Save 20%
-          </span>
-        </button>
-      </div>
-
-      {/* Pricing Cards Grid */}
+      {/* Pricing Cards Grid - 4 columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl mb-8 items-stretch">
         {pricingTiers.map((tier, index) => (
           <PricingCard
@@ -147,15 +77,14 @@ export default function Pricing() {
 
       {/* Footer CTA */}
       <div className="text-center mt-8">
-        <p className="text-[#a1a1aa] text-sm">
+        <p className="text-zinc-400 text-sm">
           Need help choosing?{" "}
-          <a href="/contact" className="text-[#8b5cf6] hover:underline font-medium">
+          <a href="/contact" className="text-[#a78bfa] hover:underline font-medium">
             Contact our sales team
           </a>
         </p>
       </div>
 
-      {/* Plan Upgrade Popup */}
       {selectedTier && (
         <PlanUpgradePopup
           isOpen={isPopupOpen}

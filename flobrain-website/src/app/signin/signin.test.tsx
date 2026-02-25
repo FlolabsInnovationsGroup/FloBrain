@@ -17,8 +17,7 @@ describe("Login Component", () => {
   it("should render all form fields correctly", () => {
     render(<Login />);
 
-    expect(screen.getByText("Welcome Back!")).toBeInTheDocument();
-    expect(screen.getByText("Sign in to your FLOBRAIN account")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Sign In" })).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
   });
@@ -33,7 +32,7 @@ describe("Login Component", () => {
   it("should update email input value when user types", () => {
     render(<Login />);
 
-    const emailInput = screen.getByPlaceholderText("Enter your email");
+    const emailInput = screen.getByPlaceholderText("you@example.com");
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
 
     expect(emailInput).toHaveValue("test@example.com");
@@ -42,7 +41,7 @@ describe("Login Component", () => {
   it("should update password input value when user types", () => {
     render(<Login />);
 
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
     fireEvent.change(passwordInput, { target: { value: "password123" } });
 
     expect(passwordInput).toHaveValue("password123");
@@ -51,7 +50,7 @@ describe("Login Component", () => {
   it("should toggle password visibility when eye icon is clicked", () => {
     render(<Login />);
 
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
     const toggleButtons = screen.getAllByRole("button");
     const passwordToggle = toggleButtons.find(
       (button) => button.querySelector("svg") && button.getAttribute("type") === "button"
@@ -78,7 +77,7 @@ describe("Login Component", () => {
   it("should render register link", () => {
     render(<Login />);
 
-    const registerLink = screen.getByText("Register for free");
+    const registerLink = screen.getByText("Sign up for free");
     expect(registerLink).toHaveAttribute("href", "/register");
     expect(screen.getByText(/Don't have an account?/i)).toBeInTheDocument();
   });
@@ -93,8 +92,8 @@ describe("Login Component", () => {
   it("should handle both inputs filled correctly", () => {
     render(<Login />);
 
-    const emailInput = screen.getByPlaceholderText("Enter your email");
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const emailInput = screen.getByPlaceholderText("you@example.com");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
 
     fireEvent.change(emailInput, { target: { value: "user@example.com" } });
     fireEvent.change(passwordInput, { target: { value: "SecurePass123!" } });
@@ -103,18 +102,18 @@ describe("Login Component", () => {
     expect(passwordInput).toHaveValue("SecurePass123!");
   });
 
-  it("should have proper styling classes for glass morphism effect", () => {
+  it("should have form card with dark theme styling", () => {
     const { container } = render(<Login />);
 
-    const card = container.querySelector(".bg-white\\/5");
-    expect(card).toBeInTheDocument();
-    expect(card).toHaveClass("backdrop-blur-xl");
+    const formCard = container.querySelector(".rounded-2xl");
+    expect(formCard).toBeInTheDocument();
+    expect(formCard?.className).toContain("bg-[#1a1525]");
   });
 
   it("should render divider text correctly", () => {
     render(<Login />);
 
-    expect(screen.getByText("or continue with")).toBeInTheDocument();
+    expect(screen.getByText("Or continue with")).toBeInTheDocument();
   });
 
   it("should display icons for form inputs", () => {
@@ -132,25 +131,24 @@ describe("Login Component", () => {
     fireEvent.click(submitButton);
 
     // Verify inputs are still empty (no default behavior)
-    const emailInput = screen.getByPlaceholderText("Enter your email");
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const emailInput = screen.getByPlaceholderText("you@example.com");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
 
     expect(emailInput).toHaveValue("");
     expect(passwordInput).toHaveValue("");
   });
 
-  it("should have background gradient styling", () => {
+  it("should have dark background styling", () => {
     const { container } = render(<Login />);
 
     const main = container.querySelector("main");
-    expect(main).toHaveClass("bg-gradient-to-br");
-    expect(main).toHaveClass("from-purple-950");
+    expect(main).toHaveClass("bg-[#0f0a1a]");
   });
 
   it("should handle email input blur event", () => {
     render(<Login />);
 
-    const emailInput = screen.getByPlaceholderText("Enter your email");
+    const emailInput = screen.getByPlaceholderText("you@example.com");
     fireEvent.change(emailInput, { target: { value: "test@email.com" } });
     fireEvent.blur(emailInput);
 
@@ -160,7 +158,7 @@ describe("Login Component", () => {
   it("should handle password input blur event", () => {
     render(<Login />);
 
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
     fireEvent.change(passwordInput, { target: { value: "mypassword" } });
     fireEvent.blur(passwordInput);
 
