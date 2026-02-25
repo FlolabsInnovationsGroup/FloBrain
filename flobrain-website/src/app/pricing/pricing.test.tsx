@@ -11,10 +11,10 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("lucide-react", () => ({
   Check: () => <div data-testid="check-icon" />,
-  LayoutGrid: () => <div data-testid="layout-grid-icon" />,
+  Brain: () => <div data-testid="brain-icon" />,
   Zap: () => <div data-testid="zap-icon" />,
   Building2: () => <div data-testid="building2-icon" />,
-  Building: () => <div data-testid="building-icon" />,
+  Crown: () => <div data-testid="crown-icon" />,
 }));
 
 interface PopupProps {
