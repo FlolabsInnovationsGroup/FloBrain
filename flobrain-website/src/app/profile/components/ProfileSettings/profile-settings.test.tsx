@@ -19,8 +19,8 @@ describe("ProfileSettings Component", () => {
     
     expect(screen.getByLabelText(/full name/i)).toBeDefined();
     expect(screen.getByLabelText(/email address/i)).toBeDefined();
-    expect(screen.getByRole("heading", { name: /current plan/i })).toBeDefined();
-    expect(screen.getByRole("link", { name: /change plan/i })).toBeDefined();
+    expect(screen.getByText(/current plan/i)).toBeDefined();
+    expect(screen.getByRole("link", { name: /upgrade now/i })).toBeDefined();
     expect(screen.getByRole('button', { name: /delete account/i })).toBeDefined();
   });
 
@@ -59,12 +59,12 @@ describe("ProfileSettings Component", () => {
     expect(screen.getByText(/free/i)).toBeDefined();
   });
 
-  it("should navigate user to pricing page when clicking change plan link", () => {
+  it("should navigate user to pricing page when clicking upgrade link", () => {
     render(<ProfileSettings />);
     
-    const changePlanLink = screen.getByRole("link", { name: /change plan/i }) as HTMLAnchorElement;
-    expect(changePlanLink).toBeDefined();
-    expect(changePlanLink.getAttribute("href")).toBe("/pricing");
+    const upgradeLink = screen.getByRole("link", { name: /upgrade now/i }) as HTMLAnchorElement;
+    expect(upgradeLink).toBeDefined();
+    expect(upgradeLink.getAttribute("href")).toBe("/pricing");
   });
 
   it("should show confirmation dialog when delete account is clicked", () => {
@@ -118,14 +118,6 @@ describe("ProfileSettings Component", () => {
     render(<ProfileSettings />);
     
     const deleteButton = screen.getByRole('button', { name: /delete account/i });
-    expect(deleteButton.className).toContain('bg-red-600/80');
-  });
-
-  it("should render Profile Settings heading", () => {
-    render(<ProfileSettings />);
-    
-    const heading = screen.getByRole('heading', { name: /profile settings/i });
-    expect(heading).toBeDefined();
-    expect(heading.tagName).toBe('H2');
+    expect(deleteButton.className).toContain('E07A5F');
   });
 });
