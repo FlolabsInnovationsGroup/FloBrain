@@ -1,31 +1,47 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { MemoryActivity } from ".";
-
-// Mock Math.random to have predictable heatmap colors
-vi.spyOn(Math, "random").mockReturnValue(0.5);
 
 describe("MemoryActivity Component", () => {
   it("should render the Memory Activity title", () => {
     render(<MemoryActivity />);
-    expect(screen.getByText("Memory Activity")).toBeDefined();
+    expect(screen.getByText("MEMORY ACTIVITY")).toBeDefined();
   });
 
-  it("should render memory chunks created section", () => {
+  it("should render the subtitle", () => {
     render(<MemoryActivity />);
-    expect(screen.getByText("Memory chunks created today")).toBeDefined();
+    expect(screen.getByText("Last 12 weeks")).toBeDefined();
+  });
+
+  it("should render TODAY stat card", () => {
+    render(<MemoryActivity />);
+    expect(screen.getByText("TODAY")).toBeDefined();
     expect(screen.getByText("1,247")).toBeDefined();
-    expect(screen.getByText("+23%")).toBeDefined();
+    expect(screen.getByText("chunks created")).toBeDefined();
   });
 
-  it("should render Memory Usage Heatmap title", () => {
+  it("should render THIS WEEK stat card", () => {
     render(<MemoryActivity />);
-    expect(screen.getByText("Memory Usage Heatmap (Last 7 Days)")).toBeDefined();
+    expect(screen.getByText("THIS WEEK")).toBeDefined();
+    expect(screen.getByText("8,942")).toBeDefined();
+    expect(screen.getByText("+2.3%")).toBeDefined();
+  });
+
+  it("should render TOTAL stat card", () => {
+    render(<MemoryActivity />);
+    expect(screen.getByText("TOTAL")).toBeDefined();
+    expect(screen.getByText("127.4K")).toBeDefined();
+    expect(screen.getByText("all time")).toBeDefined();
+  });
+
+  it("should render Usage Heatmap title", () => {
+    render(<MemoryActivity />);
+    expect(screen.getByText("Usage Heatmap")).toBeDefined();
   });
 
   it("should render all 7 days of the week", () => {
     render(<MemoryActivity />);
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const days = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"];
     days.forEach((day) => {
       expect(screen.getByText(day)).toBeDefined();
     });
@@ -33,23 +49,22 @@ describe("MemoryActivity Component", () => {
 
   it("should render time labels", () => {
     render(<MemoryActivity />);
-    const timeLabels = ["12am", "6am", "12pm", "6pm", "11pm"];
+    const timeLabels = ["12 am", "6 am", "12 pm", "6 pm", "11 pm"];
     timeLabels.forEach((label) => {
       expect(screen.getByText(label)).toBeDefined();
     });
   });
 
-  it("should render memory chunks as a link to /memory", () => {
+  it("should render intensity legend", () => {
     render(<MemoryActivity />);
-    const link = screen.getByRole("link");
-    expect(link.getAttribute("href")).toBe("/memory");
+    expect(screen.getByText("Less")).toBeDefined();
+    expect(screen.getByText("More")).toBeDefined();
   });
 
-  it("should render heatmap with 7 rows (days)", () => {
-    render(<MemoryActivity />);
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    days.forEach((day) => {
-      expect(screen.getByText(day)).toBeDefined();
-    });
+  it("should render heatmap with circular indicators", () => {
+    const { container } = render(<MemoryActivity />);
+    const circles = container.querySelectorAll(".rounded-full");
+    // Should have legend circles + heatmap circles (7 days * 24 hours = 168)
+    expect(circles.length).toBeGreaterThan(100);
   });
 });
