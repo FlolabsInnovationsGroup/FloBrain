@@ -1,6 +1,7 @@
 __pycache__/
 db.sqlite3
 .env
+.venv/
 # Node + project ignores
 node_modules/
 .env

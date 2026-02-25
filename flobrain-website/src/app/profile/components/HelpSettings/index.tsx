@@ -1,28 +1,34 @@
+"use client";
+
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+
+const faqItems = [
+  "FAQ Placeholder Question 1",
+  "FAQ Placeholder Question 2",
+  "FAQ Placeholder Question 3",
+  "FAQ Placeholder Question 4",
+];
+
 export default function HelpSettings() {
-  const helpTopics = [
-    { title: "Getting Started", description: "Learn the basics of using the platform" },
-    { title: "Account Management", description: "Manage your account settings and preferences" },
-    { title: "Privacy & Security", description: "Understand how we protect your data" },
-    { title: "Contact Support", description: "Get in touch with our support team" },
-  ];
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-3xl font-bold text-white">Help</h2>
-
-      <div className="space-y-4">
-        {helpTopics.map((topic, index) => (
-          <button
-            key={index}
-            className="w-full text-left p-4 bg-indigo-950/30 border border-purple-500/20 rounded-lg hover:bg-indigo-950/50 hover:border-purple-500/40 transition-colors group"
-          >
-            <h3 className="text-white font-semibold text-lg group-hover:text-purple-300 transition-colors">
-              {topic.title}
-            </h3>
-            <p className="text-white/60 text-sm mt-1">{topic.description}</p>
-          </button>
-        ))}
-      </div>
+    <div className="space-y-4">
+      {faqItems.map((item, index) => (
+        <button
+          key={index}
+          onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+          className="w-full flex items-center justify-between p-4 bg-[#281C30] border border-zinc-500/50 rounded-lg hover:border-zinc-400/50 transition-colors text-left group"
+        >
+          <span className="text-white font-medium">{item}</span>
+          <ChevronDown
+            className={`w-5 h-5 text-white/70 transition-transform ${
+              expandedIndex === index ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+      ))}
     </div>
   );
 }

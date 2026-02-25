@@ -1,13 +1,26 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import Register from "./page";
+import { AuthProvider } from "@/contexts/AuthContext";
 
-// Mock Next.js router
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+}));
+
 vi.mock("next/link", () => ({
   default: ({ children, href }: { children: React.ReactNode; href: string }) => (
     <a href={href}>{children}</a>
   ),
 }));
+
+function renderWithAuth(ui: React.ReactElement) {
+  return render(<AuthProvider>{ui}</AuthProvider>);
+}
 
 describe("Register Component", () => {
   beforeEach(() => {
@@ -15,9 +28,10 @@ describe("Register Component", () => {
   });
 
   it("should render all form fields correctly", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     expect(screen.getByRole("heading", { name: "Create Account" })).toBeInTheDocument();
+    expect(screen.getByText("FloBrain")).toBeInTheDocument();
     expect(screen.getByLabelText("Full Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getAllByLabelText("Password")[0]).toBeInTheDocument();
@@ -25,14 +39,14 @@ describe("Register Component", () => {
   });
 
   it("should render social login buttons", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     expect(screen.getByText("Continue with Google")).toBeInTheDocument();
     expect(screen.getByText("Continue with Apple")).toBeInTheDocument();
   });
 
   it("should update name input value when user types", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const nameInput = screen.getByPlaceholderText("John Doe");
     fireEvent.change(nameInput, { target: { value: "John Doe" } });
@@ -41,7 +55,7 @@ describe("Register Component", () => {
   });
 
   it("should update email input value when user types", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const emailInput = screen.getByPlaceholderText("you@example.com");
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
@@ -50,7 +64,7 @@ describe("Register Component", () => {
   });
 
   it("should update password input value when user types", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const passwordInputs = screen.getAllByPlaceholderText("••••••••");
     const passwordInput = passwordInputs[0];
@@ -60,7 +74,7 @@ describe("Register Component", () => {
   });
 
   it("should update confirm password input value when user types", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const passwordInputs = screen.getAllByPlaceholderText("••••••••");
     const confirmPasswordInput = passwordInputs[1];
@@ -70,7 +84,7 @@ describe("Register Component", () => {
   });
 
   it("should toggle password visibility when eye icon is clicked", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const passwordInput = screen.getAllByPlaceholderText("••••••••")[0];
     const toggleButtons = screen.getAllByRole("button");
@@ -90,7 +104,7 @@ describe("Register Component", () => {
   });
 
   it("should toggle confirm password visibility when eye icon is clicked", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const confirmPasswordInput = screen.getAllByPlaceholderText("••••••••")[1];
     const toggleButtons = screen.getAllByRole("button");
@@ -111,7 +125,7 @@ describe("Register Component", () => {
   });
 
   it("should render sign in link", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const signInLink = screen.getByText("Login");
     expect(signInLink).toHaveAttribute("href", "/signin");
@@ -119,14 +133,14 @@ describe("Register Component", () => {
   });
 
   it("should render create account button", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const submitButton = screen.getByRole("button", { name: /Create Account/i });
     expect(submitButton).toBeInTheDocument();
   });
 
   it("should handle all inputs filled correctly", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const nameInput = screen.getByPlaceholderText("John Doe");
     const emailInput = screen.getByPlaceholderText("you@example.com");
@@ -145,22 +159,22 @@ describe("Register Component", () => {
     expect(confirmPasswordInput).toHaveValue("SecurePass123!");
   });
 
-  it("should have form card with dark theme styling", () => {
-    const { container } = render(<Register />);
+  it("should have proper styling for auth card", () => {
+    const { container } = renderWithAuth(<Register />);
 
-    const formCard = container.querySelector(".rounded-2xl");
-    expect(formCard).toBeInTheDocument();
-    expect(formCard?.className).toContain("bg-[#1a1525]");
+    const card = container.querySelector(".rounded-2xl");
+    expect(card).toBeInTheDocument();
+    expect(card?.className).toContain("CABEE8");
   });
 
   it("should render divider text correctly", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     expect(screen.getByText("Or continue with")).toBeInTheDocument();
   });
 
   it("should display icons for form inputs", () => {
-    const { container } = render(<Register />);
+    const { container } = renderWithAuth(<Register />);
 
     // Check for Mail, Lock, and User icons (lucide-react)
     const mailIcon = container.querySelector("svg");
@@ -168,7 +182,7 @@ describe("Register Component", () => {
   });
 
   it("should handle empty form submission", () => {
-    render(<Register />);
+    renderWithAuth(<Register />);
 
     const submitButton = screen.getByRole("button", { name: /Create Account/i });
     fireEvent.click(submitButton);
