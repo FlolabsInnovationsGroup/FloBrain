@@ -41,8 +41,35 @@ export default function ProfileSettings() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
+    if (!isAuthenticated) {
+      queueMicrotask(() => setIsLoading(false));
+      return;
+    }
+    let cancelled = false;
+    const load = async () => {
+      await Promise.resolve();
+      if (cancelled) return;
+      setLoadError(null);
+      setIsLoading(true);
+      const res = await api.getProfile();
+      if (cancelled) return;
+      setIsLoading(false);
+      if (res.error || !res.data) {
+        setLoadError(res.error ?? "Failed to load profile");
+        return;
+      }
+      const data = {
+        fullName: res.data.fullName ?? "",
+        email: res.data.email ?? "",
+      };
+      setProfile(data);
+      setFormData(data);
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated]);
 
   const openEditModal = () => {
     setFormData({
