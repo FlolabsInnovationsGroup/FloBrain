@@ -57,7 +57,7 @@ describe("Login Component", () => {
   it("should update password input value when user types", () => {
     renderWithAuth(<Login />);
 
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
     fireEvent.change(passwordInput, { target: { value: "password123" } });
 
     expect(passwordInput).toHaveValue("password123");
@@ -66,7 +66,7 @@ describe("Login Component", () => {
   it("should toggle password visibility when eye icon is clicked", () => {
     renderWithAuth(<Login />);
 
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
     const toggleButtons = screen.getAllByRole("button");
     const passwordToggle = toggleButtons.find(
       (button) => button.querySelector("svg") && button.getAttribute("type") === "button"
@@ -174,7 +174,7 @@ it("should have proper styling for auth card", () => {
   it("should handle password input blur event", () => {
     renderWithAuth(<Login />);
 
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
     fireEvent.change(passwordInput, { target: { value: "mypassword" } });
     fireEvent.blur(passwordInput);
 

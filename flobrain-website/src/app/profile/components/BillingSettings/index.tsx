@@ -14,15 +14,15 @@ export default function BillingSettings() {
   const usage = {
     apiCalls: {
       used: "120,500",
-      limit: planDefinition?.apiCallsLimit ?? "500,000",
+      limit: planDefinition?.calls ?? "500K calls/mo",
     },
     devices: {
       used: "8",
-      limit: planDefinition?.deviceLimit.replace("Up to ", "") ?? "30",
+      limit: planDefinition?.devices ?? "50",
     },
     memoryStorage: {
       used: "12 GB",
-      limit: planDefinition?.memoryStorageLimit.replace(" memory storage", "") ?? "50 GB",
+      limit: planDefinition?.memory ?? "50GB storage",
     },
   };
 
