@@ -1,84 +1,144 @@
-import Link from "next/link";
-import { TrendingUp, CircleCheck, Server, Brain } from "lucide-react";
+"use client";
+
+import React from "react";
+import { Activity, Server } from "lucide-react";
 
 const systemHealthData = {
-  brainStatus: {
-    status: "Online",
-    statusColor: "#045900",
-    link: "/brain",
-  },
+  brainStatus: "Online",
+  allSystemsOperational: true,
   connectedDevices: 12,
-  totalTokens: {
-    count: "2,847,392",
-    percentage: "+18%",
-    isPositive: true,
-  },
 };
 
-export const SystemHealth = () => {
-  const { brainStatus, connectedDevices, totalTokens } = systemHealthData;
+export const SystemHealth = (): React.JSX.Element => {
+  const { brainStatus, allSystemsOperational, connectedDevices } = systemHealthData;
 
   return (
     <div
-      className="rounded-2xl p-8 border border-white/10"
+      className="w-full lg:w-[830px] rounded-[16px] sm:rounded-[20px]"
       style={{
-        width: "680px",
-        height: "430px",
-        background: "#FCFCFC29",
-        borderRadius: "16px",
+        background: "rgba(30, 18, 43, 0.6)",
+        padding: "clamp(20px, 4vw, 32px)",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
       }}
     >
-      <h2 className="text-xl font-semibold mb-6">System Health</h2>
-
-      <Link href={brainStatus.link} className="block mb-3">
+      {/* Top Section */}
+      <div className="flex items-start justify-between mb-5 sm:mb-8">
+        <div>
+          <h2
+            className="font-semibold mb-1"
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.5px",
+              color: "rgba(255, 255, 255, 0.5)",
+            }}
+          >
+            SYSTEM HEALTH
+          </h2>
+          <p
+            style={{
+              fontSize: "11px",
+              color: "rgba(255, 255, 255, 0.35)",
+            }}
+          >
+            Last updated: Just now
+          </p>
+        </div>
         <div
-          className="rounded-lg p-4 flex items-center justify-between hover:brightness-110 active:brightness-105 transition-all cursor-pointer"
+          className="rounded-lg flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
           style={{
-            background: "#F3CEFF85",
-            borderRadius: "8px",
-            height: "53px",
+            background: "rgba(0, 212, 146, 0.12)",
           }}
         >
-          <div className="flex items-center gap-3">
-            <Brain className="w-5 h-5 text-purple-700" />
-            <span className="text-zinc-900 font-medium">Brain Status</span>
-          </div>
-          <div className="font-semibold flex gap-1" style={{ color: brainStatus.statusColor }}>
-            <CircleCheck className="w-5 h-5" />
-            {brainStatus.status}
-          </div>
+          <Activity className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: "#00D492" }} />
         </div>
-      </Link>
-
-      <div
-        className="rounded-lg p-4 mb-3 flex items-center justify-between"
-        style={{
-          background: "#F3CEFF85",
-          borderRadius: "8px",
-          height: "53px",
-        }}
-      >
-        <div className="flex items-center gap-3">
-          <Server className="w-5 h-5 text-purple-700" />
-          <span className="text-zinc-900 font-medium">Connected Devices</span>
-        </div>
-        <span className="text-2xl font-bold text-zinc-900">{connectedDevices}</span>
       </div>
 
-      <div
-        className="rounded-lg p-4"
-        style={{
-          background: "#F3CEFF85",
-          borderRadius: "8px",
-        }}
-      >
-        <div className="text-zinc-900 text-sm mb-2">Total tokens today</div>
-        <div className="flex items-center gap-2">
-          <span className="text-4xl font-bold text-zinc-900">{totalTokens.count}</span>
-          <div className="flex items-center text-[#045900] font-semibold">
-            <TrendingUp className="w-5 h-5" />
-            <span>{totalTokens.percentage}</span>
+      {/* Main Status Area */}
+      <div className="mb-5 sm:mb-8">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2">
+          <div
+            className="rounded-full flex-shrink-0"
+            style={{
+              width: "10px",
+              height: "10px",
+              background: "#00D492",
+              boxShadow: "0 0 12px rgba(0, 212, 146, 0.6)",
+            }}
+          />
+          <h3
+            className="font-bold"
+            style={{
+              fontSize: "clamp(20px, 4vw, 28px)",
+              color: "#FFFFFF",
+              lineHeight: "1.2",
+            }}
+          >
+            Brain Status: {brainStatus}
+          </h3>
+        </div>
+        {allSystemsOperational && (
+          <div className="flex items-center gap-2 ml-1">
+            <div
+              className="rounded-full"
+              style={{
+                width: "5px",
+                height: "5px",
+                background: "#00D492",
+              }}
+            />
+            <span
+              className="font-medium"
+              style={{
+                fontSize: "clamp(11px, 2vw, 13px)",
+                color: "#00D492",
+              }}
+            >
+              All systems operational
+            </span>
           </div>
+        )}
+      </div>
+
+      {/* Bottom Section */}
+      <div className="mb-3 sm:mb-5">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Server className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "rgba(255, 255, 255, 0.4)" }} />
+            <span
+              className="font-medium"
+              style={{
+                fontSize: "clamp(12px, 2.5vw, 15px)",
+                color: "rgba(255, 255, 255, 0.7)",
+              }}
+            >
+              Connected Devices
+            </span>
+          </div>
+          <div
+            className="font-bold"
+            style={{
+              fontSize: "clamp(24px, 5vw, 35px)",
+              color: "#FFFFFF",
+              lineHeight: "1",
+            }}
+          >
+            {connectedDevices}
+          </div>
+        </div>
+
+        {/* Device Indicators Row */}
+        <div className="flex gap-1 sm:gap-2">
+          {Array.from({ length: connectedDevices }).map((_, index) => (
+            <div
+              key={index}
+              className="flex-1 rounded"
+              style={{
+                height: "7px",
+                background: "linear-gradient(180deg, #A78BFA 0%, #8B5CF6 100%)",
+              }}
+            />
+          ))}
         </div>
       </div>
     </div>
