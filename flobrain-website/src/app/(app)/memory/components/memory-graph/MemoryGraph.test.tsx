@@ -3,14 +3,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { MemoryGraph } from "./index";
 import React from "react";
 
-// Mock the data
-vi.mock("../../mockData", () => ({
-  memoryNodes: [
-    { id: "1", name: "Node A", group: 1 },
-    { id: "2", name: "Node B", group: 2 },
-  ],
-  memoryLinks: [{ source: "1", target: "2" }],
-}));
+const mockNodes = [
+  { id: "1", name: "Node A", val: 10, group: "front" },
+  { id: "2", name: "Node B", val: 10, group: "back" },
+];
+const mockLinks = [{ source: "1", target: "2" }];
 
 // Define proper types for mock props
 interface MockForceGraphProps {
@@ -66,6 +63,8 @@ describe("MemoryGraph Component", () => {
     const setGraphActive = vi.fn();
     render(
       <MemoryGraph
+        nodes={mockNodes}
+        links={mockLinks}
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
@@ -79,6 +78,8 @@ describe("MemoryGraph Component", () => {
     const setGraphActive = vi.fn();
     render(
       <MemoryGraph
+        nodes={mockNodes}
+        links={mockLinks}
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
@@ -92,6 +93,8 @@ describe("MemoryGraph Component", () => {
     const setGraphActive = vi.fn();
     render(
       <MemoryGraph
+        nodes={mockNodes}
+        links={mockLinks}
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={true}
         setGraphActive={setGraphActive}
@@ -115,6 +118,8 @@ describe("MemoryGraph Component", () => {
     const setGraphActive = vi.fn();
     render(
       <MemoryGraph
+        nodes={mockNodes}
+        links={mockLinks}
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
@@ -132,6 +137,8 @@ describe("MemoryGraph Component", () => {
     const setGraphActive = vi.fn();
     render(
       <MemoryGraph
+        nodes={mockNodes}
+        links={mockLinks}
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
@@ -151,6 +158,8 @@ describe("MemoryGraph Component", () => {
     const setGraphActive = vi.fn();
     const { container } = render(
       <MemoryGraph
+        nodes={mockNodes}
+        links={mockLinks}
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={true}
         setGraphActive={setGraphActive}
@@ -167,6 +176,8 @@ describe("MemoryGraph Component", () => {
     const setGraphActive = vi.fn();
     const { container } = render(
       <MemoryGraph
+        nodes={mockNodes}
+        links={mockLinks}
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}
@@ -183,6 +194,8 @@ describe("MemoryGraph Component", () => {
     const setGraphActive = vi.fn();
     const { container } = render(
       <MemoryGraph
+        nodes={mockNodes}
+        links={mockLinks}
         onOpenMemoryNodeDialog={onOpenDialog}
         graphActive={false}
         setGraphActive={setGraphActive}

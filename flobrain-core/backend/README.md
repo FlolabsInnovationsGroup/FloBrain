@@ -32,10 +32,11 @@ This is the Django + PostgreSQL backend for the FloBrain application. It is full
 * Git
 
 ### 1. Navigate to the Directory
-Since this is part of the main monorepo, you must first move into the backend folder:
+Since this is part of the main monorepo, you must first move into the backend folder (from repo root: `Caipo-FloLabs`):
 ```bash
-cd backend
+cd flobrain-core/backend
 ```
+Or from `flobrain-core`: `cd backend`. All `docker compose` commands must be run from this `backend/` directory.
 ### 2. First-Time Setup (Build & Run)
 - To download the dependencies, build the containers, and start the app` for the first time`, run:
 or 
@@ -90,3 +91,17 @@ docker compose up --build
 ``` 
 "Port is already allocated"
 If you see an error about port 5432 or 8000 being in use, make sure you don't have another Postgres instance or Django server running on your machine.
+
+### 7. Running without Docker (local venv)
+If you run Django on your machine (e.g. `python manage.py runserver`) instead of in Docker:
+
+1. **Install dependencies** (note: file is `requirements.txt` and you need the `-r` flag):
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
+   *(Wrong: `pip install requirments.txt` — that tries to install a package named "requirments.txt".)*
+
+2. **PostgreSQL** must be running locally, and in `flobrain/settings.py` (or via env) set `DB_HOST=localhost` (or `127.0.0.1`). Otherwise you'll see `Error loading psycopg2 or psycopg module` if the driver isn't installed, or connection errors if Postgres isn't running.
+
+**Recommended:** Use Docker (`docker compose up`) so Postgres and the app run together without local installs.

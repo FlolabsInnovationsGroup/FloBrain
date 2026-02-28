@@ -1,20 +1,41 @@
 "use client";
 import dynamic from "next/dynamic";
-import { memoryLinks, memoryNodes } from "../../mockData";
 import { useEffect, useRef, useState } from "react";
 import { memoryNode } from "../../../../../types/MemoryNodes";
+import type { MemoryNodeApi } from "@/lib/api";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ssr: false,
 });
 
 interface MemoryGraphProps {
+  nodes: MemoryNodeApi[];
+  links: { source: string; target: string }[];
   onOpenMemoryNodeDialog: (node: memoryNode) => void;
   graphActive: boolean;
   setGraphActive: (active: boolean) => void;
 }
 
+// Map API nodes to force-graph format (id, name, val, group; force-graph may add x, y, color)
+function toGraphNodes(apiNodes: MemoryNodeApi[]): memoryNode[] {
+  return apiNodes.map((n) => ({
+    id: n.id,
+    name: n.name,
+    val: n.val,
+    group: n.group,
+    memory_type: n.memory_type,
+    relevance: n.relevance,
+  }));
+}
+
+// Links: force-graph expects source/target as node objects or ids; we use ids and let lib resolve
+function toGraphLinks(links: { source: string; target: string }[]) {
+  return links.map((l) => ({ source: l.source, target: l.target }));
+}
+
 export const MemoryGraph = ({
+  nodes,
+  links,
   onOpenMemoryNodeDialog,
   graphActive,
   setGraphActive,
@@ -22,6 +43,9 @@ export const MemoryGraph = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  const graphNodes = toGraphNodes(nodes);
+  const graphLinks = toGraphLinks(links);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -75,18 +99,19 @@ export const MemoryGraph = ({
           style={{ pointerEvents: graphActive ? "auto" : "none" }}
         >
           <ForceGraph2D
-            graphData={{ nodes: memoryNodes, links: memoryLinks }}
+            graphData={{ nodes: graphNodes, links: graphLinks }}
             width={dimensions.width}
             height={dimensions.height}
             nodeAutoColorBy="group"
             nodeLabel="name"
             onNodeClick={(node) => {
               if (graphActive) {
-                onOpenMemoryNodeDialog(node);
+                onOpenMemoryNodeDialog(node as memoryNode);
               }
             }}
             nodeCanvasObject={(node: memoryNode, ctx, globalScale) => {
-              const label = node.name.length > 10 ? `${node.name.slice(0, 10)}...` : node.name;
+              const name = typeof node.name === "string" ? node.name : "";
+              const label = name.length > 10 ? `${name.slice(0, 10)}...` : name;
               const fontSize = 12 / globalScale;
               ctx.font = `${fontSize}px Sans-Serif`;
               const textWidth = ctx.measureText(label).width;

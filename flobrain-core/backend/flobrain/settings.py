@@ -37,10 +37,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
+    "rest_framework",
     "users",
+    "memory",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -81,7 +85,8 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'flobrain_db'),
         'USER': os.environ.get('DB_USER', 'flo_user'),
         'PASSWORD': os.environ.get('DB_PASS', 'flo_password'),
-        'HOST': os.environ.get('DB_HOST', 'db'),
+        # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker (set by compose).
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
@@ -122,3 +127,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+
+# CORS: allow frontend (Next.js) to call this API
+CORS_ALLOW_ALL_ORIGINS = True
+
+# REST framework
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+}
