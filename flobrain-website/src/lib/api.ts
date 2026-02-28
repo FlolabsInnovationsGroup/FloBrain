@@ -124,6 +124,57 @@ export const api = {
       json: { refresh },
     });
   },
+
+  // --- Profile (requires auth) ---
+
+  async getProfile() {
+    return this.request<{ id: string; fullName: string; email: string }>("/api/profile/");
+  },
+
+  async updateProfile(body: { fullName?: string; email?: string }) {
+    return this.request<{ id: string; fullName: string; email: string }>("/api/profile/", {
+      method: "PATCH",
+      json: body,
+    });
+  },
+
+  async changePassword(currentPassword: string, newPassword: string) {
+    return this.request<{ message: string }>("/api/profile/change-password/", {
+      method: "POST",
+      json: { current_password: currentPassword, new_password: newPassword },
+    });
+  },
+
+  // --- Memory graph (requires auth) ---
+
+  async getMemoryGraph(params?: {
+    search?: string;
+    date_range?: string;
+    memory_type?: string;
+    min_relevance?: number;
+  }) {
+    const searchParams = new URLSearchParams();
+    if (params?.search) searchParams.set("search", params.search);
+    if (params?.date_range) searchParams.set("date_range", params.date_range);
+    if (params?.memory_type) searchParams.set("memory_type", params.memory_type);
+    if (params?.min_relevance != null)
+      searchParams.set("min_relevance", String(params.min_relevance));
+    const qs = searchParams.toString();
+    const path = `/api/memory/graph/${qs ? `?${qs}` : ""}`;
+    return this.request<{ nodes: MemoryNodeApi[]; links: { source: string; target: string }[] }>(
+      path
+    );
+  },
+};
+
+export type MemoryNodeApi = {
+  id: string;
+  name: string;
+  val: number;
+  group: string;
+  memory_type?: string;
+  relevance?: number;
+  created_at?: string | null;
 };
 
 // Re-export for team: use apiClient for custom requests + React Query

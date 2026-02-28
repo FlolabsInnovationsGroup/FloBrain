@@ -32,10 +32,11 @@ This is the Django + PostgreSQL backend for the FloBrain application. It is full
 * Git
 
 ### 1. Navigate to the Directory
-Since this is part of the main monorepo, you must first move into the backend folder:
+Since this is part of the main monorepo, you must first move into the backend folder (from repo root: `Caipo-FloLabs`):
 ```bash
-cd backend
+cd flobrain-core/backend
 ```
+Or from `flobrain-core`: `cd backend`. All `docker compose` commands must be run from this `backend/` directory.
 ### 2. First-Time Setup (Build & Run)
 - To download the dependencies, build the containers, and start the app` for the first time`, run:
 or 

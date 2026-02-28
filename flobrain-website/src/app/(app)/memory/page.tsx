@@ -5,18 +5,36 @@ import { MemoryGraph } from "./components/memory-graph";
 import { MemoryNodeDetailsDialog } from "./components/memory-node-details-dialog";
 import { MemoryFilter } from "./components/memory-filter";
 import { memoryNode } from "../../../types/MemoryNodes";
+import { api } from "@/lib/api";
+import { useQuery } from "@/hooks/useApi";
 
 export default function Memory() {
   const [selectedNode, setSelectedNode] = useState<memoryNode | null>(null);
   const [openMemoryNodeDialog, setOpenMemoryNodeDialog] = useState<boolean>(false);
   const [graphActive, setGraphActive] = useState<boolean>(false);
 
-  // Filter states
+  // Filter states (sent to API)
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [dateRange, setDateRange] = useState("All Time");
   const [memoryType, setMemoryType] = useState("All");
   const [minRelevance, setMinRelevance] = useState(0.0);
+
+  const { data: graphData, isLoading, error } = useQuery({
+    queryKey: ["memory", "graph", searchQuery, dateRange, memoryType, minRelevance],
+    queryFn: async () => {
+      const result = await api.getMemoryGraph({
+        search: searchQuery || undefined,
+        date_range: dateRange !== "All Time" ? dateRange : undefined,
+        memory_type: memoryType !== "All" ? memoryType : undefined,
+        min_relevance: minRelevance > 0 ? minRelevance : undefined,
+      });
+      if (result.error || result.status >= 400) {
+        throw new Error(result.error ?? "Failed to load memory graph");
+      }
+      return result.data!;
+    },
+  });
 
   const toggleFilters = () => setFiltersOpen(!filtersOpen);
 
@@ -37,6 +55,9 @@ export default function Memory() {
       setGraphActive(false);
     }
   };
+
+  const nodes = graphData?.nodes ?? [];
+  const links = graphData?.links ?? [];
 
   return (
     <main
@@ -108,13 +129,36 @@ export default function Memory() {
           className="w-full lg:w-4/5 flex flex-col items-center justify-center h-[60vh] min-h-0"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Memory Graph */}
+          {/* Memory Graph or loading/error */}
           <div className="w-full h-[calc(60vh-5rem)] overflow-hidden rounded-xl border-4 border-[#4c1d95]/50">
-            <MemoryGraph
-              onOpenMemoryNodeDialog={onOpenMemoryNodeDialog}
-              graphActive={graphActive}
-              setGraphActive={setGraphActive}
-            />
+            {isLoading && (
+              <div className="w-full h-full flex items-center justify-center bg-black/20 rounded-lg">
+                <div className="text-zinc-400 animate-pulse">Loading memory graph…</div>
+              </div>
+            )}
+            {error && (
+              <div className="w-full h-full flex items-center justify-center bg-black/20 rounded-lg">
+                <p className="text-red-300 text-center px-4">
+                  {error instanceof Error ? error.message : "Failed to load memory graph"}
+                </p>
+              </div>
+            )}
+            {!isLoading && !error && nodes.length === 0 && (
+              <div className="w-full h-full flex items-center justify-center bg-black/20 rounded-lg">
+                <p className="text-zinc-400 text-center px-4">
+                  No memories match your filters. Try adjusting search or filters.
+                </p>
+              </div>
+            )}
+            {!isLoading && !error && nodes.length > 0 && (
+              <MemoryGraph
+                nodes={nodes}
+                links={links}
+                onOpenMemoryNodeDialog={onOpenMemoryNodeDialog}
+                graphActive={graphActive}
+                setGraphActive={setGraphActive}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -123,7 +167,7 @@ export default function Memory() {
       <MemoryNodeDetailsDialog
         open={openMemoryNodeDialog}
         setOpen={setOpenMemoryNodeDialog}
-        description={selectedNode?.name}
+        node={selectedNode}
       />
     </main>
   );

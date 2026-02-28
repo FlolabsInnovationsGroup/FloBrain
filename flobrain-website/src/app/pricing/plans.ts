@@ -7,13 +7,13 @@ export interface PlanDefinition {
   description: string;
   monthlyPrice?: string;
   annualPrice?: string;
+  /** Secondary price label (e.g. "/Contact us" for Enterprise) */
+  priceSuffix?: string;
   devices: string;
-  cpuCores: string;
+  calls: string;
   memory: string;
-  storage: string;
-  apiCallsLimit: string;
-  deviceLimit: string;
-  memoryStorageLimit: string;
+  workflows: string;
+  buttonText: string;
   /** Base features (Developer). For higher tiers, these are the ADDITIONAL features only. */
   features: string[];
   /** When set, display "All in {parent} plus:" followed by features. */
@@ -24,72 +24,65 @@ export const PLANS: PlanDefinition[] = [
   {
     id: "developer",
     name: "Developer",
-    description: "Perfect for hobbyists and early development",
+    description: "Perfect for hobbyists and experimentation",
     monthlyPrice: "Free",
-    devices: "3 devices",
-    cpuCores: "10K cpu/mins",
-    memory: "Workflows",
-    storage: "1GB storage",
-    apiCallsLimit: "10,000 API calls/month",
-    deviceLimit: "Up to 3 devices",
-    memoryStorageLimit: "1GB memory storage",
+    devices: "3",
+    calls: "10K calls/mo",
+    memory: "1GB storage",
+    workflows: "100/day",
+    buttonText: "Start using",
     features: [
       "Community support",
-      "30-day event retention",
-      "7-day data retention",
-      "Public project templates",
+      "Basic documentation",
+      "Public Discord channel",
+      "API rate limiting",
+      "Standard uptime SLA",
     ],
   },
   {
     id: "pro",
     name: "Pro",
-    badge: "BEST VALUE",
+    badge: "Most Popular",
     description: "For startups and small teams building products",
-    monthlyPrice: "$ 49",
-    annualPrice: "$ 470",
-    devices: "30 devices",
-    cpuCores: "100K cpu/mins",
-    memory: "Workflows",
-    storage: "10GB storage",
-    apiCallsLimit: "500,000 API calls/month",
-    deviceLimit: "Up to 30 devices",
-    memoryStorageLimit: "50GB memory storage",
+    monthlyPrice: "$49",
+    annualPrice: "$470",
+    devices: "50",
+    calls: "500K calls/mo",
+    memory: "50GB storage",
+    workflows: "Unlimited",
+    buttonText: "Start Free Trial",
     inheritsFrom: "developer",
     features: [
-      "Unlimited workflows/automations",
       "Priority email support",
-      "Advanced monitoring",
-      "30-day data retention",
-      "Custom workflow templates",
-      "Webhook integrations",
-      "Multi-tenant AI routing",
+      "Advanced analytics dashboard",
+      "Custom model routing",
+      "Workflow templates library",
+      "Team collaboration (5 seats)",
+      "Higher rate limits",
+      "99.9% uptime SLA",
     ],
   },
   {
     id: "business",
     name: "Business",
     description: "For growing businesses and production deployments",
-    monthlyPrice: "$ 299",
-    annualPrice: "$ 2,870",
-    devices: "100 devices",
-    cpuCores: "5M cpu/mins",
-    memory: "Workflows",
-    storage: "500GB storage",
-    apiCallsLimit: "5,000,000 API calls/month",
-    deviceLimit: "Up to 500 devices",
-    memoryStorageLimit: "500GB memory storage",
+    monthlyPrice: "$299",
+    annualPrice: "$2,870",
+    devices: "500",
+    calls: "5M calls/mo",
+    memory: "50GB storage",
+    workflows: "Unlimited",
+    buttonText: "Start Free Trial",
     inheritsFrom: "pro",
     features: [
-      "Priority support with 4-hour SLA",
-      "Full analytics suite",
-      "90-day data retention",
-      "Team collaboration tools",
-      "Custom model fine-tuning",
-      "Advanced security controls",
+      "Priority support (24/5)",
       "SSO & RBAC",
-      "API rate limit customization",
+      "Advanced security controls",
+      "Custom integrations",
+      "Dedicated success manager",
+      "Unlimited team seats",
+      "White-label options",
       "99.95% uptime SLA",
-      "Dedicated account manager",
     ],
   },
   {
@@ -97,25 +90,22 @@ export const PLANS: PlanDefinition[] = [
     name: "Enterprise",
     description: "For large organizations with custom needs",
     monthlyPrice: "Custom",
+    priceSuffix: "/Contact us",
     devices: "Unlimited",
-    cpuCores: "Unlimited",
+    calls: "Unlimited",
     memory: "Custom",
-    storage: "Unlimited",
-    apiCallsLimit: "Unlimited API calls",
-    deviceLimit: "Unlimited devices",
-    memoryStorageLimit: "Custom memory storage",
+    workflows: "Unlimited",
+    buttonText: "Contact Sales",
     inheritsFrom: "business",
     features: [
-      "Custom model training",
-      "24/7 dedicated support",
-      "Custom data retention",
-      "On-premise deployment option",
-      "White-label solutions",
+      "Priority support (24/7)",
       "Advanced compliance (SOC 2, HIPAA)",
-      "Custom integrations",
+      "On-premise deployment option",
+      "Custom SLAs",
       "Dedicated infrastructure",
-      "Volume discounts",
-      "Training & onboarding",
+      "Custom contract terms",
+      "Professional services",
+      "Executive business reviews",
     ],
   },
 ];
@@ -137,13 +127,17 @@ export function getPlanByName(name: string): PlanDefinition | undefined {
 export function getPlanPrice(
   plan: PlanDefinition,
   cycle: BillingCycle
-): { price: string; period: string } {
+): { price: string; period: string; priceSuffix?: string } {
   if (cycle === "annual" && plan.annualPrice) {
-    return { price: plan.annualPrice, period: "/year" };
+    return {
+      price: plan.annualPrice,
+      period: "/year",
+      priceSuffix: plan.priceSuffix,
+    };
   }
-
   return {
     price: plan.monthlyPrice ?? "Custom",
     period: plan.monthlyPrice === "Free" || plan.monthlyPrice === "Custom" ? "" : "/month",
+    priceSuffix: plan.priceSuffix,
   };
 }

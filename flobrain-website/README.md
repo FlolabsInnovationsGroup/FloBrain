@@ -1,5 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Clean reinstall (remove node_modules and lockfile, then install and run)
+
+From the `flobrain-website` directory:
+
+```bash
+# Remove dependencies and lockfile for a clean install
+rm -rf node_modules package-lock.json
+
+# Install dependencies
+npm install
+
+# Run the dev server
+npm run dev
+```
+
 ## to add new components from shadcn/ui
 
 npx shadcn@latest add "component name"

@@ -1,5 +1,5 @@
 import logging
-from typing import cast
+from typing import cast, Optional
 
 from django.conf import settings
 from django.db import DatabaseError, IntegrityError
@@ -10,9 +10,10 @@ from rest_framework.views import APIView
 
 from .jwt_utils import decode_token, make_access_token, make_refresh_token
 from .models import User
-from .serializers import LoginSerializer, RegisterSerializer
+from .serializers import ChangePasswordSerializer, LoginSerializer, ProfileSerializer, RegisterSerializer
 
 logger = logging.getLogger(__name__)
+_UserManager = getattr(User, "objects")
 
 
 def home(request):
@@ -134,3 +135,92 @@ class RefreshView(APIView):
                 {"error": "Refresh failed", "details": "Invalid or expired token"},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
+
+
+def get_user_from_request(request) -> Optional[User]:
+    """Extract User from Authorization: Bearer <access_token>. Returns None if invalid/missing."""
+    auth = request.META.get("HTTP_AUTHORIZATION") or ""
+    if not auth.startswith("Bearer "):
+        return None
+    token = auth[7:].strip()
+    if not token:
+        return None
+    payload = decode_token(token)
+    if not payload or payload.get("type") != "access":
+        return None
+    user_id = payload.get("sub")
+    if not user_id:
+        return None
+    try:
+        return _UserManager.get(id=user_id)
+    except (User.DoesNotExist, AttributeError):
+        return None
+
+
+class ProfileView(APIView):
+    """GET: return current user profile. PATCH: update fullName and email. Requires Bearer token."""
+
+    def get(self, request):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        return Response({
+            "id": str(user.id),
+            "fullName": getattr(user, "username", None) or user.email or "",
+            "email": user.email,
+        })
+
+    def patch(self, request):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        # Normalize fullName -> username for serializer
+        payload = dict(request.data) if request.data else {}
+        if "fullName" in payload and "username" not in payload:
+            payload["username"] = payload["fullName"]
+        serializer = ProfileSerializer(
+            instance=user,
+            data=payload,
+            partial=True,
+            context={"user": user},
+        )
+        if not serializer.is_valid():
+            return Response(
+                {"error": "Validation failed", "details": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer.save()
+        return Response({
+            "id": str(user.id),
+            "fullName": getattr(user, "username", None) or user.email,
+            "email": user.email,
+        })
+
+
+class ChangePasswordView(APIView):
+    """POST: change password. Body: current_password, new_password. Requires Bearer token."""
+
+    def post(self, request):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        serializer = ChangePasswordSerializer(
+            data=request.data or {},
+            context={"user": user},
+        )
+        if not serializer.is_valid():
+            return Response(
+                {"error": "Validation failed", "details": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer.save()
+        return Response({"message": "Password updated successfully"})
