@@ -147,4 +147,3 @@ export function getPlanPrice(
     period: plan.monthlyPrice === "Free" || plan.monthlyPrice === "Custom" ? "" : "/month",
   };
 }
-
