@@ -45,3 +45,23 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid credentials")
         attrs["user"] = user
         return attrs
+
+
+from .models import UserPreferences, PresetPreferences
+
+class PresetPreferencesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PresetPreferences
+        fields = ['id', 'name', 'description', 'settings']
+
+class UserPreferencesSerializer(serializers.ModelSerializer):
+    preset_detail = PresetPreferencesSerializer(read_only=True)
+    
+    class Meta:
+        model = UserPreferences
+        fields = ['id', 'preset', 'preset_detail', 'overrides', 'updated_at']
+        read_only_fields = ['id', 'updated_at']
+    
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
