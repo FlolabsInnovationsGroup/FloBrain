@@ -5,6 +5,8 @@ from .views import (
     LogoutView,
     RegisterView,
     home,
+    UserPreferencesListCreateView,
+    PresetPreferencesListView,      
 )
 
 urlpatterns = [
@@ -13,4 +15,8 @@ urlpatterns = [
     path("api/auth/signin/", LoginView.as_view(), name="signin"),
     path("api/auth/signout/", LogoutView.as_view(), name="signout"),
     path("api/auth/refresh/", RefreshView.as_view(), name="refresh"),
+    
+    path("api/settings/preferences/", UserPreferencesListCreateView.as_view(), name="user-preferences"),
+    path("api/settings/preferences/<uuid:pk>/", UserPreferencesListCreateView.as_view(), name="user-preference-detail"),
+    path("api/settings/presets/", PresetPreferencesListView.as_view(), name="preset-preferences"),
 ]
