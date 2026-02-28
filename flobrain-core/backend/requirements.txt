@@ -2,6 +2,7 @@ asgiref
 Django
 django-cors-headers
 djangorestframework
+djangorestframework-simplejwt==5.5.1 
 greenlet
 PyJWT
 psycopg2-binary
