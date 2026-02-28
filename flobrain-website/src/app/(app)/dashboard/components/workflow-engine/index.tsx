@@ -1,53 +1,307 @@
-import { AlertCircle } from "lucide-react";
+"use client";
+
+import React from "react";
+import { AlertCircle, AlertTriangle, Clock } from "lucide-react";
+
+interface WorkflowAlert {
+  id: number;
+  severity: "critical" | "warning";
+  title: string;
+  description: string;
+  component: string;
+  timestamp: string;
+}
 
 const workflowEngineData = {
-  errors: [
+  alerts: [
     {
       id: 1,
-      title: "Sentiment Analysis",
-      description: "Model timeout after 30s - retrying with fallback",
-      timestamp: "5 minutes ago",
+      severity: "critical" as const,
+      title: "Sentiment Analysis - API rate limit exceeded",
+      description: "OpenAI API rate limit reached. Requests throttled for 14 minutes.",
+      component: "sentiment-analysis:v2",
+      timestamp: "2 min ago",
     },
     {
       id: 2,
-      title: "Image Recognition",
-      description: "Invalid image format - preprocessing failed",
-      timestamp: "12 minutes ago",
+      severity: "critical" as const,
+      title: "Memory Retrieval Timeout",
+      description: "Vector database query exceeded 30s timeout threshold.",
+      component: "memory-engine",
+      timestamp: "19 min ago",
+    },
+    {
+      id: 3,
+      severity: "warning" as const,
+      title: "High Memory Usage Detected",
+      description: "Workflow 'user-context-builder' consuming 647MB. Consider optimization.",
+      component: "user-context-builder",
+      timestamp: "1 hour ago",
+    },
+    {
+      id: 4,
+      severity: "critical" as const,
+      title: "Failed Webhook Delivery",
+      description: "Unable to deliver completion event to endpoint: https://api.client.com/events",
+      component: "webhook-dispatcher",
+      timestamp: "3 hours ago",
+    },
+    {
+      id: 5,
+      severity: "warning" as const,
+      title: "Model Version Deprecated",
+      description: "GPT-4-0314 will be deprecated on June 13. Migrate to gpt-4-turbo.",
+      component: "llm-router",
+      timestamp: "5 hours ago",
     },
   ],
 };
 
-export const WorkflowEngine = () => {
-  const { errors } = workflowEngineData;
+export const WorkflowEngine = (): React.JSX.Element => {
+  const { alerts } = workflowEngineData;
+
+  const criticalCount = alerts.filter((alert) => alert.severity === "critical").length;
+  const warningCount = alerts.filter((alert) => alert.severity === "warning").length;
 
   return (
-    <div className="rounded-2xl p-6 border border-white/10" style={{ background: "#FCFCFC29" }}>
-      <h2 className="text-xl font-semibold mb-4">Workflow Engine</h2>
+    <div
+      className="w-full rounded-[16px] sm:rounded-[20px]"
+      style={{
+        background: "rgba(30, 18, 43, 0.6)",
+        padding: "clamp(16px, 4vw, 32px)",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
+      }}
+    >
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+        <div>
+          <h2
+            className="font-semibold mb-1"
+            style={{
+              fontSize: "11px",
+              letterSpacing: "0.5px",
+              color: "rgba(255, 255, 255, 0.5)",
+            }}
+          >
+            WORKFLOW ENGINE
+          </h2>
+          <p
+            style={{
+              fontSize: "11px",
+              color: "rgba(255, 255, 255, 0.35)",
+            }}
+          >
+            Recent errors & warnings
+          </p>
+        </div>
 
-      <div className="mb-3">
-        <h3 className="text-lg font-medium text-zinc-300 mb-3">Recent Errors</h3>
+        {/* Status Badges */}
+        <div className="flex items-center gap-2">
+          <div
+            className="rounded-full font-semibold"
+            style={{
+              padding: "5px 10px",
+              background: "rgba(220, 38, 38, 0.15)",
+              border: "1px solid rgba(220, 38, 38, 0.3)",
+              fontSize: "11px",
+              color: "#FCA5A5",
+            }}
+          >
+            {criticalCount} Critical
+          </div>
+          <div
+            className="rounded-full font-semibold"
+            style={{
+              padding: "5px 10px",
+              background: "rgba(245, 158, 11, 0.15)",
+              border: "1px solid rgba(245, 158, 11, 0.3)",
+              fontSize: "11px",
+              color: "#FCD34D",
+            }}
+          >
+            {warningCount} Warnings
+          </div>
+        </div>
+      </div>
 
-        {errors.map(
-          (error: { id: number; title: string; description: string; timestamp: string }) => (
-            <div
-              key={error.id}
-              className={`rounded-lg p-4 ${error.id !== errors.length ? "mb-3" : ""}`}
-              style={{ background: "#FC444736", border: "2px solid #D00003" }}
-            >
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-500 mt-1 flex-shrink-0" />
-                <div className="flex-1">
-                  <div className="mb-1">
-                    <span className="text-black font-medium">{error.title}</span>
-                  </div>
-                  <p className="text-sm text-zinc-400 mb-2">{error.description}</p>
-                  <span className="text-xs text-zinc-500">{error.timestamp}</span>
+      {/* Error List Section */}
+      <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+        {alerts.map((alert: WorkflowAlert) => (
+          <div
+            key={alert.id}
+            className="rounded-lg sm:rounded-xl"
+            style={{
+              padding: "clamp(12px, 3vw, 20px)",
+              background:
+                alert.severity === "critical"
+                  ? "rgba(220, 38, 38, 0.08)"
+                  : "rgba(245, 158, 11, 0.08)",
+              border:
+                alert.severity === "critical"
+                  ? "1px solid rgba(220, 38, 38, 0.2)"
+                  : "1px solid rgba(245, 158, 11, 0.2)",
+            }}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+              {/* Top row on mobile: Icon + Timestamp */}
+              <div className="flex items-center justify-between sm:hidden">
+                <div className="flex-shrink-0">
+                  {alert.severity === "critical" ? (
+                    <div
+                      className="rounded-full flex items-center justify-center"
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        background: "rgba(220, 38, 38, 0.2)",
+                      }}
+                    >
+                      <AlertCircle className="w-4 h-4" style={{ color: "#FCA5A5" }} />
+                    </div>
+                  ) : (
+                    <div
+                      className="rounded-full flex items-center justify-center"
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        background: "rgba(245, 158, 11, 0.2)",
+                      }}
+                    >
+                      <AlertTriangle className="w-4 h-4" style={{ color: "#FCD34D" }} />
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-3 h-3" style={{ color: "rgba(255, 255, 255, 0.3)" }} />
+                  <span
+                    style={{
+                      fontSize: "11px",
+                      color: "rgba(255, 255, 255, 0.4)",
+                    }}
+                  >
+                    {alert.timestamp}
+                  </span>
                 </div>
               </div>
+
+              {/* Desktop Icon */}
+              <div className="flex-shrink-0 mt-0.5 hidden sm:block">
+                {alert.severity === "critical" ? (
+                  <div
+                    className="rounded-full flex items-center justify-center"
+                    style={{
+                      width: "24px",
+                      height: "24px",
+                      background: "rgba(220, 38, 38, 0.2)",
+                    }}
+                  >
+                    <AlertCircle className="w-4 h-4" style={{ color: "#FCA5A5" }} />
+                  </div>
+                ) : (
+                  <div
+                    className="rounded-full flex items-center justify-center"
+                    style={{
+                      width: "24px",
+                      height: "24px",
+                      background: "rgba(245, 158, 11, 0.2)",
+                    }}
+                  >
+                    <AlertTriangle className="w-4 h-4" style={{ color: "#FCD34D" }} />
+                  </div>
+                )}
+              </div>
+
+              {/* Main Content */}
+              <div className="flex-1 min-w-0">
+                <h3
+                  className="font-semibold mb-1.5 sm:mb-2"
+                  style={{
+                    fontSize: "clamp(12px, 2.5vw, 14px)",
+                    color: "#FFFFFF",
+                    lineHeight: "1.3",
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {alert.title}
+                </h3>
+
+                <p
+                  className="mb-2 sm:mb-3"
+                  style={{
+                    fontSize: "12px",
+                    color: "rgba(255, 255, 255, 0.5)",
+                    lineHeight: "1.5",
+                    wordBreak: "break-word",
+                    overflowWrap: "anywhere",
+                  }}
+                >
+                  {alert.description}
+                </p>
+
+                {/* Tag + Link */}
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                  <code
+                    className="rounded font-mono"
+                    style={{
+                      padding: "3px 6px",
+                      background: "rgba(255, 255, 255, 0.05)",
+                      fontSize: "10px",
+                      color: "rgba(255, 255, 255, 0.4)",
+                      wordBreak: "break-all",
+                    }}
+                  >
+                    {alert.component}
+                  </code>
+                  <button
+                    className="font-medium hover:underline"
+                    style={{
+                      fontSize: "11px",
+                      color: "#A78BFA",
+                      cursor: "pointer",
+                    }}
+                  >
+                    View Details →
+                  </button>
+                </div>
+              </div>
+
+              {/* Desktop Timestamp */}
+              <div className="hidden sm:flex items-center gap-1.5 flex-shrink-0">
+                <Clock className="w-3.5 h-3.5" style={{ color: "rgba(255, 255, 255, 0.3)" }} />
+                <span
+                  style={{
+                    fontSize: "11px",
+                    color: "rgba(255, 255, 255, 0.4)",
+                  }}
+                >
+                  {alert.timestamp}
+                </span>
+              </div>
             </div>
-          )
-        )}
+          </div>
+        ))}
       </div>
+
+      {/* Footer Section */}
+      <button
+        className="w-full rounded-lg sm:rounded-xl font-medium transition-all"
+        style={{
+          padding: "clamp(10px, 2vw, 14px)",
+          background: "rgba(139, 92, 246, 0.1)",
+          border: "1px solid rgba(139, 92, 246, 0.25)",
+          fontSize: "clamp(12px, 2.5vw, 13px)",
+          color: "#A78BFA",
+          cursor: "pointer",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "rgba(139, 92, 246, 0.15)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "rgba(139, 92, 246, 0.1)";
+        }}
+      >
+        View All Errors & Logs
+      </button>
     </div>
   );
 };
