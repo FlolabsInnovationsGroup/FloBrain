@@ -23,13 +23,13 @@ describe("MemoryFilter Component", () => {
 
   it("should render the search input", () => {
     render(<MemoryFilter {...defaultProps} />);
-    const searchInput = screen.getByPlaceholderText("Search memories (type keywords)");
+    const searchInput = screen.getByPlaceholderText("Search by keywords or memory type (e.g. Chunks, Summaries)");
     expect(searchInput).toBeDefined();
   });
 
   it("should call onSearchQueryChange when typing in search input", () => {
     render(<MemoryFilter {...defaultProps} />);
-    const searchInput = screen.getByPlaceholderText("Search memories (type keywords)");
+    const searchInput = screen.getByPlaceholderText("Search by keywords or memory type (e.g. Chunks, Summaries)");
     fireEvent.change(searchInput, { target: { value: "test query" } });
     expect(defaultProps.onSearchQueryChange).toHaveBeenCalledWith("test query");
   });
