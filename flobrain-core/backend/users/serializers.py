@@ -4,7 +4,7 @@ Auth serializers for register/login using users.models.User.
 from django.contrib.auth.hashers import make_password, check_password
 from rest_framework import serializers
 
-from .models import User
+from .models import User, UserPreferences, PresetPreferences
 
 # Django Model adds .objects and .DoesNotExist at runtime; type checker needs a hint
 _UserManager = getattr(User, "objects")
@@ -83,3 +83,22 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.password_hash = make_password(self.validated_data["new_password"])
         user.save(update_fields=["password_hash"])
         return user
+
+
+class PresetPreferencesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PresetPreferences
+        fields = ['id', 'name', 'description', 'settings']
+
+
+class UserPreferencesSerializer(serializers.ModelSerializer):
+    preset_detail = PresetPreferencesSerializer(read_only=True)
+
+    class Meta:
+        model = UserPreferences
+        fields = ['id', 'preset', 'preset_detail', 'overrides', 'updated_at']
+        read_only_fields = ['id', 'updated_at']
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
