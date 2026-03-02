@@ -5,6 +5,7 @@ import { ApplicationsCard } from ".";
 describe("ApplicationsCard Component", () => {
   const mockProps = {
     icon: <span data-testid="mock-icon">Icon</span>,
+    iconColor: "#a855f7",
     title: "Test Application",
     description: "Test Description",
     tags: ["React", "TypeScript", "Tailwind"],
@@ -24,7 +25,7 @@ describe("ApplicationsCard Component", () => {
   it("should render all tags provided", () => {
     render(<ApplicationsCard {...mockProps} />);
     mockProps.tags.forEach((tag) => {
-      expect(screen.getByText(tag)).toBeDefined();
+      expect(screen.getByText((content) => content.includes(tag))).toBeDefined();
     });
   });
 
