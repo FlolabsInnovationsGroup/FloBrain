@@ -46,10 +46,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-900 relative">
-      {/* Soft glowing vignette */}
-      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-purple-900/20" />
-
+    <div className="min-h-screen relative">
       {/* Hero Section */}
       <section className="relative z-10 pt-16 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

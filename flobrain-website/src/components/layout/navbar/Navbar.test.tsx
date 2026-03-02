@@ -19,8 +19,8 @@ function renderWithAuth(ui: React.ReactElement) {
 describe("Navbar Component", () => {
   it("should render the logo and brand name", () => {
     renderWithAuth(<Navbar />);
-    expect(screen.getByAltText("Logo")).toBeDefined();
-    expect(screen.getByText("FLOBRAIN")).toBeDefined();
+    expect(screen.getByAltText("FloBrain")).toBeDefined();
+    expect(screen.getByText("FloBrain")).toBeDefined();
   });
 
   it("should render desktop navigation links", async () => {
