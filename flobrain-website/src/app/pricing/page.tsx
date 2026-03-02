@@ -48,7 +48,7 @@ export default function Pricing() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 md:p-12 bg-gradient-to-b from-[#0f0a1a] via-[#1a0f2e] to-[#0f0a1a]">
+    <main className="flex min-h-screen flex-col items-center justify-start p-8 md:p-12">
       {/* Header */}
       <div className="text-center mb-12 max-w-3xl">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">
