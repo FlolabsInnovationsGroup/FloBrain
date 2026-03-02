@@ -5,107 +5,117 @@ import {
   RefreshCw,
   Database,
   Plug,
+  Layers,
   Watch,
   Smartphone,
-  Laptop,
+  Globe,
   Bot,
-  Wifi,
   Building2,
 } from "lucide-react";
+
+const iconSize = "w-8 h-8";
 
 export const features = [
   {
     id: 1,
-    icon: <GitBranch className="w-5 h-5" color="#1F4F8B" />,
+    icon: <GitBranch className={iconSize} color="#a78bfa" />,
     title: "Workflow Engine",
     description:
-      "Orchestrate complex AI workflows with sequential, parallel, and conditional execution. Support for 100+ steps with sub-50ms overhead.",
-    color: "#AFD3FF",
+      "Orchestrate complex AI workflows with visual drag-and-drop or code-first approaches.",
+    color: "#a78bfa",
   },
   {
     id: 2,
-    icon: <Brain className="w-5 h-5" color="#610081" />,
+    icon: <Database className={iconSize} color="#2dd4bf" />,
     title: "Memory System",
     description:
-      "Persistent, contextual memory with vector embeddings. Store 100K+ memories per user with <100ms semantic search retrieval.",
-    color: "#DF9CF5",
+      "Persistent, long-term memory that learns from every interaction and context.",
+    color: "#2dd4bf",
   },
   {
     id: 3,
-    icon: <Cpu className="w-5 h-5" color="#1F832D" />,
+    icon: <Brain className={iconSize} color="#ec4899" />,
     title: "AI Orchestration",
     description:
-      "Intelligent routing across multiple AI models. Support for GPT-4, Whisper, ElevenLabs, and local models with automatic failover.",
-    color: "#8AFDD3",
+      "Route requests to the best model for the job. Multi-model, multi-provider support.",
+    color: "#ec4899",
   },
   {
     id: 4,
-    icon: <RefreshCw className="w-5 h-5" color="#B34800" />,
+    icon: <RefreshCw className={iconSize} color="#22c55e" />,
     title: "Real-Time Sync",
     description:
-      "Seamless synchronization across all devices. <500ms sync latency with offline support and conflict resolution.",
-    color: "#FCB98C",
+      "Keep state synchronized across all devices and platforms in real-time.",
+    color: "#22c55e",
   },
   {
     id: 5,
-    icon: <Database className="w-5 h-5" color="#53E1FD" />,
+    icon: <Layers className={iconSize} color="#f59e0b" />,
     title: "State Management",
     description:
-      "Distributed state handling with Redis. <10ms read latency and 100% consistency across replicas.",
-    color: "#A3F0FF",
+      "Centralized state management that works across web, mobile, IoT, and embedded systems.",
+    color: "#f59e0b",
   },
   {
     id: 6,
-    icon: <Plug className="w-5 h-5" color="#8F0909" />,
+    icon: <Plug className={iconSize} color="#38bdf8" />,
     title: "Integration Layer",
     description:
-      "RESTful and gRPC APIs with SDKs for Python, JavaScript, and Go. Support for 1000+ API calls per second.",
-    color: "#FE9294",
+      "Pre-built connectors for popular services, APIs, and platforms. Extensible architecture.",
+    color: "#38bdf8",
   },
 ];
+
+const appIconSize = "w-8 h-8";
 
 export const applications = [
   {
     id: 1,
-    icon: <Watch className="w-6 h-6" color="#1F4F8B" />,
+    icon: <Watch className={appIconSize} color="#a855f7" />,
+    iconColor: "#a855f7",
     title: "Wearables",
-    description: "Smart watches, AI pins, AR glasses",
-    tags: ["CAIPO Band", "Smart glasses", "AI Pins"],
+    description: "Power smart watches and fitness trackers with on-device AI",
+    tags: ["Apple Watch", "Wear OS", "Fitbit", "Garmin"],
   },
   {
     id: 2,
-    icon: <Smartphone className="w-6 h-6" color="#1F4F8B" />,
+    icon: <Smartphone className={appIconSize} color="#3b82f6" />,
+    iconColor: "#3b82f6",
     title: "Mobile Apps",
-    description: "iOS and Android applications",
-    tags: ["Productivity Apps", "AI Assistants", "Health Trackers"],
+    description: "Native iOS and Android SDKs for seamless integration",
+    tags: ["iOS", "Android", "React Native", "Flutter"],
   },
   {
     id: 3,
-    icon: <Laptop className="w-6 h-6" color="#1F4F8B" />,
+    icon: <Globe className={appIconSize} color="#22c55e" />,
+    iconColor: "#22c55e",
     title: "Web Apps",
-    description: "Browser-based applications",
-    tags: ["Dashboards", "Admin Panels", "SaaS Products"],
+    description: "JavaScript SDK for modern web applications",
+    tags: ["React", "Vue", "Next.js", "Svelte"],
   },
   {
     id: 4,
-    icon: <Bot className="w-6 h-6" color="#1F4F8B" />,
+    icon: <Bot className={appIconSize} color="#f97316" />,
+    iconColor: "#f97316",
     title: "Robotics",
-    description: "Autonomous robots and drones",
-    tags: ["Service Robots", "Drones", "Smart Devices"],
+    description: "Real-time decision making for autonomous systems",
+    tags: ["ROS", "ROS2", "NVIDIA Isaac", "Custom"],
   },
   {
     id: 5,
-    icon: <Wifi className="w-6 h-6" color="#1F4F8B" />,
+    icon: <Cpu className={appIconSize} color="#ec4899" />,
+    iconColor: "#ec4899",
     title: "IoT Devices",
-    description: "ESP32, Raspberry Pi, edge devices",
-    tags: ["Smart Home", "Sensors", "Edge AI"],
+    description: "Lightweight runtime for resource-constrained devices",
+    tags: ["ESP32", "Raspberry Pi", "Arduino", "Edge"],
   },
   {
     id: 6,
-    icon: <Building2 className="w-6 h-6" color="#1F4F8B" />,
+    icon: <Building2 className={appIconSize} color="#6366f1" />,
+    iconColor: "#6366f1",
     title: "Enterprise",
-    description: "On-premise and cloud deployments",
-    tags: ["Private Cloud", "Data Centers", "Hybrid Setup"],
+    description: "On-premise deployment with SSO and compliance",
+    tags: ["AWS", "Azure", "GCP", "On-Prem"],
   },
 ];
 
