@@ -1,8 +1,8 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { memoryNode } from "../../../../../types/MemoryNodes";
 import type { MemoryNodeApi } from "@/lib/api";
+import { memoryNode } from "@/types/MemoryNodes";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ssr: false,
