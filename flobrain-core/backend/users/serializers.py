@@ -85,6 +85,17 @@ class ChangePasswordSerializer(serializers.Serializer):
         return user
 
 
+class DeleteAccountSerializer(serializers.Serializer):
+    """Confirm account deletion with current password. User from context."""
+    password = serializers.CharField(write_only=True, required=True)
+
+    def validate_password(self, value):
+        user = self.context.get("user")
+        if not user or not check_password(value, user.password_hash):
+            raise serializers.ValidationError("Password is incorrect.")
+        return value
+
+
 class PresetPreferencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = PresetPreferences

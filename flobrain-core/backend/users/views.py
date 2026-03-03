@@ -15,6 +15,7 @@ from .jwt_utils import decode_token, make_access_token, make_refresh_token
 from .models import User, UserPreferences, PresetPreferences
 from .serializers import (
     ChangePasswordSerializer,
+    DeleteAccountSerializer,
     LoginSerializer,
     ProfileSerializer,
     RegisterSerializer,
@@ -233,6 +234,31 @@ class ChangePasswordView(APIView):
             )
         serializer.save()
         return Response({"message": "Password updated successfully"})
+
+
+class DeleteAccountView(APIView):
+    """POST: delete account. Body: password. Requires Bearer token. Irreversible."""
+
+    def post(self, request):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        serializer = DeleteAccountSerializer(
+            data=request.data or {},
+            context={"user": user},
+        )
+        if not serializer.is_valid():
+            return Response(
+                {"error": "Validation failed", "details": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        user_id = str(user.id)
+        user.delete()
+        logger.info("User account deleted: %s", user_id)
+        return Response({"message": "Account deleted successfully"})
 
 
 class UserPreferencesListCreateView(APIView):

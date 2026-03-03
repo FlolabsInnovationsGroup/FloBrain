@@ -145,6 +145,13 @@ export const api = {
     });
   },
 
+  async deleteAccount(password: string) {
+    return this.request<{ message: string }>("/api/profile/delete/", {
+      method: "POST",
+      json: { password },
+    });
+  },
+
   // --- Memory graph (requires auth) ---
 
   async getMemoryGraph(params?: {
@@ -165,6 +172,32 @@ export const api = {
       path
     );
   },
+
+  // --- Dashboard (health unauthenticated; memory-activity requires auth) ---
+
+  async getDashboardHealth() {
+    return this.request<DashboardHealthApi>("/api/dashboard/health/");
+  },
+
+  async getDashboardMemoryActivity() {
+    return this.request<DashboardMemoryActivityApi>("/api/dashboard/memory-activity/");
+  },
+};
+
+export type DashboardHealthApi = {
+  status: "ok" | "degraded";
+  backend: string;
+  database: string;
+  allSystemsOperational: boolean;
+};
+
+export type DashboardMemoryActivityApi = {
+  today_count: number;
+  week_count: number;
+  total_count: number;
+  week_percentage: string;
+  week_positive: boolean;
+  heatmap: number[][];
 };
 
 export type MemoryNodeApi = {
