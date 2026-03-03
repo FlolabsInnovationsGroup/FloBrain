@@ -100,7 +100,8 @@ export const MemoryFilter = ({
                 <div className="flex gap-3">
                   <div className="mt-[2px] text-[#312634]/80">ⓘ</div>
                   <p className="text-[#312634]/80 text-[13px] leading-snug">
-                    Combine multiple filters to narrow down your memory search. The graph updates in real‑time.
+                    Combine multiple filters to narrow down your memory search. The graph updates in
+                    real‑time.
                   </p>
                 </div>
               </div>

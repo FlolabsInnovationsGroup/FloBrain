@@ -2,99 +2,207 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; 
-import { Menu, X } from "lucide-react";
-import FlolabsLogo from "@/assets/images/flolabs-logo.svg"; 
+import { usePathname } from "next/navigation";
+import { Menu, X, Home, DollarSign, Mail } from "lucide-react";
+import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
+import { useAuth } from "@/contexts/AuthContext";
+
+const navIconClass = "size-4 shrink-0";
+
+const activeLinkClass =
+  "bg-white/10 text-white ring-1 ring-[#a855f7]/50";
+const inactiveLinkClass = "text-zinc-400 hover:text-white";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
-
-  // Logic: Are we inside the app or on the landing page?
-  const isAppRoute = pathname.startsWith("/home") || 
-                     pathname.startsWith("/dashboard") || 
-                     pathname.startsWith("/brain") || 
-                     pathname.startsWith("/memory");
+  const isHomeActive = pathname === "/" || pathname === "/home";
+  const isPricingActive = pathname === "/pricing";
+  const isContactActive = pathname === "/contact";
 
   return (
-    <nav className="w-full backdrop-blur-md sticky top-0 z-50 border-b border-zinc-800/50 bg-[#020617]/80">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          
-          {/* LEFT: Logo (Always visible) */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center gap-4">
-              <Image 
-                src={FlolabsLogo} 
-                alt="Logo" 
-                className="h-8 w-auto" 
-                priority 
-              />
-              <span className="bg-gradient-to-r from-[#610081] to-[#702ACD] bg-clip-text text-transparent text-[28px] font-bold tracking-tighter">
-                FLOBRAIN
+    <header className="sticky top-0 z-[100] w-full px-4 pt-4 md:px-6 md:pt-5">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between rounded-2xl border border-white/5 bg-[#0f0a1a]/95 px-5 py-3 shadow-[0_8px_32px_rgba(147,51,234,0.18)] backdrop-blur-md md:px-6 md:py-3.5">
+        {/* LEFT: Logo + Brand + Tagline */}
+        <div className="flex min-w-0 shrink items-center gap-3">
+          <Link href="/" className="flex shrink-0 items-center gap-3">
+            <Image
+              src={FlolabsLogo}
+              alt="FloBrain"
+              className="h-8 w-auto text-[#a855f7]"
+              priority
+            />
+            <div className="flex flex-col">
+              <span className="text-lg font-semibold tracking-tight text-white">
+                FloBrain
               </span>
-            </Link>
-          </div>
-          
-    {/* RIGHT: Conditional Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            
-            {/* LOGGED IN VIEW: Only show app links if inside the app */}
-            {isAppRoute ? (
-              <div className="flex items-baseline space-x-6 text-zinc-400">
-                <Link href="/home" className="hover:text-white transition-colors text-sm font-medium">Home</Link>
-                <Link href="/dashboard" className="hover:text-white transition-colors text-sm font-medium">Dashboard</Link>
-                <Link href="/brain" className="hover:text-white transition-colors text-sm font-medium">Brain</Link>
-                <Link href="/memory" className="hover:text-white transition-colors text-sm font-medium">Memory</Link>
-              </div>
-            ) : (
-              /* LOGGED OUT VIEW: Show Auth buttons + Pricing on landing page */
-              <div className="flex items-center gap-6">
-                <Link href="/pricing" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">
-                  Pricing
-                </Link>
-                <div className="flex items-center gap-4">
-                  <Link href="/signin" className="text-sm font-medium text-zinc-300 hover:text-white transition-colors">
-                    Sign In
-                  </Link>
-                  <Link 
-                    href="/register" 
-                    className="px-5 py-2.5 text-sm font-semibold bg-[#9333ea] text-white rounded-xl hover:bg-[#a855f7] transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)]"
-                  >
-                    Register
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile Button */}
-          <div className="md:hidden">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-zinc-400 hover:text-white">
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
+              <span className="text-xs text-zinc-500">
+                v1 • AI Operating System
+              </span>
+            </div>
+          </Link>
         </div>
-      </div>
 
-      {/* Mobile Menu (Same logic as Desktop) */}
-      {isOpen && (
-        <div className="md:hidden bg-slate-950 border-b border-zinc-800 p-4 space-y-4">
-          {isAppRoute ? (
-            <>
-              <Link href="/home" className="block text-zinc-300" onClick={() => setIsOpen(false)}>Home</Link>
-              <Link href="/dashboard" className="block text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
-              <Link href="/brain" className="block text-zinc-300" onClick={() => setIsOpen(false)}>Brain</Link>
-            </>
+        {/* CENTER: Nav links (desktop) — truly centered */}
+        <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex md:items-center md:gap-1">
+          {!isLoading && isAuthenticated ? (
+            <div className="flex items-center gap-1">
+              <Link
+                href="/home"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  isHomeActive ? activeLinkClass : inactiveLinkClass
+                }`}
+              >
+                <Home className={navIconClass} />
+                Home
+              </Link>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white"
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/brain"
+                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white"
+              >
+                Brain
+              </Link>
+              <Link
+                href="/memory"
+                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white"
+              >
+                Memory
+              </Link>
+              <Link
+                href="/profile"
+                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white"
+              >
+                Profile
+              </Link>
+            </div>
           ) : (
-            <div className="flex flex-col gap-3">
-              <Link href="/signin" className="text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
-              <Link href="/register" className="bg-[#9333ea] text-white p-3 rounded-lg text-center" onClick={() => setIsOpen(false)}>Register</Link>
+            <div className="flex items-center gap-1">
+              <Link
+                href="/home"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  isHomeActive ? activeLinkClass : inactiveLinkClass
+                }`}
+              >
+                <Home className={navIconClass} />
+                Home
+              </Link>
+              <Link
+                href="/pricing"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  isPricingActive ? activeLinkClass : inactiveLinkClass
+                }`}
+              >
+                <DollarSign className={navIconClass} />
+                Pricing
+              </Link>
+              <Link
+                href="/contact"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  isContactActive ? activeLinkClass : inactiveLinkClass
+                }`}
+              >
+                <Mail className={navIconClass} />
+                Contact
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT: Auth actions */}
+        <div className="flex shrink-0 items-center gap-4">
+          <div className="hidden md:flex md:items-center md:gap-4">
+            {isLoading ? (
+              <span className="text-sm text-zinc-500">…</span>
+            ) : !isAuthenticated ? (
+              <>
+                <Link
+                  href="/signin"
+                  className="text-sm font-medium text-white hover:text-white/90"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-xl bg-[#9333ea] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(147,51,234,0.3)] transition-colors hover:bg-[#a855f7]"
+                >
+                  Register
+                </Link>
+              </>
+            ) : null}
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            type="button"
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-zinc-400 hover:text-white md:hidden"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+          >
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile menu */}
+      {isOpen && (
+        <div className="mx-auto mt-2 max-w-6xl rounded-2xl border border-white/5 bg-[#0f0a1a]/95 p-4 shadow-lg md:hidden">
+          {!isLoading && isAuthenticated ? (
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/home"
+                className={`rounded-lg py-2 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
+                onClick={() => setIsOpen(false)}
+              >
+                Home
+              </Link>
+              <Link href="/dashboard" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
+              <Link href="/brain" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Brain</Link>
+              <Link href="/memory" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Memory</Link>
+              <Link href="/profile" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Profile</Link>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/home"
+                className={`rounded-lg py-2 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
+                onClick={() => setIsOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                href="/pricing"
+                className={`rounded-lg py-2 ${isPricingActive ? "font-medium text-white" : "text-zinc-300"}`}
+                onClick={() => setIsOpen(false)}
+              >
+                Pricing
+              </Link>
+              <Link
+                href="/contact"
+                className={`rounded-lg py-2 ${isContactActive ? "font-medium text-white" : "text-zinc-300"}`}
+                onClick={() => setIsOpen(false)}
+              >
+                Contact
+              </Link>
+              <Link href="/signin" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
+              <Link
+                href="/register"
+                className="rounded-xl bg-[#9333ea] py-3 text-center text-white"
+                onClick={() => setIsOpen(false)}
+              >
+                Register
+              </Link>
             </div>
           )}
         </div>
       )}
-    </nav>
+    </header>
   );
 }

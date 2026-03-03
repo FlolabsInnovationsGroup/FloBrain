@@ -1,43 +1,71 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Clean reinstall (remove node_modules and lockfile, then install and run)
+
+From the `flobrain-website` directory:
+
+```bash
+# Remove dependencies and lockfile for a clean install
+rm -rf node_modules package-lock.json
+
+# Install dependencies
+npm install
+
+# Run the dev server
+npm run dev
+```
+
 ## to add new components from shadcn/ui
 
 npx shadcn@latest add "component name"
 example :   npx shadcn@latest add card
             npx shadcn@latest add button
 
+## How to add new APIs
 
-## Getting Started
+The app uses **Axios** (`apiClient`) and **React Query** for API calls. The backend URL is set via `NEXT_PUBLIC_API_URL` (default: `http://127.0.0.1:8000`). Authenticated requests automatically send the JWT via the `Authorization` header.
 
-First, run the development server:
+### 1. Fetching data (GET) – use `useQuery` + `apiClient`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Import from `@/hooks/useApi` and call your backend endpoint:
+
+```tsx
+import { useQuery, apiClient } from "@/hooks/useApi";
+
+// In your component:
+const { data, isLoading, error } = useQuery({
+  queryKey: ["my-collection"],  // unique key for caching
+  queryFn: async () => {
+    const res = await apiClient.get("/api/my-collection/");
+    return res.data;
+  },
+});
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Creating/updating/deleting (POST, PUT, PATCH, DELETE) – use `useMutation` + `apiClient`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```tsx
+import { useMutation, useQueryClient, apiClient } from "@/hooks/useApi";
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+const queryClient = useQueryClient();
+const mutation = useMutation({
+  mutationFn: (body: { name: string }) =>
+    apiClient.post("/api/my-collection/", body),
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["my-collection"] });
+  },
+});
+```
 
-## Learn More
+### Files to know
 
-To learn more about Next.js, take a look at the following resources:
+|------------------------|---------------------------------------------------------------------|
+| File                   | Purpose                                                             |
+|------------------------|---------------------------------------------------------------------|
+| `src/lib/axios.ts`     | Axios instance (`apiClient`), base URL, auth header interceptor     | 
+| `src/lib/api.ts`       | Auth methods + optional shared API methods; uses `apiClient`        |
+| `src/hooks/useApi.ts`  | Re-exports `useQuery`, `useMutation`, `useQueryClient`, `apiClient` |
+|------------------------|---------------------------------------------------------------------|
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Auth (login, register, sign out) is handled by `AuthContext` and the methods in `api`; use the pattern above for other collections and endpoints.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

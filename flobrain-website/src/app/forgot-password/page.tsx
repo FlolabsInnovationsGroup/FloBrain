@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Mail, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/layout/button";
 import { Input } from "@/components/layout/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/layout/card";
 import { Label } from "@/components/layout/label";
 
 export default function ForgotPassword() {
@@ -17,94 +16,102 @@ export default function ForgotPassword() {
     e.preventDefault();
     if (!email.trim()) return;
     setIsLoading(true);
-    // TODO: Integrate with your auth provider's password reset API
+    // TODO: Integrate with auth provider's password reset API
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsLoading(false);
     setIsSubmitted(true);
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-purple-950 via-zinc-950 to-purple-900 flex items-center justify-center p-4 sm:p-8 lg:p-24">
-      <div className="w-full max-w-md">
-        <Card className="bg-white/5 backdrop-blur-xl border border-white/20 shadow-2xl">
-          <CardHeader className="text-center space-y-2">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-zinc-200 bg-clip-text text-transparent">
-              Reset your password
-            </CardTitle>
-            <CardDescription className="text-zinc-300">
+    <main className="min-h-screen bg-[#2E0A4E] flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 relative overflow-hidden">
+      {/* Back button */}
+      <Link
+        href="/signin"
+        className="absolute top-6 left-6 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-[#8B65C5]/80 hover:bg-[#8B65C5] text-white transition-colors"
+      >
+        <ArrowLeft size={20} />
+      </Link>
+
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(139,92,246,0.15)_0%,_transparent_60%)]" />
+
+      <div className="w-full max-w-md relative z-10">
+        <div className="w-full bg-[#CABEE8]/90 rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-[#5F298F]">Reset your password</h1>
+            <p className="text-zinc-600 text-sm mt-2">
               Enter your email and we&apos;ll send you a link to reset your password
-            </CardDescription>
-          </CardHeader>
+            </p>
+          </div>
 
-          <CardContent className="space-y-6">
-            {isSubmitted ? (
-              <>
-                <div className="rounded-lg bg-green-500/10 border border-green-500/30 p-4 text-center">
-                  <p className="text-green-400 text-sm">
-                    Check your inbox at <span className="font-medium text-white">{email}</span> for a
-                    password reset link.
-                  </p>
-                </div>
-                <Link href="/signin" className="block">
-                  <Button
-                    variant="outline"
-                    className="w-full h-12 border-white/30 bg-white/5 text-white hover:bg-white/10 hover:border-white/40 flex items-center justify-center gap-2"
-                  >
-                    <ArrowLeft size={18} />
-                    Back to Sign In
-                  </Button>
-                </Link>
-                <p className="text-center text-sm text-zinc-400">
-                  Didn&apos;t receive the email?{" "}
-                  <button
-                    type="button"
-                    onClick={() => setIsSubmitted(false)}
-                    className="text-purple-300 hover:text-purple-200 font-medium transition-colors"
-                  >
-                    Try again
-                  </button>
+{isSubmitted ? (
+            <>
+              <div className="rounded-lg bg-green-100 border border-green-200 p-4 text-center">
+                <p className="text-green-800 text-sm">
+                  Check your inbox at <span className="font-medium text-zinc-900">{email}</span> for a
+                  password reset link.
                 </p>
-              </>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white font-medium">
-                    Email
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      className="pl-10 bg-white/10 border-white/30 text-white placeholder-zinc-400 focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:border-transparent h-12"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      disabled={isLoading}
-                    />
-                  </div>
-                </div>
-
+              </div>
+              <Link href="/signin" className="block">
                 <Button
-                  type="submit"
-                  disabled={isLoading || !email.trim()}
-                  className="w-full h-12 bg-purple-600 hover:bg-purple-700 text-white font-semibold text-lg shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  variant="outline"
+                  className="w-full h-12 border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50 rounded-lg flex items-center justify-center gap-2 font-medium"
                 >
-                  {isLoading ? "Sending..." : "Send reset link"}
-                </Button>
-
-                <Link
-                  href="/signin"
-                  className="flex items-center justify-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
-                >
-                  <ArrowLeft size={16} />
+                  <ArrowLeft size={18} />
                   Back to Sign In
-                </Link>
-              </form>
-            )}
-          </CardContent>
-        </Card>
+                </Button>
+              </Link>
+              <p className="text-center text-sm text-zinc-600">
+                Didn&apos;t receive the email?{" "}
+                <button
+                  type="button"
+                  onClick={() => setIsSubmitted(false)}
+                  className="font-semibold text-[#6B46C1] hover:text-[#5B36B1] transition-colors"
+                >
+                  Try again
+                </button>
+              </p>
+            </>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-zinc-800 font-medium">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    className="pl-10 bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 rounded-lg h-12 focus-visible:ring-2 focus-visible:ring-[#6B46C1]/50 focus-visible:border-[#6B46C1]"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={isLoading || !email.trim()}
+                className="w-full h-12 bg-[#6B46C1] hover:bg-[#5B36B1] text-white font-semibold rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isLoading ? "Sending..." : "Send reset link"}
+                <span className="text-lg">→</span>
+              </Button>
+
+              <Link
+                href="/signin"
+                className="flex items-center justify-center gap-2 text-sm text-zinc-600 hover:text-zinc-800 transition-colors"
+              >
+                <ArrowLeft size={16} />
+                Back to Sign In
+              </Link>
+            </form>
+          )}
+        </div>
       </div>
     </main>
   );
