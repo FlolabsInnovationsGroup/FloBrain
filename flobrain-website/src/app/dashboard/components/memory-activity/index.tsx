@@ -2,42 +2,35 @@
 
 import React from "react";
 import { Database, TrendingUp } from "lucide-react";
+import { api } from "@/lib/api";
+import { useQuery } from "@/hooks/useApi";
 
-const memoryActivityData = {
-  today: {
-    count: "1,247",
-    label: "chunks created",
-  },
-  thisWeek: {
-    count: "8,942",
-    percentage: "+2.3%",
-    isPositive: true,
-  },
-  total: {
-    count: "127.4K",
-    label: "all time",
-  },
-  heatmapDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  timeLabels: ["12 am", "6 am", "12 pm", "6 pm", "11 pm"],
-};
+const HEATMAP_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return n.toLocaleString();
+}
 
 export const MemoryActivity = (): React.JSX.Element => {
-  const { today, thisWeek, total, heatmapDays } = memoryActivityData;
+  const { data: activity, isLoading, error } = useQuery({
+    queryKey: ["dashboard", "memory-activity"],
+    queryFn: async () => {
+      const result = await api.getDashboardMemoryActivity();
+      if (result.error || result.status >= 400) {
+        throw new Error(result.error ?? "Failed to load memory activity");
+      }
+      return result.data!;
+    },
+    refetchInterval: 60_000,
+  });
 
-  // Generate heatmap data (24 hours x 7 days)
-  const generateHeatmapData = (): number[][] => {
-    return heatmapDays.map((_, dayIndex) =>
-      Array.from({ length: 24 }, (_, hourIndex) => {
-        // Create more realistic patterns
-        const baseIntensity = Math.random() * 0.5;
-        const dayFactor = dayIndex < 5 ? 1.2 : 0.8; // Weekdays more active
-        const hourFactor = hourIndex >= 9 && hourIndex <= 17 ? 1.5 : 0.5; // Business hours
-        return Math.min(baseIntensity * dayFactor * hourFactor, 1);
-      })
-    );
-  };
-
-  const heatmapData = generateHeatmapData();
+  const heatmapData: number[][] =
+    activity?.heatmap && activity.heatmap.length === 7
+      ? activity.heatmap
+      : HEATMAP_DAYS.map(() => Array.from({ length: 24 }, () => 0));
+  const heatmapDays = HEATMAP_DAYS;
 
   const getHeatmapColor = (intensity: number): string => {
     if (intensity > 0.75) return "#FFEA00"; // Bright yellow - high
@@ -45,6 +38,31 @@ export const MemoryActivity = (): React.JSX.Element => {
     if (intensity > 0.25) return "#8B7000"; // Medium yellow/brown
     return "#3A3547"; // Dark purple - low activity
   };
+
+  const todayCount = activity ? formatCount(activity.today_count) : "—";
+  const weekCount = activity ? formatCount(activity.week_count) : "—";
+  const totalCount = activity ? formatCount(activity.total_count) : "—";
+  const weekPercentage = activity?.week_percentage ?? "—";
+  const weekPositive = activity?.week_positive ?? true;
+
+  if (error) {
+    return (
+      <div
+        className="w-full rounded-[16px] sm:rounded-[20px]"
+        style={{
+          background: "rgba(30, 18, 43, 0.6)",
+          padding: "clamp(16px, 4vw, 32px)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
+        }}
+      >
+        <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "rgba(255, 255, 255, 0.5)" }}>
+          MEMORY ACTIVITY
+        </h2>
+        <p style={{ fontSize: "13px", color: "#FCA5A5" }}>Failed to load memory activity. Sign in may be required.</p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -75,7 +93,7 @@ export const MemoryActivity = (): React.JSX.Element => {
               color: "rgba(255, 255, 255, 0.35)",
             }}
           >
-            Last 12 weeks
+            {isLoading ? "Loading…" : "Last 7 days"}
           </p>
         </div>
         <div
@@ -117,7 +135,7 @@ export const MemoryActivity = (): React.JSX.Element => {
               lineHeight: "1",
             }}
           >
-            {today.count}
+            {todayCount}
           </div>
           <div
             style={{
@@ -125,7 +143,7 @@ export const MemoryActivity = (): React.JSX.Element => {
               color: "rgba(255, 255, 255, 0.35)",
             }}
           >
-            {today.label}
+            chunks created
           </div>
         </div>
 
@@ -156,18 +174,18 @@ export const MemoryActivity = (): React.JSX.Element => {
               lineHeight: "1",
             }}
           >
-            {thisWeek.count}
+            {weekCount}
           </div>
           <div className="flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" style={{ color: "#00D492" }} />
+            <TrendingUp className="w-3 h-3" style={{ color: weekPositive ? "#00D492" : "#FCA5A5" }} />
             <span
               className="font-semibold"
               style={{
                 fontSize: "11px",
-                color: "#00D492",
+                color: weekPositive ? "#00D492" : "#FCA5A5",
               }}
             >
-              {thisWeek.percentage}
+              {weekPercentage}
             </span>
           </div>
         </div>
@@ -199,7 +217,7 @@ export const MemoryActivity = (): React.JSX.Element => {
               lineHeight: "1",
             }}
           >
-            {total.count}
+            {totalCount}
           </div>
           <div
             style={{
@@ -207,7 +225,7 @@ export const MemoryActivity = (): React.JSX.Element => {
               color: "rgba(255, 255, 255, 0.35)",
             }}
           >
-            {total.label}
+            all time
           </div>
         </div>
       </div>

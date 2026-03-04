@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -52,7 +53,21 @@ class MemoryGraphView(APIView):
         qs = MemoryNode.objects.all()
 
         if search:
-            qs = qs.filter(name__icontains=search)
+            # Map display names (searchable in UI) to DB memory_type values
+            search_lower = search.lower().strip()
+            type_map = {
+                "chunks": "chunk",
+                "summaries": "summary",
+                "interactions": "interaction",
+                "workflows": "workflow",
+            }
+            type_value = type_map.get(search_lower)
+            if type_value:
+                qs = qs.filter(
+                    Q(name__icontains=search) | Q(memory_type=type_value)
+                )
+            else:
+                qs = qs.filter(name__icontains=search)
 
         start, end = _parse_date_range(date_range)
         if start is not None and end is not None:

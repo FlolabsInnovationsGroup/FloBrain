@@ -35,7 +35,7 @@ export const MemoryFilter = ({
           <div className="absolute inset-0 bg-gradient-to-r from-[#4c1d95]/30 to-[#7c3aed]/30 backdrop-blur-sm rounded-2xl border border-[#6b21a8]/40 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search memories (type keywords)"
+            placeholder="Search by keywords or memory type (e.g. Chunks, Summaries)"
             value={searchQuery}
             onChange={(e) => onSearchQueryChange(e.target.value)}
             className="relative w-full px-6 py-4 bg-[#8B6E99]/80 backdrop-blur-xl rounded-2xl border-2 border-[#8b5cf6]/50 text-white placeholder-[#a1a1aa] text-lg font-medium focus:outline-none focus:border-[#8b5cf6]/80 focus:ring-4 focus:ring-[#8b5cf6]/20 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#8b5cf6]/30"

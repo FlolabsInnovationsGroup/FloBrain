@@ -2,15 +2,47 @@
 
 import React from "react";
 import { Activity, Server } from "lucide-react";
-
-const systemHealthData = {
-  brainStatus: "Online",
-  allSystemsOperational: true,
-  connectedDevices: 12,
-};
+import { api } from "@/lib/api";
+import { useQuery } from "@/hooks/useApi";
 
 export const SystemHealth = (): React.JSX.Element => {
-  const { brainStatus, allSystemsOperational, connectedDevices } = systemHealthData;
+  const { data: health, isLoading, error, dataUpdatedAt } = useQuery({
+    queryKey: ["dashboard", "health"],
+    queryFn: async () => {
+      const result = await api.getDashboardHealth();
+      if (result.error || result.status >= 400) {
+        throw new Error(result.error ?? "Failed to load health");
+      }
+      return result.data!;
+    },
+    refetchInterval: 30_000,
+  });
+
+  const brainStatus = health?.backend === "online" ? "Online" : "Offline";
+  const allSystemsOperational = health?.allSystemsOperational ?? false;
+  const databaseStatus = health?.database ?? "unknown";
+  const lastUpdated = dataUpdatedAt
+    ? new Date(dataUpdatedAt).toLocaleTimeString()
+    : "—";
+
+  if (error) {
+    return (
+      <div
+        className="w-full lg:w-[830px] rounded-[16px] sm:rounded-[20px]"
+        style={{
+          background: "rgba(30, 18, 43, 0.6)",
+          padding: "clamp(20px, 4vw, 32px)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
+        }}
+      >
+        <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "rgba(255, 255, 255, 0.5)" }}>
+          SYSTEM HEALTH
+        </h2>
+        <p style={{ fontSize: "13px", color: "#FCA5A5" }}>Unable to reach backend. Check that the API is running.</p>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -41,7 +73,7 @@ export const SystemHealth = (): React.JSX.Element => {
               color: "rgba(255, 255, 255, 0.35)",
             }}
           >
-            Last updated: Just now
+            {isLoading ? "Loading…" : `Last updated: ${lastUpdated}`}
           </p>
         </div>
         <div
@@ -100,7 +132,7 @@ export const SystemHealth = (): React.JSX.Element => {
         )}
       </div>
 
-      {/* Bottom Section */}
+      {/* Bottom Section - Backend & Database */}
       <div className="mb-3 sm:mb-5">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-2 sm:gap-3">
@@ -112,33 +144,19 @@ export const SystemHealth = (): React.JSX.Element => {
                 color: "rgba(255, 255, 255, 0.7)",
               }}
             >
-              Connected Devices
+              Database
             </span>
           </div>
           <div
-            className="font-bold"
+            className="font-bold capitalize"
             style={{
-              fontSize: "clamp(24px, 5vw, 35px)",
-              color: "#FFFFFF",
+              fontSize: "clamp(18px, 4vw, 24px)",
+              color: databaseStatus === "connected" ? "#00D492" : "rgba(255,255,255,0.5)",
               lineHeight: "1",
             }}
           >
-            {connectedDevices}
+            {isLoading ? "—" : databaseStatus}
           </div>
-        </div>
-
-        {/* Device Indicators Row */}
-        <div className="flex gap-1 sm:gap-2">
-          {Array.from({ length: connectedDevices }).map((_, index) => (
-            <div
-              key={index}
-              className="flex-1 rounded"
-              style={{
-                height: "7px",
-                background: "linear-gradient(180deg, #A78BFA 0%, #8B5CF6 100%)",
-              }}
-            />
-          ))}
         </div>
       </div>
     </div>

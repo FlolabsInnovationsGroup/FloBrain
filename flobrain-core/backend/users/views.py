@@ -2,15 +2,26 @@ import logging
 from typing import cast, Optional
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError, IntegrityError
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .jwt_utils import decode_token, make_access_token, make_refresh_token
-from .models import User
-from .serializers import ChangePasswordSerializer, LoginSerializer, ProfileSerializer, RegisterSerializer
+from .models import User, UserPreferences, PresetPreferences
+from .serializers import (
+    ChangePasswordSerializer,
+    DeleteAccountSerializer,
+    LoginSerializer,
+    ProfileSerializer,
+    RegisterSerializer,
+    UserPreferencesSerializer,
+    PresetPreferencesSerializer,
+)
 
 logger = logging.getLogger(__name__)
 _UserManager = getattr(User, "objects")
@@ -136,7 +147,6 @@ class RefreshView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED,
             )
 
-
 def get_user_from_request(request) -> Optional[User]:
     """Extract User from Authorization: Bearer <access_token>. Returns None if invalid/missing."""
     auth = request.META.get("HTTP_AUTHORIZATION") or ""
@@ -224,3 +234,121 @@ class ChangePasswordView(APIView):
             )
         serializer.save()
         return Response({"message": "Password updated successfully"})
+
+
+class DeleteAccountView(APIView):
+    """POST: delete account. Body: password. Requires Bearer token. Irreversible."""
+
+    def post(self, request):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        serializer = DeleteAccountSerializer(
+            data=request.data or {},
+            context={"user": user},
+        )
+        if not serializer.is_valid():
+            return Response(
+                {"error": "Validation failed", "details": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        user_id = str(user.id)
+        user.delete()
+        logger.info("User account deleted: %s", user_id)
+        return Response({"message": "Account deleted successfully"})
+
+
+class UserPreferencesListCreateView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            prefs = UserPreferences.objects.filter(user=request.user)
+            serializer = UserPreferencesSerializer(prefs, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.exception("Failed to fetch user preferences")
+            return Response(
+                {"error": "Failed to fetch preferences", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def post(self, request):
+        try:
+            serializer = UserPreferencesSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                {"error": "Validation failed", "details": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except IntegrityError:
+            return Response(
+                {"error": "Preference already exists", "details": "Duplicate preference key"},
+                status=status.HTTP_409_CONFLICT,
+            )
+        except Exception as e:
+            logger.exception("Failed to create preference")
+            return Response(
+                {"error": "Failed to create preference", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def patch(self, request, pk=None):
+        try:
+            preference = UserPreferences.objects.get(id=pk, user=request.user)
+            serializer = UserPreferencesSerializer(preference, data=request.data, partial=True, context={'request': request})
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(
+                {"error": "Validation failed", "details": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except ObjectDoesNotExist:
+            return Response(
+                {"error": "Preference not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            logger.exception("Failed to update preference")
+            return Response(
+                {"error": "Failed to update preference", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def delete(self, request, pk=None):
+        try:
+            preference = UserPreferences.objects.get(id=pk, user=request.user)
+            preference.delete()
+            return Response({"message": "Preference deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        except ObjectDoesNotExist:
+            return Response(
+                {"error": "Preference not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            logger.exception("Failed to delete preference")
+            return Response(
+                {"error": "Failed to delete preference", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class PresetPreferencesListView(APIView):
+    def get(self, request):
+        try:
+            presets = PresetPreferences.objects.all()
+            serializer = PresetPreferencesSerializer(presets, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            logger.exception("Failed to fetch presets")
+            return Response(
+                {"error": "Failed to fetch presets", "details": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
