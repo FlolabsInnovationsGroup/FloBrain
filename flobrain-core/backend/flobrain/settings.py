@@ -26,6 +26,9 @@ SECRET_KEY = "django-insecure-yxp6z(@h*q#7yary@%qm!pvn4e2&4)pql8qz6zk3u4&^3j4&f!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Avoid W042 on models that don't define an explicit primary key (e.g. UserGroup, UserRole)
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"]
 
 
@@ -43,6 +46,7 @@ INSTALLED_APPS = [
     "users",
     "memory",
     "dashboard",
+    "brain",
 ]
 
 MIDDLEWARE = [
