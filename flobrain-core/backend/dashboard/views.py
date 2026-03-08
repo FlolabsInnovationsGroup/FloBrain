@@ -27,11 +27,15 @@ class DashboardHealthView(APIView):
         except Exception:
             db_ok = False
 
+        # system_status, connected_devices, and latest_errors are mocked until real sources are wired up.
+        # system_status possible values: "online" | "idle" | "loading" | "offline" | "critical_error"
         return Response({
             "status": "ok" if db_ok else "degraded",
             "backend": "online",
             "database": "connected" if db_ok else "disconnected",
             "allSystemsOperational": db_ok,
+            "system_status": "online",
+            "connected_devices": 3,
         })
 
 
@@ -111,4 +115,26 @@ class DashboardMemoryActivityView(APIView):
             "week_percentage": week_percentage,
             "week_positive": week_positive,
             "heatmap": heatmap_normalized,
+        })
+
+class DashboardErrorLogView(APIView):
+    """
+    Get /api/dashboard/error-log/
+    Requires bearer token. Returns error logs 
+    """
+    def get(self,  request):
+        user =get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication Required", "details": "valid Bearer token required"},
+                status=401,
+            )
+        # Mocked error log data 
+        return Response({
+            "error-logs":[
+                {"level": "warning", "message": "Memory node sync delayed by 3s", "timestamp": "06/03/26"},
+                {"level": "error",   "message": "Device XIAO-ESP32-S3 lost connection", "timestamp": "06/03/26"},
+                {"level": "warning", "message": "High CPU usage detected on brain core (87%)", "timestamp": "05/03/26"},
+                {"level": "error",   "message": "Failed to upload audio chunk to GCS", "timestamp": "05/03/26"},
+            ]
         })
