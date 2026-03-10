@@ -20,6 +20,7 @@ interface SidebarProps {
   onDeleteFolder: (id: number) => void;
   onRenameFolder: (id: number, newName: string) => void;
   onExportChat: (id: number, format: 'pdf' | 'txt' | 'json') => void;
+  chatsLoading?: boolean;
 }
 
 export default function Sidebar({ 
@@ -37,7 +38,8 @@ export default function Sidebar({
   onCreateFolder,
   onDeleteFolder,
   onRenameFolder,
-  onExportChat
+  onExportChat,
+  chatsLoading = false,
 }: SidebarProps) {
   const [editingChatId, setEditingChatId] = useState<number | null>(null);
   const [editingFolderId, setEditingFolderId] = useState<number | null>(null);
@@ -300,7 +302,10 @@ export default function Sidebar({
             />
           ))}
 
-          {chatHistory.length === 0 && (
+          {chatsLoading && (
+            <p className="text-white/40 text-sm py-4 text-center">Loading chats...</p>
+          )}
+          {!chatsLoading && chatHistory.length === 0 && (
             <p className="text-white/40 text-sm py-4 text-center">No chats yet</p>
           )}
         </div>

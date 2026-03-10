@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, KeyboardEvent, useRef } from 'react';
+import { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import { Mic, MicOff, Image as ImageIcon, X } from 'lucide-react';
 import Image from 'next/image';
 
@@ -15,12 +15,18 @@ export default function ChatInput({ onSendMessage, disabled = false }: ChatInput
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    textareaRef.current?.focus();
+  }, []);
 
   const handleSend = () => {
     if ((inputValue.trim() || imagePreview) && !disabled) {
       onSendMessage(inputValue.trim(), imagePreview || undefined);
       setInputValue('');
       setImagePreview(null);
+      textareaRef.current?.focus();
     }
   };
 
@@ -130,6 +136,7 @@ new Blob(audioChunks, { type: 'audio/webm' });
           {/* Text Input */}
           <div className="flex-1 relative">
             <textarea
+              ref={textareaRef}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}

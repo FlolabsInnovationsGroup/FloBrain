@@ -182,6 +182,43 @@ export const api = {
   async getDashboardMemoryActivity() {
     return this.request<DashboardMemoryActivityApi>("/api/dashboard/memory-activity/");
   },
+
+  // --- Brain / Chat (requires auth) ---
+
+  async getChats() {
+    return this.request<BrainChatApi[]>("/api/brain/chats/");
+  },
+
+  async createChat(title?: string) {
+    return this.request<BrainChatDetailApi>("/api/brain/chats/", {
+      method: "POST",
+      json: { title: title ?? "New Chat" },
+    });
+  },
+
+  async getChat(chatId: number) {
+    return this.request<BrainChatDetailApi>(`/api/brain/chats/${chatId}/`);
+  },
+
+  async updateChat(chatId: number, title: string) {
+    return this.request<BrainChatDetailApi>(`/api/brain/chats/${chatId}/`, {
+      method: "PATCH",
+      json: { title },
+    });
+  },
+
+  async deleteChat(chatId: number) {
+    return this.request<void>(`/api/brain/chats/${chatId}/`, {
+      method: "DELETE",
+    });
+  },
+
+  async sendMessage(chatId: number, text: string, image?: string) {
+    return this.request<BrainChatDetailApi>(`/api/brain/chats/${chatId}/send/`, {
+      method: "POST",
+      json: { text, image: image ?? "" },
+    });
+  },
 };
 
 export type DashboardHealthApi = {
@@ -209,6 +246,24 @@ export type MemoryNodeApi = {
   relevance?: number;
   created_at?: string | null;
 };
+
+export type BrainMessageApi = {
+  id: string;
+  role: string;
+  type: "user" | "assistant";
+  text?: string | null;
+  image?: string | null;
+  timestamp?: string | null;
+};
+
+export type BrainChatApi = {
+  id: number;
+  title: string;
+  timestamp: string;
+  messages: BrainMessageApi[];
+};
+
+export type BrainChatDetailApi = BrainChatApi;
 
 // Re-export for team: use apiClient for custom requests + React Query
 export { apiClient } from "./axios";
