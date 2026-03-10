@@ -112,3 +112,46 @@ class MemoryGraphView(APIView):
         ]
 
         return Response({"nodes": nodes, "links": links})
+
+
+class MemoryNodeDetailView(APIView):
+    """
+    GET /api/memory/nodes/{id}/
+    Returns single node + all connections for detail panel.
+    """
+    def get(self, request, pk):
+        from users.views import get_user_from_request
+        
+        user = get_user_from_request(request)
+        if not user:
+            return Response({"error": "Authentication required"}, status=401)
+        
+        try:
+            node = MemoryNode.objects.get(id=pk)
+            
+            # All connections (not filtered)
+            outgoing = [
+                {"id": link.target.id, "name": link.target.name, "group": link.target.group}
+                for link in node.outgoing_links.all()
+            ]
+            incoming = [
+                {"id": link.source.id, "name": link.source.name, "group": link.source.group}
+                for link in node.incoming_links.all()
+            ]
+            
+            return Response({
+                "id": node.id,
+                "name": node.name,
+                "val": node.val,
+                "group": node.group,
+                "memory_type": node.memory_type,
+                "relevance": node.relevance,
+                "created_at": node.created_at.isoformat(),
+                "connections": {
+                    "outgoing": outgoing,
+                    "incoming": incoming,
+                    "total": len(outgoing) + len(incoming)
+                }
+            })
+        except MemoryNode.DoesNotExist:
+            return Response({"error": "Node not found"}, status=404)

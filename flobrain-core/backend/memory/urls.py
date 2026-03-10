@@ -1,7 +1,7 @@
 from django.urls import path
-
-from .views import MemoryGraphView
+from .views import MemoryGraphView, MemoryNodeDetailView  
 
 urlpatterns = [
-    path("api/memory/graph/", MemoryGraphView.as_view(), name="memory_graph"),
+    path('graph/', MemoryGraphView.as_view(), name='memory-graph'),      
+    path('nodes/<str:pk>/', MemoryNodeDetailView.as_view(), name='memory-node-detail'),  
 ]
