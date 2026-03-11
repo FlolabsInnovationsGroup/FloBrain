@@ -48,19 +48,26 @@ export const MemoryGraph = ({
   const graphLinks = toGraphLinks(links);
 
   useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
     const updateDimensions = () => {
       if (containerRef.current) {
-        setDimensions({
-          width: containerRef.current.offsetWidth,
-          height: containerRef.current.offsetHeight,
-        });
+        const w = containerRef.current.offsetWidth;
+        const h = containerRef.current.offsetHeight;
+        setDimensions((prev) => (prev.width === w && prev.height === h ? prev : { width: w, height: h }));
       }
     };
 
     updateDimensions();
+    const ro = new ResizeObserver(updateDimensions);
+    ro.observe(el);
     window.addEventListener("resize", updateDimensions);
 
-    return () => window.removeEventListener("resize", updateDimensions);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", updateDimensions);
+    };
   }, []);
 
   const handleOutsideClick = (e: React.MouseEvent) => {
@@ -98,6 +105,7 @@ export const MemoryGraph = ({
           className="w-full h-full bg-transparent relative overflow-hidden rounded-lg"
           style={{ pointerEvents: graphActive ? "auto" : "none" }}
         >
+          {dimensions.width > 0 && dimensions.height > 0 && (
           <ForceGraph2D
             graphData={{ nodes: graphNodes, links: graphLinks }}
             width={dimensions.width}
@@ -143,6 +151,7 @@ export const MemoryGraph = ({
             enableZoomInteraction={graphActive}
             enablePanInteraction={graphActive}
           />
+          )}
         </div>
       </div>
     </div>

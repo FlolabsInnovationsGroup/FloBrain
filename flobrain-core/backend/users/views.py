@@ -1,4 +1,6 @@
+import hashlib
 import logging
+from datetime import datetime, timezone
 from typing import cast, Optional
 
 from django.conf import settings
@@ -12,7 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .jwt_utils import decode_token, make_access_token, make_refresh_token
-from .models import User, UserPreferences, PresetPreferences
+from .models import User, UserPreferences, PresetPreferences, BlacklistedRefreshToken
 from .serializers import (
     ChangePasswordSerializer,
     DeleteAccountSerializer,
@@ -97,7 +99,13 @@ class LoginView(APIView):
             )
 
 
+def _hash_refresh_token(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
+
+
 class LogoutView(APIView):
+    """POST with userId and refresh_token (optional). Invalidates the refresh token server-side."""
+
     def post(self, request):
         try:
             user_id = request.data.get("userId")
@@ -106,6 +114,21 @@ class LogoutView(APIView):
                     {"error": "userId is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+            refresh_token = request.data.get("refresh_token")
+            if refresh_token:
+                payload = decode_token(refresh_token)
+                if payload and payload.get("type") == "refresh" and payload.get("sub") == user_id:
+                    exp = payload.get("exp")
+                    expires_at = (
+                        datetime.fromtimestamp(exp, tz=timezone.utc)
+                        if exp is not None
+                        else datetime.now(timezone.utc)
+                    )
+                    token_hash = _hash_refresh_token(refresh_token)
+                    BlacklistedRefreshToken.objects.update_or_create(
+                        token_hash=token_hash,
+                        defaults={"expires_at": expires_at},
+                    )
             return Response({"message": "Logged out successfully"})
         except Exception:
             return Response(
@@ -127,6 +150,11 @@ class RefreshView(APIView):
             if not payload or payload.get("type") != "refresh":
                 return Response(
                     {"error": "Invalid or expired refresh token"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+            if BlacklistedRefreshToken.objects.filter(token_hash=_hash_refresh_token(refresh)).exists():
+                return Response(
+                    {"error": "Token has been revoked", "details": "Please sign in again"},
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
             user_id = payload.get("sub")

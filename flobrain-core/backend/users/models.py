@@ -103,6 +103,15 @@ class RefreshToken(models.Model):
         db_table = "refresh_tokens"
 
 
+class BlacklistedRefreshToken(models.Model):
+    """Refresh tokens invalidated on logout; checked in RefreshView."""
+    token_hash = models.CharField(max_length=64, unique=True, db_index=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        db_table = "blacklisted_refresh_tokens"
+
+
 class GuestDeviceMap(models.Model):
     id = models.UUIDField(
         primary_key=True,
