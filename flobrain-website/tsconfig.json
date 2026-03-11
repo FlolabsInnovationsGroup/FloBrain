@@ -32,8 +32,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
     "**/*.mts",
     "src/declarations.d.ts",
     "vitest.setup.ts"
@@ -41,6 +39,7 @@
   "exclude": [
     "node_modules",
     "cypress",
-    "cypress.config.ts"
+    "cypress.config.ts",
+    ".next"
   ]
 }

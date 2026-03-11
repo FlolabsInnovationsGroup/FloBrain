@@ -44,11 +44,13 @@ export default function BrainPage() {
   // Fetch chats from backend when authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      setChatsLoading(false);
+      queueMicrotask(() => setChatsLoading(false));
       return;
     }
-    setChatsLoading(true);
-    setError(null);
+    queueMicrotask(() => {
+      setChatsLoading(true);
+      setError(null);
+    });
     api
       .getChats()
       .then((res) => {
@@ -138,7 +140,7 @@ export default function BrainPage() {
     const { text, image } = pendingMessageRef.current;
     pendingMessageRef.current = null;
 
-    setIsLoading(true);
+    queueMicrotask(() => setIsLoading(true));
     api
       .sendMessage(currentChatId, text, image)
       .then((res) => {
