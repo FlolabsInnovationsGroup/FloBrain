@@ -1,103 +1,54 @@
 "use client";
 
-import { useState } from "react";
-import PlanUpgradePopup from "./components/popup";
-import PricingCard from "./components/PricingCard";
-import { PLANS, getPlanPrice, getInheritsLabel } from "./plans";
-import type { PricingCardTier } from "./components/PricingCard";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { PRICING_DESIGNS } from "./designs";
 
-export default function Pricing() {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedTier, setSelectedTier] = useState<PricingCardTier | null>(null);
-
-  const currentPlan = {
-    name: "Developer",
-    price: "Free",
-    period: "",
-  };
-
-  const pricingTiers: PricingCardTier[] = PLANS.map((plan) => {
-    const { price, period, priceSuffix } = getPlanPrice(plan, "monthly");
-    return {
-      name: plan.name,
-      badge: plan.badge,
-      description: plan.description,
-      price,
-      period,
-      priceSuffix,
-      devices: plan.devices,
-      calls: plan.calls,
-      memory: plan.memory,
-      workflows: plan.workflows,
-      buttonText: plan.buttonText,
-      isPrimary: plan.id === "pro",
-      features: plan.features,
-      inheritsFromPlan: getInheritsLabel(plan.inheritsFrom),
-    };
-  });
-
-  const handlePlanClick = (tier: PricingCardTier) => {
-    setSelectedTier(tier);
-    setIsPopupOpen(true);
-  };
-
-  const handleConfirm = () => {
-    if (selectedTier?.price === "Free") {
-      setIsPopupOpen(false);
-    }
-  };
+function PricingContent() {
+  const searchParams = useSearchParams();
+  const designParam = searchParams.get("design");
+  const designNum = Math.min(20, Math.max(1, parseInt(designParam || "1", 10) || 1));
+  const design = PRICING_DESIGNS[designNum - 1];
+  const DesignComponent = design.component;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 md:p-12">
-      {/* Header */}
-      <div className="text-center mb-12 max-w-3xl">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-          <span className="text-white">Pricing Built for </span>
-          <span className="bg-gradient-to-r from-[#e879f9] via-[#c084fc] to-[#a78bfa] bg-clip-text text-transparent">
-            Every Stage of Growth
-          </span>
-        </h1>
-        <p className="text-zinc-400 text-lg mt-4">
-          From individual user to enterprise teams, FloBrain scales with you. Start free and upgrade
-          as you grow.
-        </p>
-      </div>
+    <>
+      <DesignComponent />
+      <nav
+        className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 max-w-[calc(100vw-2rem)] rounded-full border border-zinc-700/50 bg-zinc-900/90 px-3 py-2 shadow-lg backdrop-blur-sm"
+        aria-label="Switch pricing design"
+      >
+        <div className="flex flex-wrap items-center justify-center gap-1">
+          <span className="mr-1 text-xs text-zinc-500">Design:</span>
+          {PRICING_DESIGNS.map(({ id, name }) => (
+            <a
+              key={id}
+              href={`/pricing?design=${id}`}
+              className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors min-w-[1.5rem] text-center ${
+                designNum === id
+                  ? "bg-violet-600 text-white"
+                  : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
+              }`}
+            >
+              {id}
+            </a>
+          ))}
+        </div>
+        <p className="mt-1 text-center text-[10px] text-zinc-500">{design.name}</p>
+      </nav>
+    </>
+  );
+}
 
-      {/* Pricing Cards Grid - 4 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl mb-8 items-stretch">
-        {pricingTiers.map((tier, index) => (
-          <PricingCard
-            key={tier.name}
-            tier={tier}
-            index={index}
-            onSelect={() => handlePlanClick(tier)}
-          />
-        ))}
-      </div>
+function PricingFallback() {
+  const DesignComponent = PRICING_DESIGNS[0].component;
+  return <DesignComponent />;
+}
 
-      {/* Footer CTA */}
-      <div className="text-center mt-8">
-        <p className="text-zinc-400 text-sm">
-          Need help choosing?{" "}
-          <a href="/contact" className="text-[#a78bfa] hover:underline font-medium">
-            Contact our sales team
-          </a>
-        </p>
-      </div>
-
-      {selectedTier && (
-        <PlanUpgradePopup
-          isOpen={isPopupOpen}
-          onClose={() => setIsPopupOpen(false)}
-          currentPlan={currentPlan}
-          selectedPlan={{
-            name: selectedTier.name,
-            price: selectedTier.price,
-            period: selectedTier.period,
-          }}
-          onConfirm={handleConfirm}
-        />
-      )}
-    </main>
+export default function Pricing() {
+  return (
+    <Suspense fallback={<PricingFallback />}>
+      <PricingContent />
+    </Suspense>
   );
 }
