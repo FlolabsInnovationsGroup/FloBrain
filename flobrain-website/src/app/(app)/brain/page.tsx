@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import type { ChatHistory, Folder, Message } from '@/types/chat';
 import Sidebar from './components/Sidebar/index';
@@ -15,6 +16,9 @@ export default function BrainPage() {
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
   
   // Store pending message to send after chat creation
   const pendingMessageRef = useRef<{ text: string; image?: string } | null>(null);
@@ -43,6 +47,21 @@ export default function BrainPage() {
     setCurrentChatId(newChatId);
     setMessages(newChat.messages);
   }, []);
+
+  // Initialize from URL param (e.g., /brain?initialMessage=...)
+  useEffect(() => {
+    const messageFromUrl = searchParams.get('initialMessage');
+    if (!messageFromUrl) return;
+
+    setInitialInputValue(messageFromUrl);
+
+    if (!currentChatId) {
+      handleNewChat();
+    }
+
+    // Clean the URL so the param is not persistent
+    router.replace('/brain');
+  }, [searchParams, currentChatId, handleNewChat, router]);
 
   // Effect to send pending message after chat is created
   useEffect(() => {
@@ -341,6 +360,7 @@ export default function BrainPage() {
               <ChatInput 
                 onSendMessage={handleSendMessage} 
                 disabled={isLoading}
+                initialText={initialInputValue ?? undefined}
               />
             </>
           ) : (

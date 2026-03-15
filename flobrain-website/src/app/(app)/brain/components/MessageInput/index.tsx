@@ -1,20 +1,28 @@
 "use client";
 
-import { useState, KeyboardEvent, useRef } from 'react';
+import { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import { Mic, MicOff, Image as ImageIcon, X } from 'lucide-react';
 import Image from 'next/image';
 
 interface ChatInputProps {
   onSendMessage: (text: string, image?: string) => void;
   disabled?: boolean;
+  initialText?: string;
 }
 
-export default function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
+export default function ChatInput({ onSendMessage, disabled = false, initialText }: ChatInputProps) {
   const [inputValue, setInputValue] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  // Apply initial text when provided (e.g., from home Ask Anything input)
+  useEffect(() => {
+    if (typeof initialText === 'string') {
+      setInputValue(initialText);
+    }
+  }, [initialText]);
 
   const handleSend = () => {
     if ((inputValue.trim() || imagePreview) && !disabled) {
