@@ -1,0 +1,50 @@
+# FloBrain Default Workflow Definition
+# ---------------------------------------------------------------------------
+# This YAML describes the default agent chain executed for every user message.
+# The WorkflowEngine reads this to understand the pipeline steps.
+# ---------------------------------------------------------------------------
+
+name: default
+description: >
+  Standard CAIPO workflow: route intent via ControlAgent, then execute
+  the appropriate specialist agent (General or Notion).
+
+version: "1.0"
+
+steps:
+  - id: route
+    agent: control
+    description: Classify the user's intent and select the execution agent.
+    output: routed_agent   # The name of the agent to invoke next
+
+  - id: execute
+    agent: "{{routed_agent}}"  # Resolved at runtime from the route step output
+    description: Execute the selected specialist agent and produce the response.
+    output: final_response
+
+# Agent registry — agents available for routing
+agents:
+  general:
+    description: General conversation, questions, math, coding, writing.
+    triggers:
+      - general conversation
+      - coding help
+      - math
+      - writing
+      - general questions
+
+  notion:
+    description: Notion workspace queries — tasks, projects, pages, notes.
+    triggers:
+      - notion
+      - tasks
+      - projects
+      - pages
+      - notes
+      - workspace
+
+# Future extension point: add more agents here
+# Example:
+#   calendar:
+#     description: Google Calendar queries.
+#     triggers: [calendar, events, schedule, meeting]
