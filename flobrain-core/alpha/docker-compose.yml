@@ -1,0 +1,61 @@
+version: "3.9"
+
+# FloBrain Alpha — Docker Compose
+# ---------------------------------------------------------------------------
+# Services:
+#   flobrain  - The FastAPI application
+#   ollama    - Local LLM server (optional, GPU-accelerated if available)
+#
+# Usage:
+#   docker-compose up --build
+#   docker-compose up --build -d     # detached
+# ---------------------------------------------------------------------------
+
+services:
+  flobrain:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flobrain-alpha
+    ports:
+      - "8000:8000"
+    volumes:
+      - flobrain_data:/app/data
+    env_file:
+      - .env
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - SQLITE_URL=sqlite+aiosqlite:////app/data/flobrain.db
+      - CHROMADB_PATH=/app/data/chroma
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: flobrain-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    # Uncomment the following for GPU support:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  flobrain_data:
+    driver: local
+  ollama_models:
+    driver: local
