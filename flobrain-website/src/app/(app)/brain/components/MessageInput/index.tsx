@@ -7,9 +7,10 @@ import Image from 'next/image';
 interface ChatInputProps {
   onSendMessage: (text: string, image?: string) => void;
   disabled?: boolean;
+  initialText?: string;
 }
 
-export default function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
+export default function ChatInput({ onSendMessage, disabled = false, initialText }: ChatInputProps) {
   const [inputValue, setInputValue] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -20,6 +21,13 @@ export default function ChatInput({ onSendMessage, disabled = false }: ChatInput
   useEffect(() => {
     textareaRef.current?.focus();
   }, []);
+
+  // Apply initial text when provided (e.g., from home Ask Anything input)
+  useEffect(() => {
+    if (typeof initialText === 'string') {
+      setInputValue(initialText);
+    }
+  }, [initialText]);
 
   const handleSend = () => {
     if ((inputValue.trim() || imagePreview) && !disabled) {
