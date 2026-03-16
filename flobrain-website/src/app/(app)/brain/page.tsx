@@ -144,10 +144,11 @@ export default function BrainPage() {
     const messageFromUrl = searchParams.get('initialMessage');
     if (!messageFromUrl) return;
 
-    setInitialInputValue(messageFromUrl);
+    // Defer setState to avoid synchronous setState in effect (react-hooks/set-state-in-effect)
+    queueMicrotask(() => setInitialInputValue(messageFromUrl));
 
     if (!currentChatId) {
-      handleNewChat();
+      queueMicrotask(() => void handleNewChat());
     }
 
     // Clean the URL so the param is not persistent
