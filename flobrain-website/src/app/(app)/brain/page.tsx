@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import type { ChatHistory, Folder, Message } from '@/types/chat';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,7 +27,15 @@ function sortChatsByLastUsed(chats: ChatHistory[]): ChatHistory[] {
   });
 }
 
-export default function BrainPage() {
+function BrainPageFallback() {
+  return (
+    <div className="flex h-screen bg-[#1a0b2e] text-white items-center justify-center">
+      <div className="animate-pulse text-white/60">Loading...</div>
+    </div>
+  );
+}
+
+function BrainPageContent() {
   const { isAuthenticated } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
@@ -36,7 +45,11 @@ export default function BrainPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [chatsLoading, setChatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
+  // Store pending message to send after chat creation
   const pendingMessageRef = useRef<{ text: string; image?: string } | null>(null);
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
@@ -133,6 +146,22 @@ export default function BrainPage() {
     setCurrentChatId(newChatId);
     setMessages(newChat.messages);
   }, [isAuthenticated, chatHistory, isUnusedNewChat]);
+
+  // Initialize from URL param (e.g., /brain?initialMessage=...)
+  useEffect(() => {
+    const messageFromUrl = searchParams.get('initialMessage');
+    if (!messageFromUrl) return;
+
+    // Defer setState to avoid synchronous setState in effect (react-hooks/set-state-in-effect)
+    queueMicrotask(() => setInitialInputValue(messageFromUrl));
+
+    if (!currentChatId) {
+      queueMicrotask(() => void handleNewChat());
+    }
+
+    // Clean the URL so the param is not persistent
+    router.replace('/brain');
+  }, [searchParams, currentChatId, handleNewChat, router]);
 
   // Send pending message after chat is created (API flow)
   useEffect(() => {
@@ -503,7 +532,12 @@ export default function BrainPage() {
         {currentChatId ? (
           <>
             <ChatArea messages={messages} />
-            <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+            <ChatInput
+              key={initialInputValue ?? 'default'}
+              onSendMessage={handleSendMessage}
+              disabled={isLoading}
+              initialText={initialInputValue ?? undefined}
+            />
           </>
         ) : (
           <main className="flex-1 relative overflow-y-auto flex items-center justify-center">
@@ -558,5 +592,13 @@ export default function BrainPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function BrainPage() {
+  return (
+    <Suspense fallback={<BrainPageFallback />}>
+      <BrainPageContent />
+    </Suspense>
   );
 }

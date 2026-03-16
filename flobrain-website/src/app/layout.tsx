@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProviderWrapper>
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-screen flex flex-col bg-[linear-gradient(90deg,#290036_0%,#070014_100%)]">
             <Navbar />
             <div className="flex-1">{children}</div>
             <Footer />
