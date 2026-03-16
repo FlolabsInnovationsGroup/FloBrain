@@ -326,6 +326,244 @@ async def memory_graph(current_user: User = Depends(get_current_user)) -> dict:
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Workflow errors  (/api/dashboard/workflow-errors/*)
+# ---------------------------------------------------------------------------
+
+
+def _relative_time(dt: datetime) -> str:
+    """Return a human-readable relative time string."""
+    now = datetime.now(timezone.utc)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    diff = now - dt
+    total_seconds = int(diff.total_seconds())
+    if total_seconds < 60:
+        return "just now"
+    if total_seconds < 3600:
+        mins = total_seconds // 60
+        return f"{mins} min ago"
+    if total_seconds < 86400:
+        hours = total_seconds // 3600
+        return f"{hours} hour{'s' if hours != 1 else ''} ago"
+    days = total_seconds // 86400
+    return f"{days} day{'s' if days != 1 else ''} ago"
+
+
+async def _build_workflow_errors() -> list[dict[str, Any]]:
+    """Compute real workflow errors from system state."""
+    errors: list[dict[str, Any]] = []
+    now = datetime.now(timezone.utc)
+
+    # 1. LLM health check
+    try:
+        llm_status = await llm_service.health_check()
+        if not llm_status.get("available", False):
+            errors.append({
+                "id": "llm-unavailable",
+                "severity": "critical",
+                "title": "LLM Service Unavailable",
+                "description": "Ollama LLM service is not responding. AI chat functionality is disabled.",
+                "component": "llm-service",
+                "timestamp": now.isoformat(),
+                "timestamp_relative": "just now",
+                "details": {
+                    "error_type": "ServiceUnavailableError",
+                    "stack_trace": None,
+                    "context": {"model": llm_service.ollama_model, "status": llm_status},
+                    "resolution": "Ensure Ollama is running: `ollama serve`. Check that the model is pulled: `ollama pull llama3.2`.",
+                    "affected_requests": 0,
+                    "duration_ms": None,
+                },
+            })
+    except Exception as exc:
+        errors.append({
+            "id": "llm-health-error",
+            "severity": "critical",
+            "title": "LLM Health Check Failed",
+            "description": f"Could not reach LLM service: {exc}",
+            "component": "llm-service",
+            "timestamp": now.isoformat(),
+            "timestamp_relative": "just now",
+            "details": {
+                "error_type": type(exc).__name__,
+                "stack_trace": None,
+                "context": {"exception": str(exc)},
+                "resolution": "Ensure Ollama is running and accessible.",
+                "affected_requests": 0,
+                "duration_ms": None,
+            },
+        })
+
+    # 2. Missing optional packages
+    try:
+        import faster_whisper  # noqa: F401
+    except ImportError:
+        errors.append({
+            "id": "pkg-faster-whisper",
+            "severity": "warning",
+            "title": "Transcription Unavailable",
+            "description": "`faster-whisper` is not installed. Audio transcription features are disabled.",
+            "component": "transcription-service",
+            "timestamp": now.isoformat(),
+            "timestamp_relative": "just now",
+            "details": {
+                "error_type": "ImportError",
+                "stack_trace": None,
+                "context": {"package": "faster-whisper"},
+                "resolution": "Install with: `pip install faster-whisper`",
+                "affected_requests": 0,
+                "duration_ms": None,
+            },
+        })
+
+    try:
+        import sentence_transformers  # noqa: F401
+    except ImportError:
+        errors.append({
+            "id": "pkg-sentence-transformers",
+            "severity": "warning",
+            "title": "Embeddings Service Unavailable",
+            "description": "`sentence-transformers` is not installed. Semantic embedding features are disabled.",
+            "component": "embeddings-service",
+            "timestamp": now.isoformat(),
+            "timestamp_relative": "just now",
+            "details": {
+                "error_type": "ImportError",
+                "stack_trace": None,
+                "context": {"package": "sentence-transformers"},
+                "resolution": "Install with: `pip install sentence-transformers`",
+                "affected_requests": 0,
+                "duration_ms": None,
+            },
+        })
+
+    try:
+        import chromadb  # noqa: F401
+    except ImportError:
+        errors.append({
+            "id": "pkg-chromadb",
+            "severity": "warning",
+            "title": "Vector Store Unavailable",
+            "description": "`chromadb` is not installed. Vector database and similarity search are disabled.",
+            "component": "vector-store",
+            "timestamp": now.isoformat(),
+            "timestamp_relative": "just now",
+            "details": {
+                "error_type": "ImportError",
+                "stack_trace": None,
+                "context": {"package": "chromadb"},
+                "resolution": "Install with: `pip install chromadb`",
+                "affected_requests": 0,
+                "duration_ms": None,
+            },
+        })
+
+    # 3. Abandoned sessions (no messages, older than 30 min)
+    cutoff = now - timedelta(minutes=30)
+    try:
+        async with AsyncSessionLocal() as db:
+            sessions_result = await db.execute(select(Session))
+            all_sessions = sessions_result.scalars().all()
+            abandoned = []
+            for s in all_sessions:
+                created = s.created_at
+                if created and created.tzinfo is None:
+                    created = created.replace(tzinfo=timezone.utc)
+                if created and created < cutoff:
+                    msgs_result = await db.execute(
+                        select(Message).where(Message.session_id == s.id).limit(1)
+                    )
+                    if not msgs_result.scalar_one_or_none():
+                        abandoned.append(s)
+        if abandoned:
+            oldest = min(
+                (s.created_at for s in abandoned if s.created_at),
+                default=now,
+            )
+            if oldest.tzinfo is None:
+                oldest = oldest.replace(tzinfo=timezone.utc)
+            errors.append({
+                "id": "db-abandoned-sessions",
+                "severity": "info",
+                "title": f"{len(abandoned)} Abandoned Session(s) Detected",
+                "description": f"{len(abandoned)} chat session(s) were created but contain no messages and are over 30 minutes old.",
+                "component": "database",
+                "timestamp": oldest.isoformat(),
+                "timestamp_relative": _relative_time(oldest),
+                "details": {
+                    "error_type": "AbandonedSessionWarning",
+                    "stack_trace": None,
+                    "context": {"abandoned_count": len(abandoned), "cutoff_minutes": 30},
+                    "resolution": "Run a cleanup job to remove empty sessions older than 30 minutes.",
+                    "affected_requests": len(abandoned),
+                    "duration_ms": None,
+                },
+            })
+    except Exception:
+        pass
+
+    # 4. Messages containing error text
+    try:
+        from sqlalchemy import or_
+        async with AsyncSessionLocal() as db:
+            err_result = await db.execute(
+                select(Message).where(
+                    or_(
+                        Message.content.ilike("%error%"),
+                        Message.content.ilike("%failed%"),
+                        Message.content.ilike("%unavailable%"),
+                    )
+                ).order_by(Message.created_at.desc()).limit(20)
+            )
+            error_messages = err_result.scalars().all()
+        if error_messages:
+            latest = error_messages[0]
+            latest_ts = latest.created_at or now
+            if latest_ts.tzinfo is None:
+                latest_ts = latest_ts.replace(tzinfo=timezone.utc)
+            errors.append({
+                "id": "db-error-messages",
+                "severity": "warning",
+                "title": f"{len(error_messages)} Message(s) Contain Error Text",
+                "description": "Recent chat messages contain words like 'error', 'failed', or 'unavailable', suggesting AI pipeline issues.",
+                "component": "conversation-engine",
+                "timestamp": latest_ts.isoformat(),
+                "timestamp_relative": _relative_time(latest_ts),
+                "details": {
+                    "error_type": "PipelineErrorSignal",
+                    "stack_trace": None,
+                    "context": {
+                        "matched_message_count": len(error_messages),
+                        "latest_message_snippet": (latest.content or "")[:120],
+                    },
+                    "resolution": "Review conversation logs to identify recurring AI pipeline failures.",
+                    "affected_requests": len(error_messages),
+                    "duration_ms": None,
+                },
+            })
+    except Exception:
+        pass
+
+    return errors
+
+
+@router.get("/api/dashboard/workflow-errors/")
+async def dashboard_workflow_errors() -> list:
+    """Return real system errors — no auth required."""
+    return await _build_workflow_errors()
+
+
+@router.get("/api/dashboard/workflow-errors/{error_id}/")
+async def dashboard_workflow_error_detail(error_id: str) -> dict:
+    """Return a single workflow error by id — no auth required."""
+    errors = await _build_workflow_errors()
+    for err in errors:
+        if err["id"] == error_id:
+            return err
+    raise HTTPException(status_code=404, detail="Error not found")
+
+
 @router.get("/api/dashboard/health/")
 async def dashboard_health() -> dict:
     """Check backend + database health."""

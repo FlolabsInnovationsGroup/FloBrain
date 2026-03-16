@@ -219,6 +219,13 @@ export const api = {
       json: { text, image: image ?? "" },
     });
   },
+
+  async getWorkflowErrors() {
+    return this.request<WorkflowErrorApi[]>('/api/dashboard/workflow-errors/');
+  },
+  async getWorkflowError(id: string) {
+    return this.request<WorkflowErrorApi>(`/api/dashboard/workflow-errors/${id}/`);
+  },
 };
 
 export type DashboardHealthApi = {
@@ -264,6 +271,26 @@ export type BrainChatApi = {
 };
 
 export type BrainChatDetailApi = BrainChatApi;
+
+export type WorkflowErrorDetailApi = {
+  error_type: string;
+  stack_trace: string | null;
+  context: Record<string, unknown>;
+  resolution: string | null;
+  affected_requests: number;
+  duration_ms: number | null;
+};
+
+export type WorkflowErrorApi = {
+  id: string;
+  severity: 'critical' | 'warning' | 'info';
+  title: string;
+  description: string;
+  component: string;
+  timestamp: string;
+  timestamp_relative: string;
+  details: WorkflowErrorDetailApi;
+};
 
 // Re-export for team: use apiClient for custom requests + React Query
 export { apiClient } from "./axios";

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [Unreleased] - 2026-03-16 (cont.)
+
+### Added — Dashboard Workflow Errors (Skynet AI)
+- New backend endpoint `GET /api/dashboard/workflow-errors/` returning real system errors (LLM health, missing packages, DB anomalies)
+- New backend endpoint `GET /api/dashboard/workflow-errors/{id}/` for single error detail
+- WorkflowEngine dashboard component now fetches live data instead of mocked alerts
+- "View Details" modal shows full error context, stack trace placeholder, resolution suggestions
+- WorkflowErrorApi and WorkflowErrorDetailApi types added to api.ts
+
 ## [Unreleased] - 2026-03-16
 
 ### Fixed — FloBrain Chat End-to-End UX
