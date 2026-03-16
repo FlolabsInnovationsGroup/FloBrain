@@ -51,7 +51,11 @@ app.add_middleware(
 # ---------------------------------------------------------------------------
 
 from api.routes import audio, auth, chat, health  # noqa: E402
+from api.routes.compat import router as compat_router  # noqa: E402
 from api.routes.integrations import notion_oauth_router, router as integrations_router  # noqa: E402
+
+# Compat router: frontend-expected paths (/api/auth/*, /api/brain/*, etc.)
+app.include_router(compat_router, tags=["Compat"])
 
 app.include_router(health.router, prefix="/api/v1", tags=["Health"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
