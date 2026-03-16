@@ -2,6 +2,15 @@
 
 ## [Unreleased] - 2026-03-16
 
+### Fixed — FloBrain Chat End-to-End UX
+
+- **Optimistic UI**: User message now appears immediately on send (before backend round-trip); reverted on error
+- **Typing indicator**: Animated three-dot bounce indicator shown while Ollama is processing
+- **next.config conflict**: Removed duplicate `next.config.ts`; cleaned `next.config.js` to minimal config
+- **Health endpoint model info**: `GET /api/dashboard/health/` now returns `model` and `availableModels` fields for visibility
+
+
+
 ### Added — Local Dev Environment Setup (Skynet AI)
 
 **Goal:** Run the full FloBrain stack locally (simulating AWS), connecting the existing `flobrain-website` UI to the `flobrain-core/alpha` backend.

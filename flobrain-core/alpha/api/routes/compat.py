@@ -343,6 +343,8 @@ async def dashboard_health() -> dict:
         "backend": "ok" if llm_status.get("available") else "unavailable",
         "database": "ok" if db_ok else "error",
         "allSystemsOperational": all_ok,
+        "model": llm_service.ollama_model,
+        "availableModels": llm_status.get("models", []),
     }
 
 

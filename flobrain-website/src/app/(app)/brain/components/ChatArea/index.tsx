@@ -6,15 +6,16 @@ import Image from 'next/image';
 
 interface ChatAreaProps {
   messages: Message[];
+  isLoading?: boolean;
 }
 
-export default function ChatArea({ messages }: ChatAreaProps) {
+export default function ChatArea({ messages, isLoading }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive or loading state changes
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isLoading]);
 
   return (
     <div className="flex-1 overflow-y-auto px-6 py-8">
@@ -96,6 +97,39 @@ export default function ChatArea({ messages }: ChatAreaProps) {
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className='flex gap-4 justify-start'>
+                <div className='w-10 h-10 flex-shrink-0'>
+                  <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <circle cx="20" cy="20" r="18" fill="url(#brainGradient2)" opacity="0.2"/>
+                    <circle cx="20" cy="12" r="3" fill="url(#brainGradient2)"/>
+                    <circle cx="12" cy="20" r="3" fill="url(#brainGradient2)"/>
+                    <circle cx="28" cy="20" r="3" fill="url(#brainGradient2)"/>
+                    <circle cx="16" cy="28" r="3" fill="url(#brainGradient2)"/>
+                    <circle cx="24" cy="28" r="3" fill="url(#brainGradient2)"/>
+                    <line x1="20" y1="15" x2="15" y2="18" stroke="url(#brainGradient2)" strokeWidth="1.5"/>
+                    <line x1="20" y1="15" x2="25" y2="18" stroke="url(#brainGradient2)" strokeWidth="1.5"/>
+                    <line x1="12" y1="23" x2="16" y2="26" stroke="url(#brainGradient2)" strokeWidth="1.5"/>
+                    <line x1="28" y1="23" x2="24" y2="26" stroke="url(#brainGradient2)" strokeWidth="1.5"/>
+                    <line x1="15" y1="20" x2="16" y2="25" stroke="url(#brainGradient2)" strokeWidth="1.5"/>
+                    <line x1="25" y1="20" x2="24" y2="25" stroke="url(#brainGradient2)" strokeWidth="1.5"/>
+                    <defs>
+                      <linearGradient id="brainGradient2" x1="8" y1="8" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#8B5CF6"/>
+                        <stop offset="1" stopColor="#6366F1"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div className='max-w-2xl rounded-2xl px-5 py-4 bg-[#3d2b5f]/40 text-white/80'>
+                  <div className='flex gap-1 items-center h-5'>
+                    <span className='w-2 h-2 bg-white/60 rounded-full animate-bounce' style={{animationDelay:'0ms'}}/>
+                    <span className='w-2 h-2 bg-white/60 rounded-full animate-bounce' style={{animationDelay:'150ms'}}/>
+                    <span className='w-2 h-2 bg-white/60 rounded-full animate-bounce' style={{animationDelay:'300ms'}}/>
+                  </div>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </>
         )}

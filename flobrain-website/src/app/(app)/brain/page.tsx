@@ -140,12 +140,21 @@ export default function BrainPage() {
     const { text, image } = pendingMessageRef.current;
     pendingMessageRef.current = null;
 
+    const optimisticUserMsg: Message = {
+      id: `optimistic-${Date.now()}`,
+      type: 'user',
+      text,
+      image,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, optimisticUserMsg]);
     queueMicrotask(() => setIsLoading(true));
     api
       .sendMessage(currentChatId, text, image)
       .then((res) => {
         if (res.error) {
           setError(res.error);
+          setMessages((prev) => prev.filter((m) => m.id !== optimisticUserMsg.id));
           return;
         }
         if (res.data) {
@@ -215,19 +224,30 @@ export default function BrainPage() {
       }
 
       if (isAuthenticated) {
+        const optimisticUserMsg: Message = {
+          id: `optimistic-${Date.now()}`,
+          type: 'user',
+          text,
+          image,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, optimisticUserMsg]);
         setIsLoading(true);
-        const res = await api.sendMessage(currentChatId, text, image);
-        if (res.error) {
-          setError(res.error);
+        try {
+          const res = await api.sendMessage(currentChatId, text, image);
+          if (res.error) {
+            setError(res.error);
+            setMessages((prev) => prev.filter((m) => m.id !== optimisticUserMsg.id));
+            return;
+          }
+          if (res.data) {
+            const chat = apiChatToChatHistory(res.data);
+            setMessages(chat.messages);
+            applyChatFromApi(chat);
+          }
+        } finally {
           setIsLoading(false);
-          return;
         }
-        if (res.data) {
-          const chat = apiChatToChatHistory(res.data);
-          setMessages(chat.messages);
-          applyChatFromApi(chat);
-        }
-        setIsLoading(false);
         return;
       }
 
@@ -502,7 +522,7 @@ export default function BrainPage() {
 
         {currentChatId ? (
           <>
-            <ChatArea messages={messages} />
+            <ChatArea messages={messages} isLoading={isLoading} />
             <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
           </>
         ) : (
