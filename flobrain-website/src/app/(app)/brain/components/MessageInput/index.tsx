@@ -11,7 +11,9 @@ interface ChatInputProps {
 }
 
 export default function ChatInput({ onSendMessage, disabled = false, initialText }: ChatInputProps) {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(() =>
+    typeof initialText === 'string' ? initialText : ''
+  );
   const [isRecording, setIsRecording] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -21,13 +23,6 @@ export default function ChatInput({ onSendMessage, disabled = false, initialText
   useEffect(() => {
     textareaRef.current?.focus();
   }, []);
-
-  // Apply initial text when provided (e.g., from home Ask Anything input)
-  useEffect(() => {
-    if (typeof initialText === 'string') {
-      setInputValue(initialText);
-    }
-  }, [initialText]);
 
   const handleSend = () => {
     if ((inputValue.trim() || imagePreview) && !disabled) {

@@ -35,17 +35,13 @@ export default function BrainPage() {
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-<<<<<<< HEAD
   const [chatsLoading, setChatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-=======
   const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Store pending message to send after chat creation
->>>>>>> main
   const pendingMessageRef = useRef<{ text: string; image?: string } | null>(null);
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
@@ -143,9 +139,6 @@ export default function BrainPage() {
     setMessages(newChat.messages);
   }, [isAuthenticated, chatHistory, isUnusedNewChat]);
 
-<<<<<<< HEAD
-  // Send pending message after chat is created (API flow)
-=======
   // Initialize from URL param (e.g., /brain?initialMessage=...)
   useEffect(() => {
     const messageFromUrl = searchParams.get('initialMessage');
@@ -161,8 +154,7 @@ export default function BrainPage() {
     router.replace('/brain');
   }, [searchParams, currentChatId, handleNewChat, router]);
 
-  // Effect to send pending message after chat is created
->>>>>>> main
+  // Send pending message after chat is created (API flow)
   useEffect(() => {
     if (!currentChatId || !pendingMessageRef.current || !isAuthenticated) return;
     const { text, image } = pendingMessageRef.current;
@@ -495,7 +487,6 @@ export default function BrainPage() {
         </div>
       )}
 
-<<<<<<< HEAD
       <Sidebar
         isOpen={isSidebarOpen}
         onToggle={toggleSidebar}
@@ -532,7 +523,12 @@ export default function BrainPage() {
         {currentChatId ? (
           <>
             <ChatArea messages={messages} />
-            <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+            <ChatInput
+              key={initialInputValue ?? 'default'}
+              onSendMessage={handleSendMessage}
+              disabled={isLoading}
+              initialText={initialInputValue ?? undefined}
+            />
           </>
         ) : (
           <main className="flex-1 relative overflow-y-auto flex items-center justify-center">
@@ -565,70 +561,6 @@ export default function BrainPage() {
                     </linearGradient>
                   </defs>
                 </svg>
-=======
-       <div className="flex flex-1 flex-col min-w-0 relative">
-          {/* HAMBURGER MENU BUTTON - ALIGNED WITH SIDEBAR TOP */}
-          {!isSidebarOpen && (
-            <div className="fixed top-6 left-4 z-[9999]">
-               <button 
-                 onClick={toggleSidebar}
-                 className="p-2 hover:bg-white/10 rounded-lg transition-all"
-                 title="Open Sidebar"
-               >
-                 <Menu size={24} className="text-white" />
-               </button>
-            </div>
-          )}
-          
-          {/* Main content area */}
-          {currentChatId ? (
-            <>
-              <ChatArea messages={messages} />
-              <ChatInput 
-                onSendMessage={handleSendMessage} 
-                disabled={isLoading}
-                initialText={initialInputValue ?? undefined}
-              />
-            </>
-          ) : (
-            <main className="flex-1 relative overflow-y-auto flex items-center justify-center">
-              <div className="text-center max-w-md px-6">
-                <div className="w-20 h-20 mx-auto mb-6 opacity-50">
-                  <svg viewBox="0 0 100 100" fill="none">
-                    <path 
-                      d="M50 10L20 25V45C20 62.5 35 77.5 50 82.5C65 77.5 80 62.5 80 45V25L50 10Z" 
-                      fill="url(#mainGradient)" 
-                      stroke="white" 
-                      strokeWidth="3"
-                    />
-                    <path 
-                      d="M35 45L45 55L65 35" 
-                      stroke="white" 
-                      strokeWidth="5" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                    />
-                    <defs>
-                      <linearGradient id="mainGradient" x1="20" y1="10" x2="80" y2="82.5">
-                        <stop stopColor="#8B5CF6"/>
-                        <stop offset="1" stopColor="#6366F1"/>
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </div>
-                <h2 className="text-3xl font-bold text-white mb-3">Welcome to FLOBRAIN</h2>
-                <p className="text-white/60 mb-8">
-                  Start a new conversation to chat with our AI assistant.
-                </p>
-                <button
-                  onClick={handleNewChat}
-                  className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-8 py-4 
-                           rounded-xl font-semibold hover:opacity-90 transition-all duration-200
-                           shadow-lg shadow-[#8B5CF6]/30 hover:shadow-[#8B5CF6]/50 text-lg"
-                >
-                  Start New Chat
-                </button>
->>>>>>> main
               </div>
               <h2 className="text-3xl font-bold text-white mb-3">
                 Welcome to FLOBRAIN
