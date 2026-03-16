@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import type { ChatHistory, Folder, Message } from '@/types/chat';
@@ -27,7 +27,15 @@ function sortChatsByLastUsed(chats: ChatHistory[]): ChatHistory[] {
   });
 }
 
-export default function BrainPage() {
+function BrainPageFallback() {
+  return (
+    <div className="flex h-screen bg-[#1a0b2e] text-white items-center justify-center">
+      <div className="animate-pulse text-white/60">Loading...</div>
+    </div>
+  );
+}
+
+function BrainPageContent() {
   const { isAuthenticated } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
@@ -584,5 +592,13 @@ export default function BrainPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function BrainPage() {
+  return (
+    <Suspense fallback={<BrainPageFallback />}>
+      <BrainPageContent />
+    </Suspense>
   );
 }
