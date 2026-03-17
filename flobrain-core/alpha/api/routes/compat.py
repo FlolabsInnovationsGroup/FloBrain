@@ -22,6 +22,8 @@ from api.middleware.auth import create_access_token, decode_token, get_current_u
 from db.database import AsyncSessionLocal
 from db.models import Message, Session, User
 from memory.conversation import conversation_memory
+from memory.store import knowledge_store
+from memory.user_memory import _namespace
 from services.llm import llm_service
 
 router = APIRouter()
@@ -293,32 +295,266 @@ async def delete_account(
 
 
 # ---------------------------------------------------------------------------
-# Memory graph  (/api/memory/graph/)
+# Memory helpers
 # ---------------------------------------------------------------------------
+
+# Colour palette kept in sync with the frontend legend
+_MEMORY_TYPE_COLOURS = {
+    "user_fact":    "#10b981",  # green  → Interactions
+    "conversation": "#3b82f6",  # blue   → Chunks
+    "knowledge":    "#a78bfa",  # purple → Summaries
+    "workflow":     "#fbbf24",  # yellow → Workflows
+}
+
+_FRONTEND_GROUP = {
+    "user_fact":    "Interactions",
+    "conversation": "Chunks",
+    "knowledge":    "Summaries",
+    "workflow":     "Workflows",
+}
+
+
+def _classify_memory(metadata: dict) -> str:
+    """Return a memory_type string based on stored metadata."""
+    ns: str = metadata.get("namespace", "")
+    source: str = metadata.get("source", "")
+    if "user_memory" in ns or source == "conversation":
+        return "user_fact"
+    if source in ("notion", "manual", "knowledge"):
+        return "knowledge"
+    if source == "workflow":
+        return "workflow"
+    return "conversation"
+
+
+def _date_cutoff(date_range: str | None) -> datetime | None:
+    now = datetime.now(timezone.utc)
+    if date_range == "Last Week":
+        return now - timedelta(days=7)
+    if date_range == "Last Month":
+        return now - timedelta(days=30)
+    if date_range == "Last Year":
+        return now - timedelta(days=365)
+    return None
+
+
+def _memory_nodes_from_store(
+    user_id: str,
+    session_id: str | None = None,
+    search: str | None = None,
+    date_range: str | None = None,
+    memory_type: str | None = None,
+    min_relevance: float = 0.0,
+    n_results: int = 60,
+) -> list[dict[str, Any]]:
+    """
+    Pull memory facts for this user from knowledge_store, apply filters,
+    and return a list of MemoryNodeApi-shaped dicts.
+    """
+    query = search or "user memory facts"
+    namespace = _namespace(user_id, session_id)
+    raw = knowledge_store.search(query, n_results=n_results * 3)
+
+    cutoff = _date_cutoff(date_range)
+    results: list[dict[str, Any]] = []
+
+    for r in raw:
+        meta = r.get("metadata", {})
+        ns: str = meta.get("namespace", "")
+
+        # namespace filter: only this user's facts
+        if not (ns == namespace or ns.startswith(f"user_memory:{user_id}")):
+            continue
+
+        score: float = r.get("score", 0.0)
+        if score < min_relevance:
+            continue
+
+        m_type = _classify_memory(meta)
+        frontend_group = _FRONTEND_GROUP.get(m_type, "Chunks")
+
+        # memory_type filter (frontend label)
+        if memory_type and memory_type != "All":
+            type_map = {v: k for k, v in _FRONTEND_GROUP.items()}
+            if type_map.get(memory_type) != m_type:
+                continue
+
+        # date filter
+        extracted_at: str | None = meta.get("extracted_at")
+        if cutoff and extracted_at:
+            try:
+                dt = datetime.fromisoformat(extracted_at)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                if dt < cutoff:
+                    continue
+            except ValueError:
+                pass
+
+        text: str = r.get("text", "")
+        node_id: str = r.get("id", str(uuid.uuid4()))
+        # val (size) proportional to score, clamped 3–20
+        val = max(3, min(20, int(score * 20)))
+
+        results.append({
+            "id": node_id,
+            "name": text[:80] + ("…" if len(text) > 80 else ""),
+            "full_text": text,
+            "val": val,
+            "group": frontend_group,
+            "memory_type": frontend_group,
+            "relevance": round(score, 3),
+            "created_at": extracted_at,
+            "color": _MEMORY_TYPE_COLOURS.get(m_type, "#a78bfa"),
+            "metadata": meta,
+        })
+
+        if len(results) >= n_results:
+            break
+
+    return results
+
+
+def _build_links(nodes: list[dict[str, Any]]) -> list[dict[str, str]]:
+    """
+    Create similarity links: connect pairs that share the same group,
+    up to 3 links per node to keep the graph readable.
+    """
+    from collections import defaultdict
+    by_group: dict[str, list[str]] = defaultdict(list)
+    for n in nodes:
+        by_group[n["group"]].append(n["id"])
+
+    links: list[dict[str, str]] = []
+    seen: set[tuple[str, str]] = set()
+    for group_nodes in by_group.values():
+        for i, src in enumerate(group_nodes):
+            count = 0
+            for tgt in group_nodes[i + 1 :]:
+                pair = (min(src, tgt), max(src, tgt))
+                if pair not in seen and count < 3:
+                    links.append({"source": src, "target": tgt})
+                    seen.add(pair)
+                    count += 1
+    return links
+
+
+# ---------------------------------------------------------------------------
+# Memory CRUD  (/api/memory/*)
+# ---------------------------------------------------------------------------
+
+class AddMemoryRequest(BaseModel):
+    text: str
+    memory_type: str = "user_fact"  # user_fact | knowledge | workflow
 
 
 @router.get("/api/memory/graph/")
-async def memory_graph(current_user: User = Depends(get_current_user)) -> dict:
-    """Return a basic knowledge graph built from the user's chat sessions."""
-    async with AsyncSessionLocal() as db:
-        result = await db.execute(
-            select(Session).where(Session.user_id == current_user.id)
-        )
-        sessions = result.scalars().all()
+async def memory_graph(
+    search: str | None = None,
+    date_range: str | None = None,
+    memory_type: str | None = None,
+    min_relevance: float = 0.0,
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """
+    Return the user's memory graph with filters applied.
 
-    nodes = []
-    links = []
-
-    for session in sessions:
-        meta = session.session_metadata or {}
-        int_id = meta.get("int_id", 0)
-        nodes.append({
-            "id": str(int_id),
-            "label": session.title,
-            "type": "session",
-        })
-
+    Nodes come from the ChromaDB knowledge_store, scoped to this user.
+    Each node carries: id, name, val, group, memory_type, relevance, color, created_at.
+    Links are auto-generated between nodes in the same group.
+    """
+    nodes = _memory_nodes_from_store(
+        user_id=current_user.id,
+        search=search,
+        date_range=date_range,
+        memory_type=memory_type,
+        min_relevance=min_relevance,
+    )
+    links = _build_links(nodes)
     return {"nodes": nodes, "links": links}
+
+
+@router.get("/api/memory/facts/")
+async def list_memory_facts(
+    current_user: User = Depends(get_current_user),
+) -> list[dict]:
+    """Return all stored user facts (flat list, no graph formatting)."""
+    nodes = _memory_nodes_from_store(user_id=current_user.id, n_results=100)
+    return [
+        {
+            "id": n["id"],
+            "text": n["full_text"],
+            "memory_type": n["memory_type"],
+            "relevance": n["relevance"],
+            "created_at": n["created_at"],
+        }
+        for n in nodes
+    ]
+
+
+@router.post("/api/memory/facts/", status_code=201)
+async def add_memory_fact(
+    body: AddMemoryRequest,
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """
+    Manually add a memory fact for the current user.
+    Stored in ChromaDB with the user's namespace so it surfaces in the graph.
+    """
+    if not body.text.strip():
+        raise HTTPException(status_code=400, detail="text must not be empty")
+
+    type_map = {
+        "user_fact": "user_memory",
+        "knowledge": "knowledge",
+        "workflow": "workflow",
+    }
+    source = type_map.get(body.memory_type, "manual")
+    namespace = _namespace(current_user.id, None)
+    doc_id = str(uuid.uuid4())
+
+    metadata: dict[str, Any] = {
+        "namespace": namespace,
+        "user_id": current_user.id,
+        "source": source if source != "user_memory" else "conversation",
+        "extracted_at": datetime.now(timezone.utc).isoformat(),
+        "added_manually": True,
+    }
+    knowledge_store.add(text=body.text.strip(), metadata=metadata, doc_id=doc_id)
+
+    return {
+        "id": doc_id,
+        "text": body.text.strip(),
+        "memory_type": _FRONTEND_GROUP.get(
+            _classify_memory(metadata), "Chunks"
+        ),
+        "created_at": metadata["extracted_at"],
+    }
+
+
+@router.delete("/api/memory/facts/{fact_id}/")
+async def delete_memory_fact(
+    fact_id: str,
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    """
+    Delete a specific memory fact by id.
+    Returns 403 if the fact belongs to a different user.
+    """
+    doc = knowledge_store.get_by_id(fact_id)
+    if doc is None:
+        raise HTTPException(status_code=404, detail="Memory fact not found")
+
+    meta = doc.get("metadata", {})
+    stored_user = meta.get("user_id")
+    ns: str = meta.get("namespace", "")
+    if stored_user and stored_user != current_user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    if not stored_user and current_user.id not in ns:
+        raise HTTPException(status_code=403, detail="Access denied")
+
+    knowledge_store.delete(fact_id)
+    return {"detail": "Deleted"}
 
 
 # ---------------------------------------------------------------------------

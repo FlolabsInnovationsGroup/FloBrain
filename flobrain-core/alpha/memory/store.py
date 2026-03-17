@@ -174,6 +174,33 @@ class MemoryStore:
         elif self._fallback is not None:
             self._fallback.delete(doc_id)
 
+    def get_by_id(self, doc_id: str) -> dict[str, Any] | None:
+        """Fetch a single document by its id, or None if not found."""
+        self._init()
+        if self._using_chroma and self._chroma_collection is not None:
+            try:
+                result = self._chroma_collection.get(
+                    ids=[doc_id],
+                    include=["documents", "metadatas"],
+                )
+                ids = result.get("ids", [])
+                if not ids:
+                    return None
+                docs = result.get("documents") or [[]]
+                metas = result.get("metadatas") or [[]]
+                return {
+                    "id": ids[0],
+                    "text": docs[0] if docs else "",
+                    "metadata": metas[0] if metas else {},
+                }
+            except Exception:
+                return None
+        elif self._fallback is not None:
+            doc = self._fallback._docs.get(doc_id)
+            if doc:
+                return {"id": doc["id"], "text": doc["text"], "metadata": doc["metadata"]}
+        return None
+
 
 # Module-level singletons for different namespaces
 memory_store = MemoryStore(collection_name="flobrain_memory")

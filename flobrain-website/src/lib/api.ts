@@ -152,7 +152,7 @@ export const api = {
     });
   },
 
-  // --- Memory graph (requires auth) ---
+  // --- Memory graph + CRUD (requires auth) ---
 
   async getMemoryGraph(params?: {
     search?: string;
@@ -171,6 +171,23 @@ export const api = {
     return this.request<{ nodes: MemoryNodeApi[]; links: { source: string; target: string }[] }>(
       path
     );
+  },
+
+  async listMemoryFacts() {
+    return this.request<MemoryFactApi[]>("/api/memory/facts/");
+  },
+
+  async addMemoryFact(text: string, memory_type: "user_fact" | "knowledge" | "workflow" = "user_fact") {
+    return this.request<MemoryFactApi>("/api/memory/facts/", {
+      method: "POST",
+      json: { text, memory_type },
+    });
+  },
+
+  async deleteMemoryFact(factId: string) {
+    return this.request<{ detail: string }>(`/api/memory/facts/${factId}/`, {
+      method: "DELETE",
+    });
   },
 
   // --- Dashboard (health unauthenticated; memory-activity requires auth) ---
@@ -247,9 +264,19 @@ export type DashboardMemoryActivityApi = {
 export type MemoryNodeApi = {
   id: string;
   name: string;
+  full_text?: string;
   val: number;
   group: string;
   memory_type?: string;
+  relevance?: number;
+  created_at?: string | null;
+  color?: string;
+};
+
+export type MemoryFactApi = {
+  id: string;
+  text: string;
+  memory_type: string;
   relevance?: number;
   created_at?: string | null;
 };
