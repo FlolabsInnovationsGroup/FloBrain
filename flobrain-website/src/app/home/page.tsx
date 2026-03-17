@@ -30,6 +30,7 @@ export default function Brain() {
     <main className="mt-3 h-[100vh] w-[92%] mx-auto bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] text-slate-300 font-[Inter] overflow-hidden flex flex-col">
       <div className="flex flex-1 min-h-0 gap-3 overflow-hidden relative">
         <LeftPanel
+          variant="modules"
           activeModuleId={activeModuleId}
           onModuleSelect={handleModuleSelect}
           onNewChat={handleNewChat}

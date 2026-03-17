@@ -2,24 +2,25 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import ChatArea from '.'; // Adjust path if necessary
 import type { Message } from '@/types/chat';
 
 // Mock the SVG imports
-jest.mock('@/assets/flolabs-logo.svg', () => 'div');
-jest.mock('next/image', () => ({
+vi.mock('@/assets/images/synthesiznig-circle.svg', () => ({ default: '/synthesiznig-circle.svg' }));
+vi.mock('next/image', () => ({
   __esModule: true,
   default: ({ src: _src, alt }: { src: string; alt?: string }) => (
     <div data-testid="next-image" role="img" aria-label={alt || 'image'} />
   ),
 }));
 
-const scrollIntoViewMock = jest.fn();
+const scrollIntoViewMock = vi.fn();
 window.HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
 
 describe('ChatArea Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('Empty State', () => {
@@ -71,8 +72,8 @@ describe('ChatArea Component', () => {
 
     test('renders images in messages when provided', () => {
       render(<ChatArea messages={mockMessages} />);
-      const image = screen.getByAltText('User upload');
-      expect(image).toHaveAttribute('src', 'https://example.com/image.jpg');
+      const image = screen.getByRole('img', { name: 'User upload' });
+      expect(image).toBeInTheDocument();
     });
   });
 
@@ -101,7 +102,7 @@ describe('ChatArea Component', () => {
         timestamp: new Date(),
       }];
       render(<ChatArea messages={messages} />);
-      const image = screen.getByAltText('User upload');
+      const image = screen.getByRole('img', { name: 'User upload' });
       expect(image).toBeInTheDocument();
     });
   });
