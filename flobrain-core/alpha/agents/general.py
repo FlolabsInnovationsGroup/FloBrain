@@ -6,6 +6,7 @@ from typing import Any
 
 from agents.base import AgentResponse, BaseAgent
 from memory.conversation import conversation_memory
+from memory.user_memory import user_memory_extractor
 from services.llm import LLMService
 
 logger = logging.getLogger(__name__)
@@ -52,9 +53,12 @@ class GeneralAgent(BaseAgent):
     ) -> AgentResponse:
         ctx = context or {}
         session_id: str | None = ctx.get("session_id")
+        user_id: str | None = ctx.get("user_id")
 
-        # Enrich with recent memory if available
-        enriched_messages = await self._enrich_with_history(messages, session_id)
+        # Enrich with recent history + user memory facts
+        enriched_messages = await self._enrich_with_history(
+            messages, session_id, user_id
+        )
 
         try:
             content = await self._llm_complete(enriched_messages, context=None)
@@ -64,6 +68,15 @@ class GeneralAgent(BaseAgent):
                 "I'm sorry, I'm unable to reach the language model right now. "
                 "Please check that Ollama is running and try again."
             )
+
+        # Schedule background fact extraction (fire-and-forget)
+        user_message = messages[-1]["content"] if messages else ""
+        user_memory_extractor.schedule_extraction(
+            user_message=user_message,
+            assistant_reply=content,
+            user_id=user_id,
+            session_id=session_id,
+        )
 
         return AgentResponse(
             content=content,
@@ -78,26 +91,58 @@ class GeneralAgent(BaseAgent):
     ) -> AsyncGenerator[str, None]:
         ctx = context or {}
         session_id: str | None = ctx.get("session_id")
-        enriched_messages = await self._enrich_with_history(messages, session_id)
+        user_id: str | None = ctx.get("user_id")
+        enriched_messages = await self._enrich_with_history(
+            messages, session_id, user_id
+        )
 
+        full_content: list[str] = []
         try:
             async for chunk in self._llm_stream(enriched_messages, context=None):
+                full_content.append(chunk)
                 yield chunk
         except Exception as exc:
             logger.error("GeneralAgent streaming failed: %s", exc)
-            yield (
+            error_msg = (
                 "I'm sorry, I'm unable to reach the language model right now. "
                 "Please check that Ollama is running and try again."
             )
+            full_content.append(error_msg)
+            yield error_msg
+
+        # Schedule background fact extraction after stream completes
+        user_message = messages[-1]["content"] if messages else ""
+        user_memory_extractor.schedule_extraction(
+            user_message=user_message,
+            assistant_reply="".join(full_content),
+            user_id=user_id,
+            session_id=session_id,
+        )
 
     async def _enrich_with_history(
-        self, messages: list[dict[str, str]], session_id: str | None
+        self,
+        messages: list[dict[str, str]],
+        session_id: str | None,
+        user_id: str | None = None,
     ) -> list[dict[str, str]]:
         """
-        Prepend the system prompt and inject recent history from DB if available.
+        Prepend the system prompt (enriched with user memory facts) and
+        inject recent conversation history from DB if available.
         """
-        # Build the system message
-        full: list[dict[str, str]] = [{"role": "system", "content": self.system_prompt}]
+        # Fetch relevant user facts for the current query
+        current_query = messages[-1]["content"] if messages else ""
+        user_context = await user_memory_extractor.get_user_context(
+            query=current_query,
+            user_id=user_id,
+            session_id=session_id,
+        )
+
+        # Build the system message, appending user facts when available
+        system_content = self.system_prompt
+        if user_context:
+            system_content = f"{self.system_prompt}\n\n{user_context}"
+
+        full: list[dict[str, str]] = [{"role": "system", "content": system_content}]
 
         if session_id and messages:
             try:
