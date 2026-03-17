@@ -176,23 +176,30 @@ class UserMemoryExtractor:
             logger.debug("No user facts extracted for namespace=%s", namespace)
             return []
 
+        from memory.universal import universal_memory, MemoryType
+
         stored: list[str] = []
         for fact in facts:
             fact = fact.strip()
             if not fact:
                 continue
-            doc_id = str(uuid.uuid4())
-            metadata: dict[str, Any] = {
-                "namespace": namespace,
-                "extracted_at": datetime.now(timezone.utc).isoformat(),
-                "source": "conversation",
-            }
-            if user_id:
-                metadata["user_id"] = user_id
-            if session_id:
-                metadata["session_id"] = session_id
-
-            knowledge_store.add(text=fact, metadata=metadata, doc_id=doc_id)
+            # Detect preference facts vs semantic facts
+            m_type = (
+                MemoryType.PREFERENCE
+                if any(
+                    w in fact.lower()
+                    for w in ["prefer", "like", "hate", "want", "dislike", "love", "enjoy"]
+                )
+                else MemoryType.SEMANTIC
+            )
+            await universal_memory.create(
+                text=fact,
+                memory_type=m_type,
+                actor="agent",
+                user_id=user_id,
+                session_id=session_id,
+                source="conversation",
+            )
             stored.append(fact)
 
         logger.info(

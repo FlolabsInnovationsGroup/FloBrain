@@ -1080,3 +1080,47 @@ async def send_message(
         "timestamp": timestamp,
         "messages": [_msg_to_frontend(m) for m in all_messages],
     }
+
+
+# ---------------------------------------------------------------------------
+# Memory confirmation / rejection / event history
+# ---------------------------------------------------------------------------
+
+
+@router.post("/api/memory/confirm/{memory_id}/")
+async def confirm_memory(
+    memory_id: str,
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    from memory.universal import universal_memory
+    await universal_memory.confirm(memory_id, actor="user")
+    return {"detail": "confirmed", "memory_id": memory_id}
+
+
+@router.post("/api/memory/reject/{memory_id}/")
+async def reject_memory(
+    memory_id: str,
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    from memory.universal import universal_memory
+    await universal_memory.reject(memory_id, actor="user")
+    return {"detail": "rejected", "memory_id": memory_id}
+
+
+@router.get("/api/memory/events/{memory_id}/")
+async def get_memory_events(
+    memory_id: str,
+    current_user: User = Depends(get_current_user),
+) -> list:
+    from memory.events import memory_event_store
+    events = await memory_event_store.get_history(memory_id)
+    return [
+        {
+            "id": e.id,
+            "event_type": e.event_type,
+            "actor": e.actor,
+            "payload": e.payload,
+            "created_at": e.created_at.isoformat(),
+        }
+        for e in events
+    ]

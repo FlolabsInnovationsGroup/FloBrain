@@ -135,18 +135,34 @@ async def test_get_user_context_returns_facts_for_namespace():
 
 @pytest.mark.asyncio
 async def test_extract_and_store_persists_facts():
-    """Facts returned by the LLM should be stored in knowledge_store."""
+    """Facts returned by the LLM should be stored via universal_memory.create."""
     from memory.user_memory import UserMemoryExtractor
+    from memory.universal import MemoryObject, MemoryType, ConfirmationState
+    from datetime import datetime, timezone
 
     mock_llm = AsyncMock()
     mock_llm.chat = AsyncMock(return_value='["User is named Charlie", "User loves Python"]')
 
-    mock_store = MagicMock()
+    created_calls: list[dict] = []
+
+    async def _fake_create(text, memory_type, actor, user_id=None, session_id=None, source="chat", tags=None):
+        created_calls.append({"text": text, "user_id": user_id})
+        return MemoryObject(
+            id="fake-id",
+            text=text,
+            memory_type=memory_type,
+            importance_score=0.5,
+            confirmation_state=ConfirmationState.PENDING,
+            user_id=user_id,
+            session_id=session_id,
+            created_at=datetime.now(timezone.utc).isoformat(),
+        )
 
     with (
-        patch("memory.user_memory.knowledge_store", mock_store),
         patch("memory.user_memory.llm_service", mock_llm),
+        patch("memory.universal.universal_memory") as mock_um,
     ):
+        mock_um.create = _fake_create
         extractor = UserMemoryExtractor()
         extractor._llm = mock_llm
         facts = await extractor._extract_and_store(
@@ -158,11 +174,10 @@ async def test_extract_and_store_persists_facts():
 
     assert "User is named Charlie" in facts
     assert "User loves Python" in facts
-    assert mock_store.add.call_count == 2
+    assert len(created_calls) == 2
 
-    # Verify namespace in stored metadata
-    call_kwargs = mock_store.add.call_args_list[0][1]
-    assert call_kwargs["metadata"]["namespace"] == "user_memory:u99"
+    # Verify user_id forwarded
+    assert created_calls[0]["user_id"] == "u99"
 
 
 @pytest.mark.asyncio

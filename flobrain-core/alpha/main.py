@@ -20,9 +20,23 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    import asyncio
+    from memory.universal import universal_memory
+
+    async def _expire_memories_loop():
+        while True:
+            await asyncio.sleep(3600)
+            try:
+                count = await universal_memory.expire_due()
+                if count:
+                    logger.info("Expired %d memories.", count)
+            except Exception as exc:
+                logger.warning("Memory expiry failed: %s", exc)
+
     logger.info("Starting %s v%s", settings.APP_NAME, settings.VERSION)
     await init_db()
     logger.info("Database tables ready.")
+    asyncio.ensure_future(_expire_memories_loop())
     yield
     logger.info("Shutting down %s.", settings.APP_NAME)
 
