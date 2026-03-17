@@ -59,8 +59,10 @@ class WorkflowEngine:
     ) -> AgentResponse:
         """
         Execute the default workflow:
-          Control → route → execute selected agent.
+          Control → route → execute selected agent → judge.
         """
+        from agents.judge import judge_agent
+
         agents = self._get_agents()
         ctx = context or {}
 
@@ -76,8 +78,20 @@ class WorkflowEngine:
         agent = agents.get(routed_to, agents["general"])
         response = await agent.run(messages, context=ctx)
 
-        # Tag the routed_to in metadata
+        # Step 3: Judge the response
+        user_message = messages[-1]["content"] if messages else ""
+        verdict = await judge_agent.evaluate(user_message, response.content)
+        response.content = judge_agent.apply_verdict(response.content, verdict)
         response.metadata["routed_to"] = routed_to
+        response.metadata["judge"] = verdict.to_dict()
+
+        if not verdict.passed and not verdict.skipped:
+            logger.warning(
+                "JudgeAgent verdict FAILED for agent=%s issues=%s",
+                routed_to,
+                verdict.issues,
+            )
+
         return response
 
     async def stream(
