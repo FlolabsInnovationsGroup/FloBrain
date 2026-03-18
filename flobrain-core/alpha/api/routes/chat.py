@@ -20,7 +20,7 @@ from api.schemas import (
 )
 from db.database import AsyncSessionLocal
 from db.models import Message, Session, User
-from agents.workflows.engine import workflow_engine
+from agents.workflows.engine import workflow_engine, workflow_state_store
 from memory.conversation import conversation_memory
 
 logger = logging.getLogger(__name__)
@@ -185,6 +185,25 @@ async def chat(
         message_id=msg_id,
         metadata=agent_response.metadata,
     )
+
+
+@router.get("/sessions/{session_id}/workflow-state")
+async def get_workflow_state(
+    session_id: str,
+    current_user=Depends(get_optional_user),
+) -> dict:
+    state = await workflow_state_store.load(session_id)
+    if state is None:
+        raise HTTPException(status_code=404, detail="No workflow state found for this session")
+    return {
+        "workflow_id": state.workflow_id,
+        "session_id": state.session_id,
+        "current_step": state.current_step,
+        "completed_steps": state.completed_steps,
+        "failed_steps": state.failed_steps,
+        "created_at": state.created_at,
+        "updated_at": state.updated_at,
+    }
 
 
 async def _stream_response(

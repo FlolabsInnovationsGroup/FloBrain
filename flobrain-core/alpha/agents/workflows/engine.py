@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import asyncio
 import logging
+import time
+import uuid
 from collections.abc import AsyncGenerator
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -10,6 +14,104 @@ import yaml
 from agents.base import AgentResponse
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Workflow dataclasses
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class WorkflowStep:
+    step_type: str  # "LLM_CALL" | "FUNCTION_CALL" | "DECISION"
+    agent_id: str
+    prompt_override: str | None = None
+    required_tools: list[str] = field(default_factory=list)
+    retry_config: dict = field(default_factory=lambda: {"max_retries": 2, "backoff_seconds": 1.0})
+
+
+@dataclass
+class WorkflowState:
+    workflow_id: str
+    session_id: str
+    current_step: str
+    completed_steps: list[str] = field(default_factory=list)
+    failed_steps: list[str] = field(default_factory=list)
+    context: dict = field(default_factory=dict)
+    created_at: str = field(
+        default_factory=lambda: __import__('datetime').datetime.now(
+            __import__('datetime').timezone.utc
+        ).isoformat()
+    )
+    updated_at: str = field(
+        default_factory=lambda: __import__('datetime').datetime.now(
+            __import__('datetime').timezone.utc
+        ).isoformat()
+    )
+
+
+class WorkflowStateStore:
+    async def save(self, state: WorkflowState) -> None:
+        from db.database import AsyncSessionLocal
+        from db.models import WorkflowStateModel
+        from sqlalchemy import select
+        from datetime import datetime, timezone
+
+        async with AsyncSessionLocal() as db:
+            result = await db.execute(
+                select(WorkflowStateModel).where(WorkflowStateModel.session_id == state.session_id)
+            )
+            existing = result.scalar_one_or_none()
+            now = datetime.now(timezone.utc)
+            state_dict = {
+                "workflow_id": state.workflow_id,
+                "session_id": state.session_id,
+                "current_step": state.current_step,
+                "completed_steps": state.completed_steps,
+                "failed_steps": state.failed_steps,
+                "context": state.context,
+                "created_at": state.created_at,
+                "updated_at": now.isoformat(),
+            }
+            if existing:
+                existing.state_json = state_dict
+                existing.updated_at = now
+            else:
+                db.add(WorkflowStateModel(
+                    id=str(uuid.uuid4()),
+                    session_id=state.session_id,
+                    state_json=state_dict,
+                    created_at=now,
+                    updated_at=now,
+                ))
+            await db.commit()
+
+    async def load(self, session_id: str) -> WorkflowState | None:
+        from db.database import AsyncSessionLocal
+        from db.models import WorkflowStateModel
+        from sqlalchemy import select
+
+        async with AsyncSessionLocal() as db:
+            result = await db.execute(
+                select(WorkflowStateModel).where(WorkflowStateModel.session_id == session_id)
+            )
+            row = result.scalar_one_or_none()
+            if row is None:
+                return None
+            d = row.state_json
+            return WorkflowState(
+                workflow_id=d.get("workflow_id", ""),
+                session_id=d.get("session_id", session_id),
+                current_step=d.get("current_step", ""),
+                completed_steps=d.get("completed_steps", []),
+                failed_steps=d.get("failed_steps", []),
+                context=d.get("context", {}),
+                created_at=d.get("created_at", ""),
+                updated_at=d.get("updated_at", ""),
+            )
+
+
+workflow_state_store = WorkflowStateStore()
 
 _DEFINITIONS_DIR = Path(__file__).parent / "definitions"
 
@@ -74,9 +176,47 @@ class WorkflowEngine:
         )
         logger.debug("Workflow routed to agent: %s", routed_to)
 
-        # Step 2: Execute selected agent
+        # Step 2: Execute selected agent with retry
         agent = agents.get(routed_to, agents["general"])
-        response = await agent.run(messages, context=ctx)
+        max_retries = 2
+        backoff = 1.0
+        last_exc: Exception | None = None
+
+        wf_id = str(uuid.uuid4())
+        wf_state = WorkflowState(
+            workflow_id=wf_id,
+            session_id=ctx.get("session_id", ""),
+            current_step="routing",
+        )
+
+        for attempt in range(max_retries + 1):
+            try:
+                response = await agent.run(messages, context=ctx)
+                wf_state.current_step = "complete"
+                wf_state.completed_steps.append(routed_to)
+                break
+            except Exception as exc:
+                last_exc = exc
+                wf_state.failed_steps.append(f"{routed_to}:attempt{attempt}")
+                logger.warning(
+                    "WorkflowEngine attempt %d/%d failed for agent %s: %s",
+                    attempt + 1, max_retries + 1, routed_to, exc,
+                )
+                if attempt < max_retries:
+                    await asyncio.sleep(backoff * (2 ** attempt))
+                else:
+                    # Save state before raising
+                    try:
+                        await workflow_state_store.save(wf_state)
+                    except Exception:
+                        pass
+                    raise exc
+
+        # Save state (best-effort, non-blocking)
+        try:
+            await workflow_state_store.save(wf_state)
+        except Exception:
+            pass
 
         # Step 3: Judge the response
         user_message = messages[-1]["content"] if messages else ""
@@ -119,9 +259,42 @@ class WorkflowEngine:
             routed_to = "general"
 
         agent = agents.get(routed_to, agents["general"])
+        max_retries = 2
+        backoff = 1.0
 
-        async for chunk in agent.stream(messages, context=ctx):
-            yield chunk
+        wf_id = str(uuid.uuid4())
+        wf_state = WorkflowState(
+            workflow_id=wf_id,
+            session_id=ctx.get("session_id", ""),
+            current_step="routing",
+        )
+
+        for attempt in range(max_retries + 1):
+            try:
+                async for chunk in agent.stream(messages, context=ctx):
+                    yield chunk
+                wf_state.current_step = "complete"
+                wf_state.completed_steps.append(routed_to)
+                break
+            except Exception as exc:
+                wf_state.failed_steps.append(f"{routed_to}:attempt{attempt}")
+                logger.warning(
+                    "WorkflowEngine stream attempt %d/%d failed for agent %s: %s",
+                    attempt + 1, max_retries + 1, routed_to, exc,
+                )
+                if attempt < max_retries:
+                    await asyncio.sleep(backoff * (2 ** attempt))
+                else:
+                    try:
+                        await workflow_state_store.save(wf_state)
+                    except Exception:
+                        pass
+                    raise exc
+
+        try:
+            await workflow_state_store.save(wf_state)
+        except Exception:
+            pass
 
     def load_workflow_definition(self, name: str = "default") -> dict:
         """Load and return a workflow YAML definition."""
