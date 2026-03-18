@@ -64,7 +64,7 @@ export default function Pricing() {
       </div>
 
       {/* Pricing Cards Grid - 4 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl mb-8 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mb-8 items-stretch">
         {pricingTiers.map((tier, index) => (
           <PricingCard
             key={tier.name}
