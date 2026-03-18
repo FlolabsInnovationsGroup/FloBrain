@@ -40,7 +40,7 @@ const PLAN_ICON_BG = [
   "bg-blue-500/80",      // Enterprise - blue
 ] as const;
 
-export default function PricingCard({ tier, index, onSelect }: PricingCardProps) {
+export default function PricingCard({ tier, index }: PricingCardProps) {
   const { Icon } = PLAN_ICONS[index % PLAN_ICONS.length];
   const iconBg = PLAN_ICON_BG[index % PLAN_ICON_BG.length];
 
@@ -102,7 +102,7 @@ export default function PricingCard({ tier, index, onSelect }: PricingCardProps)
         </div>
 
         {/* CTA Button */}
-        <button
+        {/* <button
           onClick={onSelect}
           className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 flex-shrink-0 ${
             tier.isPrimary
@@ -112,7 +112,7 @@ export default function PricingCard({ tier, index, onSelect }: PricingCardProps)
         >
           {tier.buttonText}
           <span>→</span>
-        </button>
+        </button> */}
 
         {/* Feature list with checkmarks */}
         <div className="mt-5 space-y-2 flex-1 min-h-0">

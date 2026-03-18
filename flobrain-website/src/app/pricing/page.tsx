@@ -76,14 +76,14 @@ export default function Pricing() {
       </div>
 
       {/* Footer CTA */}
-      <div className="text-center mt-8">
+      {/* <div className="text-center mt-8">
         <p className="text-zinc-400 text-sm">
           Need help choosing?{" "}
           <a href="/contact" className="text-[#a78bfa] hover:underline font-medium">
             Contact our sales team
           </a>
         </p>
-      </div>
+      </div> */}
 
       {selectedTier && (
         <PlanUpgradePopup
