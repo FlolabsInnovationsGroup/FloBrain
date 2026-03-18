@@ -51,6 +51,15 @@ class Settings(BaseSettings):
     # Vector Store
     CHROMADB_PATH: str = "./data/chroma"
 
+    # Rate limiting
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_GENERAL: int = 60   # requests per minute
+    RATE_LIMIT_AUDIO: int = 10     # requests per minute for audio endpoint
+
+    # Judge
+    JUDGE_ENABLED: bool = True
+    JUDGE_CONFIDENCE_THRESHOLD: float = 0.6
+
     # CORS
     CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:5173", "http://localhost:8080"]
 

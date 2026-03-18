@@ -60,6 +60,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+if settings.RATE_LIMIT_ENABLED:
+    from api.middleware.rate_limit import RateLimitMiddleware
+    app.add_middleware(RateLimitMiddleware)
+
 # ---------------------------------------------------------------------------
 # Routers
 # ---------------------------------------------------------------------------
