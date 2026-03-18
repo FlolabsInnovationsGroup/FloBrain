@@ -252,8 +252,13 @@ async def test_create_preference_type_for_preference_text():
             created_at=datetime.now(timezone.utc).isoformat(),
         )
 
-    with patch("memory.universal.universal_memory") as mock_um:
+    with (
+        patch("memory.universal.universal_memory") as mock_um,
+        patch("memory.intelligence.llm_service") as mock_intel_llm,
+    ):
         mock_um.create = _fake_create
+        mock_um.score = AsyncMock()
+        mock_intel_llm.chat = AsyncMock(return_value='{"type": "PREFERENCE", "reason": "preference"}')
         await extractor._extract_and_store(
             user_message="I like dark mode",
             assistant_reply="Got it!",

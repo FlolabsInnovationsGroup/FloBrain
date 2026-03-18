@@ -81,6 +81,22 @@ class ConversationMemory:
         except Exception as exc:
             logger.debug("Failed to index message in vector store: %s", exc)
 
+        # For long assistant messages, chunk and store in background
+        if role == "assistant" and len(content) > 500:
+            try:
+                from memory.intelligence import memory_intelligence
+                import asyncio
+                asyncio.ensure_future(
+                    memory_intelligence.chunk_and_store(
+                        content,
+                        user_id=None,  # no user_id in conversation context
+                        session_id=session_id,
+                        source="assistant_response",
+                    )
+                )
+            except Exception:
+                pass
+
         return msg_id
 
     async def get_history(

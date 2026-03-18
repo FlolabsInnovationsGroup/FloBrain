@@ -161,8 +161,11 @@ async def test_extract_and_store_persists_facts():
     with (
         patch("memory.user_memory.llm_service", mock_llm),
         patch("memory.universal.universal_memory") as mock_um,
+        patch("memory.intelligence.llm_service") as mock_intel_llm,
     ):
         mock_um.create = _fake_create
+        mock_um.score = AsyncMock()
+        mock_intel_llm.chat = AsyncMock(return_value='{"type": "SEMANTIC", "reason": ""}')
         extractor = UserMemoryExtractor()
         extractor._llm = mock_llm
         facts = await extractor._extract_and_store(

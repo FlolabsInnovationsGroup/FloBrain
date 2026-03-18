@@ -176,23 +176,17 @@ class UserMemoryExtractor:
             logger.debug("No user facts extracted for namespace=%s", namespace)
             return []
 
-        from memory.universal import universal_memory, MemoryType
+        from memory.universal import universal_memory
+        from memory.intelligence import memory_intelligence
 
         stored: list[str] = []
         for fact in facts:
             fact = fact.strip()
             if not fact:
                 continue
-            # Detect preference facts vs semantic facts
-            m_type = (
-                MemoryType.PREFERENCE
-                if any(
-                    w in fact.lower()
-                    for w in ["prefer", "like", "hate", "want", "dislike", "love", "enjoy"]
-                )
-                else MemoryType.SEMANTIC
-            )
-            await universal_memory.create(
+            score = await memory_intelligence.score_importance_async(fact)
+            m_type = await memory_intelligence.classify_type(fact)
+            obj = await universal_memory.create(
                 text=fact,
                 memory_type=m_type,
                 actor="agent",
@@ -200,6 +194,7 @@ class UserMemoryExtractor:
                 session_id=session_id,
                 source="conversation",
             )
+            await universal_memory.score(obj.id, score, reason="extraction-scored")
             stored.append(fact)
 
         logger.info(
