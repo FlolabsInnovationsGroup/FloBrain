@@ -12,9 +12,6 @@ jobs:
   deploy-preview:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./flobrain-website
 
     steps:
       - name: Checkout repository
@@ -28,6 +25,7 @@ jobs:
           cache-dependency-path: ./flobrain-website/package-lock.json
 
       - name: Install dependencies
+        working-directory: ./flobrain-website
         run: npm ci
 
       - name: Install Vercel CLI
@@ -54,9 +52,6 @@ jobs:
   deploy-production:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./flobrain-website
 
     steps:
       - name: Checkout repository
@@ -70,6 +65,7 @@ jobs:
           cache-dependency-path: ./flobrain-website/package-lock.json
 
       - name: Install dependencies
+        working-directory: ./flobrain-website
         run: npm ci
 
       - name: Install Vercel CLI
