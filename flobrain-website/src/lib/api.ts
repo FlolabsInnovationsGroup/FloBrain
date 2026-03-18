@@ -243,6 +243,38 @@ export const api = {
   async getWorkflowError(id: string) {
     return this.request<WorkflowErrorApi>(`/api/dashboard/workflow-errors/${id}/`);
   },
+
+  // --- Models marketplace ---
+
+  async getModelCatalog() {
+    return this.request<ModelCatalog>("/api/models/catalog");
+  },
+  async getProviderConnections() {
+    return this.request<ProviderConnection[]>("/api/models/providers");
+  },
+  async connectProvider(provider: string, api_key?: string, base_url?: string) {
+    return this.request<{ detail: string }>("/api/models/providers/connect/", {
+      method: "POST",
+      json: { provider, api_key, base_url },
+    });
+  },
+  async disconnectProvider(provider: string) {
+    return this.request<{ detail: string }>(`/api/models/providers/${provider}/`, {
+      method: "DELETE",
+    });
+  },
+  async getModelPreferences() {
+    return this.request<ModelPreference[]>("/api/models/preferences/");
+  },
+  async selectModel(agent_role: string, provider: string, model_name: string) {
+    return this.request<{ detail: string }>("/api/models/preferences/select/", {
+      method: "POST",
+      json: { agent_role, provider, model_name },
+    });
+  },
+  async getActiveModelConfig() {
+    return this.request<ActiveModelConfig>("/api/models/active-config/");
+  },
 };
 
 export type DashboardHealthApi = {
@@ -317,6 +349,42 @@ export type WorkflowErrorApi = {
   timestamp: string;
   timestamp_relative: string;
   details: WorkflowErrorDetailApi;
+};
+
+export type ModelCatalogEntry = {
+  id: string;
+  name: string;
+  description: string;
+  context_window: number;
+  tags: string[];
+};
+
+export type ModelCatalog = {
+  openai: ModelCatalogEntry[];
+  anthropic: ModelCatalogEntry[];
+  ollama: ModelCatalogEntry[];
+};
+
+export type ProviderConnection = {
+  id: string;
+  provider: string;
+  base_url: string | null;
+  is_active: boolean;
+  has_key: boolean;
+  created_at: string;
+};
+
+export type ModelPreference = {
+  agent_role: string;
+  provider: string;
+  model_name: string;
+};
+
+export type ActiveModelConfig = {
+  control: { provider: string; model: string; custom: boolean };
+  general: { provider: string; model: string; custom: boolean };
+  notion:  { provider: string; model: string; custom: boolean };
+  judge:   { provider: string; model: string; custom: boolean };
 };
 
 // Re-export for team: use apiClient for custom requests + React Query
