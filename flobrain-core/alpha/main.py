@@ -64,6 +64,10 @@ if settings.RATE_LIMIT_ENABLED:
     from api.middleware.rate_limit import RateLimitMiddleware
     app.add_middleware(RateLimitMiddleware)
 
+# Add RequestTracingMiddleware LAST so it runs FIRST (Starlette reverse order)
+from api.middleware.logging import RequestTracingMiddleware  # noqa: E402
+app.add_middleware(RequestTracingMiddleware)
+
 # ---------------------------------------------------------------------------
 # Routers
 # ---------------------------------------------------------------------------

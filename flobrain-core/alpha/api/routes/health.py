@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
+from api.middleware.logging import get_request_count, get_request_id
 from api.schemas import HealthResponse
 from config.settings import settings
 from services.llm import llm_service
@@ -20,5 +21,6 @@ async def health_check() -> HealthResponse:
         services={
             "llm": llm_status,
             "app": "ok",
+            "request_count": get_request_count(),
         },
     )
