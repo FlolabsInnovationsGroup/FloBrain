@@ -64,7 +64,7 @@ app.add_middleware(
 # Routers
 # ---------------------------------------------------------------------------
 
-from api.routes import audio, auth, chat, health  # noqa: E402
+from api.routes import audio, auth, chat, health, nlu as nlu_route  # noqa: E402
 from api.routes.compat import router as compat_router  # noqa: E402
 from api.routes.integrations import notion_oauth_router, router as integrations_router  # noqa: E402
 
@@ -76,6 +76,7 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["Chat"])
 app.include_router(audio.router, prefix="/api/v1/audio", tags=["Audio"])
 app.include_router(integrations_router, prefix="/api/v1/integrations", tags=["Integrations"])
+app.include_router(nlu_route.router, prefix="/api/v1", tags=["NLU"])
 
 # Notion OAuth at /auth/notion/connect and /auth/notion/callback
 app.include_router(notion_oauth_router, prefix="/auth/notion", tags=["Notion OAuth"])

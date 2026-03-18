@@ -60,9 +60,24 @@ class ControlAgent(BaseAgent):
 
         Returns one of: "general", "notion".
         """
+        ctx = context if context is not None else {}
+
+        # Run NLU first
+        try:
+            from agents.nlu import nlu_service
+            nlu_result = await nlu_service.analyze(message)
+            ctx["nlu"] = nlu_result.to_dict()
+            ctx["entities"] = nlu_result.entities
+        except Exception as exc:
+            logger.debug("NLU failed in ControlAgent: %s", exc)
+
+        nlu_hint = ""
+        if ctx.get("nlu"):
+            nlu_hint = f"\nDetected intent: {ctx['nlu'].get('intent', '')}"
+
         routing_messages = [
             {"role": "system", "content": ROUTING_PROMPT},
-            {"role": "user", "content": message},
+            {"role": "user", "content": message + nlu_hint},
         ]
 
         try:
