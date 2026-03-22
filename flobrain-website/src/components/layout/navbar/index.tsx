@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Home, DollarSign, Mail } from "lucide-react";
+import { Menu, X, Home, DollarSign } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,7 +20,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const isHomeActive = pathname === "/" || pathname === "/home";
   const isPricingActive = pathname === "/pricing";
-  const isContactActive = pathname === "/contact";
+  // const isContactActive = pathname === "/contact";
 
   return (
     <header className="sticky top-0 z-[100] w-[95%] max-w-none mx-auto px-4 pt-4 md:px-6 md:pt-5">
@@ -86,7 +86,7 @@ export default function Navbar() {
           ) : (
             <div className="flex items-center gap-1">
               <Link
-                href="/home"
+                href="/"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                   isHomeActive ? activeLinkClass : inactiveLinkClass
                 }`}
@@ -103,7 +103,7 @@ export default function Navbar() {
                 <DollarSign className={navIconClass} />
                 Pricing
               </Link>
-              <Link
+              {/* <Link
                 href="/contact"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                   isContactActive ? activeLinkClass : inactiveLinkClass
@@ -111,14 +111,14 @@ export default function Navbar() {
               >
                 <Mail className={navIconClass} />
                 Contact
-              </Link>
+              </Link> */}
             </div>
           )}
         </div>
 
         {/* RIGHT: Auth actions */}
         <div className="flex shrink-0 items-center gap-4">
-          <div className="hidden md:flex md:items-center md:gap-4">
+          {/* <div className="hidden md:flex md:items-center md:gap-4">
             {isLoading ? (
               <span className="text-sm text-zinc-500">…</span>
             ) : !isAuthenticated ? (
@@ -137,7 +137,7 @@ export default function Navbar() {
                 </Link>
               </>
             ) : null}
-          </div>
+          </div> */}
 
           {/* Mobile menu button */}
           <button
@@ -171,7 +171,7 @@ export default function Navbar() {
           ) : (
             <div className="flex flex-col gap-2">
               <Link
-                href="/home"
+                href="/"
                 className={`rounded-lg py-2 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
@@ -184,21 +184,21 @@ export default function Navbar() {
               >
                 Pricing
               </Link>
-              <Link
+              {/* <Link
                 href="/contact"
                 className={`rounded-lg py-2 ${isContactActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
                 Contact
-              </Link>
-              <Link href="/signin" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
+              </Link> */}
+              {/* <Link href="/signin" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
               <Link
                 href="/register"
                 className="rounded-xl bg-[#9333ea] py-3 text-center text-white"
                 onClick={() => setIsOpen(false)}
               >
                 Register
-              </Link>
+              </Link> */}
             </div>
           )}
         </div>
