@@ -24,4 +24,5 @@ urlpatterns = [
     path("", include("memory.urls")),
     path("", include("dashboard.urls")),
     path("", include("brain.urls")),
+    path("", include("contact.urls")),
 ]
