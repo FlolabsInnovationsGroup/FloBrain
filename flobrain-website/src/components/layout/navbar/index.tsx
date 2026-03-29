@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Home, DollarSign } from "lucide-react";
+import { Menu, X, Home, DollarSign, Mail, MessageCircle, LayoutDashboard, Brain } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,10 +20,19 @@ export default function Navbar() {
   const pathname = usePathname();
   const isHomeActive = pathname === "/" || pathname === "/home";
   const isPricingActive = pathname === "/pricing";
-  // const isContactActive = pathname === "/contact";
+  const isContactActive = pathname === "/contact";
+  const isDashboardActive = pathname === "/dashboard";
+  const isChatsActive = pathname === "/brain";
+  const isMemoryActive = pathname === "/memory";
+
+  const isBrainPage = pathname === "/brain";
+  const headerClass = isBrainPage
+    ? "fixed top-0 left-0 right-0 z-[100] w-full px-4 pt-4 md:px-6 md:pt-5"
+    : "sticky top-0 z-[100] w-[95%] max-w-none mx-auto px-4 pt-4 md:px-6 md:pt-5";
 
   return (
-    <header className="sticky top-0 z-[100] w-[95%] max-w-none mx-auto px-4 pt-4 md:px-6 md:pt-5">
+    <header className={headerClass}>
+      <div className={isBrainPage ? "w-[95%] max-w-none mx-auto" : undefined}>
       <nav className="w-full flex items-center justify-between rounded-2xl border border-white/5 bg-[#0f0a1a]/95 px-5 py-3 shadow-[0_8px_32px_rgba(147,51,234,0.18)] backdrop-blur-md md:px-6 md:py-3.5">
         {/* LEFT: Logo + Brand + Tagline */}
         <div className="flex min-w-0 shrink items-center gap-3">
@@ -60,20 +69,29 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  isDashboardActive ? activeLinkClass : inactiveLinkClass
+                }`}
               >
+                <LayoutDashboard className={navIconClass} />
                 Dashboard
               </Link>
               <Link
                 href="/brain"
-                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  isChatsActive ? activeLinkClass : inactiveLinkClass
+                }`}
               >
-                Brain
+                <MessageCircle className={navIconClass} />
+                Chats
               </Link>
               <Link
                 href="/memory"
-                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white"
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                  isMemoryActive ? activeLinkClass : inactiveLinkClass
+                }`}
               >
+                <Brain className={navIconClass} />
                 Memory
               </Link>
               <Link
@@ -86,7 +104,7 @@ export default function Navbar() {
           ) : (
             <div className="flex items-center gap-1">
               <Link
-                href="/"
+                href="/home"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                   isHomeActive ? activeLinkClass : inactiveLinkClass
                 }`}
@@ -103,7 +121,7 @@ export default function Navbar() {
                 <DollarSign className={navIconClass} />
                 Pricing
               </Link>
-              {/* <Link
+              <Link
                 href="/contact"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                   isContactActive ? activeLinkClass : inactiveLinkClass
@@ -111,14 +129,14 @@ export default function Navbar() {
               >
                 <Mail className={navIconClass} />
                 Contact
-              </Link> */}
+              </Link>
             </div>
           )}
         </div>
 
         {/* RIGHT: Auth actions */}
         <div className="flex shrink-0 items-center gap-4">
-          {/* <div className="hidden md:flex md:items-center md:gap-4">
+          <div className="hidden md:flex md:items-center md:gap-4">
             {isLoading ? (
               <span className="text-sm text-zinc-500">…</span>
             ) : !isAuthenticated ? (
@@ -137,7 +155,7 @@ export default function Navbar() {
                 </Link>
               </>
             ) : null}
-          </div> */}
+          </div>
 
           {/* Mobile menu button */}
           <button
@@ -164,14 +182,14 @@ export default function Navbar() {
                 Home
               </Link>
               <Link href="/dashboard" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
-              <Link href="/brain" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Brain</Link>
+              <Link href="/brain" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Chats</Link>
               <Link href="/memory" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Memory</Link>
               <Link href="/profile" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Profile</Link>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
               <Link
-                href="/"
+                href="/home"
                 className={`rounded-lg py-2 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
@@ -184,25 +202,26 @@ export default function Navbar() {
               >
                 Pricing
               </Link>
-              {/* <Link
+              <Link
                 href="/contact"
                 className={`rounded-lg py-2 ${isContactActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
                 Contact
-              </Link> */}
-              {/* <Link href="/signin" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
+              </Link>
+              <Link href="/signin" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
               <Link
                 href="/register"
                 className="rounded-xl bg-[#9333ea] py-3 text-center text-white"
                 onClick={() => setIsOpen(false)}
               >
                 Register
-              </Link> */}
+              </Link>
             </div>
           )}
         </div>
       )}
+      </div>
     </header>
   );
 }

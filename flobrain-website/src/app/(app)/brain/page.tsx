@@ -2,12 +2,11 @@
 
 import { useState, useCallback, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Menu } from 'lucide-react';
 import type { ChatHistory, Folder, Message } from '@/types/chat';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
 import { apiChatToChatHistory, apiChatListToChatHistory } from './lib/brainApi';
-import Sidebar from './components/Sidebar/index';
+import { LeftPanel } from '@/app/home/components/left-panel';
 import ChatArea from './components/ChatArea/index';
 import ChatInput from './components/MessageInput/index';
 import jsPDF from 'jspdf';
@@ -37,9 +36,8 @@ function BrainPageFallback() {
 
 function BrainPageContent() {
   const { isAuthenticated } = useAuth();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
-  const [folders, setFolders] = useState<Folder[]>([]);
+  const [_folders, setFolders] = useState<Folder[]>([]);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,8 +49,6 @@ function BrainPageContent() {
 
   // Store pending message to send after chat creation
   const pendingMessageRef = useRef<{ text: string; image?: string } | null>(null);
-
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   // Fetch chats from backend when authenticated
   useEffect(() => {
@@ -349,7 +345,7 @@ function BrainPageContent() {
     [chatHistory, isAuthenticated]
   );
 
-  const handleDeleteChat = useCallback(
+  const _handleDeleteChat = useCallback(
     async (id: number) => {
       if (isAuthenticated) {
         const res = await api.deleteChat(id);
@@ -364,7 +360,7 @@ function BrainPageContent() {
     [isAuthenticated, currentChatId]
   );
 
-  const handleRenameChat = useCallback(
+  const _handleRenameChat = useCallback(
     async (id: number, newTitle: string) => {
       if (isAuthenticated) {
         const res = await api.updateChat(id, newTitle);
@@ -377,7 +373,7 @@ function BrainPageContent() {
     [isAuthenticated]
   );
 
-  const handleClearAll = useCallback(async () => {
+  const _handleClearAll = useCallback(async () => {
     if (!window.confirm('Are you sure you want to delete all chats?')) return;
     if (isAuthenticated && chatHistory.length > 0) {
       await Promise.all(chatHistory.map((c) => api.deleteChat(c.id)));
@@ -387,11 +383,11 @@ function BrainPageContent() {
     setMessages([]);
   }, [isAuthenticated, chatHistory]);
 
-  const handleCreateFolder = (name: string) => {
+  const _handleCreateFolder = (name: string) => {
     setFolders((prev) => [...prev, { id: Date.now(), name, chats: [] }]);
   };
 
-  const handleDeleteFolder = (id: number) => {
+  const _handleDeleteFolder = (id: number) => {
     if (!window.confirm('Delete this folder? Chats will be moved to root.')) return;
     setChatHistory((prev) =>
       prev.map((c) => (c.folderId === id ? { ...c, folderId: undefined } : c))
@@ -399,13 +395,13 @@ function BrainPageContent() {
     setFolders((prev) => prev.filter((f) => f.id !== id));
   };
 
-  const handleRenameFolder = (id: number, newName: string) => {
+  const _handleRenameFolder = (id: number, newName: string) => {
     setFolders((prev) =>
       prev.map((f) => (f.id === id ? { ...f, name: newName } : f))
     );
   };
 
-  const handleMoveToFolder = (chatId: number, folderId: number | null) => {
+  const _handleMoveToFolder = (chatId: number, folderId: number | null) => {
     setChatHistory((prev) =>
       prev.map((c) =>
         c.id === chatId
@@ -415,7 +411,7 @@ function BrainPageContent() {
     );
   };
 
-  const handleExportChat = (id: number, format: 'pdf' | 'txt' | 'json') => {
+  const _handleExportChat = (id: number, format: 'pdf' | 'txt' | 'json') => {
     const chat = chatHistory.find((c) => c.id === id);
     if (!chat) return;
 
@@ -465,7 +461,7 @@ function BrainPageContent() {
       } catch (e) {
         console.error('PDF export error:', e);
         alert('PDF export failed. Using TXT instead.');
-        handleExportChat(id, 'txt');
+        _handleExportChat(id, 'txt');
       }
     }
   };
@@ -482,7 +478,7 @@ function BrainPageContent() {
   };
 
   return (
-    <div className="flex h-screen bg-[#1a0b2e] text-white overflow-hidden">
+    <main className="h-screen w-[92%] mx-auto bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] text-slate-300 font-[Inter] overflow-hidden flex flex-col pt-[7rem] box-border mb-2">
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
           {error}
@@ -496,102 +492,84 @@ function BrainPageContent() {
         </div>
       )}
 
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onToggle={toggleSidebar}
-        chatHistory={chatHistory}
-        folders={folders}
-        currentChatId={currentChatId}
-        onNewChat={handleNewChat}
-        onLoadChat={handleLoadChat}
-        onDeleteChat={handleDeleteChat}
-        onRenameChat={handleRenameChat}
-        onClearAllChats={handleClearAll}
-        onMoveToFolder={handleMoveToFolder}
-        onCreateFolder={handleCreateFolder}
-        onDeleteFolder={handleDeleteFolder}
-        onRenameFolder={handleRenameFolder}
-        onExportChat={handleExportChat}
-        chatsLoading={chatsLoading}
-      />
+      <div className="flex flex-1 min-h-0 gap-3 overflow-hidden relative">
+        <LeftPanel
+          variant="chats"
+          chatHistory={chatHistory}
+          currentChatId={currentChatId}
+          onLoadChat={handleLoadChat}
+          onNewChat={handleNewChat}
+          onSearch={() => {}}
+          onPreferences={() => {}}
+          onSettings={() => {}}
+          chatsLoading={chatsLoading}
+        />
 
-      <div className="flex flex-1 flex-col min-w-0 relative">
-        {!isSidebarOpen && (
-          <div className="fixed top-6 left-4 z-[9999]">
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              className="p-2 hover:bg-white/10 rounded-lg transition-all"
-              title="Open Sidebar"
-            >
-              <Menu size={24} className="text-white" />
-            </button>
-          </div>
-        )}
-
-        {currentChatId ? (
-          <>
-            <ChatArea messages={messages} />
-            <ChatInput
-              key={initialInputValue ?? 'default'}
-              onSendMessage={handleSendMessage}
-              disabled={isLoading}
-              initialText={initialInputValue ?? undefined}
-            />
-          </>
-        ) : (
-          <main className="flex-1 relative overflow-y-auto flex items-center justify-center">
-            <div className="text-center max-w-md px-6">
-              <div className="w-20 h-20 mx-auto mb-6 opacity-50">
-                <svg viewBox="0 0 100 100" fill="none">
-                  <path
-                    d="M50 10L20 25V45C20 62.5 35 77.5 50 82.5C65 77.5 80 62.5 80 45V25L50 10Z"
-                    fill="url(#mainGradient)"
-                    stroke="white"
-                    strokeWidth="3"
-                  />
-                  <path
-                    d="M35 45L45 55L65 35"
-                    stroke="white"
-                    strokeWidth="5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <defs>
-                    <linearGradient
-                      id="mainGradient"
-                      x1="20"
-                      y1="10"
-                      x2="80"
-                      y2="82.5"
-                    >
-                      <stop stopColor="#8B5CF6" />
-                      <stop offset="1" stopColor="#6366F1" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+        <section className="flex-1 relative flex flex-col min-w-0 min-h-0 bg-[#0B0719]/30 rounded-xl overflow-hidden">
+          {currentChatId ? (
+            <>
+              <ChatArea messages={messages} isLoading={isLoading} />
+              <ChatInput
+                key={initialInputValue ?? 'default'}
+                onSendMessage={handleSendMessage}
+                disabled={isLoading}
+                initialText={initialInputValue ?? undefined}
+              />
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center overflow-y-auto">
+              <div className="text-center max-w-md px-6">
+                <div className="w-20 h-20 mx-auto mb-6 opacity-50">
+                  <svg viewBox="0 0 100 100" fill="none">
+                    <path
+                      d="M50 10L20 25V45C20 62.5 35 77.5 50 82.5C65 77.5 80 62.5 80 45V25L50 10Z"
+                      fill="url(#mainGradient)"
+                      stroke="white"
+                      strokeWidth="3"
+                    />
+                    <path
+                      d="M35 45L45 55L65 35"
+                      stroke="white"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <defs>
+                      <linearGradient
+                        id="mainGradient"
+                        x1="20"
+                        y1="10"
+                        x2="80"
+                        y2="82.5"
+                      >
+                        <stop stopColor="#8B5CF6" />
+                        <stop offset="1" stopColor="#6366F1" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <h2 className="text-3xl font-bold text-white mb-3">
+                  Welcome to FLOBRAIN
+                </h2>
+                <p className="text-white/60 mb-8">
+                  Start a new conversation to chat with our AI assistant.
+                  {isAuthenticated
+                    ? ' Your chats are saved on the server.'
+                    : ' Sign in to save chats.'}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleNewChat}
+                  className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-8 py-4 rounded-xl font-semibold hover:opacity-90 transition-all duration-200 shadow-lg shadow-[#8B5CF6]/30 hover:shadow-[#8B5CF6]/50 text-lg"
+                >
+                  Start New Chat
+                </button>
               </div>
-              <h2 className="text-3xl font-bold text-white mb-3">
-                Welcome to FLOBRAIN
-              </h2>
-              <p className="text-white/60 mb-8">
-                Start a new conversation to chat with our AI assistant.
-                {isAuthenticated
-                  ? ' Your chats are saved on the server.'
-                  : ' Sign in to save chats.'}
-              </p>
-              <button
-                type="button"
-                onClick={handleNewChat}
-                className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-8 py-4 rounded-xl font-semibold hover:opacity-90 transition-all duration-200 shadow-lg shadow-[#8B5CF6]/30 hover:shadow-[#8B5CF6]/50 text-lg"
-              >
-                Start New Chat
-              </button>
             </div>
-          </main>
-        )}
+          )}
+        </section>
       </div>
-    </div>
+    </main>
   );
 }
 
