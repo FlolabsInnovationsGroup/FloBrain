@@ -247,9 +247,9 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
             <button
               type="button"
               onClick={onPreferences}
-              className="flex-1 flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-sm text-[#CAD5E2] bg-[#0F172B]/80 border border-[#1D293D]/50 hover:bg-[#0F172B]/90 transition-all"
+              className="group flex-1 flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-sm text-[#CAD5E2] bg-[#0F172B]/80 border border-[#1D293D]/50 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#7F56D9]/60 hover:bg-[#1B1235] hover:text-white hover:shadow-[0_10px_24px_rgba(127,86,217,0.25)]"
             >
-              <SlidersHorizontal className="w-4 h-4 shrink-0" aria-hidden />
+              <SlidersHorizontal className="w-4 h-4 shrink-0 transition-colors group-hover:text-[#C4B5FD]" aria-hidden />
               <span className="text-[#CAD5E2]">Preferences</span>
             </button>
             <button

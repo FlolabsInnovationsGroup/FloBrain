@@ -10,6 +10,7 @@ import { LeftPanel } from '@/app/home/components/left-panel';
 import ChatArea from './components/ChatArea/index';
 import ChatInput from './components/MessageInput/index';
 import jsPDF from 'jspdf';
+import { X } from 'lucide-react';
 
 const WELCOME_MESSAGE: Message = {
   id: 'msg-welcome',
@@ -34,6 +35,174 @@ function BrainPageFallback() {
   );
 }
 
+type BrainPreferences = {
+  showConfidencePanel: boolean;
+  compactMode: boolean;
+  autoScroll: boolean;
+  enableVoiceInput: boolean;
+  enableImageUpload: boolean;
+};
+
+const DEFAULT_PREFERENCES: BrainPreferences = {
+  showConfidencePanel: true,
+  compactMode: false,
+  autoScroll: true,
+  enableVoiceInput: true,
+  enableImageUpload: true,
+};
+
+function PreferenceToggle({
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  label: string;
+  description: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-4 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+      <div>
+        <p className="text-sm font-medium text-white">{label}</p>
+        <p className="mt-1 text-xs text-white/60">{description}</p>
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full p-0.5 transition-colors ${
+          checked ? 'bg-violet-500' : 'bg-white/20'
+        }`}
+      >
+        <span
+          className={`h-5 w-5 rounded-full bg-white transition-transform duration-200 ${
+            checked ? 'translate-x-5' : 'translate-x-0'
+          }`}
+        />
+      </button>
+    </div>
+  );
+}
+
+function PreferencesModal({
+  open,
+  preferences,
+  onClose,
+  onChange,
+}: {
+  open: boolean;
+  preferences: BrainPreferences;
+  onClose: () => void;
+  onChange: (prefs: BrainPreferences) => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 p-4">
+      <div className="w-full max-w-xl rounded-2xl border border-violet-400/30 bg-[#120724] shadow-2xl">
+        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Preferences</h2>
+            <p className="text-xs text-white/60">Control Brain page features and layout.</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-md p-1 text-white/70 hover:bg-white/10 hover:text-white"
+            aria-label="Close preferences"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <div className="space-y-3 p-5">
+          <PreferenceToggle
+            label="Show confidence panel"
+            description="Display model confidence cards on the right side."
+            checked={preferences.showConfidencePanel}
+            onChange={(showConfidencePanel) => onChange({ ...preferences, showConfidencePanel })}
+          />
+          <PreferenceToggle
+            label="Compact mode"
+            description="Reduce spacing in the chat feed."
+            checked={preferences.compactMode}
+            onChange={(compactMode) => onChange({ ...preferences, compactMode })}
+          />
+          <PreferenceToggle
+            label="Auto-scroll"
+            description="Scroll to the latest message automatically."
+            checked={preferences.autoScroll}
+            onChange={(autoScroll) => onChange({ ...preferences, autoScroll })}
+          />
+          <PreferenceToggle
+            label="Voice input"
+            description="Enable microphone capture in the composer."
+            checked={preferences.enableVoiceInput}
+            onChange={(enableVoiceInput) => onChange({ ...preferences, enableVoiceInput })}
+          />
+          <PreferenceToggle
+            label="Image upload"
+            description="Enable image upload in the composer."
+            checked={preferences.enableImageUpload}
+            onChange={(enableImageUpload) => onChange({ ...preferences, enableImageUpload })}
+          />
+        </div>
+        <div className="flex items-center justify-end gap-3 border-t border-white/10 px-5 py-4">
+          <button
+            type="button"
+            onClick={() => onChange(DEFAULT_PREFERENCES)}
+            className="rounded-lg border border-white/20 px-4 py-2 text-sm text-white/80 hover:bg-white/10"
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-500"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ConfidencePanel() {
+  const cards = [
+    { model: 'GPT-4o', confidence: 87, latency: '151ms', tokens: '2.9K' },
+    { model: 'Claude 3.5', confidence: 94, latency: '149ms', tokens: '3.0K' },
+    { model: 'Gemini 1.5', confidence: 73, latency: '120ms', tokens: '3.4K' },
+  ];
+  return (
+    <aside className="hidden w-[300px] shrink-0 rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 xl:block">
+      <h3 className="mb-3 text-sm font-semibold text-white">Confidence</h3>
+      <div className="space-y-3">
+        {cards.map((card) => (
+          <div key={card.model} className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-white">{card.model}</p>
+              <span className="text-xs text-white/80">{card.confidence}%</span>
+            </div>
+            <div className="mt-2 h-1.5 rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-[#6C63FF] to-[#A855F7]"
+                style={{ width: `${card.confidence}%` }}
+              />
+            </div>
+            <div className="mt-2 flex justify-between text-[11px] text-white/60">
+              <span>Latency {card.latency}</span>
+              <span>Tokens {card.tokens}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
 function BrainPageContent() {
   const { isAuthenticated } = useAuth();
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
@@ -44,6 +213,8 @@ function BrainPageContent() {
   const [chatsLoading, setChatsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
+  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [preferences, setPreferences] = useState<BrainPreferences>(DEFAULT_PREFERENCES);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -500,75 +671,92 @@ function BrainPageContent() {
           onLoadChat={handleLoadChat}
           onNewChat={handleNewChat}
           onSearch={() => {}}
-          onPreferences={() => {}}
+          onPreferences={() => setIsPreferencesOpen(true)}
           onSettings={() => {}}
           chatsLoading={chatsLoading}
         />
 
-        <section className="flex-1 relative flex flex-col min-w-0 min-h-0 bg-[#0B0719]/30 rounded-xl overflow-hidden">
-          {currentChatId ? (
-            <>
-              <ChatArea messages={messages} isLoading={isLoading} />
-              <ChatInput
-                key={initialInputValue ?? 'default'}
-                onSendMessage={handleSendMessage}
-                disabled={isLoading}
-                initialText={initialInputValue ?? undefined}
-              />
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center overflow-y-auto">
-              <div className="text-center max-w-md px-6">
-                <div className="w-20 h-20 mx-auto mb-6 opacity-50">
-                  <svg viewBox="0 0 100 100" fill="none">
-                    <path
-                      d="M50 10L20 25V45C20 62.5 35 77.5 50 82.5C65 77.5 80 62.5 80 45V25L50 10Z"
-                      fill="url(#mainGradient)"
-                      stroke="white"
-                      strokeWidth="3"
-                    />
-                    <path
-                      d="M35 45L45 55L65 35"
-                      stroke="white"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                    <defs>
-                      <linearGradient
-                        id="mainGradient"
-                        x1="20"
-                        y1="10"
-                        x2="80"
-                        y2="82.5"
-                      >
-                        <stop stopColor="#8B5CF6" />
-                        <stop offset="1" stopColor="#6366F1" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
+        <div className="flex flex-1 min-w-0 min-h-0 gap-3">
+          <section className="flex-1 relative flex flex-col min-w-0 min-h-0 bg-[#0B0719]/30 rounded-xl overflow-hidden border border-white/10">
+            {currentChatId ? (
+              <>
+                <ChatArea
+                  messages={messages}
+                  isLoading={isLoading}
+                  compactMode={preferences.compactMode}
+                  autoScroll={preferences.autoScroll}
+                />
+                <ChatInput
+                  key={initialInputValue ?? 'default'}
+                  onSendMessage={handleSendMessage}
+                  disabled={isLoading}
+                  initialText={initialInputValue ?? undefined}
+                  allowVoiceInput={preferences.enableVoiceInput}
+                  allowImageUpload={preferences.enableImageUpload}
+                  compactMode={preferences.compactMode}
+                />
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center overflow-y-auto">
+                <div className="text-center max-w-md px-6">
+                  <div className="w-20 h-20 mx-auto mb-6 opacity-50">
+                    <svg viewBox="0 0 100 100" fill="none">
+                      <path
+                        d="M50 10L20 25V45C20 62.5 35 77.5 50 82.5C65 77.5 80 62.5 80 45V25L50 10Z"
+                        fill="url(#mainGradient)"
+                        stroke="white"
+                        strokeWidth="3"
+                      />
+                      <path
+                        d="M35 45L45 55L65 35"
+                        stroke="white"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <defs>
+                        <linearGradient
+                          id="mainGradient"
+                          x1="20"
+                          y1="10"
+                          x2="80"
+                          y2="82.5"
+                        >
+                          <stop stopColor="#8B5CF6" />
+                          <stop offset="1" stopColor="#6366F1" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                  <h2 className="text-3xl font-bold text-white mb-3">
+                    Welcome to FLOBRAIN
+                  </h2>
+                  <p className="text-white/60 mb-8">
+                    Start a new conversation to chat with our AI assistant.
+                    {isAuthenticated
+                      ? ' Your chats are saved on the server.'
+                      : ' Sign in to save chats.'}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleNewChat}
+                    className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-8 py-4 rounded-xl font-semibold hover:opacity-90 transition-all duration-200 shadow-lg shadow-[#8B5CF6]/30 hover:shadow-[#8B5CF6]/50 text-lg"
+                  >
+                    Start New Chat
+                  </button>
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-3">
-                  Welcome to FLOBRAIN
-                </h2>
-                <p className="text-white/60 mb-8">
-                  Start a new conversation to chat with our AI assistant.
-                  {isAuthenticated
-                    ? ' Your chats are saved on the server.'
-                    : ' Sign in to save chats.'}
-                </p>
-                <button
-                  type="button"
-                  onClick={handleNewChat}
-                  className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-8 py-4 rounded-xl font-semibold hover:opacity-90 transition-all duration-200 shadow-lg shadow-[#8B5CF6]/30 hover:shadow-[#8B5CF6]/50 text-lg"
-                >
-                  Start New Chat
-                </button>
               </div>
-            </div>
-          )}
-        </section>
+            )}
+          </section>
+          {preferences.showConfidencePanel && <ConfidencePanel />}
+        </div>
       </div>
+      <PreferencesModal
+        open={isPreferencesOpen}
+        preferences={preferences}
+        onClose={() => setIsPreferencesOpen(false)}
+        onChange={setPreferences}
+      />
     </main>
   );
 }

@@ -19,9 +19,11 @@ const TAB_COLORS: Record<AnswerTab, string> = {
 interface ChatAreaProps {
   messages: Message[];
   isLoading?: boolean;
+  compactMode?: boolean;
+  autoScroll?: boolean;
 }
 
-function MessageBubble({ message }: { message: Message }) {
+function MessageBubble({ message, compactMode = false }: { message: Message; compactMode?: boolean }) {
   const gradientId = `brainGradient-${message.id}`;
   return (
     <div
@@ -52,7 +54,7 @@ function MessageBubble({ message }: { message: Message }) {
         </div>
       )}
       <div
-        className={`max-w-2xl rounded-2xl px-5 py-4 ${
+        className={`max-w-2xl rounded-2xl ${compactMode ? 'px-4 py-3' : 'px-5 py-4'} ${
           message.type === 'user'
             ? 'bg-[#7c5dbd]/30 text-white/90'
             : 'bg-[#3d2b5f]/40 text-white/80'
@@ -70,7 +72,13 @@ function MessageBubble({ message }: { message: Message }) {
           </div>
         )}
         {message.text && (
-          <p className="text-sm leading-relaxed whitespace-pre-wrap text-white">{message.text}</p>
+          <p
+            className={`whitespace-pre-wrap text-white ${
+              compactMode ? 'text-[13px] leading-6' : 'text-sm leading-relaxed'
+            }`}
+          >
+            {message.text}
+          </p>
         )}
       </div>
     </div>
@@ -83,23 +91,29 @@ function ResponsePanel({
   isLoading,
   selectedModel,
   onSelectModel,
+  compactMode = false,
 }: {
   userMessage: Message;
   assistantMessage: Message | null;
   isLoading: boolean;
   selectedModel: AnswerTab;
   onSelectModel: (model: AnswerTab) => void;
+  compactMode?: boolean;
 }) {
   return (
-    <div className="space-y-4 pt-2">
-      <MessageBubble message={userMessage} />
+    <div className={`${compactMode ? 'space-y-3 pt-1' : 'space-y-4 pt-2'}`}>
+      <MessageBubble message={userMessage} compactMode={compactMode} />
       <div className="flex flex-col gap-0">
-        <div className="flex items-center gap-2 mb-3">
+        <div className={`flex items-center gap-2 ${compactMode ? 'mb-2' : 'mb-3'}`}>
           <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" aria-hidden />
           <span className="text-sm font-medium text-white/90">FloBrain</span>
         </div>
         <div className="rounded-xl bg-[#0B0719]/80 border border-white/10 overflow-hidden">
-          <div className="flex flex-wrap items-center gap-2 p-3 border-b border-white/10">
+          <div
+            className={`flex flex-wrap items-center gap-2 border-b border-white/10 ${
+              compactMode ? 'p-2' : 'p-3'
+            }`}
+          >
             {ANSWER_TABS.map((model) => {
               const isSelected = selectedModel === model;
               const color = TAB_COLORS[model];
@@ -128,7 +142,7 @@ function ResponsePanel({
               <Plus className="w-4 h-4" />
             </button>
           </div>
-          <div className="p-4 min-h-[120px]">
+          <div className={`${compactMode ? 'p-3 min-h-[96px]' : 'p-4 min-h-[120px]'}`}>
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="relative w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] flex-shrink-0">
@@ -159,7 +173,12 @@ function ResponsePanel({
   );
 }
 
-export default function ChatArea({ messages, isLoading = false }: ChatAreaProps) {
+export default function ChatArea({
+  messages,
+  isLoading = false,
+  compactMode = false,
+  autoScroll = true,
+}: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [selectedModel, setSelectedModel] = useState<AnswerTab>('ChatGPT');
 
@@ -187,12 +206,13 @@ export default function ChatArea({ messages, isLoading = false }: ChatAreaProps)
     }, [messages, isLoading]);
 
   useEffect(() => {
+    if (!autoScroll) return;
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, showResponseBlock]);
+  }, [messages, showResponseBlock, autoScroll]);
 
   return (
-    <div className="flex-1 overflow-y-auto px-6 py-8">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className={`flex-1 overflow-y-auto px-6 ${compactMode ? 'py-4' : 'py-8'}`}>
+      <div className={`max-w-4xl mx-auto ${compactMode ? 'space-y-3' : 'space-y-6'}`}>
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center py-20">
             <div className="w-16 h-16 mb-4">
@@ -213,7 +233,7 @@ export default function ChatArea({ messages, isLoading = false }: ChatAreaProps)
         ) : (
           <>
             {historyMessages.map((message) => (
-              <MessageBubble key={message.id} message={message} />
+              <MessageBubble key={message.id} message={message} compactMode={compactMode} />
             ))}
 
             {showResponseBlock && lastUserMessage && (
@@ -223,6 +243,7 @@ export default function ChatArea({ messages, isLoading = false }: ChatAreaProps)
                 isLoading={isLoading}
                 selectedModel={selectedModel}
                 onSelectModel={setSelectedModel}
+                compactMode={compactMode}
               />
             )}
 
