@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { ForceGraphMethods } from "react-force-graph-2d";
 import type { MemoryNodeApi } from "@/lib/api";
 import { memoryNode } from "@/types/MemoryNodes";
 
@@ -16,7 +17,6 @@ interface MemoryGraphProps {
   setGraphActive: (active: boolean) => void;
 }
 
-// Map API nodes to force-graph format (id, name, val, group; force-graph may add x, y, color)
 function toGraphNodes(apiNodes: MemoryNodeApi[]): memoryNode[] {
   return apiNodes.map((n) => ({
     id: n.id,
@@ -28,7 +28,6 @@ function toGraphNodes(apiNodes: MemoryNodeApi[]): memoryNode[] {
   }));
 }
 
-// Links: force-graph expects source/target as node objects or ids; we use ids and let lib resolve
 function toGraphLinks(links: { source: string; target: string }[]) {
   return links.map((l) => ({ source: l.source, target: l.target }));
 }
@@ -41,11 +40,16 @@ export const MemoryGraph = ({
   setGraphActive,
 }: MemoryGraphProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const graphRef = useRef<ForceGraphMethods<memoryNode, { source: string; target: string }> | undefined>(
+    undefined
+  );
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  const graphNodes = toGraphNodes(nodes);
-  const graphLinks = toGraphLinks(links);
+  // Keep graph data references stable unless API data actually changes.
+  // This prevents force-graph from resetting node positions on local UI state changes.
+  const graphNodes = useMemo(() => toGraphNodes(nodes), [nodes]);
+  const graphLinks = useMemo(() => toGraphLinks(links), [links]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -71,7 +75,6 @@ export const MemoryGraph = ({
   }, []);
 
   const handleOutsideClick = (e: React.MouseEvent) => {
-    // Deactivate when clicking outside the border
     if (e.target === e.currentTarget && graphActive) {
       setGraphActive(false);
     }
@@ -79,78 +82,91 @@ export const MemoryGraph = ({
 
   const handleBorderClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Activate when clicking inside the border
     if (!graphActive) {
       setGraphActive(true);
     }
   };
 
+  const handleResetView = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    graphRef.current?.centerAt?.(0, 0, 350);
+    graphRef.current?.zoomToFit?.(500, 60);
+  };
+
   return (
-    <div ref={containerRef} className="w-full h-full relative" onClick={handleOutsideClick}>
-      {/* Instruction Message */}
-      <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 bg-black/50 text-white px-4 py-2 rounded-lg text-sm">
+    <div className="relative flex min-h-0 min-w-0 flex-1 flex-col" onClick={handleOutsideClick}>
+      <div className="pointer-events-none absolute left-1/2 top-2 z-10 -translate-x-1/2 rounded-lg bg-black/50 px-4 py-2 text-sm text-white">
         {graphActive
           ? "Click outside the graph to navigate the memory page"
           : "Click inside the border to interact with the graph"}
       </div>
+      <button
+        type="button"
+        onClick={handleResetView}
+        className="absolute right-3 top-2 z-10 rounded-md bg-black/50 px-2.5 py-1 text-xs text-zinc-200 transition hover:bg-black/60"
+        aria-label="Reset graph view"
+      >
+        Reset view
+      </button>
 
-      {/* Graph Container with Border */}
       <div
-        className={`w-full h-full border-4 rounded-xl transition-all duration-300 ${
+        className={`mt-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border-4 transition-all duration-300 ${
           graphActive ? "border-[#a78bfa] shadow-lg shadow-[#a78bfa]/50" : "border-[#4c1d95]/50"
         }`}
         onClick={handleBorderClick}
       >
         <div
-          className="w-full h-full bg-transparent relative overflow-hidden rounded-lg"
+          ref={containerRef}
+          className="relative min-h-0 min-w-0 flex-1 overflow-hidden rounded-lg bg-transparent"
           style={{ pointerEvents: graphActive ? "auto" : "none" }}
         >
           {dimensions.width > 0 && dimensions.height > 0 && (
-          <ForceGraph2D
-            graphData={{ nodes: graphNodes, links: graphLinks }}
-            width={dimensions.width}
-            height={dimensions.height}
-            nodeAutoColorBy="group"
-            nodeLabel="name"
-            onNodeClick={(node) => {
-              if (graphActive) {
-                onOpenMemoryNodeDialog(node as memoryNode);
-              }
-            }}
-            nodeCanvasObject={(node: memoryNode, ctx, globalScale) => {
-              const name = typeof node.name === "string" ? node.name : "";
-              const label = name.length > 10 ? `${name.slice(0, 10)}...` : name;
-              const fontSize = 12 / globalScale;
-              ctx.font = `${fontSize}px Sans-Serif`;
-              const textWidth = ctx.measureText(label).width;
-              const bckgDimensions = [textWidth, fontSize].map((n) => n + fontSize * 0.2);
-              ctx.textAlign = "center";
-              ctx.textBaseline = "middle";
-              ctx.fillStyle = node.color;
-              ctx.fillText(label, node.x ?? 0, node.y ?? 0);
-              node.__bckgDimensions = bckgDimensions;
-            }}
-            nodePointerAreaPaint={(node: memoryNode, color, ctx) => {
-              ctx.fillStyle = color;
-              const bckgDimensions = node.__bckgDimensions;
-              const nodeX = node.x ?? 0;
-              const nodeY = node.y ?? 0;
+            <ForceGraph2D
+              ref={graphRef}
+              graphData={{ nodes: graphNodes, links: graphLinks }}
+              width={dimensions.width}
+              height={dimensions.height}
+              nodeAutoColorBy="group"
+              nodeLabel="name"
+              onNodeClick={(node) => {
+                if (graphActive) {
+                  onOpenMemoryNodeDialog(node as memoryNode);
+                }
+              }}
+              nodeCanvasObject={(node: memoryNode, ctx, globalScale) => {
+                const name = typeof node.name === "string" ? node.name : "";
+                const label = name.length > 10 ? `${name.slice(0, 10)}...` : name;
+                const fontSize = 12 / globalScale;
+                ctx.font = `${fontSize}px Sans-Serif`;
+                const textWidth = ctx.measureText(label).width;
+                const bckgDimensions = [textWidth, fontSize].map((n) => n + fontSize * 0.2);
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = node.color;
+                ctx.fillText(label, node.x ?? 0, node.y ?? 0);
+                node.__bckgDimensions = bckgDimensions;
+              }}
+              nodePointerAreaPaint={(node: memoryNode, color, ctx) => {
+                ctx.fillStyle = color;
+                const bckgDimensions = node.__bckgDimensions;
+                const nodeX = node.x ?? 0;
+                const nodeY = node.y ?? 0;
 
-              if (bckgDimensions) {
-                ctx.fillRect(
-                  nodeX - bckgDimensions[0] / 2,
-                  nodeY - bckgDimensions[1] / 2,
-                  bckgDimensions[0],
-                  bckgDimensions[1]
-                );
-              }
-            }}
-            linkColor={() => "#ffffff"}
-            backgroundColor="rgba(0,0,0,0)"
-            enableNodeDrag={graphActive}
-            enableZoomInteraction={graphActive}
-            enablePanInteraction={graphActive}
-          />
+                if (bckgDimensions) {
+                  ctx.fillRect(
+                    nodeX - bckgDimensions[0] / 2,
+                    nodeY - bckgDimensions[1] / 2,
+                    bckgDimensions[0],
+                    bckgDimensions[1]
+                  );
+                }
+              }}
+              linkColor={() => "#ffffff"}
+              backgroundColor="rgba(0,0,0,0)"
+              enableNodeDrag={graphActive}
+              enableZoomInteraction={graphActive}
+              enablePanInteraction={graphActive}
+            />
           )}
         </div>
       </div>
