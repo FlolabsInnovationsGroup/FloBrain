@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { Zap, Layers, WifiOff, Shield, ArrowRight } from "lucide-react";
+
+import { Zap, Layers, WifiOff, Shield } from "lucide-react";
 
 const FOOTER_BANNER_FEATURES = [
   { icon: Zap, label: "Real-time Sync" },
@@ -35,7 +35,7 @@ export const FooterBanner = () => {
             </div>
           ))}
         </div>
-        <Link
+        {/* <Link
           href="/register"
           className="mt-10 inline-flex items-center justify-center gap-2 rounded-xl bg-[#A855F7] px-8 py-4 text-white font-semibold text-base hover:bg-[#7C3AED] transition-colors"
         style={{
@@ -44,10 +44,10 @@ export const FooterBanner = () => {
         }}>
           Create Free Account
           <ArrowRight className="size-5 shrink-0" />
-        </Link>
+        </Link> 
         <p className="mt-6 text-center text-sm text-white/70 font-light">
           No credit card required • Free tier includes 10K tokens/month
-        </p>
+        </p>*/}
       </div>
     </div>
   );

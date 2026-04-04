@@ -7,10 +7,13 @@ import Image from 'next/image';
 interface ChatInputProps {
   onSendMessage: (text: string, image?: string) => void;
   disabled?: boolean;
+  initialText?: string;
 }
 
-export default function ChatInput({ onSendMessage, disabled = false }: ChatInputProps) {
-  const [inputValue, setInputValue] = useState('');
+export default function ChatInput({ onSendMessage, disabled = false, initialText }: ChatInputProps) {
+  const [inputValue, setInputValue] = useState(() =>
+    typeof initialText === 'string' ? initialText : ''
+  );
   const [isRecording, setIsRecording] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
