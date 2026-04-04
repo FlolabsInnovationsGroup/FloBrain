@@ -25,6 +25,7 @@ function toGraphNodes(apiNodes: MemoryNodeApi[]): memoryNode[] {
     group: n.group,
     memory_type: n.memory_type,
     relevance: n.relevance,
+    created_at: n.created_at,
   }));
 }
 
