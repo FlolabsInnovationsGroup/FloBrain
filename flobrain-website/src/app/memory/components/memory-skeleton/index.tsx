@@ -1,94 +1,98 @@
+import { Search, Filter } from "lucide-react";
+
 export const MemorySkeleton = () => {
   return (
-    <div className="flex min-h-screen flex-col items-start justify-start p-12 bg-gradient-to-br from-[#1a0033] via-[#2a1a4a] to-[#0f0f23]">
-      {/* Header Skeleton */}
-      <div className="w-full mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="h-10 bg-white/10 rounded w-80 animate-pulse" />
-        </div>
-        <div className="h-5 bg-white/5 rounded w-[600px] animate-pulse" />
-      </div>
-
-      {/* Main Content: Legend and Graph */}
-      <div className="flex flex-col lg:flex-row lg:items-center gap-4 w-full">
-        {/* Memory Types Legend Skeleton */}
-        <div className="w-full lg:w-1/5 flex-shrink-0 bg-[#e194ff]/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-[#4c1d95]/50 shadow-2xl">
-          <div className="h-5 bg-[#4c1d95]/40 rounded w-32 mb-3 animate-pulse" />
-          <div className="grid grid-cols-2 lg:grid-cols-1 gap-3 lg:gap-2">
-            {/* Memory Type Items */}
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={`legend-${index}`} className="flex items-center gap-3">
-                <div
-                  className={`w-3 h-3 rounded-full flex-shrink-0 ${
-                    index === 0
-                      ? "bg-[#3b82f6]"
-                      : index === 1
-                        ? "bg-[#a78bfa]"
-                        : index === 2
-                          ? "bg-[#10b981]"
-                          : "bg-[#fbbf24]"
-                  }`}
-                />
-                <div className="flex flex-col leading-tight flex-1">
-                  <div className="h-4 bg-[#4c1d95]/40 rounded w-20 mb-1 animate-pulse" />
-                  <div className="h-3 bg-[#4c1d95]/30 rounded w-full animate-pulse" />
-                </div>
-              </div>
+    <div
+      data-testid="memory-skeleton-root"
+      className="flex min-h-[100dvh] flex-col bg-[#08040A] px-3 py-3 pb-6 md:px-5 md:py-5"
+    >
+      <div className="mx-auto flex min-h-0 w-full max-w-[1600px] flex-1 flex-col overflow-hidden rounded-2xl border border-[#7B5CFF]/22 bg-[#0a0510]/95 shadow-[0_0_80px_rgba(123,92,255,0.14)] backdrop-blur-xl">
+        <header className="flex shrink-0 flex-col gap-4 border-b border-white/[0.06] px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6">
+          <div className="h-10 w-48 animate-pulse rounded-lg bg-white/10" />
+          <div className="flex gap-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-9 w-24 animate-pulse rounded-xl bg-white/10" />
             ))}
           </div>
-          <div className="mt-4 pt-3 border-t border-[#4c1d95]/60">
-            <div className="h-3 bg-[#4c1d95]/40 rounded w-full animate-pulse" />
-          </div>
-        </div>
+        </header>
 
-        {/* Memory Graph Container Skeleton */}
-        <div className="w-full lg:w-4/5 flex flex-col items-center justify-center h-[60vh] min-h-0">
-          {/* Graph Placeholder */}
-          <div className="w-full h-[calc(60vh-5rem)] overflow-hidden rounded-xl border-4 border-[#4c1d95]/50 bg-[#1a0033]/50 relative">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center space-y-4">
-                <div className="h-8 bg-white/10 rounded w-64 mx-auto animate-pulse" />
-                <div className="h-4 bg-white/5 rounded w-48 mx-auto animate-pulse" />
+        <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 lg:flex-row lg:gap-6 lg:p-6">
+          <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-[min(100%,320px)]">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-zinc-600" />
+              <div className="h-12 w-full animate-pulse rounded-2xl bg-white/[0.06]" />
+            </div>
+            <div className="flex h-12 items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.04] px-4">
+              <Filter className="size-4 text-zinc-600" />
+              <div className="h-4 flex-1 animate-pulse rounded bg-white/10" />
+            </div>
+            <div className="h-10 w-28 animate-pulse rounded bg-white/10" />
+            <div className="h-12 w-full animate-pulse rounded-2xl bg-white/[0.06]" />
 
-                {/* Simulated Graph Nodes */}
-                <div className="relative w-[600px] h-[400px] mx-auto mt-8">
-                  {Array.from({ length: 8 }).map((_, index) => {
-                    const positions = [
-                      { top: "20%", left: "30%" },
-                      { top: "15%", left: "60%" },
-                      { top: "40%", left: "20%" },
-                      { top: "35%", left: "70%" },
-                      { top: "60%", left: "40%" },
-                      { top: "65%", left: "65%" },
-                      { top: "75%", left: "25%" },
-                      { top: "80%", left: "80%" },
-                    ];
+            <div className="hidden flex-1 lg:block" />
 
-                    return (
-                      <div
-                        key={`node-${index}`}
-                        className={`absolute rounded-full ${
-                          index % 4 === 0
-                            ? "bg-[#3b82f6]/50"
-                            : index % 4 === 1
-                              ? "bg-[#a78bfa]/50"
-                              : index % 4 === 2
-                                ? "bg-[#10b981]/50"
-                                : "bg-[#fbbf24]/50"
-                        }`}
-                        style={{
-                          top: positions[index].top,
-                          left: positions[index].left,
-                          width: `${40 + (index % 3) * 20}px`,
-                          height: `${40 + (index % 3) * 20}px`,
-                        }}
-                      />
-                    );
-                  })}
-                </div>
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
+              <div className="mb-3 h-4 w-32 animate-pulse rounded bg-white/10" />
+              <div className="space-y-3">
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={`legend-${index}`}
+                    data-testid={`legend-${index}`}
+                    className="flex items-start gap-3"
+                  >
+                    <div className="mt-0.5 size-9 shrink-0 animate-pulse rounded-xl bg-white/10" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3.5 w-28 animate-pulse rounded bg-white/10" />
+                      <div className="h-3 w-full animate-pulse rounded bg-white/5" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 border-t border-white/[0.06] pt-3">
+                <div className="h-4 w-full animate-pulse rounded bg-white/5" />
               </div>
             </div>
-          </div>
+          </aside>
+
+          <section className="relative min-h-[min(70vh,640px)] flex-1 overflow-hidden rounded-2xl border border-white/[0.06] bg-[#08040A] lg:min-h-0">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative h-[400px] w-full max-w-[600px]">
+                {Array.from({ length: 8 }).map((_, index) => {
+                  const positions = [
+                    { top: "20%", left: "30%" },
+                    { top: "15%", left: "60%" },
+                    { top: "40%", left: "20%" },
+                    { top: "35%", left: "70%" },
+                    { top: "60%", left: "40%" },
+                    { top: "65%", left: "65%" },
+                    { top: "75%", left: "25%" },
+                    { top: "80%", left: "80%" },
+                  ];
+                  return (
+                    <div
+                      key={`node-${index}`}
+                      data-testid={`node-${index}`}
+                      className={`absolute rounded-full ${
+                        index % 4 === 0
+                          ? "bg-[#56CCF2]/40"
+                          : index % 4 === 1
+                            ? "bg-[#7B5CFF]/40"
+                            : index % 4 === 2
+                              ? "bg-[#6FCF97]/40"
+                              : "bg-[#F2994A]/40"
+                      }`}
+                      style={{
+                        top: positions[index].top,
+                        left: positions[index].left,
+                        width: `${16 + (index % 3) * 10}px`,
+                        height: `${16 + (index % 3) * 10}px`,
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>

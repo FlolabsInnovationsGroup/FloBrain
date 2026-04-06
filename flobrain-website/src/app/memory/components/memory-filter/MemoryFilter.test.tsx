@@ -23,26 +23,26 @@ describe("MemoryFilter Component", () => {
 
   it("should render the search input", () => {
     render(<MemoryFilter {...defaultProps} />);
-    const searchInput = screen.getByPlaceholderText("Search by keywords or memory type (e.g. Chunks, Summaries)");
+    const searchInput = screen.getByPlaceholderText("Search memories by content or keyword...");
     expect(searchInput).toBeDefined();
   });
 
   it("should call onSearchQueryChange when typing in search input", () => {
     render(<MemoryFilter {...defaultProps} />);
-    const searchInput = screen.getByPlaceholderText("Search by keywords or memory type (e.g. Chunks, Summaries)");
+    const searchInput = screen.getByPlaceholderText("Search memories by content or keyword...");
     fireEvent.change(searchInput, { target: { value: "test query" } });
     expect(defaultProps.onSearchQueryChange).toHaveBeenCalledWith("test query");
   });
 
-  it("should render the Advanced filters button", () => {
+  it("should render the Advanced filters control", () => {
     render(<MemoryFilter {...defaultProps} />);
-    const filterButton = screen.getByText("Advanced filters");
+    const filterButton = screen.getByRole("button", { name: "Advanced filters" });
     expect(filterButton).toBeDefined();
   });
 
-  it("should call onToggleFilters when clicking Advanced filters button", () => {
+  it("should call onToggleFilters when clicking Advanced filters", () => {
     render(<MemoryFilter {...defaultProps} />);
-    const filterButton = screen.getByText("Advanced filters");
+    const filterButton = screen.getByRole("button", { name: "Advanced filters" });
     fireEvent.click(filterButton);
     expect(defaultProps.onToggleFilters).toHaveBeenCalledTimes(1);
   });
@@ -103,12 +103,15 @@ describe("MemoryFilter Component", () => {
   it("should highlight the active date range option", () => {
     render(<MemoryFilter {...defaultProps} filtersOpen={true} dateRange="Last Month" />);
     const lastMonthButton = screen.getByText("Last Month");
-    expect(lastMonthButton.className).toContain("bg-[#CDA7D8]");
+    expect(lastMonthButton.className).toContain("bg-[#7B5CFF]/20");
   });
 
   it("should highlight the active memory type option", () => {
     render(<MemoryFilter {...defaultProps} filtersOpen={true} memoryType="Summaries" />);
-    const summariesButton = screen.getByText("Summaries");
-    expect(summariesButton.className).toContain("bg-[#CDA7D8]");
+    const summariesInModal = screen
+      .getAllByText("Summaries")
+      .find((el) => el.tagName === "BUTTON");
+    expect(summariesInModal).toBeTruthy();
+    expect(summariesInModal!.className).toContain("bg-[#7B5CFF]/20");
   });
 });

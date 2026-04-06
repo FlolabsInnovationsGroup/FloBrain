@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
+import { AppChrome } from "@/components/layout/AppChrome";
 import { AuthProviderWrapper } from "@/components/providers/AuthProviderWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,10 +20,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProviderWrapper>
-          <div className="min-h-screen flex flex-col bg-[linear-gradient(90deg,#290036_0%,#070014_100%)]">
-            <Navbar />
-            <div className="flex-1">{children}</div>
-            <Footer />
+          <div className="flex min-h-screen flex-col">
+            <AppChrome>{children}</AppChrome>
           </div>
         </AuthProviderWrapper>
       </body>
