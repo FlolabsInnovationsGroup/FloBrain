@@ -47,15 +47,25 @@ vi.mock("next/dynamic", () => ({
 
 describe("MemoryGraph Component", () => {
   beforeEach(() => {
-    global.ResizeObserver = vi.fn().mockImplementation(() => ({
-      observe: vi.fn(),
-      unobserve: vi.fn(),
-      disconnect: vi.fn(),
-    }));
+    global.ResizeObserver = class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    } as unknown as typeof ResizeObserver;
+    Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
+      configurable: true,
+      value: 400,
+    });
+    Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
+      configurable: true,
+      value: 400,
+    });
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    delete (HTMLElement.prototype as unknown as { offsetWidth?: number }).offsetWidth;
+    delete (HTMLElement.prototype as unknown as { offsetHeight?: number }).offsetHeight;
   });
 
   it("should render the graph container", () => {
