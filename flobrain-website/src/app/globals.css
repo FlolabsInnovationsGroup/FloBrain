@@ -37,3 +37,22 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+/* Memory node side panel — thin thumb, invisible track, deep purple */
+.memory-node-panel-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.memory-node-panel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.memory-node-panel-scroll::-webkit-scrollbar-thumb {
+  background: #16101f;
+  border-radius: 9999px;
+}
+.memory-node-panel-scroll::-webkit-scrollbar-thumb:hover {
+  background: #1f1729;
+}
+.memory-node-panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #16101f transparent;
+}
