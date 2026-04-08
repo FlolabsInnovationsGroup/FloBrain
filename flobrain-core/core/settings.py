@@ -150,3 +150,11 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
+# Email (SMTP via Gmail, port 587 TLS)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('SMTP_PORT', 587))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('SMTP_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASS')
+SALES_EMAIL = os.environ.get('SALES_EMAIL')
