@@ -1,6 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AppChrome } from "@/components/layout/AppChrome";
+import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/footer";
+import { RootBackground } from "@/components/layout/RootBackground";
 import { AuthProviderWrapper } from "@/components/providers/AuthProviderWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -14,9 +16,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProviderWrapper>
-          <div className="flex min-h-screen flex-col">
-            <AppChrome>{children}</AppChrome>
-          </div>
+          <RootBackground>
+            <Navbar />
+            <div className="flex-1">{children}</div>
+            <Footer />
+          </RootBackground>
         </AuthProviderWrapper>
       </body>
     </html>
