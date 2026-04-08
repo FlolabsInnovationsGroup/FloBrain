@@ -18,6 +18,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
+  const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
   const isHomeActive = pathname === "/" || pathname === "/home";
   const isPricingActive = pathname === "/pricing";
   const isContactActive = pathname === "/contact";
@@ -31,9 +32,14 @@ export default function Navbar() {
     : "sticky top-0 z-[100] w-[95%] max-w-none mx-auto px-4 pt-4 md:px-6 md:pt-5";
 
   return (
-    <header className={headerClass}>
-      <div className={isBrainPage ? "w-[95%] max-w-none mx-auto" : undefined}>
-      <nav className="w-full flex items-center justify-between rounded-2xl border border-white/5 bg-[#0f0a1a]/95 px-5 py-3 shadow-[0_8px_32px_rgba(147,51,234,0.18)] backdrop-blur-md md:px-6 md:py-3.5">
+    <header
+      className={
+        isMemoryRoute
+          ? "pointer-events-none fixed inset-x-0 top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
+          : "sticky top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
+      }
+    >
+      <nav className="pointer-events-auto relative mx-auto flex max-w-6xl items-center justify-between rounded-2xl border border-white/5 bg-[#0f0a1a]/95 px-5 py-3 shadow-[0_8px_32px_rgba(147,51,234,0.18)] backdrop-blur-md md:px-6 md:py-3.5">
         {/* LEFT: Logo + Brand + Tagline */}
         <div className="flex min-w-0 shrink items-center gap-3">
           <Link href="/" className="flex shrink-0 items-center gap-3">
@@ -171,7 +177,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="mx-auto mt-2 max-w-6xl rounded-2xl border border-white/5 bg-[#0f0a1a]/95 p-4 shadow-lg md:hidden">
+        <div className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border border-white/5 bg-[#0f0a1a]/95 p-4 shadow-lg md:hidden">
           {!isLoading && isAuthenticated ? (
             <div className="flex flex-col gap-2">
               <Link
