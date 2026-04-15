@@ -1,7 +1,7 @@
 export type BillingCycle = "monthly" | "annual";
 
 export interface PlanDefinition {
-  id: "developer" | "pro" | "business" | "enterprise";
+  id: "personal" | "pro" |"enterprise";
   name: string;
   badge?: string;
   description: string;
@@ -17,72 +17,50 @@ export interface PlanDefinition {
   /** Base features (Developer). For higher tiers, these are the ADDITIONAL features only. */
   features: string[];
   /** When set, display "All in {parent} plus:" followed by features. */
-  inheritsFrom?: "developer" | "pro" | "business";
+  inheritsFrom?: "personal" | "pro" ;
 }
 
 export const PLANS: PlanDefinition[] = [
   {
-    id: "developer",
-    name: "Developer",
+    id: "personal",
+    name: "Personal",
     description: "Perfect for hobbyists and experimentation",
     monthlyPrice: "Free",
-    devices: "3",
-    calls: "10K calls/mo",
-    memory: "1GB storage",
-    workflows: "100/day",
+    devices: "1",
+    calls: "100/mo",
+    memory: "100 MB storage",
+    workflows: "10/day",
     buttonText: "Start using",
     features: [
-      "Community support",
-      "Basic documentation",
-      "Public Discord channel",
-      "API rate limiting",
-      "Standard uptime SLA",
+      "Access to GPT model",
+      "Image understanding",
+      "Voice-to-voice conversation",
+      "System monitoring",
+      "Short memory persistence",
+      "User support",
+      "Data privacy",
     ],
   },
   {
     id: "pro",
     name: "Pro",
     badge: "Most Popular",
-    description: "For startups and small teams building products",
-    monthlyPrice: "$49",
-    annualPrice: "$470",
-    devices: "50",
-    calls: "500K calls/mo",
-    memory: "50GB storage",
-    workflows: "Unlimited",
+    description: "For advanced personal use or startups and small teams",
+    monthlyPrice: "$20",
+    annualPrice: "$240",
+    devices: "5",
+    calls: "500K/mo",
+    memory: "5 GB storage",
+    workflows: "100/day",
     buttonText: "Start Free Trial",
-    inheritsFrom: "developer",
+    inheritsFrom: "personal",
     features: [
-      "Priority email support",
-      "Advanced analytics dashboard",
-      "Custom model routing",
-      "Workflow templates library",
-      "Team collaboration (5 seats)",
-      "Higher rate limits",
-      "99.9% uptime SLA",
-    ],
-  },
-  {
-    id: "business",
-    name: "Business",
-    description: "For growing businesses and production deployments",
-    monthlyPrice: "$299",
-    annualPrice: "$2,870",
-    devices: "500",
-    calls: "5M calls/mo",
-    memory: "50GB storage",
-    workflows: "Unlimited",
-    buttonText: "Start Free Trial",
-    inheritsFrom: "pro",
-    features: [
-      "Priority support (24/5)",
-      "SSO & RBAC",
-      "Advanced security controls",
-      "Custom integrations",
-      "Dedicated success manager",
-      "Unlimited team seats",
-      "White-label options",
-      "99.95% uptime SLA",
+     "Access to Claude model",
+     "Access to Gemini model",
+     "Long memory persistence",
+     "Team with up to 5 members",
+     "Files integration",
+     "Custom preferences"
     ],
   },
   {
@@ -96,24 +74,19 @@ export const PLANS: PlanDefinition[] = [
     memory: "Custom",
     workflows: "Unlimited",
     buttonText: "Contact Sales",
-    inheritsFrom: "business",
+    inheritsFrom: "pro",
     features: [
-      "Priority support (24/7)",
-      "Advanced compliance (SOC 2, HIPAA)",
-      "On-premise deployment option",
-      "Custom SLAs",
-      "Dedicated infrastructure",
-      "Custom contract terms",
-      "Professional services",
-      "Executive business reviews",
+    "Team with unlimited members",
+    "Enterprise's model integration",
+    "Greater file upload limit",
+    "Compare responses from multiple models",
     ],
   },
 ];
 
 const INHERITS_LABELS: Record<NonNullable<PlanDefinition["inheritsFrom"]>, string> = {
-  developer: "Developer",
+  personal: "Personal",
   pro: "Pro",
-  business: "Business",
 };
 
 export function getInheritsLabel(inheritsFrom: PlanDefinition["inheritsFrom"]): string | undefined {

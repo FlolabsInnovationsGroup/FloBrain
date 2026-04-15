@@ -22,19 +22,19 @@ describe("MemorySkeleton Component", () => {
 
   it("should render memory types legend with 4 items", () => {
     const { container } = render(<MemorySkeleton />);
-    const legendItems = container.querySelectorAll("[key^='legend-']");
+    const legendItems = container.querySelectorAll("[data-testid^='legend-']");
     expect(legendItems.length).toBe(4);
   });
 
   it("should render 8 simulated graph nodes", () => {
     const { container } = render(<MemorySkeleton />);
-    const nodes = container.querySelectorAll("[key^='node-']");
+    const nodes = container.querySelectorAll("[data-testid^='node-']");
     expect(nodes.length).toBe(8);
   });
 
-  it("should apply gradient background", () => {
-    const { container } = render(<MemorySkeleton />);
-    const mainContainer = container.querySelector(".bg-gradient-to-br");
-    expect(mainContainer).toBeDefined();
+  it("should use memory page background", () => {
+    const { getByTestId } = render(<MemorySkeleton />);
+    const root = getByTestId("memory-skeleton-root");
+    expect(root.className).toContain("bg-[#08040A]");
   });
 });

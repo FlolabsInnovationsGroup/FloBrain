@@ -1,4 +1,3 @@
-import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import brainImage from "@/assets/images/brain.svg";
 export const HeroSection = () => {
@@ -12,14 +11,14 @@ export const HeroSection = () => {
           applications. Build smarter products with workflow orchestration, persistent memory, and
           real-time AI—all privacy-first.
         </p>
-        <button className="py-7 rounded-[16px] bg-[#A855F7] text-white font-semibold text-[20px] flex flex-row items-center justify-center gap-2 w-50 h-16 mt-[50px] cursor-pointer"
+        {/* <button className="py-7 rounded-[16px] bg-[#A855F7] text-white font-semibold text-[20px] flex flex-row items-center justify-center gap-2 w-50 h-16 mt-[50px] cursor-pointer"
         style={{
           boxShadow:
             "0 2px 30px rgba(169, 85, 247, 0.59) ",
         }}>
           Get started
           <ArrowRight />
-        </button>
+        </button> */}
       </div>
       <div>
         <Image src={brainImage} alt="FloBrain" width={256} height={233} />

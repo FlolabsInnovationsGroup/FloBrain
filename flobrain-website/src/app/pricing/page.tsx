@@ -64,7 +64,7 @@ export default function Pricing() {
       </div>
 
       {/* Pricing Cards Grid - 4 columns */}
-      <div className="mb-8 grid w-full max-w-7xl grid-cols-1 items-stretch gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mb-8 items-stretch">
         {pricingTiers.map((tier, index) => (
           <PricingCard
             key={tier.name}
@@ -76,14 +76,14 @@ export default function Pricing() {
       </div>
 
       {/* Footer CTA */}
-      <div className="text-center mt-8">
+      {/* <div className="text-center mt-8">
         <p className="text-zinc-400 text-sm">
           Need help choosing?{" "}
           <a href="/contact" className="text-[#a78bfa] hover:underline font-medium">
             Contact our sales team
           </a>
         </p>
-      </div>
+      </div> */}
 
       {selectedTier && (
         <PlanUpgradePopup
