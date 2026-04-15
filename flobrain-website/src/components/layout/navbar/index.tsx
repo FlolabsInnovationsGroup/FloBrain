@@ -26,11 +26,6 @@ export default function Navbar() {
   const isChatsActive = pathname === "/brain";
   const isMemoryActive = pathname === "/memory";
 
-  const isBrainPage = pathname === "/brain";
-  const headerClass = isBrainPage
-    ? "fixed top-0 left-0 right-0 z-[100] w-full px-4 pt-4 md:px-6 md:pt-5"
-    : "sticky top-0 z-[100] w-[95%] max-w-none mx-auto px-4 pt-4 md:px-6 md:pt-5";
-
   return (
     <header
       className={
@@ -66,36 +61,32 @@ export default function Navbar() {
             <div className="flex items-center gap-1">
               <Link
                 href="/home"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  isHomeActive ? activeLinkClass : inactiveLinkClass
-                }`}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isHomeActive ? activeLinkClass : inactiveLinkClass
+                  }`}
               >
                 <Home className={navIconClass} />
                 Home
               </Link>
               <Link
                 href="/dashboard"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  isDashboardActive ? activeLinkClass : inactiveLinkClass
-                }`}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isDashboardActive ? activeLinkClass : inactiveLinkClass
+                  }`}
               >
                 <LayoutDashboard className={navIconClass} />
                 Dashboard
               </Link>
               <Link
                 href="/brain"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  isChatsActive ? activeLinkClass : inactiveLinkClass
-                }`}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isChatsActive ? activeLinkClass : inactiveLinkClass
+                  }`}
               >
                 <MessageCircle className={navIconClass} />
                 Chats
               </Link>
               <Link
                 href="/memory"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  isMemoryActive ? activeLinkClass : inactiveLinkClass
-                }`}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isMemoryActive ? activeLinkClass : inactiveLinkClass
+                  }`}
               >
                 <Brain className={navIconClass} />
                 Memory
@@ -111,27 +102,24 @@ export default function Navbar() {
             <div className="flex items-center gap-1">
               <Link
                 href="/home"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  isHomeActive ? activeLinkClass : inactiveLinkClass
-                }`}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isHomeActive ? activeLinkClass : inactiveLinkClass
+                  }`}
               >
                 <Home className={navIconClass} />
                 Home
               </Link>
               <Link
                 href="/pricing"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  isPricingActive ? activeLinkClass : inactiveLinkClass
-                }`}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isPricingActive ? activeLinkClass : inactiveLinkClass
+                  }`}
               >
                 <DollarSign className={navIconClass} />
                 Pricing
               </Link>
               <Link
                 href="/contact"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                  isContactActive ? activeLinkClass : inactiveLinkClass
-                }`}
+                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isContactActive ? activeLinkClass : inactiveLinkClass
+                  }`}
               >
                 <Mail className={navIconClass} />
                 Contact
@@ -227,7 +215,6 @@ export default function Navbar() {
           )}
         </div>
       )}
-      </div>
     </header>
   );
 }

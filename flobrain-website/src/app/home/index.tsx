@@ -16,15 +16,15 @@ export default function HomePage() {
       <HeroSection />
 
       {/* 2. Features Grid */}
-      <div className="w-full max-w-7xl px-4 py-20">
-        <h1 className="text-[36px] font-bold text-center mb-4 text-[#FFFFFF]">
+      <div className="w-full max-w-7xl px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
+        <h1 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[36px] font-bold text-center mb-3 sm:mb-4 text-[#FFFFFF]">
           Powerful Features, Simple Integration
         </h1>
-        <p className="text-[20px] font-regular text-center text-zinc-400 mb-28">
-        Everything you need to build intelligent, context-aware applications
+        <p className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] font-regular text-center text-zinc-400 mb-10 sm:mb-16 md:mb-20 lg:mb-28 max-w-[90%] sm:max-w-[80%] mx-auto">
+          Everything you need to build intelligent, context-aware applications
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[50px] mt-[50px]">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 md:gap-8 lg:gap-[50px] mt-6 sm:mt-8 md:mt-[50px]">
           {features.map((feature) => (
             <FeaturesCard {...feature} key={feature.id} />
           ))}
@@ -32,16 +32,16 @@ export default function HomePage() {
       </div>
 
       {/* 3. Applications / Ecosystem Section */}
-      <div className="w-full max-w-7xl px-4 py-20">
-        <h1 className="text-[35px] font-bold text-center mb-4 text-[#FFFFFF]">
+      <div className="w-full max-w-7xl px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
+        <h1 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[35px] font-bold text-center mb-3 sm:mb-4 text-[#FFFFFF]">
           Every Where, All At Once
         </h1>
-        <p className="text-[20px] text-center text-zinc-400 mx-auto w-[80%] md:w-[60%] mb-28">
+        <p className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] text-center text-zinc-400 mx-auto w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] mb-10 sm:mb-16 md:mb-20 lg:mb-28">
           FloBrain seamlessly integrates with wearables, mobile apps, web platforms, robotics, IoT
           devices, and enterprise systems—all through a unified API
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[50px] mt-[80px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-[50px] mt-6 sm:mt-8 md:mt-[80px]">
           {applications.map((application) => (
             <ApplicationsCard {...application} key={application.id} />
           ))}

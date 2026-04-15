@@ -10,7 +10,7 @@ interface FeaturesCardProps {
 export const FeaturesCard = ({ icon, title, description }: FeaturesCardProps) => {
   return (
     <div
-      className="w-full rounded-2xl p-8 text-left bg-[#E3E3E31A] border border-white/[0.06] transition-colors"
+      className="w-full rounded-2xl p-2 md:p-8 text-left bg-[#E3E3E31A] border border-white/[0.06] transition-colors"
       style={{
         boxShadow:
           "0 0 0 1px rgba(168, 85, 247, 0.08), 0 0 24px -4px rgba(168, 85, 247, 0.15), 0 0 48px -12px rgba(236, 72, 153, 0.08)",

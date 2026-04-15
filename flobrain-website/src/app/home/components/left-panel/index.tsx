@@ -15,6 +15,8 @@ import {
 import { cn } from "@/lib/utils";
 import type { ChatHistory } from "@/types/chat";
 
+const EMPTY_CHAT_HISTORY: ChatHistory[] = [];
+
 export type SystemModuleId = "brain-activity" | "load-memory" | "router-config" | "system-health";
 
 export const SYSTEM_MODULE_IDS: SystemModuleId[] = [
@@ -100,7 +102,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const isChats = variant === "chats";
   const activeModuleId = isModules ? props.activeModuleId : undefined;
   const onModuleSelect = isModules ? props.onModuleSelect : undefined;
-  const chatHistory = isChats ? (props.chatHistory ?? []) : [];
+  const chatHistory = isChats ? (props.chatHistory ?? EMPTY_CHAT_HISTORY) : EMPTY_CHAT_HISTORY;
   const currentChatId = isChats ? (props.currentChatId ?? null) : null;
   const onLoadChat = isChats ? props.onLoadChat : undefined;
   const chatsLoading = isChats ? (props.chatsLoading ?? false) : false;
