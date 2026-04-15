@@ -26,11 +26,6 @@ export default function Navbar() {
   const isChatsActive = pathname === "/brain";
   const isMemoryActive = pathname === "/memory";
 
-  const isBrainPage = pathname === "/brain";
-  const headerClass = isBrainPage
-    ? "fixed top-0 left-0 right-0 z-[100] w-full px-4 pt-4 md:px-6 md:pt-5"
-    : "sticky top-0 z-[100] w-[95%] max-w-none mx-auto px-4 pt-4 md:px-6 md:pt-5";
-
   return (
     <header
       className={
@@ -227,7 +222,6 @@ export default function Navbar() {
           )}
         </div>
       )}
-      </div>
     </header>
   );
 }

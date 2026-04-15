@@ -100,16 +100,20 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const isChats = variant === "chats";
   const activeModuleId = isModules ? props.activeModuleId : undefined;
   const onModuleSelect = isModules ? props.onModuleSelect : undefined;
-  const chatHistory = isChats ? (props.chatHistory ?? []) : [];
   const currentChatId = isChats ? (props.currentChatId ?? null) : null;
   const onLoadChat = isChats ? props.onLoadChat : undefined;
   const chatsLoading = isChats ? (props.chatsLoading ?? false) : false;
+  const chats = useMemo(() => {
+    if (!isChats) return [];
+    const chatProps = props as LeftPanelPropsChats;
+    return chatProps.chatHistory ?? [];
+  }, [isChats, props]);
 
   const filteredChats = useMemo(() => {
-    if (!isChats || !searchQuery.trim()) return chatHistory;
+    if (!isChats || !searchQuery.trim()) return chats;
     const q = searchQuery.trim().toLowerCase();
-    return chatHistory.filter((c) => c.title.toLowerCase().includes(q));
-  }, [isChats, chatHistory, searchQuery]);
+    return chats.filter((c) => c.title.toLowerCase().includes(q));
+  }, [isChats, chats, searchQuery]);
 
   const searchPlaceholder = isChats ? "Search chats..." : "Search ...";
 
