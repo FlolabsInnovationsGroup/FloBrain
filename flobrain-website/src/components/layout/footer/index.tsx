@@ -26,7 +26,7 @@ export default function Footer() {
   if (!showFooter) return null;
 
   return (
-    <footer className="mt-24 border-t border-white/5 bg-[#020617]">
+    <footer className="mt-3 md:mt-24 border-t border-white/5 bg-[#020617]">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-10 md:flex-row md:items-start md:justify-between md:px-6 md:py-12">
         <div>
           <p className="text-lg font-semibold tracking-tight text-white">

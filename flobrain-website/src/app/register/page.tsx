@@ -5,9 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { Mail, Lock, EyeOff, Eye, User, Apple } from "lucide-react";
-import { Button } from "@/components/layout/button";
-import { Input } from "@/components/layout/input";
-import { Label } from "@/components/layout/label";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Register() {
@@ -49,75 +46,106 @@ export default function Register() {
   }
 
   return (
-    <main className="min-h-screen bg-[#2E0A4E] flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 relative overflow-hidden">
-      {/* Subtle background pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(139,92,246,0.15)_0%,_transparent_60%)]" />
+    <main
+      className="min-h-screen flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden"
+      style={{ background: "linear-gradient(160deg, #1a0a2e 0%, #0d0618 60%, #070014 100%)" }}
+    >
+      {/* Radial glow background */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div
+          className="w-[480px] h-[480px] rounded-full opacity-20"
+          style={{
+            background: "radial-gradient(circle, #7c3aed 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
+      </div>
 
-      <div className="w-full max-w-md relative z-10 flex flex-col items-center">
-        {/* Header - outside card */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-[#8A2BE2] mb-2">Create Account</h1>
-          <p className="text-zinc-400 text-sm">
-            Join <span className="font-semibold text-[#8A2BE2]">FloBrain</span> and start your journey
-          </p>
-        </div>
+      <div className="w-full max-w-sm relative z-10 flex flex-col gap-6">
 
-        {/* Form Card - light lavender */}
-        <div className="w-full bg-[#CABEE8]/90 rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Title */}
+        <h1
+          className="text-[28px] sm:text-[32px] font-bold text-center"
+          style={{ color: "#EC4899" }}
+        >
+          Create Account
+        </h1>
+
+        {/* Card */}
+        <div
+          className="w-full rounded-2xl p-5 sm:p-6 flex flex-col gap-5"
+          style={{
+            background: "rgba(22, 10, 40, 0.85)",
+            border: "1px solid rgba(139, 92, 246, 0.2)",
+            boxShadow: "0 0 40px rgba(124, 58, 237, 0.12), 0 4px 24px rgba(0,0,0,0.4)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
+            {/* Error */}
             {error && (
-              <p className="text-sm text-red-600 bg-red-100 border border-red-200 rounded-lg px-3 py-2">
+              <p className="text-sm text-red-400 bg-red-900/30 border border-red-500/30 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}
 
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-zinc-800 font-medium">
-                Full Name
-              </Label>
+            {/* Full Name */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-white/80">Full Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
-                <Input
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <input
                   id="name"
                   type="text"
-                  placeholder="Enter your full name"
-                  className="pl-10 bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 rounded-lg h-12 focus-visible:ring-2 focus-visible:ring-[#6B46C1]/50 focus-visible:border-[#6B46C1]"
+                  placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  style={{
+                    background: "#e8e3f0",
+                    border: "1px solid rgba(139,92,246,0.15)",
+                  }}
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-zinc-800 font-medium">
-                Email
-              </Label>
+            {/* Email */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-white/80">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
-                <Input
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
-                  className="pl-10 bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 rounded-lg h-12 focus-visible:ring-2 focus-visible:ring-[#6B46C1]/50 focus-visible:border-[#6B46C1]"
+                  placeholder="johndoe@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  style={{
+                    background: "#e8e3f0",
+                    border: "1px solid rgba(139,92,246,0.15)",
+                  }}
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-zinc-800 font-medium">
-                Password
-              </Label>
+            {/* Password */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-white/80">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
-                <Input
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Create a password"
-                  className="pl-10 pr-12 bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 rounded-lg h-12 focus-visible:ring-2 focus-visible:ring-[#6B46C1]/50 focus-visible:border-[#6B46C1]"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  style={{
+                    background: "#e8e3f0",
+                    border: "1px solid rgba(139,92,246,0.15)",
+                  }}
                 />
                 <button
                   type="button"
@@ -129,19 +157,22 @@ export default function Register() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password" className="text-zinc-800 font-medium">
-                Confirm Password
-              </Label>
+            {/* Confirm Password */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm font-medium text-white/80">Confirm Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
-                <Input
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <input
                   id="confirm-password"
                   type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirm your password"
-                  className="pl-10 pr-12 bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-400 rounded-lg h-12 focus-visible:ring-2 focus-visible:ring-[#6B46C1]/50 focus-visible:border-[#6B46C1]"
+                  placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  style={{
+                    background: "#e8e3f0",
+                    border: "1px solid rgba(139,92,246,0.15)",
+                  }}
                 />
                 <button
                   type="button"
@@ -153,44 +184,61 @@ export default function Register() {
               </div>
             </div>
 
-            <Button
+            {/* Submit */}
+            <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-[#6B46C1] hover:bg-[#5B36B1] text-white font-semibold rounded-lg shadow-lg disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full h-12 rounded-xl font-semibold text-white text-[15px] flex items-center justify-center gap-2 mt-1 transition-opacity disabled:opacity-60 cursor-pointer"
+              style={{
+                background: "linear-gradient(90deg, #7c3aed 0%, #a855f7 100%)",
+                boxShadow: "0 0 24px rgba(168, 85, 247, 0.5), 0 4px 16px rgba(124, 58, 237, 0.4)",
+              }}
             >
               {loading ? "Creating account…" : "Create Account"}
-              <span className="text-lg">→</span>
-            </Button>
+              {!loading && <span className="text-base">→</span>}
+            </button>
           </form>
 
+          {/* Divider */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-zinc-300" />
-            <span className="text-sm text-zinc-500">Or continue with</span>
-            <div className="flex-1 h-px bg-zinc-300" />
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
           </div>
 
-          <div className="space-y-3">
-            <Button
+          {/* Social Buttons */}
+          <div className="flex flex-col gap-3">
+            <button
               type="button"
-              variant="outline"
-              className="w-full h-12 border-zinc-300 bg-white/80 text-zinc-800 hover:bg-white hover:border-zinc-400 rounded-lg flex items-center justify-center gap-3 font-medium"
+              className="w-full h-12 rounded-xl font-medium text-white text-sm flex items-center justify-center gap-3 transition-colors hover:opacity-90"
+              style={{
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.12)",
+              }}
             >
               <FcGoogle size={20} />
               Continue with Google
-            </Button>
-            <Button
+            </button>
+            <button
               type="button"
-              variant="outline"
-              className="w-full h-12 border-zinc-300 bg-white/80 text-zinc-800 hover:bg-white hover:border-zinc-400 rounded-lg flex items-center justify-center gap-3 font-medium"
+              className="w-full h-12 rounded-xl font-medium text-white text-sm flex items-center justify-center gap-3 transition-colors hover:opacity-90"
+              style={{
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.12)",
+              }}
             >
-              <Apple size={20} className="text-zinc-800" />
+              <Apple size={20} className="text-white" />
               Continue with Apple
-            </Button>
+            </button>
           </div>
 
-          <p className="text-center text-sm text-zinc-600">
+          {/* Login Link */}
+          <p className="text-center text-sm text-zinc-500">
             Already have an account?{" "}
-            <Link href="/signin" className="font-semibold text-[#6B46C1] hover:text-[#5B36B1] transition-colors">
+            <Link
+              href="/signin"
+              className="font-semibold transition-colors"
+              style={{ color: "#a855f7" }}
+            >
               Login
             </Link>
           </p>
