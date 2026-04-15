@@ -61,17 +61,17 @@ export default function PricingCard({ tier, index, onSelect }: PricingCardProps)
         </div>
       )}
 
-      <div className="p-6 flex flex-col h-full">
+      <div className="flex h-full flex-col p-5 sm:p-6">
         {/* Icon - per-plan color */}
         <div className={`w-11 h-11 rounded-xl mb-4 flex items-center justify-center flex-shrink-0 ${iconBg}`}>
           <Icon className="w-5 h-5 text-white" />
         </div>
 
-        <h3 className="text-xl font-bold text-white mb-1">{tier.name}</h3>
-        <p className="text-zinc-400 text-sm mb-4 min-h-[2.5rem]">{tier.description}</p>
+        <h3 className="mb-1 text-xl font-bold text-white">{tier.name}</h3>
+        <p className="mb-4 min-h-[2.5rem] text-sm text-zinc-400">{tier.description}</p>
 
         {/* Price */}
-        <div className="mb-4 flex items-baseline gap-1">
+        <div className="mb-4 flex flex-wrap items-baseline gap-1">
           <span className="text-3xl font-bold text-white">{tier.price}</span>
           {tier.period && (
             <span className="text-zinc-400 text-sm">{tier.period}</span>
@@ -82,22 +82,22 @@ export default function PricingCard({ tier, index, onSelect }: PricingCardProps)
         </div>
 
         {/* 2x2 Key features grid */}
-        <div className="grid grid-cols-2 gap-2 mb-5">
+        <div className="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
           <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-center">
             <div className="text-zinc-500 text-xs mb-0.5">Devices</div>
-            <div className="text-white font-medium text-sm whitespace-nowrap">{tier.devices}</div>
+            <div className="break-words text-sm font-medium text-white">{tier.devices}</div>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-center">
             <div className="text-zinc-500 text-xs mb-0.5">Calls</div>
-            <div className="text-white font-medium text-sm whitespace-nowrap">{tier.calls}</div>
+            <div className="break-words text-sm font-medium text-white">{tier.calls}</div>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-center">
             <div className="text-zinc-500 text-xs mb-0.5">Memory</div>
-            <div className="text-white font-medium text-sm whitespace-nowrap">{tier.memory}</div>
+            <div className="break-words text-sm font-medium text-white">{tier.memory}</div>
           </div>
           <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-center">
             <div className="text-zinc-500 text-xs mb-0.5">Workflows</div>
-            <div className="text-white font-medium text-sm whitespace-nowrap">{tier.workflows}</div>
+            <div className="break-words text-sm font-medium text-white">{tier.workflows}</div>
           </div>
         </div>
 
