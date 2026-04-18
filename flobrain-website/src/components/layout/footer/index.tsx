@@ -26,15 +26,15 @@ export default function Footer() {
   if (!showFooter) return null;
 
   return (
-    <footer className="mt-3 md:mt-24 border-t border-white/5 bg-[#020617]">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-10 md:flex-row md:items-start md:justify-between md:px-6 md:py-12">
-        <div>
-          <p className="text-lg font-semibold tracking-tight text-white">
+    <footer className="mt-6 sm:mt-10 md:mt-24 border-t border-white/5 bg-[#020617]">
+      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 py-8 sm:gap-10 sm:px-6 sm:py-10 md:flex-row md:items-start md:justify-between md:px-8 md:py-12">
+        <div className="text-center md:text-left">
+          <p className="text-base font-semibold tracking-tight text-white sm:text-lg">
             {FOOTER_BRAND}
           </p>
         </div>
 
-        <div className="grid flex-1 gap-8 text-left text-sm text-zinc-400 sm:grid-cols-2 md:grid-cols-4">
+        <div className="grid w-full flex-1 grid-cols-1 gap-6 text-left text-sm text-zinc-400 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4">
           {FOOTER_SECTIONS.map((section) => (
             <div key={section.title}>
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">

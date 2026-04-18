@@ -30,25 +30,25 @@ export default function Navbar() {
     <header
       className={
         isMemoryRoute
-          ? "pointer-events-none fixed inset-x-0 top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
-          : "sticky top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
+          ? "pointer-events-none fixed inset-x-0 top-0 z-[100] px-3 pt-3 sm:px-4 sm:pt-4 md:px-6 md:pt-5"
+          : "sticky top-0 z-[100] px-3 pt-3 sm:px-4 sm:pt-4 md:px-6 md:pt-5"
       }
     >
-      <nav className="pointer-events-auto relative mx-auto flex max-w-6xl items-center justify-between rounded-2xl border border-white/5 bg-[#0f0a1a]/95 px-5 py-3 shadow-[0_8px_32px_rgba(147,51,234,0.18)] backdrop-blur-md md:px-6 md:py-3.5">
+      <nav className="pointer-events-auto relative mx-auto flex max-w-6xl items-center justify-between rounded-2xl border border-white/5 bg-[#0f0a1a]/95 px-3 py-2.5 shadow-[0_8px_32px_rgba(147,51,234,0.18)] backdrop-blur-md sm:px-5 sm:py-3 md:px-6 md:py-3.5">
         {/* LEFT: Logo + Brand + Tagline */}
         <div className="flex min-w-0 shrink items-center gap-3">
-          <Link href="/" className="flex shrink-0 items-center gap-3">
+          <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
             <Image
               src={FlolabsLogo}
               alt="FloBrain"
-              className="h-8 w-auto text-[#a855f7]"
+              className="h-7 w-auto text-[#a855f7] sm:h-8"
               priority
             />
-            <div className="flex flex-col">
-              <span className="text-lg font-semibold tracking-tight text-white">
+            <div className="flex min-w-0 flex-col">
+              <span className="text-base font-semibold tracking-tight text-white sm:text-lg">
                 FloBrain
               </span>
-              <span className="text-xs text-zinc-500">
+              <span className="text-[10px] leading-tight text-zinc-500 sm:text-xs">
                 v1 • AI Operating System
               </span>
             </div>
@@ -155,7 +155,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="text-zinc-400 hover:text-white md:hidden"
+            className="rounded-md p-1.5 text-zinc-400 transition-colors hover:text-white md:hidden"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -165,45 +165,45 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border border-white/5 bg-[#0f0a1a]/95 p-4 shadow-lg md:hidden">
+        <div className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border border-white/5 bg-[#0f0a1a]/95 p-3 shadow-lg sm:p-4 md:hidden">
           {!isLoading && isAuthenticated ? (
             <div className="flex flex-col gap-2">
               <Link
                 href="/home"
-                className={`rounded-lg py-2 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
+                className={`rounded-lg px-2 py-2.5 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
                 Home
               </Link>
-              <Link href="/dashboard" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
-              <Link href="/brain" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Chats</Link>
-              <Link href="/memory" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Memory</Link>
-              <Link href="/profile" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Profile</Link>
+              <Link href="/dashboard" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
+              <Link href="/brain" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Chats</Link>
+              <Link href="/memory" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Memory</Link>
+              <Link href="/profile" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Profile</Link>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
               <Link
                 href="/home"
-                className={`rounded-lg py-2 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
+                className={`rounded-lg px-2 py-2.5 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
                 Home
               </Link>
               <Link
                 href="/pricing"
-                className={`rounded-lg py-2 ${isPricingActive ? "font-medium text-white" : "text-zinc-300"}`}
+                className={`rounded-lg px-2 py-2.5 ${isPricingActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
                 Pricing
               </Link>
               <Link
                 href="/contact"
-                className={`rounded-lg py-2 ${isContactActive ? "font-medium text-white" : "text-zinc-300"}`}
+                className={`rounded-lg px-2 py-2.5 ${isContactActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
                 Contact
               </Link>
-              <Link href="/signin" className="rounded-lg py-2 text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
+              <Link href="/signin" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
               <Link
                 href="/register"
                 className="rounded-xl bg-[#9333ea] py-3 text-center text-white"
