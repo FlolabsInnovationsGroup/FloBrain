@@ -132,7 +132,9 @@ export default function HomePage() {
             <div className="mt-5 space-y-3">
               <div className="rounded-xl border border-white/10 bg-white/5 p-4">
                 <p className="text-sm text-zinc-400">Input</p>
-                <p className="mt-1 text-sm text-zinc-100">"Create a morning care routine plan."</p>
+                <p className="mt-1 text-sm text-zinc-100">
+                  &quot;Create a morning care routine plan.&quot;
+                </p>
               </div>
               <div className="rounded-xl border border-violet-300/20 bg-violet-400/10 p-4">
                 <p className="flex items-center gap-2 text-sm text-violet-200">
