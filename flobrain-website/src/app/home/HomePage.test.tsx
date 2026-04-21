@@ -1,69 +1,31 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import HomePage from ".";
 
-vi.mock("./constants", () => ({
-  features: [
-    { id: 1, title: "Integration Feature 1", description: "Desc 1", icon: <span />, color: "#000" },
-    { id: 2, title: "Integration Feature 2", description: "Desc 2", icon: <span />, color: "#fff" },
-  ],
-  applications: [
-    {
-      id: 1,
-      title: "Integration App 1",
-      description: "App Desc 1",
-      tags: ["Tag1"],
-      icon: <span />,
-    },
-    {
-      id: 2,
-      title: "Integration App 2",
-      description: "App Desc 2",
-      tags: ["Tag2"],
-      icon: <span />,
-    },
-  ],
-  possibilities: ["Possibility 1"],
-}));
-
-vi.mock("next/image", () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @next/next/no-img-element
-  default: (props: any) => <img alt="" {...props} />,
-}));
-
-vi.mock("../../../../../assets/images/brain.svg", () => ({
-  default: "brain.svg",
-}));
-
 describe("HomePage Integration", () => {
-  it("should render the main page sections and static headings", () => {
+  it("renders primary hero and CTA sections", () => {
     render(<HomePage />);
-    expect(screen.getByText("Powerful Features, Simple Integration")).toBeDefined();
-    expect(screen.getByText("Every Where, All At Once")).toBeDefined();
-    expect(screen.getByText("THE INTELLIGENCE LAYER")).toBeDefined();
-    expect(screen.getByText("One Brain, Infinite Possibilities")).toBeDefined();
+    expect(
+      screen.getByText("Build intelligent product experiences with one AI operating layer.")
+    ).toBeDefined();
+    expect(screen.getByRole("link", { name: /Start free/i })).toHaveAttribute("href", "/register");
+    expect(screen.getByRole("link", { name: /Book demo/i })).toHaveAttribute("href", "/contact");
   });
 
-  it("should map and render all features from constants", () => {
+  it("renders key feature and solution cards", () => {
     render(<HomePage />);
-    expect(screen.getByText("Integration Feature 1")).toBeDefined();
-    expect(screen.getByText("Integration Feature 2")).toBeDefined();
-
-    const features = screen.getAllByText(/Integration Feature/);
-    expect(features).toHaveLength(2);
+    expect(screen.getByText("Agentic Workflows")).toBeDefined();
+    expect(screen.getByText("Multi-Model Router")).toBeDefined();
+    expect(screen.getByText("Care & Health")).toBeDefined();
+    expect(screen.getByText("Enterprise Ops")).toBeDefined();
   });
 
-  it("should map and render all applications from constants", () => {
+  it("renders implementation steps and bottom CTA", () => {
     render(<HomePage />);
-    expect(screen.getByText("Integration App 1")).toBeDefined();
-    expect(screen.getByText("Integration App 2")).toBeDefined();
-
-    const apps = screen.getAllByText(/Integration App/);
-    expect(apps).toHaveLength(2);
-  });
-
-  it("should render the footer banner with its content", () => {
-    render(<HomePage />);
-    expect(screen.getByText(/Whether you're using a wearable/i)).toBeDefined();
+    expect(screen.getByText("How teams launch with Caipo")).toBeDefined();
+    expect(screen.getByText("Step 1")).toBeDefined();
+    expect(screen.getByText("Ready to build your CAIPO experience?")).toBeDefined();
+    expect(screen.getByRole("link", { name: /Create account/i })).toHaveAttribute("href", "/register");
+    expect(screen.getByRole("link", { name: /View pricing/i })).toHaveAttribute("href", "/pricing");
   });
 });
