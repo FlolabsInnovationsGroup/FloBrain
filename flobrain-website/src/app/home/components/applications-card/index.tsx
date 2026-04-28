@@ -17,7 +17,7 @@ export const ApplicationsCard = ({
 }: ApplicationsCardProps) => {
   return (
     <div
-      className="w-full rounded-2xl p-6 md:p-7 bg-[#181024] border border-white/[0.08] text-left transition-colors"
+      className="w-full rounded-2xl p-3 md:p-6 bg-[#181024] border border-white/[0.08] text-left transition-colors"
     >
       <div className="flex flex-col gap-4">
         <div className="flex flex-row items-center gap-4">

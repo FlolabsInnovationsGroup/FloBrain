@@ -1,16 +1,26 @@
 "use client";
 
 import { useState, KeyboardEvent, useRef, useEffect } from 'react';
-import { Mic, MicOff, Image as ImageIcon, X } from 'lucide-react';
+import { Mic, MicOff, Image as ImageIcon, X, Zap } from 'lucide-react';
 import Image from 'next/image';
 
 interface ChatInputProps {
   onSendMessage: (text: string, image?: string) => void;
   disabled?: boolean;
   initialText?: string;
+  allowImageUpload?: boolean;
+  allowVoiceInput?: boolean;
+  compactMode?: boolean;
 }
 
-export default function ChatInput({ onSendMessage, disabled = false, initialText }: ChatInputProps) {
+export default function ChatInput({
+  onSendMessage,
+  disabled = false,
+  initialText,
+  allowImageUpload = true,
+  allowVoiceInput = true,
+  compactMode = false,
+}: ChatInputProps) {
   const [inputValue, setInputValue] = useState(() =>
     typeof initialText === 'string' ? initialText : ''
   );
@@ -114,8 +124,8 @@ new Blob(audioChunks, { type: 'audio/webm' });
   };
 
   return (
-    <div className="border-t border-white/10 bg-[#1a0d2e]/50 backdrop-blur-sm">
-      <div className="max-w-4xl mx-auto px-6 py-4">
+    <div className="backdrop-blur-sm shrink-0">
+      <div className={`max-w-4xl mx-auto px-6 ${compactMode ? 'py-2.5' : 'py-4'}`}>
         {/* Image Preview */}
         {imagePreview && (
           <div className="mb-3 relative inline-block">
@@ -135,81 +145,93 @@ new Blob(audioChunks, { type: 'audio/webm' });
           </div>
         )}
 
-        <div className="flex gap-3 items-stretch">
+        <div
+          className={`flex gap-3 items-center bg-[#111827] border-[#1F2937] border px-2 rounded-full ${
+            compactMode ? 'py-1.5' : 'py-2'
+          }`}
+        >
+          {/* Lightning icon (left) */}
+          <div className="shrink-0 text-amber-400/90" aria-hidden>
+            <Zap className="w-5 h-5 ml-4" fill="none" />
+          </div>
+
           {/* Text Input */}
-          <div className="flex-1 relative">
+          <div className="flex-1 relative flex min-w-0">
             <textarea
               ref={textareaRef}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="Type your message... (Press Enter to send, Shift+Enter for new line)"
+              placeholder="How does this LLM work?"
               disabled={disabled}
               rows={1}
-              className="w-full h-[48px] bg-[#2d1b4e]/80 text-white px-4 py-3 rounded-xl 
-                       border border-white/10 focus:border-[#7c5dbd] focus:outline-none
-                       resize-none
-                       placeholder:text-white/40 disabled:opacity-50 disabled:cursor-not-allowed
-                       transition-all duration-200"
+              className={`w-full min-w-0 text-white pl-2 pr-4
+                       resize-none placeholder:text-white text-base focus:outline-none
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
+                         compactMode ? 'h-10 py-2.5' : 'h-12 py-3'
+                       }`}
             />
           </div>
 
-          {/* Image Upload Button */}
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={disabled}
-            className="bg-[#2d1b4e]/80 text-white h-[48px] w-[48px] flex items-center justify-center rounded-xl 
-                     border border-white/10 hover:border-[#7c5dbd] hover:bg-[#3d2b5f]
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     transition-all duration-200 flex-shrink-0"
-            title="Upload image"
-          >
-            <ImageIcon size={20} />
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageSelect}
-            className="hidden"
-          />
+          {/* Secondary actions (image, voice) - compact */}
+          <div className="flex items-center gap-1 shrink-0">
+            {allowImageUpload && (
+              <>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={disabled}
+                  className="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors disabled:opacity-50"
+                  title="Upload image"
+                >
+                  <ImageIcon size={18} />
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageSelect}
+                  className="hidden"
+                />
+              </>
+            )}
+            {allowVoiceInput && (
+              <button
+                onClick={toggleRecording}
+                disabled={disabled}
+                className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
+                  isRecording
+                    ? 'text-red-400 hover:text-red-300 animate-pulse'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+                title={isRecording ? 'Stop recording' : 'Voice input'}
+              >
+                {isRecording ? <MicOff size={18} /> : <Mic size={18} />}
+              </button>
+            )}
+          </div>
 
-          {/* Voice Input Button */}
-          <button
-            onClick={toggleRecording}
-            disabled={disabled}
-            className={`h-[48px] w-[48px] flex items-center justify-center rounded-xl border transition-all duration-200 flex-shrink-0
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     ${isRecording 
-                       ? 'bg-red-500 hover:bg-red-600 border-red-400 animate-pulse' 
-                       : 'bg-[#2d1b4e]/80 hover:bg-[#3d2b5f] border-white/10 hover:border-[#7c5dbd]'
-                     }`}
-            title={isRecording ? "Stop recording" : "Start voice input"}
-          >
-            {isRecording ? <MicOff size={20} /> : <Mic size={20} />}
-          </button>
-          
-          {/* Send Button */}
+          {/* Send Button - circular purple with arrow up */}
           <button
             onClick={handleSend}
             disabled={(!inputValue.trim() && !imagePreview) || disabled}
-            className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white h-[48px] w-[48px] 
-                     flex items-center justify-center rounded-xl font-medium hover:opacity-90 transition-all duration-200
-                     disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0
-                     shadow-lg shadow-[#8B5CF6]/20 hover:shadow-[#8B5CF6]/40"
+            className={`shrink-0 rounded-full bg-[#9333ea] hover:bg-[#a855f7] text-white
+                     flex items-center justify-center font-medium hover:opacity-90 transition-all duration-200
+                     disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#9333ea]/30 ${
+                       compactMode ? 'w-10 h-10' : 'w-12 h-12'
+                     }`}
+            aria-label="Send message"
           >
-            <svg 
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
               strokeWidth="2"
-              strokeLinecap="round" 
+              strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              <path d="M12 19V5M5 12l7-7 7 7" />
             </svg>
           </button>
         </div>

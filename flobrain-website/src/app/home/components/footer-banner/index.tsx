@@ -10,44 +10,31 @@ const FOOTER_BANNER_FEATURES = [
 
 export const FooterBanner = () => {
   return (
-    <div className="w-full my-[4px]">
+    <div className="w-full my-[4px] px-4 sm:px-6 md:px-8 pb-12 sm:pb-16 md:pb-20">
       <div
-        className="relative overflow-hidden rounded-[24px] flex flex-col items-center py-[36px] px-[64px] max-w-[85%] mx-auto"
+        className="relative overflow-hidden rounded-[16px] sm:rounded-[20px] md:rounded-[24px] flex flex-col items-center py-8 sm:py-10 md:py-[36px] px-5 sm:px-10 md:px-[64px] w-full max-w-full md:max-w-[85%] mx-auto"
         style={{
           background:
           "linear-gradient(135deg, #EC489940, #8B5CF640)",
         }}
       >
-        <h2 className="text-[36px] font-bold text-white text-center">
+        <h2 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[36px] font-bold text-white text-center">
           One Brain, Infinite Possibilities
         </h2>
-        <p className="mt-4 text-center text-[#9CA3AF] text-base md:text-xl max-w-[600px]">
+        <p className="mt-3 sm:mt-4 text-center text-[#9CA3AF] text-sm sm:text-base md:text-xl max-w-[600px]">
           Join thousands of developers building the next generation of intelligent applications
         </p>
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 sm:mt-8 md:mt-10 flex flex-wrap justify-center gap-2 sm:gap-3">
           {FOOTER_BANNER_FEATURES.map(({ icon: Icon, label }) => (
             <div
               key={label}
-              className="flex flex-row items-center gap-2 rounded-full border border-white/40 px-4 py-2.5 text-white"
+              className="flex flex-row items-center gap-2 rounded-full border border-white/40 px-3 sm:px-4 py-2 sm:py-2.5 text-white"
             >
-              <Icon className="size-4 shrink-0 text-[#A855F7]" strokeWidth={2} />
-              <span className="text-sm font-medium whitespace-nowrap">{label}</span>
+              <Icon className="size-3.5 sm:size-4 shrink-0 text-[#A855F7]" strokeWidth={2} />
+              <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{label}</span>
             </div>
           ))}
         </div>
-        {/* <Link
-          href="/register"
-          className="mt-10 inline-flex items-center justify-center gap-2 rounded-xl bg-[#A855F7] px-8 py-4 text-white font-semibold text-base hover:bg-[#7C3AED] transition-colors"
-        style={{
-          boxShadow:
-            "0 2px 30px rgba(169, 85, 247, 0.59) ",
-        }}>
-          Create Free Account
-          <ArrowRight className="size-5 shrink-0" />
-        </Link> 
-        <p className="mt-6 text-center text-sm text-white/70 font-light">
-          No credit card required • Free tier includes 10K tokens/month
-        </p>*/}
       </div>
     </div>
   );
