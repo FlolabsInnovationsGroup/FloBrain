@@ -8,19 +8,21 @@ vi.mock('@/contexts/AuthContext', () => ({
   useAuth: () => ({ isAuthenticated: false }),
 }));
 
-vi.mock('./components/Sidebar/index', () => ({
-  default: function MockSidebar({
-    isOpen,
-    onToggle,
+vi.mock('@/app/home/components/left-panel', () => ({
+  LeftPanel: function MockLeftPanel({
+    onNewChat,
+    onPreferences,
   }: {
-    isOpen: boolean;
-    onToggle: () => void;
+    onNewChat: () => void;
+    onPreferences: () => void;
   }) {
     return (
-      <div data-testid="sidebar">
-        <span>Sidebar is {isOpen ? 'Open' : 'Closed'}</span>
-        <button type="button" onClick={onToggle}>
-          Toggle Sidebar
+      <div data-testid="left-panel">
+        <button type="button" onClick={onNewChat}>
+          New Chat
+        </button>
+        <button type="button" onClick={onPreferences}>
+          Preferences
         </button>
       </div>
     );
@@ -30,27 +32,32 @@ vi.mock('./components/Sidebar/index', () => ({
 vi.mock('./components/ChatArea/index', () => ({ default: () => <div data-testid="chat-area">ChatArea</div> }));
 vi.mock('./components/MessageInput/index', () => ({ default: () => <div data-testid="message-input">MessageInput</div> }));
 vi.mock('jspdf', () => ({ __esModule: true, default: vi.fn() }));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    replace: vi.fn(),
+    push: vi.fn(),
+  }),
+  useSearchParams: () => ({
+    get: vi.fn().mockReturnValue(null),
+  }),
+}));
 
 describe('BrainPage', () => {
   it('renders main layout with sidebar and welcome content', () => {
     render(<BrainPage />);
-    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
+    expect(screen.getByTestId('left-panel')).toBeInTheDocument();
     expect(screen.getByText('Welcome to FLOBRAIN')).toBeInTheDocument();
     expect(screen.getByText(/Start a new conversation/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Start New Chat/i })).toBeInTheDocument();
   });
 
-  it('initializes with sidebar open', () => {
+  it('renders responsive container classes', () => {
     render(<BrainPage />);
-    expect(screen.getByText('Sidebar is Open')).toBeInTheDocument();
-  });
-
-  it('toggles sidebar when button is clicked', () => {
-    render(<BrainPage />);
-    fireEvent.click(screen.getByText('Toggle Sidebar'));
-    expect(screen.getByText('Sidebar is Closed')).toBeInTheDocument();
-    fireEvent.click(screen.getByText('Toggle Sidebar'));
-    expect(screen.getByText('Sidebar is Open')).toBeInTheDocument();
+    const main = document.querySelector('main');
+    expect(main).toBeInTheDocument();
+    expect(main?.className).toContain('w-full');
+    expect(main?.className).toContain('sm:px-4');
+    expect(main?.className).toContain('lg:px-6');
   });
 
   it('starts new chat when Start New Chat is clicked', async () => {

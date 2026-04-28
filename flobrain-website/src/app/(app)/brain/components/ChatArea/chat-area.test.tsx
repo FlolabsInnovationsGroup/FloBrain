@@ -31,6 +31,14 @@ describe('ChatArea Component', () => {
       const svgElement = document.querySelector('svg');
       expect(svgElement).toBeInTheDocument();
     });
+
+    test('uses responsive spacing classes for chat wrapper', () => {
+      const { container } = render(<ChatArea messages={[]} />);
+      const wrapper = container.firstChild as HTMLElement;
+      expect(wrapper.className).toContain('px-3');
+      expect(wrapper.className).toContain('sm:px-4');
+      expect(wrapper.className).toContain('md:px-6');
+    });
   });
 
   describe('With Messages', () => {

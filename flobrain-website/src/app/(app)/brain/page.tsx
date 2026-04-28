@@ -649,7 +649,7 @@ function BrainPageContent() {
   };
 
   return (
-    <main className="h-screen w-[92%] mx-auto bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] text-slate-300 font-[Inter] overflow-hidden flex flex-col pt-[7rem] box-border mb-2">
+    <main className="mx-auto mb-2 flex h-[calc(100vh-5rem)] w-full max-w-[1800px] flex-col overflow-hidden bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-2 pt-[5.5rem] font-[Inter] text-slate-300 sm:px-4 sm:pt-[6.25rem] lg:px-6">
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
           {error}
@@ -663,7 +663,7 @@ function BrainPageContent() {
         </div>
       )}
 
-      <div className="flex flex-1 min-h-0 gap-3 overflow-hidden relative">
+      <div className="relative flex min-h-0 flex-1 gap-2 overflow-hidden sm:gap-3">
         <LeftPanel
           variant="chats"
           chatHistory={chatHistory}
@@ -676,8 +676,8 @@ function BrainPageContent() {
           chatsLoading={chatsLoading}
         />
 
-        <div className="flex flex-1 min-w-0 min-h-0 gap-3">
-          <section className="flex-1 relative flex flex-col min-w-0 min-h-0 bg-[#0B0719]/30 rounded-xl overflow-hidden border border-white/10">
+        <div className="flex min-h-0 min-w-0 flex-1 gap-2 sm:gap-3">
+          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30">
             {currentChatId ? (
               <>
                 <ChatArea
@@ -697,9 +697,9 @@ function BrainPageContent() {
                 />
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center overflow-y-auto">
-                <div className="text-center max-w-md px-6">
-                  <div className="w-20 h-20 mx-auto mb-6 opacity-50">
+              <div className="flex flex-1 items-center justify-center overflow-y-auto p-4 sm:p-6">
+                <div className="max-w-md text-center">
+                  <div className="mx-auto mb-4 h-16 w-16 opacity-50 sm:mb-6 sm:h-20 sm:w-20">
                     <svg viewBox="0 0 100 100" fill="none">
                       <path
                         d="M50 10L20 25V45C20 62.5 35 77.5 50 82.5C65 77.5 80 62.5 80 45V25L50 10Z"
@@ -728,10 +728,10 @@ function BrainPageContent() {
                       </defs>
                     </svg>
                   </div>
-                  <h2 className="text-3xl font-bold text-white mb-3">
+                  <h2 className="mb-3 text-2xl font-bold text-white sm:text-3xl">
                     Welcome to FLOBRAIN
                   </h2>
-                  <p className="text-white/60 mb-8">
+                  <p className="mb-6 text-sm text-white/60 sm:mb-8 sm:text-base">
                     Start a new conversation to chat with our AI assistant.
                     {isAuthenticated
                       ? ' Your chats are saved on the server.'
@@ -740,7 +740,7 @@ function BrainPageContent() {
                   <button
                     type="button"
                     onClick={handleNewChat}
-                    className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-8 py-4 rounded-xl font-semibold hover:opacity-90 transition-all duration-200 shadow-lg shadow-[#8B5CF6]/30 hover:shadow-[#8B5CF6]/50 text-lg"
+                    className="w-full rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] px-6 py-3 text-base font-semibold text-white shadow-lg shadow-[#8B5CF6]/30 transition-all duration-200 hover:opacity-90 hover:shadow-[#8B5CF6]/50 sm:w-auto sm:px-8 sm:py-4 sm:text-lg"
                   >
                     Start New Chat
                   </button>

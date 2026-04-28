@@ -27,10 +27,10 @@ function MessageBubble({ message, compactMode = false }: { message: Message; com
   const gradientId = `brainGradient-${message.id}`;
   return (
     <div
-      className={`flex gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+      className={`flex gap-2 sm:gap-4 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
     >
       {message.type === 'assistant' && (
-        <div className="w-10 h-10 flex-shrink-0">
+        <div className="h-8 w-8 flex-shrink-0 sm:h-10 sm:w-10">
           <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
             <circle cx="20" cy="20" r="18" fill={`url(#${gradientId})`} opacity="0.2"/>
             <circle cx="20" cy="12" r="3" fill={`url(#${gradientId})`}/>
@@ -54,7 +54,7 @@ function MessageBubble({ message, compactMode = false }: { message: Message; com
         </div>
       )}
       <div
-        className={`max-w-2xl rounded-2xl ${compactMode ? 'px-4 py-3' : 'px-5 py-4'} ${
+        className={`max-w-[92%] sm:max-w-2xl rounded-2xl ${compactMode ? 'px-3 py-2.5 sm:px-4 sm:py-3' : 'px-4 py-3 sm:px-5 sm:py-4'} ${
           message.type === 'user'
             ? 'bg-[#7c5dbd]/30 text-white/90'
             : 'bg-[#3d2b5f]/40 text-white/80'
@@ -110,8 +110,8 @@ function ResponsePanel({
         </div>
         <div className="rounded-xl bg-[#0B0719]/80 border border-white/10 overflow-hidden">
           <div
-            className={`flex flex-wrap items-center gap-2 border-b border-white/10 ${
-              compactMode ? 'p-2' : 'p-3'
+            className={`flex flex-wrap items-center gap-1.5 sm:gap-2 border-b border-white/10 ${
+              compactMode ? 'p-2' : 'p-2.5 sm:p-3'
             }`}
           >
             {ANSWER_TABS.map((model) => {
@@ -122,7 +122,7 @@ function ResponsePanel({
                   key={model}
                   type="button"
                   onClick={() => onSelectModel(model)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
+                  className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm ${
                     isSelected ? 'text-white' : 'bg-[#0B0719]/60 text-white/90 hover:bg-white/5'
                   }`}
                   style={{
@@ -136,13 +136,13 @@ function ResponsePanel({
             })}
             <button
               type="button"
-              className="ml-1 p-2 rounded-lg border border-white/20 text-white/70 hover:text-white hover:border-white/40 transition-colors"
+              className="ml-1 rounded-lg border border-white/20 p-1.5 text-white/70 transition-colors hover:border-white/40 hover:text-white sm:p-2"
               aria-label="Add model"
             >
               <Plus className="w-4 h-4" />
             </button>
           </div>
-          <div className={`${compactMode ? 'p-3 min-h-[96px]' : 'p-4 min-h-[120px]'}`}>
+          <div className={`${compactMode ? 'min-h-[96px] p-3' : 'min-h-[120px] p-3 sm:p-4'}`}>
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="relative w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] flex-shrink-0">
@@ -162,7 +162,7 @@ function ResponsePanel({
                 </p>
               </div>
             ) : assistantMessage?.text ? (
-              <p className="text-sm leading-relaxed whitespace-pre-wrap text-white/90">
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-white/90">
                 {assistantMessage.text}
               </p>
             ) : null}
@@ -211,11 +211,11 @@ export default function ChatArea({
   }, [messages, showResponseBlock, autoScroll]);
 
   return (
-    <div className={`flex-1 overflow-y-auto px-6 ${compactMode ? 'py-4' : 'py-8'}`}>
-      <div className={`max-w-4xl mx-auto ${compactMode ? 'space-y-3' : 'space-y-6'}`}>
+    <div className={`flex-1 overflow-y-auto px-3 sm:px-4 md:px-6 ${compactMode ? 'py-3 sm:py-4' : 'py-5 sm:py-8'}`}>
+      <div className={`mx-auto max-w-4xl ${compactMode ? 'space-y-3' : 'space-y-4 sm:space-y-6'}`}>
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center py-20">
-            <div className="w-16 h-16 mb-4">
+          <div className="flex h-full flex-col items-center justify-center py-12 text-center sm:py-20">
+            <div className="mb-4 h-14 w-14 sm:h-16 sm:w-16">
               <svg width="64" height="64" viewBox="0 0 32 32" fill="none">
                 <path d="M16 4L8 8V14C8 19.5 11.5 24.5 16 26C20.5 24.5 24 19.5 24 14V8L16 4Z" fill="url(#gradient)" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 <path d="M12 14L15 17L20 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -227,8 +227,8 @@ export default function ChatArea({
                 </defs>
               </svg>
             </div>
-            <h2 className="text-2xl font-semibold text-white/90 mb-2">Start a conversation</h2>
-            <p className="text-white/60">Type a message below to begin chatting with FLOBRAIN AI</p>
+            <h2 className="mb-2 text-xl font-semibold text-white/90 sm:text-2xl">Start a conversation</h2>
+            <p className="text-sm text-white/60 sm:text-base">Type a message below to begin chatting with FLOBRAIN AI</p>
           </div>
         ) : (
           <>

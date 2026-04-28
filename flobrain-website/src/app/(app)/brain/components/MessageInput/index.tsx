@@ -125,7 +125,7 @@ new Blob(audioChunks, { type: 'audio/webm' });
 
   return (
     <div className="backdrop-blur-sm shrink-0">
-      <div className={`max-w-4xl mx-auto px-6 ${compactMode ? 'py-2.5' : 'py-4'}`}>
+      <div className={`mx-auto max-w-4xl px-3 sm:px-4 md:px-6 ${compactMode ? 'py-2.5' : 'py-3 sm:py-4'}`}>
         {/* Image Preview */}
         {imagePreview && (
           <div className="mb-3 relative inline-block">
@@ -146,13 +146,13 @@ new Blob(audioChunks, { type: 'audio/webm' });
         )}
 
         <div
-          className={`flex gap-3 items-center bg-[#111827] border-[#1F2937] border px-2 rounded-full ${
+          className={`flex items-center gap-1.5 rounded-2xl border border-[#1F2937] bg-[#111827] px-2 sm:gap-3 sm:rounded-full ${
             compactMode ? 'py-1.5' : 'py-2'
           }`}
         >
           {/* Lightning icon (left) */}
           <div className="shrink-0 text-amber-400/90" aria-hidden>
-            <Zap className="w-5 h-5 ml-4" fill="none" />
+            <Zap className="ml-2 h-4 w-4 sm:ml-4 sm:h-5 sm:w-5" fill="none" />
           </div>
 
           {/* Text Input */}
@@ -165,25 +165,24 @@ new Blob(audioChunks, { type: 'audio/webm' });
               placeholder="How does this LLM work?"
               disabled={disabled}
               rows={1}
-              className={`w-full min-w-0 text-white pl-2 pr-4
-                       resize-none placeholder:text-white text-base focus:outline-none
+              className={`h-10 w-full min-w-0 resize-none pl-1 pr-1 text-sm text-white placeholder:text-white focus:outline-none sm:pl-2 sm:pr-4 sm:text-base
                        disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
-                         compactMode ? 'h-10 py-2.5' : 'h-12 py-3'
+                         compactMode ? 'py-2.5' : 'sm:h-12 py-2.5 sm:py-3'
                        }`}
             />
           </div>
 
           {/* Secondary actions (image, voice) - compact */}
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
             {allowImageUpload && (
               <>
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={disabled}
-                  className="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors disabled:opacity-50"
+                  className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50 sm:p-2"
                   title="Upload image"
                 >
-                  <ImageIcon size={18} />
+                  <ImageIcon size={16} />
                 </button>
                 <input
                   ref={fileInputRef}
@@ -198,14 +197,14 @@ new Blob(audioChunks, { type: 'audio/webm' });
               <button
                 onClick={toggleRecording}
                 disabled={disabled}
-                className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
+                className={`rounded-lg p-1.5 transition-colors disabled:opacity-50 sm:p-2 ${
                   isRecording
                     ? 'text-red-400 hover:text-red-300 animate-pulse'
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
                 title={isRecording ? 'Stop recording' : 'Voice input'}
               >
-                {isRecording ? <MicOff size={18} /> : <Mic size={18} />}
+                {isRecording ? <MicOff size={16} /> : <Mic size={16} />}
               </button>
             )}
           </div>
@@ -217,7 +216,7 @@ new Blob(audioChunks, { type: 'audio/webm' });
             className={`shrink-0 rounded-full bg-[#9333ea] hover:bg-[#a855f7] text-white
                      flex items-center justify-center font-medium hover:opacity-90 transition-all duration-200
                      disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#9333ea]/30 ${
-                       compactMode ? 'w-10 h-10' : 'w-12 h-12'
+                       compactMode ? 'h-9 w-9 sm:h-10 sm:w-10' : 'h-10 w-10 sm:h-12 sm:w-12'
                      }`}
             aria-label="Send message"
           >
