@@ -9,7 +9,8 @@ const collections = [
     'presetworkflows_planA',
     'presetworkflowsteps',
     'agents',
-    'tools'
+    'tools',
+    'user_events'
 ];
 
 collections.forEach((c) => {

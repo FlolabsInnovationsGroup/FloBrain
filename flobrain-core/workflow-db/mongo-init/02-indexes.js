@@ -1,11 +1,38 @@
 db = db.getSiblingDB('flobrain');
 
+//Workflows
 db.workflows.createIndex({ user_id: 1, created_at: -1 });
+db.workflows.createIndex({ preset_workflow_id: 1, preset_version: 1 });
+
+// Workflow Steps 
 db.workflow_steps.createIndex({ workflow_id: 1, created_at: 1 });
+db.workflow_steps.createIndex({ step_type: 1 });
+
+// LLM Calls
 db.llmcalls.createIndex({ workflow_id: 1, created_at: 1 });
+db.llmcalls.createIndex({ session_id: 1, created_at: -1 });
+
+// Messages
 db.messages.createIndex({ session_id: 1, created_at: 1 });
+
+// Locations
 db.locations.createIndex({ session_id: 1, created_at: 1 });
+
+// Preset Workflows
 db.presetworkflows_planA.createIndex({ name: 1, version: 1 }, { unique: true });
-db.presetworkflowsteps.createIndex({ agent_id: 1});
+
+// Preset Workflow Steps
+db.presetworkflowsteps.createIndex({ preset_workflow_id: 1, version: 1 });
+
+// Agents
 db.agents.createIndex({ name: 1, version: 1 }, { unique: true });
-db.tools.createIndex({ name: 1 });
+
+// Tools
+db.tools.createIndex({ name: 1, version: 1 }, { unique: true });
+
+// User Events
+db.user_events.createIndex({ user_id: 1, created_at: -1 });
+db.user_events.createIndex({ event_type: 1 });
+db.user_events.createIndex({ workflow_id: 1 });
+db.user_events.createIndex({ scheduled_time: 1 });
+db.user_events.createIndex({ event_status: 1 });
