@@ -10,7 +10,7 @@ import { LeftPanel } from '@/app/home/components/left-panel';
 import ChatArea from './components/ChatArea/index';
 import ChatInput from './components/MessageInput/index';
 import jsPDF from 'jspdf';
-import { X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const WELCOME_MESSAGE: Message = {
   id: 'msg-welcome',
@@ -177,7 +177,7 @@ function ConfidencePanel() {
     { model: 'Gemini 1.5', confidence: 73, latency: '120ms', tokens: '3.4K' },
   ];
   return (
-    <aside className="hidden w-[300px] shrink-0 rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 xl:block">
+    <aside className="w-full shrink-0 rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 xl:w-[300px]">
       <h3 className="mb-3 text-sm font-semibold text-white">Confidence</h3>
       <div className="space-y-3">
         {cards.map((card) => (
@@ -214,6 +214,7 @@ function BrainPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [preferences, setPreferences] = useState<BrainPreferences>(DEFAULT_PREFERENCES);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -478,6 +479,7 @@ function BrainPageContent() {
 
   const handleLoadChat = useCallback(
     async (id: number) => {
+      setIsMobileMenuOpen(false);
       setCurrentChatId(id);
 
       const bumpAndSort = (prev: ChatHistory[]) =>
@@ -649,7 +651,7 @@ function BrainPageContent() {
   };
 
   return (
-    <main className="mx-auto mb-2 flex h-[calc(100vh-5rem)] w-full max-w-[1800px] flex-col overflow-hidden bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-2 pt-[5.5rem] font-[Inter] text-slate-300 sm:px-4 sm:pt-[6.25rem] lg:px-6">
+    <main className="mx-auto mb-2 flex h-[calc(100dvh-5rem)] w-full max-w-[1800px] flex-col overflow-y-auto bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-2 pt-[5.5rem] font-[Inter] text-slate-300 sm:px-4 sm:pt-[6.25rem] lg:h-[calc(100vh-5rem)] lg:overflow-hidden lg:px-6">
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
           {error}
@@ -663,21 +665,79 @@ function BrainPageContent() {
         </div>
       )}
 
-      <div className="relative flex min-h-0 flex-1 gap-2 overflow-hidden sm:gap-3">
-        <LeftPanel
-          variant="chats"
-          chatHistory={chatHistory}
-          currentChatId={currentChatId}
-          onLoadChat={handleLoadChat}
-          onNewChat={handleNewChat}
-          onSearch={() => {}}
-          onPreferences={() => setIsPreferencesOpen(true)}
-          onSettings={() => {}}
-          chatsLoading={chatsLoading}
-        />
+      <div className="relative flex min-h-0 flex-1 gap-2 overflow-visible sm:gap-3 xl:overflow-hidden">
+        <div className="hidden lg:flex">
+          <LeftPanel
+            variant="chats"
+            chatHistory={chatHistory}
+            currentChatId={currentChatId}
+            onLoadChat={handleLoadChat}
+            onNewChat={handleNewChat}
+            onSearch={() => {}}
+            onPreferences={() => setIsPreferencesOpen(true)}
+            onSettings={() => {}}
+            chatsLoading={chatsLoading}
+          />
+        </div>
 
-        <div className="flex min-h-0 min-w-0 flex-1 gap-2 sm:gap-3">
-          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30">
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 z-[100] bg-black/60 lg:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-hidden
+          />
+        )}
+
+        <div
+          className={`fixed inset-y-0 left-0 z-[110] w-[84%] max-w-xs transform transition-transform duration-200 lg:hidden ${
+            isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <div className="h-full bg-[#0B0719]">
+            <div className="flex items-center justify-end px-4 pt-4">
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="rounded-md p-2 text-white/80 hover:bg-white/10 hover:text-white"
+                aria-label="Close menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <LeftPanel
+              variant="chats"
+              chatHistory={chatHistory}
+              currentChatId={currentChatId}
+              onLoadChat={handleLoadChat}
+              onNewChat={() => {
+                setIsMobileMenuOpen(false);
+                void handleNewChat();
+              }}
+              onSearch={() => {}}
+              onPreferences={() => {
+                setIsMobileMenuOpen(false);
+                setIsPreferencesOpen(true);
+              }}
+              onSettings={() => {}}
+              chatsLoading={chatsLoading}
+            />
+          </div>
+        </div>
+
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 sm:gap-3 xl:flex-row">
+          <div className="lg:hidden">
+            <div className="flex items-center">
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="rounded-lg border border-white/20 bg-[#0B0719]/80 p-2 text-white/90 hover:bg-[#1b1032]"
+                aria-label="Open menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+          <section className="relative flex min-h-[60dvh] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30 xl:min-h-0">
             {currentChatId ? (
               <>
                 <ChatArea

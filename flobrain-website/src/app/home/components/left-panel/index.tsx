@@ -119,7 +119,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
 
   return (
     <div
-      className="flex flex-col bg-[#0B0719]/50 relative w-[20%] border-transparent rounded-xl"
+      className="relative flex w-full min-w-0 flex-col rounded-xl border-transparent bg-[#0B0719]/50 lg:w-[20%] lg:min-w-[260px]"
     >
       <div
         className={cn(
