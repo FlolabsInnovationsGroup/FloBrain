@@ -9,5 +9,6 @@ step_id = add_workflow_step(
     {"valid": True}
 )
 
+print("Workflow event logged for workflow:", workflow_id)
 print("Workflow:", workflow_id)
 print("Step:", step_id)
