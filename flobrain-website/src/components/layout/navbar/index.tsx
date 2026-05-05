@@ -19,6 +19,7 @@ export default function Navbar() {
   const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
   const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
+  const isDashboardRoute = pathname === "/dashboard";
   const isHomeActive = pathname === "/" || pathname === "/home";
   const isPricingActive = pathname === "/pricing";
   const isContactActive = pathname === "/contact";
@@ -29,7 +30,9 @@ export default function Navbar() {
   return (
     <header
       className={
-        isMemoryRoute
+        isDashboardRoute
+          ? "hidden md:block"
+          : isMemoryRoute
           ? "pointer-events-none fixed inset-x-0 top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
           : "sticky top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
       }
