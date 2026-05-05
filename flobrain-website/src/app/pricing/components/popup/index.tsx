@@ -50,12 +50,12 @@ export default function PlanUpgradePopup({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative bg-[#1a1a2e] border border-[#4c1d95]/50 rounded-2xl shadow-2xl max-w-md w-full mx-4 p-8">
+      <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-[#4c1d95]/50 bg-[#1a1a2e] p-5 shadow-2xl sm:p-8">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -65,7 +65,7 @@ export default function PlanUpgradePopup({
         </button>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-white mb-6">Confirm changes</h2>
+        <h2 className="mb-6 text-xl font-bold text-white sm:text-2xl">Confirm changes</h2>
 
         {/* Current Plan */}
         <div className="mb-4">
@@ -115,7 +115,7 @@ export default function PlanUpgradePopup({
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row">
           <button
             onClick={onClose}
             className="flex-1 py-3 bg-transparent border border-[#4c1d95] text-white rounded-lg font-medium hover:border-[#8b5cf6] hover:bg-[#8b5cf6]/10 transition-all duration-300"
