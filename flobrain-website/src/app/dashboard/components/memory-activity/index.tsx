@@ -43,7 +43,7 @@ export const MemoryActivity = (): React.JSX.Element => {
   const weekCount = activity ? formatCount(activity.week_count) : "—";
   const totalCount = activity ? formatCount(activity.total_count) : "—";
   const weekPercentage = activity?.week_percentage ?? "—";
-  const weekPositive = activity?.week_positive ?? true;
+  const _weekPositive = activity?.week_positive ?? true;
 
   if (error) {
     return (
