@@ -65,16 +65,16 @@ export const WorkflowEngine = (): React.JSX.Element => {
 
   return (
     <div
-      className="w-full rounded-[16px] sm:rounded-[20px]"
+      className="w-full rounded-[18px] sm:rounded-[20px]"
       style={{
-        background: "rgba(30, 18, 43, 0.6)",
-        padding: "clamp(16px, 4vw, 32px)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
+        background: "rgba(30, 18, 43, 0.72)",
+        padding: "clamp(16px, 3.2vw, 28px)",
+        border: "1px solid rgba(139, 92, 246, 0.28)",
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
       }}
     >
       {/* Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+      <div className="grid grid-cols-[1fr_auto] items-start gap-3 sm:flex sm:items-start sm:justify-between sm:gap-0 mb-4 sm:mb-6">
         <div>
           <h2
             className="font-semibold mb-1"
@@ -97,9 +97,9 @@ export const WorkflowEngine = (): React.JSX.Element => {
         </div>
 
         {/* Status Badges */}
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-2 gap-0 sm:flex sm:items-center sm:gap-2">
           <div
-            className="rounded-full font-semibold"
+            className="inline-flex w-fit justify-self-start rounded-full font-semibold"
             style={{
               padding: "5px 10px",
               background: "rgba(220, 38, 38, 0.15)",
@@ -111,7 +111,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
             {criticalCount} Critical
           </div>
           <div
-            className="rounded-full font-semibold"
+            className="inline-flex w-fit justify-self-start rounded-full font-semibold"
             style={{
               padding: "5px 10px",
               background: "rgba(245, 158, 11, 0.15)",
@@ -126,21 +126,21 @@ export const WorkflowEngine = (): React.JSX.Element => {
       </div>
 
       {/* Error List Section */}
-      <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+      <div className="space-y-3 sm:space-y-3 mb-4 sm:mb-6">
         {alerts.map((alert: WorkflowAlert) => (
           <div
             key={alert.id}
-            className="rounded-lg sm:rounded-xl"
+            className="rounded-xl sm:rounded-xl"
             style={{
               padding: "clamp(12px, 3vw, 20px)",
               background:
                 alert.severity === "critical"
-                  ? "rgba(220, 38, 38, 0.08)"
-                  : "rgba(245, 158, 11, 0.08)",
+                  ? "rgba(239, 68, 68, 0.08)"
+                  : "rgba(245, 158, 11, 0.1)",
               border:
                 alert.severity === "critical"
-                  ? "1px solid rgba(220, 38, 38, 0.2)"
-                  : "1px solid rgba(245, 158, 11, 0.2)",
+                  ? "1px solid rgba(239, 68, 68, 0.25)"
+                  : "1px solid rgba(245, 158, 11, 0.3)",
             }}
           >
             <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
@@ -241,10 +241,9 @@ export const WorkflowEngine = (): React.JSX.Element => {
                 {/* Tag + Link */}
                 <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                   <code
-                    className="rounded font-mono"
+                    className="rounded-md font-mono border border-[#9810FA4D] md:border-transparent bg-[#8200DB66] md:bg-[rgba(255,255,255,0.05)]"
                     style={{
                       padding: "3px 6px",
-                      background: "rgba(255, 255, 255, 0.05)",
                       fontSize: "10px",
                       color: "rgba(255, 255, 255, 0.4)",
                       wordBreak: "break-all",
@@ -282,26 +281,6 @@ export const WorkflowEngine = (): React.JSX.Element => {
         ))}
       </div>
 
-      {/* Footer Section */}
-      <button
-        className="w-full rounded-lg sm:rounded-xl font-medium transition-all"
-        style={{
-          padding: "clamp(10px, 2vw, 14px)",
-          background: "rgba(139, 92, 246, 0.1)",
-          border: "1px solid rgba(139, 92, 246, 0.25)",
-          fontSize: "clamp(12px, 2.5vw, 13px)",
-          color: "#A78BFA",
-          cursor: "pointer",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(139, 92, 246, 0.15)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(139, 92, 246, 0.1)";
-        }}
-      >
-        View All Errors & Logs
-      </button>
     </div>
   );
 };
