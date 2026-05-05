@@ -3,6 +3,7 @@ db = db.getSiblingDB('flobrain');
 const collections = [
     'workflows',
     'workflow_steps',
+    'workflow_events'
     'llmcalls',
     'messages',
     'locations',
@@ -10,7 +11,6 @@ const collections = [
     'presetworkflowsteps',
     'agents',
     'tools',
-    'user_events'
 ];
 
 collections.forEach((c) => {

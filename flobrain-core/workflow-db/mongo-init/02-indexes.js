@@ -30,9 +30,8 @@ db.agents.createIndex({ name: 1, version: 1 }, { unique: true });
 // Tools
 db.tools.createIndex({ name: 1, version: 1 }, { unique: true });
 
-// User Events
-db.user_events.createIndex({ user_id: 1, created_at: -1 });
-db.user_events.createIndex({ event_type: 1 });
-db.user_events.createIndex({ workflow_id: 1 });
-db.user_events.createIndex({ scheduled_time: 1 });
-db.user_events.createIndex({ event_status: 1 });
+// Workflow Events
+db.workflow_events.createIndex({ workflow_id: 1, created_at: 1 });
+db.workflow_events.createIndex({ user_id: 1, created_at: -1 });
+db.workflow_events.createIndex({ event_type: 1 });
+db.workflow_events.createIndex({ status: 1});
