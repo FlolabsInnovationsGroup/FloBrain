@@ -102,7 +102,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const isChats = variant === "chats";
   const activeModuleId = isModules ? props.activeModuleId : undefined;
   const onModuleSelect = isModules ? props.onModuleSelect : undefined;
-  const chatHistory = isChats ? (props.chatHistory ?? EMPTY_CHAT_HISTORY) : EMPTY_CHAT_HISTORY;
+  const _chatHistory = isChats ? (props.chatHistory ?? EMPTY_CHAT_HISTORY) : EMPTY_CHAT_HISTORY;
   const currentChatId = isChats ? (props.currentChatId ?? null) : null;
   const onLoadChat = isChats ? props.onLoadChat : undefined;
   const chatsLoading = isChats ? (props.chatsLoading ?? false) : false;
