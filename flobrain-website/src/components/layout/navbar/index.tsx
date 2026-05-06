@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Home, DollarSign, Mail, MessageCircle, LayoutDashboard, Brain } from "lucide-react";
+import { Menu, X, Home, DollarSign } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,10 +22,6 @@ export default function Navbar() {
   const isDashboardRoute = pathname === "/dashboard";
   const isHomeActive = pathname === "/" || pathname === "/home";
   const isPricingActive = pathname === "/pricing";
-  const isContactActive = pathname === "/contact";
-  const isDashboardActive = pathname === "/dashboard";
-  const isChatsActive = pathname === "/brain";
-  const isMemoryActive = pathname === "/memory";
 
   return (
     <header
