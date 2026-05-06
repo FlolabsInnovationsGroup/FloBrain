@@ -48,16 +48,16 @@ export default function Pricing() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-start p-8 md:p-12">
+    <main className="flex min-h-screen flex-col items-center justify-start px-4 py-8 sm:px-6 md:p-12">
       {/* Header */}
-      <div className="text-center mb-12 max-w-3xl">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">
+      <div className="mb-10 max-w-3xl text-center md:mb-12">
+        <h1 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl">
           <span className="text-white">Pricing Built for </span>
           <span className="bg-gradient-to-r from-[#e879f9] via-[#c084fc] to-[#a78bfa] bg-clip-text text-transparent">
             Every Stage of Growth
           </span>
         </h1>
-        <p className="text-zinc-400 text-lg mt-4">
+        <p className="mt-4 text-base text-zinc-400 sm:text-lg">
           From individual user to enterprise teams, FloBrain scales with you. Start free and upgrade
           as you grow.
         </p>
