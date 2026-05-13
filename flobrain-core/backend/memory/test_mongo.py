@@ -35,6 +35,7 @@ error_event_id = log_system_event(
     payload={"message": "Sample system error for testing"}
 )
 
+print("Workflow event logged for workflow:", workflow_id)
 print("Workflow:", workflow_id)
 print("Step:", step_id)
 print("System Start Event:", start_event_id)

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, KeyboardEvent, useRef, useEffect } from 'react';
-import { Mic, MicOff, Image as ImageIcon, X, Zap } from 'lucide-react';
+import { useState, KeyboardEvent as ReactKeyboardEvent, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
+import { Mic, MicOff, Image as ImageIcon, X, Zap, Plus } from 'lucide-react';
 import Image from 'next/image';
 
 interface ChatInputProps {
@@ -29,9 +29,69 @@ export default function ChatInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const attachMenuContainerRef = useRef<HTMLDivElement>(null);
+  const [attachMenuOpen, setAttachMenuOpen] = useState(false);
+
+  const minTextareaPx = compactMode ? 40 : 48;
+  const maxTextareaPx = 220;
+
+  const syncTextareaHeight = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    // Reset so scrollHeight reflects only current text (shrinks when lines are removed).
+    el.style.height = 'auto';
+    el.style.minHeight = '0';
+    el.style.maxHeight = 'none';
+    el.style.overflow = 'hidden';
+    const natural = el.scrollHeight;
+    const next = Math.min(Math.max(natural, minTextareaPx), maxTextareaPx);
+    el.style.height = `${next}px`;
+    el.style.minHeight = '';
+    el.style.maxHeight = '';
+    el.style.overflow = '';
+  }, [minTextareaPx, maxTextareaPx]);
+
+  useLayoutEffect(() => {
+    syncTextareaHeight();
+  }, [inputValue, syncTextareaHeight, compactMode]);
 
   useEffect(() => {
     textareaRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => syncTextareaHeight();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [syncTextareaHeight]);
+
+  useEffect(() => {
+    if (!attachMenuOpen) return;
+    const handlePointerDown = (e: MouseEvent) => {
+      const el = attachMenuContainerRef.current;
+      if (el && !el.contains(e.target as Node)) {
+        setAttachMenuOpen(false);
+      }
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setAttachMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [attachMenuOpen]);
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return;
+    const mq = window.matchMedia('(min-width: 768px)');
+    const onChange = () => {
+      if (mq.matches) setAttachMenuOpen(false);
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
   }, []);
 
   const handleSend = () => {
@@ -40,10 +100,11 @@ export default function ChatInput({
       setInputValue('');
       setImagePreview(null);
       textareaRef.current?.focus();
+      queueMicrotask(() => syncTextareaHeight());
     }
   };
 
-  const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyPress = (e: ReactKeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -70,8 +131,8 @@ export default function ChatInput({
         };
 
         mediaRecorder.onstop = async () => {
-new Blob(audioChunks, { type: 'audio/webm' });
-          
+          void new Blob(audioChunks, { type: 'audio/webm' });
+
           // Use Web Speech API for speech-to-text
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
@@ -146,17 +207,17 @@ new Blob(audioChunks, { type: 'audio/webm' });
         )}
 
         <div
-          className={`flex gap-3 items-center bg-[#111827] border-[#1F2937] border px-2 rounded-full ${
+          className={`flex items-end gap-3 rounded-2xl border border-[#1F2937] bg-[#111827] px-2 ${
             compactMode ? 'py-1.5' : 'py-2'
           }`}
         >
           {/* Lightning icon (left) */}
-          <div className="shrink-0 text-amber-400/90" aria-hidden>
-            <Zap className="w-5 h-5 ml-4" fill="none" />
+          <div className="mb-1 shrink-0 text-amber-400/90" aria-hidden>
+            <Zap className="ml-4 h-5 w-5" fill="none" />
           </div>
 
           {/* Text Input */}
-          <div className="flex-1 relative flex min-w-0">
+          <div className="relative flex min-w-0 flex-1 items-end">
             <textarea
               ref={textareaRef}
               value={inputValue}
@@ -165,59 +226,130 @@ new Blob(audioChunks, { type: 'audio/webm' });
               placeholder="How does this LLM work?"
               disabled={disabled}
               rows={1}
-              className={`w-full min-w-0 text-white pl-2 pr-4
-                       resize-none placeholder:text-white text-base focus:outline-none
-                       disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
-                         compactMode ? 'h-10 py-2.5' : 'h-12 py-3'
+              className={`max-h-[220px] w-full min-w-0 resize-none overflow-y-auto pl-2 pr-4 text-base text-white
+                       transition-[height] duration-150 ease-out placeholder:text-white/45 focus:outline-none
+                       disabled:cursor-not-allowed disabled:opacity-50 ${
+                         compactMode ? 'min-h-10 py-2.5' : 'min-h-12 py-3'
                        }`}
             />
           </div>
 
-          {/* Secondary actions (image, voice) - compact */}
-          <div className="flex items-center gap-1 shrink-0">
-            {allowImageUpload && (
-              <>
+          {(allowImageUpload || allowVoiceInput) && (
+            <>
+              {allowVoiceInput && isRecording ? (
                 <button
-                  onClick={() => fileInputRef.current?.click()}
+                  type="button"
+                  onClick={() => void toggleRecording()}
                   disabled={disabled}
-                  className="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors disabled:opacity-50"
-                  title="Upload image"
+                  className="mb-1 shrink-0 rounded-lg p-2 text-red-400 transition-colors animate-pulse hover:bg-white/5 hover:text-red-300 disabled:opacity-50"
+                  title="Stop recording"
+                  aria-label="Stop recording"
                 >
-                  <ImageIcon size={18} />
+                  <MicOff size={18} />
                 </button>
+              ) : (
+                <>
+                  {/* Mobile: + menu */}
+                  <div ref={attachMenuContainerRef} className="relative mb-1 shrink-0 md:hidden">
+                    <button
+                      type="button"
+                      data-testid="chat-mobile-attach-button"
+                      onClick={() => !disabled && setAttachMenuOpen((o) => !o)}
+                      disabled={disabled}
+                      aria-expanded={attachMenuOpen}
+                      aria-haspopup="menu"
+                      aria-label="Attach"
+                      title="Attach"
+                      className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+                    >
+                      <Plus size={20} strokeWidth={2.25} />
+                    </button>
+                    {attachMenuOpen && (
+                      <div
+                        role="menu"
+                        className="absolute bottom-[calc(100%+8px)] right-0 z-20 min-w-[11rem] rounded-xl border border-white/10 bg-[#1a1530] py-1 shadow-xl"
+                      >
+                        {allowImageUpload && (
+                          <button
+                            type="button"
+                            role="menuitem"
+                            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-white/90 hover:bg-white/10"
+                            onClick={() => {
+                              setAttachMenuOpen(false);
+                              fileInputRef.current?.click();
+                            }}
+                          >
+                            <ImageIcon size={18} className="shrink-0 text-slate-400" aria-hidden />
+                            Add image
+                          </button>
+                        )}
+                        {allowVoiceInput && (
+                          <button
+                            type="button"
+                            role="menuitem"
+                            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-white/90 hover:bg-white/10"
+                            onClick={() => {
+                              setAttachMenuOpen(false);
+                              void toggleRecording();
+                            }}
+                          >
+                            <Mic size={18} className="shrink-0 text-slate-400" aria-hidden />
+                            Voice input
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {/* Desktop: inline image + voice (original layout) */}
+                  <div className="mb-1 hidden shrink-0 items-center gap-1 md:flex">
+                    {allowImageUpload && (
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={disabled}
+                        className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+                        title="Upload image"
+                        aria-label="Upload image"
+                      >
+                        <ImageIcon size={18} />
+                      </button>
+                    )}
+                    {allowVoiceInput && (
+                      <button
+                        type="button"
+                        onClick={() => void toggleRecording()}
+                        disabled={disabled}
+                        className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+                        title="Voice input"
+                        aria-label="Voice input"
+                      >
+                        <Mic size={18} />
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+              {allowImageUpload && (
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
+                  data-testid="chat-image-input"
                   onChange={handleImageSelect}
                   className="hidden"
                 />
-              </>
-            )}
-            {allowVoiceInput && (
-              <button
-                onClick={toggleRecording}
-                disabled={disabled}
-                className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
-                  isRecording
-                    ? 'text-red-400 hover:text-red-300 animate-pulse'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-                }`}
-                title={isRecording ? 'Stop recording' : 'Voice input'}
-              >
-                {isRecording ? <MicOff size={18} /> : <Mic size={18} />}
-              </button>
-            )}
-          </div>
+              )}
+            </>
+          )}
 
           {/* Send Button - circular purple with arrow up */}
           <button
             onClick={handleSend}
             disabled={(!inputValue.trim() && !imagePreview) || disabled}
-            className={`shrink-0 rounded-full bg-[#9333ea] hover:bg-[#a855f7] text-white
-                     flex items-center justify-center font-medium hover:opacity-90 transition-all duration-200
-                     disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#9333ea]/30 ${
-                       compactMode ? 'w-10 h-10' : 'w-12 h-12'
+            className={`mb-1 shrink-0 rounded-full bg-[#9333ea] text-white shadow-lg shadow-[#9333ea]/30 transition-all duration-200
+                     hover:bg-[#a855f7] hover:opacity-90 flex items-center justify-center font-medium
+                     disabled:cursor-not-allowed disabled:opacity-50 ${
+                       compactMode ? 'h-10 w-10' : 'h-12 w-12'
                      }`}
             aria-label="Send message"
           >

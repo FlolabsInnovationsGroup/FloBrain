@@ -5,12 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import type { ChatHistory, Folder, Message } from '@/types/chat';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
 import { apiChatToChatHistory, apiChatListToChatHistory } from './lib/brainApi';
 import { LeftPanel } from '@/app/home/components/left-panel';
 import ChatArea from './components/ChatArea/index';
 import ChatInput from './components/MessageInput/index';
 import jsPDF from 'jspdf';
-import { X } from 'lucide-react';
+import { BarChart3, PanelLeft, X } from 'lucide-react';
 
 const WELCOME_MESSAGE: Message = {
   id: 'msg-welcome',
@@ -170,17 +171,18 @@ function PreferencesModal({
   );
 }
 
-function ConfidencePanel() {
-  const cards = [
-    { model: 'GPT-4o', confidence: 87, latency: '151ms', tokens: '2.9K' },
-    { model: 'Claude 3.5', confidence: 94, latency: '149ms', tokens: '3.0K' },
-    { model: 'Gemini 1.5', confidence: 73, latency: '120ms', tokens: '3.4K' },
-  ];
+const CONFIDENCE_CARDS = [
+  { model: 'GPT-4o', confidence: 87, latency: '151ms', tokens: '2.9K' },
+  { model: 'Claude 3.5', confidence: 94, latency: '149ms', tokens: '3.0K' },
+  { model: 'Gemini 1.5', confidence: 73, latency: '120ms', tokens: '3.4K' },
+] as const;
+
+function ConfidencePanelContent({ headingClassName }: { headingClassName?: string }) {
   return (
-    <aside className="hidden w-[300px] shrink-0 rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 xl:block">
-      <h3 className="mb-3 text-sm font-semibold text-white">Confidence</h3>
+    <>
+      <h3 className={cn('mb-3 text-sm font-semibold text-white', headingClassName)}>Confidence</h3>
       <div className="space-y-3">
-        {cards.map((card) => (
+        {CONFIDENCE_CARDS.map((card) => (
           <div key={card.model} className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-white">{card.model}</p>
@@ -199,6 +201,15 @@ function ConfidencePanel() {
           </div>
         ))}
       </div>
+    </>
+  );
+}
+
+/** Desktop (md+): fixed column; hidden below md (mobile uses drawer). */
+function ConfidencePanel() {
+  return (
+    <aside className="max-md:hidden flex w-[300px] shrink-0 flex-col rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 min-h-0">
+      <ConfidencePanelContent />
     </aside>
   );
 }
@@ -215,8 +226,32 @@ function BrainPageContent() {
   const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
   const [preferences, setPreferences] = useState<BrainPreferences>(DEFAULT_PREFERENCES);
+  const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
+  const [mobileConfidenceOpen, setMobileConfidenceOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const closeMobileSidebars = useCallback(() => {
+    setMobileSessionsOpen(false);
+    setMobileConfidenceOpen(false);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeMobileSidebars();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [closeMobileSidebars]);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const onChange = () => {
+      if (mq.matches) closeMobileSidebars();
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [closeMobileSidebars]);
 
   // Store pending message to send after chat creation
   const pendingMessageRef = useRef<{ text: string; image?: string } | null>(null);
@@ -516,6 +551,29 @@ function BrainPageContent() {
     [chatHistory, isAuthenticated]
   );
 
+  const handleLoadChatMobile = useCallback(
+    async (id: number) => {
+      await handleLoadChat(id);
+      setMobileSessionsOpen(false);
+    },
+    [handleLoadChat]
+  );
+
+  const handleNewChatMobile = useCallback(async () => {
+    await handleNewChat();
+    setMobileSessionsOpen(false);
+  }, [handleNewChat]);
+
+  const openMobileSessions = useCallback(() => {
+    setMobileConfidenceOpen(false);
+    setMobileSessionsOpen(true);
+  }, []);
+
+  const openMobileConfidence = useCallback(() => {
+    setMobileSessionsOpen(false);
+    setMobileConfidenceOpen(true);
+  }, []);
+
   const _handleDeleteChat = useCallback(
     async (id: number) => {
       if (isAuthenticated) {
@@ -649,7 +707,7 @@ function BrainPageContent() {
   };
 
   return (
-    <main className="h-screen w-[92%] mx-auto bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] text-slate-300 font-[Inter] overflow-hidden flex flex-col pt-[7rem] box-border mb-2">
+    <main className="box-border mb-2 flex h-screen max-w-full min-h-0 flex-col overflow-y-hidden bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-3 pb-24 pt-24 font-[Inter] text-slate-300 sm:px-4 sm:pb-28 sm:pt-28 md:mx-auto md:w-[92%] md:px-0 md:pb-3 md:pt-[7rem]">
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
           {error}
@@ -663,21 +721,64 @@ function BrainPageContent() {
         </div>
       )}
 
-      <div className="flex flex-1 min-h-0 gap-3 overflow-hidden relative">
-        <LeftPanel
-          variant="chats"
-          chatHistory={chatHistory}
-          currentChatId={currentChatId}
-          onLoadChat={handleLoadChat}
-          onNewChat={handleNewChat}
-          onSearch={() => {}}
-          onPreferences={() => setIsPreferencesOpen(true)}
-          onSettings={() => {}}
-          chatsLoading={chatsLoading}
-        />
+      <div className="mb-2 flex shrink-0 items-center gap-2 md:hidden">
+        <button
+          type="button"
+          onClick={openMobileSessions}
+          aria-expanded={mobileSessionsOpen}
+          aria-controls="brain-sessions-drawer"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0B0719]/60 py-2.5 text-xs font-semibold uppercase tracking-wide text-white/90 shadow-sm"
+        >
+          <PanelLeft className="h-4 w-4 shrink-0" aria-hidden />
+          Chats
+        </button>
+        {preferences.showConfidencePanel && (
+          <button
+            type="button"
+            onClick={openMobileConfidence}
+            aria-expanded={mobileConfidenceOpen}
+            aria-controls="brain-confidence-drawer"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0B0719]/60 py-2.5 text-xs font-semibold uppercase tracking-wide text-white/90 shadow-sm"
+          >
+            <BarChart3 className="h-4 w-4 shrink-0" aria-hidden />
+            Confidence
+          </button>
+        )}
+      </div>
 
-        <div className="flex flex-1 min-w-0 min-h-0 gap-3">
-          <section className="flex-1 relative flex flex-col min-w-0 min-h-0 bg-[#0B0719]/30 rounded-xl overflow-hidden border border-white/10">
+      <div className="relative flex min-h-0 min-w-0 flex-1 gap-2 sm:gap-3">
+        {mobileSessionsOpen && (
+          <button
+            type="button"
+            aria-label="Close chat list"
+            className="fixed inset-0 z-[85] bg-black/55 md:hidden"
+            onClick={() => setMobileSessionsOpen(false)}
+          />
+        )}
+
+        <div
+          id="brain-sessions-drawer"
+          className={cn(
+            'fixed bottom-24 left-0 top-24 z-[90] w-[min(100vw-1.5rem,320px)] max-w-[88vw] transition-transform duration-300 ease-out md:static md:top-auto md:bottom-auto md:z-0 md:flex md:h-auto md:max-w-none md:w-[20%] md:shrink-0 md:translate-x-0',
+            mobileSessionsOpen ? 'translate-x-0' : '-translate-x-full pointer-events-none md:pointer-events-auto md:translate-x-0'
+          )}
+        >
+          <LeftPanel
+            variant="chats"
+            className="h-full w-full min-w-0 rounded-r-xl border border-white/10 bg-[#0B0719]/50 shadow-2xl md:rounded-xl md:border-transparent md:shadow-none"
+            chatHistory={chatHistory}
+            currentChatId={currentChatId}
+            onLoadChat={handleLoadChatMobile}
+            onNewChat={handleNewChatMobile}
+            onSearch={() => {}}
+            onPreferences={() => setIsPreferencesOpen(true)}
+            onSettings={() => {}}
+            chatsLoading={chatsLoading}
+          />
+        </div>
+
+        <div className="flex min-h-0 min-w-0 flex-1 gap-2 sm:gap-3">
+          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30">
             {currentChatId ? (
               <>
                 <ChatArea
@@ -697,9 +798,9 @@ function BrainPageContent() {
                 />
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center overflow-y-auto">
-                <div className="text-center max-w-md px-6">
-                  <div className="w-20 h-20 mx-auto mb-6 opacity-50">
+              <div className="flex flex-1 items-center justify-center overflow-y-auto">
+                <div className="max-w-md px-4 text-center sm:px-6">
+                  <div className="mx-auto mb-5 h-16 w-16 opacity-50 sm:mb-6 sm:h-20 sm:w-20">
                     <svg viewBox="0 0 100 100" fill="none">
                       <path
                         d="M50 10L20 25V45C20 62.5 35 77.5 50 82.5C65 77.5 80 62.5 80 45V25L50 10Z"
@@ -728,10 +829,10 @@ function BrainPageContent() {
                       </defs>
                     </svg>
                   </div>
-                  <h2 className="text-3xl font-bold text-white mb-3">
+                  <h2 className="mb-2 text-2xl font-bold tracking-tight text-white sm:mb-3 sm:text-3xl">
                     Welcome to FLOBRAIN
                   </h2>
-                  <p className="text-white/60 mb-8">
+                  <p className="mb-6 text-sm text-white/60 sm:mb-8 sm:text-base">
                     Start a new conversation to chat with our AI assistant.
                     {isAuthenticated
                       ? ' Your chats are saved on the server.'
@@ -740,7 +841,7 @@ function BrainPageContent() {
                   <button
                     type="button"
                     onClick={handleNewChat}
-                    className="bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] text-white px-8 py-4 rounded-xl font-semibold hover:opacity-90 transition-all duration-200 shadow-lg shadow-[#8B5CF6]/30 hover:shadow-[#8B5CF6]/50 text-lg"
+                    className="rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] px-6 py-3 text-base font-semibold text-white shadow-lg shadow-[#8B5CF6]/30 transition-all duration-200 hover:opacity-90 hover:shadow-[#8B5CF6]/50 sm:px-8 sm:py-4 sm:text-lg"
                   >
                     Start New Chat
                   </button>
@@ -748,7 +849,39 @@ function BrainPageContent() {
               </div>
             )}
           </section>
-          {preferences.showConfidencePanel && <ConfidencePanel />}
+          {preferences.showConfidencePanel && (
+            <>
+              <ConfidencePanel />
+              {mobileConfidenceOpen && (
+                <button
+                  type="button"
+                  aria-label="Close confidence panel"
+                  className="fixed inset-0 z-[85] bg-black/55 md:hidden"
+                  onClick={() => setMobileConfidenceOpen(false)}
+                />
+              )}
+              <aside
+                id="brain-confidence-drawer"
+                className={cn(
+                  'fixed bottom-24 right-0 top-24 z-[90] w-[min(100vw-1.5rem,300px)] max-w-[90vw] overflow-y-auto rounded-l-xl border border-white/10 bg-[#0B0719]/55 p-4 shadow-2xl transition-transform duration-300 ease-out md:hidden',
+                  mobileConfidenceOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
+                )}
+              >
+                <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
+                  <span className="text-base font-semibold text-white">Confidence</span>
+                  <button
+                    type="button"
+                    onClick={() => setMobileConfidenceOpen(false)}
+                    className="rounded-lg p-1.5 text-white/70 hover:bg-white/10 hover:text-white"
+                    aria-label="Close confidence panel"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <ConfidencePanelContent headingClassName="sr-only" />
+              </aside>
+            </>
+          )}
         </div>
       </div>
       <PreferencesModal

@@ -3,6 +3,7 @@ from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from memory.mongo_client import db as mongo_db
 from users.views import get_user_from_request
 
 from .models import MemoryLink, MemoryNode
@@ -24,6 +25,19 @@ def _parse_date_range(date_range: str):
         start = now - timedelta(days=365)
         return start, now
     return None, None
+
+
+def _log_memory_event(user_id, event_type, status="success", payload=None):
+    mongo_db.workflow_events.insert_one(
+        {
+            "workflow_id": None,
+            "user_id": user_id,
+            "event_type": event_type,
+            "status": status,
+            "payload": payload or {},
+            "created_at": timezone.now(),
+        }
+    )
 
 
 class MemoryGraphView(APIView):
@@ -155,3 +169,56 @@ class MemoryNodeDetailView(APIView):
             })
         except MemoryNode.DoesNotExist:
             return Response({"error": "Node not found"}, status=404)
+
+    def patch(self, request, pk):
+        user = get_user_from_request(request)
+        if not user:
+            return Response({"error": "Authentication required"}, status=401)
+
+        try:
+            node = MemoryNode.objects.get(id=pk)
+        except MemoryNode.DoesNotExist:
+            return Response({"error": "Node not found"}, status=404)
+
+        allowed_fields = {"name", "val", "group", "memory_type", "relevance"}
+        updates = {}
+        for field in allowed_fields:
+            if field in request.data:
+                updates[field] = request.data[field]
+
+        if not updates:
+            return Response({"error": "No editable fields provided"}, status=400)
+
+        before = {
+            "name": node.name,
+            "val": node.val,
+            "group": node.group,
+            "memory_type": node.memory_type,
+            "relevance": node.relevance,
+        }
+
+        for field, value in updates.items():
+            setattr(node, field, value)
+        node.save(update_fields=list(updates.keys()))
+
+        _log_memory_event(
+            user_id=getattr(user, "id", None),
+            event_type="memory_updated",
+            payload={
+                "memory_node_id": node.id,
+                "before": before,
+                "after": updates,
+            },
+        )
+
+        return Response(
+            {
+                "id": node.id,
+                "name": node.name,
+                "val": node.val,
+                "group": node.group,
+                "memory_type": node.memory_type,
+                "relevance": node.relevance,
+                "created_at": node.created_at.isoformat(),
+            }
+        )
