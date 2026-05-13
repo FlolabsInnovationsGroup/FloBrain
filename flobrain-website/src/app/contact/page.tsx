@@ -46,14 +46,14 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen relative">
+    <div className="relative min-h-screen">
       {/* Hero Section */}
-      <section className="relative z-10 pt-16 pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+      <section className="relative z-10 pt-12 pb-10 sm:pt-16 sm:pb-12 md:pt-20 md:pb-16">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8">
+          <h1 className="mb-4 text-[22px] font-bold leading-tight text-white sm:text-[28px] md:text-[32px] lg:text-[36px]">
             Scale Your AI Intelligence
           </h1>
-          <p className="text-base md:text-lg text-white/70 max-w-2xl leading-relaxed">
+          <p className="max-w-[90%] text-sm leading-relaxed text-white/70 sm:max-w-[80%] sm:text-base md:max-w-[70%] md:text-lg lg:max-w-[60%] lg:text-xl">
             Connect with our engineering team to integrate FloLabs Brain into your workflow, or
             reach out to sales for enterprise solutions and partnerships.
           </p>
@@ -61,18 +61,20 @@ export default function Contact() {
       </section>
 
       {/* Main Content */}
-      <main className="relative z-10 pb-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-10 items-start">
+      <main className="relative z-10 pb-16 sm:pb-20 md:pb-24">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8">
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-10">
             {/* Left Column - Contact Form */}
-            <div className="space-y-8">
-              <div className="bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-xl p-8 shadow-lg">
-                <h2 className="text-xl font-bold text-white mb-6">Get in Touch</h2>
-                <p className="text-white/60 text-sm mb-6">
+            <div className="space-y-6 sm:space-y-8">
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5 shadow-lg backdrop-blur-md sm:p-6 md:p-8">
+                <h2 className="mb-4 text-lg font-bold text-white sm:mb-6 sm:text-xl">
+                  Get in Touch
+                </h2>
+                <p className="mb-5 text-sm text-white/60 sm:mb-6">
                   Fill out the form below and we&apos;ll respond within 24 hours.
                 </p>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 md:space-y-6">
                   <div>
                     <input
                       type="text"
@@ -82,7 +84,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       disabled={isSubmitting}
-                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white/90 placeholder-white/40 focus:border-white/20 focus:bg-white/[0.07] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </div>
                   <div>
@@ -94,7 +96,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       disabled={isSubmitting}
-                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white/90 placeholder-white/40 focus:border-white/20 focus:bg-white/[0.07] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </div>
                   <div>
@@ -106,7 +108,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       disabled={isSubmitting}
-                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white/90 placeholder-white/40 focus:border-white/20 focus:bg-white/[0.07] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </div>
                   <div>
@@ -118,13 +120,13 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       disabled={isSubmitting}
-                      className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-white/90 placeholder-white/40 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full resize-none rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white/90 placeholder-white/40 focus:border-white/20 focus:bg-white/[0.07] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-purple-600/50 disabled:to-purple-700/50 disabled:cursor-not-allowed text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg border border-purple-400/20"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-purple-400/20 bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-3.5 font-semibold text-white shadow-lg transition-all duration-200 hover:from-purple-700 hover:to-purple-800 disabled:cursor-not-allowed disabled:from-purple-600/50 disabled:to-purple-700/50"
                   >
                     {isSubmitting ? (
                       <>
@@ -140,32 +142,32 @@ export default function Contact() {
                   </button>
                 </form>
 
-                <p className="text-white/40 text-xs mt-6 text-center">
+                <p className="mt-5 text-center text-xs text-white/40 sm:mt-6">
                   By submitting this form, you agree to our Privacy Policy and Terms of Service.
                 </p>
               </div>
             </div>
 
             {/* Right Column */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {/* Direct Contact */}
               <div>
-                <h3 className="text-xl font-bold text-white mb-6 uppercase tracking-wider">
+                <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-white sm:mb-6 sm:text-xl">
                   Direct Contact
                 </h3>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {/* Technical Support */}
-                  <div className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 shadow-xl group hover:bg-white/10 transition-all duration-200">
-                    <div className="absolute top-4 right-4 text-white/30 group-hover:text-white/50 transition-colors">
+                  <div className="group relative rounded-xl border border-white/10 bg-white/5 p-5 shadow-xl backdrop-blur-md transition-all duration-200 hover:bg-white/10 sm:p-6">
+                    <div className="absolute right-4 top-4 text-white/30 transition-colors group-hover:text-white/50">
                       <ExternalLink size={16} />
                     </div>
-                    <div className="flex items-start gap-4">
-                      <div className="bg-purple-500/20 p-2 rounded-lg">
+                    <div className="flex items-start gap-3 sm:gap-4">
+                      <div className="rounded-lg bg-purple-500/20 p-2">
                         <Mail className="text-purple-400" size={20} />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-white mb-2">Technical Support</h4>
-                        <p className="text-white/70 text-sm mb-3">
+                        <h4 className="mb-2 font-semibold text-white">Technical Support</h4>
+                        <p className="mb-3 text-sm text-white/70">
                           For developers integrating the SDK
                         </p>
                         <a
@@ -179,17 +181,17 @@ export default function Contact() {
                   </div>
 
                   {/* Partnerships */}
-                  <div className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 shadow-xl group hover:bg-white/10 transition-all duration-200">
-                    <div className="absolute top-4 right-4 text-white/30 group-hover:text-white/50 transition-colors">
+                  <div className="group relative rounded-xl border border-white/10 bg-white/5 p-5 shadow-xl backdrop-blur-md transition-all duration-200 hover:bg-white/10 sm:p-6">
+                    <div className="absolute right-4 top-4 text-white/30 transition-colors group-hover:text-white/50">
                       <ExternalLink size={16} />
                     </div>
-                    <div className="flex items-start gap-4">
-                      <div className="bg-purple-500/20 p-2 rounded-lg">
+                    <div className="flex items-start gap-3 sm:gap-4">
+                      <div className="rounded-lg bg-purple-500/20 p-2">
                         <Users className="text-purple-400" size={20} />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-white mb-2">Partnerships</h4>
-                        <p className="text-white/70 text-sm mb-3">For device manufacturers</p>
+                        <h4 className="mb-2 font-semibold text-white">Partnerships</h4>
+                        <p className="mb-3 text-sm text-white/70">For device manufacturers</p>
                         <a
                           href="mailto:partners@flolabs.ai"
                           className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
@@ -201,17 +203,17 @@ export default function Contact() {
                   </div>
 
                   {/* Press / Media */}
-                  <div className="relative bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-6 shadow-xl group hover:bg-white/10 transition-all duration-200">
-                    <div className="absolute top-4 right-4 text-white/30 group-hover:text-white/50 transition-colors">
+                  <div className="group relative rounded-xl border border-white/10 bg-white/5 p-5 shadow-xl backdrop-blur-md transition-all duration-200 hover:bg-white/10 sm:p-6">
+                    <div className="absolute right-4 top-4 text-white/30 transition-colors group-hover:text-white/50">
                       <ExternalLink size={16} />
                     </div>
-                    <div className="flex items-start gap-4">
-                      <div className="bg-purple-500/20 p-2 rounded-lg">
+                    <div className="flex items-start gap-3 sm:gap-4">
+                      <div className="rounded-lg bg-purple-500/20 p-2">
                         <Newspaper className="text-purple-400" size={20} />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-white mb-2">Press / Media</h4>
-                        <p className="text-white/70 text-sm mb-3">Media inquiries and press kit</p>
+                        <h4 className="mb-2 font-semibold text-white">Press / Media</h4>
+                        <p className="mb-3 text-sm text-white/70">Media inquiries and press kit</p>
                         <a
                           href="mailto:press@flolabs.ai"
                           className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
@@ -225,16 +227,16 @@ export default function Contact() {
               </div>
 
               {/* Developer Resources */}
-              <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 shadow-2xl">
-                <h3 className="text-2xl font-bold text-white mb-6 uppercase tracking-wider">
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-2xl backdrop-blur-md sm:p-6 md:p-8">
+                <h3 className="mb-5 text-xl font-bold uppercase tracking-wider text-white sm:mb-6 sm:text-2xl">
                   Developer Resources
                 </h3>
 
                 <div className="space-y-3">
                   {/* API Documentation */}
-                  <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-purple-500/20 p-2 rounded-lg">
+                  <div className="group flex cursor-pointer items-center justify-between rounded-xl bg-white/5 p-4 transition-colors hover:bg-white/10">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="rounded-lg bg-purple-500/20 p-2">
                         <FileText className="text-purple-400" size={18} />
                       </div>
                       <div>
@@ -249,9 +251,9 @@ export default function Contact() {
                   </div>
 
                   {/* System Status */}
-                  <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-green-500/20 p-2 rounded-lg">
+                  <div className="group flex cursor-pointer items-center justify-between rounded-xl bg-white/5 p-4 transition-colors hover:bg-white/10">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="rounded-lg bg-green-500/20 p-2">
                         <Activity className="text-green-400" size={18} />
                       </div>
                       <div className="flex items-center gap-2">
@@ -268,9 +270,9 @@ export default function Contact() {
                   </div>
 
                   {/* GitHub */}
-                  <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-purple-500/20 p-2 rounded-lg">
+                  <div className="group flex cursor-pointer items-center justify-between rounded-xl bg-white/5 p-4 transition-colors hover:bg-white/10">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="rounded-lg bg-purple-500/20 p-2">
                         <Github className="text-purple-400" size={18} />
                       </div>
                       <div>
@@ -285,9 +287,9 @@ export default function Contact() {
                   </div>
 
                   {/* Discord Community */}
-                  <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors cursor-pointer group">
-                    <div className="flex items-center gap-4">
-                      <div className="bg-purple-500/20 p-2 rounded-lg">
+                  <div className="group flex cursor-pointer items-center justify-between rounded-xl bg-white/5 p-4 transition-colors hover:bg-white/10">
+                    <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="rounded-lg bg-purple-500/20 p-2">
                         <MessageCircle className="text-purple-400" size={18} />
                       </div>
                       <div>

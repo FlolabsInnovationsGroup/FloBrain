@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Home, DollarSign, Mail, MessageCircle, LayoutDashboard, Brain } from "lucide-react";
+import { Menu, X, Home, DollarSign } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,10 +22,6 @@ export default function Navbar() {
   const isDashboardRoute = pathname === "/dashboard";
   const isHomeActive = pathname === "/" || pathname === "/home";
   const isPricingActive = pathname === "/pricing";
-  const isContactActive = pathname === "/contact";
-  const isDashboardActive = pathname === "/dashboard";
-  const isChatsActive = pathname === "/brain";
-  const isMemoryActive = pathname === "/memory";
 
   return (
     <header
@@ -63,14 +59,14 @@ export default function Navbar() {
           {!isLoading && isAuthenticated ? (
             <div className="flex items-center gap-1">
               <Link
-                href="/home"
+                href="/"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isHomeActive ? activeLinkClass : inactiveLinkClass
                   }`}
               >
                 <Home className={navIconClass} />
                 Home
               </Link>
-              <Link
+              {/* <Link
                 href="/dashboard"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isDashboardActive ? activeLinkClass : inactiveLinkClass
                   }`}
@@ -99,12 +95,12 @@ export default function Navbar() {
                 className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white"
               >
                 Profile
-              </Link>
-            </div>
+              </Link>*/}
+            </div> 
           ) : (
             <div className="flex items-center gap-1">
               <Link
-                href="/home"
+                href="/"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isHomeActive ? activeLinkClass : inactiveLinkClass
                   }`}
               >
@@ -119,21 +115,21 @@ export default function Navbar() {
                 <DollarSign className={navIconClass} />
                 Pricing
               </Link>
-              <Link
+              {/* <Link
                 href="/contact"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isContactActive ? activeLinkClass : inactiveLinkClass
                   }`}
               >
                 <Mail className={navIconClass} />
                 Contact
-              </Link>
+              </Link> */}
             </div>
           )}
         </div>
 
         {/* RIGHT: Auth actions */}
-        <div className="flex shrink-0 items-center gap-4">
-          <div className="hidden md:flex md:items-center md:gap-4">
+         <div className="flex shrink-0 items-center gap-4">
+        {/*  <div className="hidden md:flex md:items-center md:gap-4">
             {isLoading ? (
               <span className="text-sm text-zinc-500">…</span>
             ) : !isAuthenticated ? (
@@ -152,7 +148,7 @@ export default function Navbar() {
                 </Link>
               </>
             ) : null}
-          </div>
+          </div>*/}
 
           {/* Mobile menu button */}
           <button
@@ -172,21 +168,21 @@ export default function Navbar() {
           {!isLoading && isAuthenticated ? (
             <div className="flex flex-col gap-2">
               <Link
-                href="/home"
+                href="/"
                 className={`rounded-lg px-2 py-2.5 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
                 Home
               </Link>
-              <Link href="/dashboard" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
+              {/* <Link href="/dashboard" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
               <Link href="/brain" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Chats</Link>
               <Link href="/memory" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Memory</Link>
-              <Link href="/profile" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Profile</Link>
+              <Link href="/profile" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Profile</Link> */}
             </div>
           ) : (
             <div className="flex flex-col gap-2">
               <Link
-                href="/home"
+                href="/"
                 className={`rounded-lg px-2 py-2.5 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
@@ -199,7 +195,7 @@ export default function Navbar() {
               >
                 Pricing
               </Link>
-              <Link
+              {/* <Link
                 href="/contact"
                 className={`rounded-lg px-2 py-2.5 ${isContactActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
@@ -213,7 +209,7 @@ export default function Navbar() {
                 onClick={() => setIsOpen(false)}
               >
                 Register
-              </Link>
+              </Link> */}
             </div>
           )}
         </div>
