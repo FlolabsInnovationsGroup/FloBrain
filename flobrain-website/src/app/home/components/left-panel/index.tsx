@@ -47,6 +47,8 @@ export interface LeftPanelPropsBase {
   onSearch?: (query: string) => void;
   onPreferences?: () => void;
   onSettings?: () => void;
+  /** Merged onto the root panel; use e.g. `w-full md:w-[20%]` when the parent sets width (drawers). */
+  className?: string;
 }
 
 export interface LeftPanelPropsModules extends LeftPanelPropsBase {
@@ -76,7 +78,7 @@ export interface LeftPanelPropsLegacy {
 }
 
 const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
-  const { variant, onNewChat, onSearch, onPreferences, onSettings } = props;
+  const { variant, onNewChat, onSearch, onPreferences, onSettings, className } = props;
   const searchId = useId();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -122,7 +124,10 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
 
   return (
     <div
-      className="flex flex-col bg-[#0B0719]/50 relative w-[20%] border-transparent rounded-xl"
+      className={cn(
+        "flex flex-col bg-[#0B0719]/50 relative w-[20%] min-h-0 border-transparent rounded-xl",
+        className
+      )}
     >
       <div
         className={cn(
