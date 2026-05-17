@@ -174,10 +174,10 @@ export default function Navbar() {
               >
                 Home
               </Link>
-              <Link href="/dashboard" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
+              {/* <Link href="/dashboard" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
               <Link href="/brain" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Chats</Link>
               <Link href="/memory" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Memory</Link>
-              <Link href="/profile" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Profile</Link>
+              <Link href="/profile" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Profile</Link> */}
             </div>
           ) : (
             <div className="flex flex-col gap-2">
