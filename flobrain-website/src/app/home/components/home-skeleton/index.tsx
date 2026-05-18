@@ -4,7 +4,7 @@ export const HomeSkeleton = () => {
   return (
     <div className="min-h-screen bg-[#020617] text-slate-300 flex flex-col">
       {/* Header */}
-      <nav className="border-b border-white/5 p-4 flex justify-between items-center backdrop-blur-xl bg-slate-950/40">
+      <nav className="flex items-center justify-between border-b border-white/5 bg-slate-950/90 p-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
             <Cpu size={18} className="text-blue-400" />
