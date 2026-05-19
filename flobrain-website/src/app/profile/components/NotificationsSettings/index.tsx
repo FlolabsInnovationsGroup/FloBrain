@@ -18,26 +18,28 @@ export default function NotificationsSettings() {
   ]);
 
   const handleSettingChange = (id: string, value: NotificationOption) => {
-    setSettings(settings.map(s => (s.id === id ? { ...s, value } : s)));
+    setSettings(settings.map((s) => (s.id === id ? { ...s, value } : s)));
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {settings.map((setting) => (
         <div
           key={setting.id}
-          className="flex items-center justify-between p-4 bg-[#281C30] border border-zinc-500/50 rounded-lg"
+          className="fb-profile-card flex items-center justify-between rounded-xl px-4 py-4"
         >
-          <span className="text-white font-medium">{setting.label}</span>
+          <span className="fb-profile-title text-sm font-medium">{setting.label}</span>
           <select
             value={setting.value}
-            onChange={(e) => handleSettingChange(setting.id, e.target.value as NotificationOption)}
-            className="px-4 py-2 bg-[#281C30] border border-zinc-500/50 rounded-lg text-white focus:outline-none focus:border-zinc-400/70 cursor-pointer"
+            onChange={(e) =>
+              handleSettingChange(setting.id, e.target.value as NotificationOption)
+            }
+            className="fb-profile-field cursor-pointer rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#9333ea]/40"
           >
-              <option value="push">Push</option>
-              <option value="email">Email</option>
-              <option value="off">Off</option>
-            </select>
+            <option value="push">Push</option>
+            <option value="email">Email</option>
+            <option value="off">Off</option>
+          </select>
         </div>
       ))}
     </div>

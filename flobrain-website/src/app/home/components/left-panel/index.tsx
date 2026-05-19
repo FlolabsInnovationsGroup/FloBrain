@@ -118,9 +118,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const searchPlaceholder = isChats ? "Search chats..." : "Search ...";
 
   return (
-    <div
-      className="relative flex w-full min-w-0 flex-col rounded-xl border-transparent bg-[#0B0719]/50 lg:w-[20%] lg:min-w-[260px]"
-    >
+    <div className="relative flex w-full min-w-0 flex-col rounded-xl border fb-sidebar lg:w-[20%] lg:min-w-[260px]">
       <div
         className={cn(
           "flex flex-col flex-1 min-h-0 p-4 gap-4",

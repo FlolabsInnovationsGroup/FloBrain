@@ -7,6 +7,7 @@ import { Menu, X, Home, DollarSign, Mail, MessageCircle, LayoutDashboard, Brain 
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 const navIconClass = "size-4 shrink-0";
 
@@ -18,7 +19,8 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
-  const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
+  const isMemoryRoute =
+    pathname === "/memory" || (pathname?.startsWith("/memory/") ?? false);
   const isHomeActive = pathname === "/" || pathname === "/home";
   const isPricingActive = pathname === "/pricing";
   const isContactActive = pathname === "/contact";
@@ -34,7 +36,14 @@ export default function Navbar() {
           : "sticky top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
       }
     >
-      <nav className="pointer-events-auto relative mx-auto flex max-w-6xl items-center justify-between rounded-2xl border border-white/5 bg-[#0f0a1a]/95 px-5 py-3 shadow-[0_8px_32px_rgba(147,51,234,0.18)] backdrop-blur-md md:px-6 md:py-3.5">
+      <nav
+        className="pointer-events-auto relative mx-auto flex max-w-6xl items-center justify-between rounded-2xl border px-5 py-3 backdrop-blur-md md:px-6 md:py-3.5"
+        style={{
+          background: "var(--fb-navbar-bg)",
+          borderColor: "var(--fb-navbar-border)",
+          boxShadow: "0 8px 32px rgba(147, 51, 234, 0.18)",
+        }}
+      >
         {/* LEFT: Logo + Brand + Tagline */}
         <div className="flex min-w-0 shrink items-center gap-3">
           <Link href="/" className="flex shrink-0 items-center gap-3">
@@ -135,8 +144,9 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* RIGHT: Auth actions */}
-        <div className="flex shrink-0 items-center gap-4">
+        {/* RIGHT: Theme toggle + auth */}
+        <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+          <ThemeToggle />
           <div className="hidden md:flex md:items-center md:gap-4">
             {isLoading ? (
               <span className="text-sm text-zinc-500">…</span>
@@ -172,7 +182,17 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border border-white/5 bg-[#0f0a1a]/95 p-4 shadow-lg md:hidden">
+        <div
+          className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border p-4 shadow-lg md:hidden"
+          style={{
+            background: "var(--fb-navbar-bg)",
+            borderColor: "var(--fb-navbar-border)",
+          }}
+        >
+          <div className="mb-4 flex items-center justify-between md:hidden">
+            <span className="text-sm font-medium text-zinc-400">Theme</span>
+            <ThemeToggle />
+          </div>
           {!isLoading && isAuthenticated ? (
             <div className="flex flex-col gap-2">
               <Link

@@ -28,15 +28,9 @@ export const SystemHealth = (): React.JSX.Element => {
   if (error) {
     return (
       <div
-        className="w-full lg:w-[830px] rounded-[16px] sm:rounded-[20px]"
-        style={{
-          background: "rgba(30, 18, 43, 0.6)",
-          padding: "clamp(20px, 4vw, 32px)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
-        }}
+        className="w-full fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
       >
-        <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "rgba(255, 255, 255, 0.5)" }}>
+        <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "var(--fb-text-muted)" }}>
           SYSTEM HEALTH
         </h2>
         <p style={{ fontSize: "13px", color: "#FCA5A5" }}>Unable to reach backend. Check that the API is running.</p>
@@ -46,13 +40,7 @@ export const SystemHealth = (): React.JSX.Element => {
 
   return (
     <div
-      className="w-full lg:w-[830px] rounded-[16px] sm:rounded-[20px]"
-      style={{
-        background: "rgba(30, 18, 43, 0.6)",
-        padding: "clamp(20px, 4vw, 32px)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
-      }}
+      className="w-full lg:w-[830px] fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
     >
       {/* Top Section */}
       <div className="flex items-start justify-between mb-5 sm:mb-8">
@@ -62,7 +50,7 @@ export const SystemHealth = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "rgba(255, 255, 255, 0.5)",
+              color: "var(--fb-text-muted)",
             }}
           >
             SYSTEM HEALTH
@@ -70,7 +58,7 @@ export const SystemHealth = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "rgba(255, 255, 255, 0.35)",
+              color: "var(--fb-text-subtle)",
             }}
           >
             {isLoading ? "Loading…" : `Last updated: ${lastUpdated}`}
@@ -102,7 +90,7 @@ export const SystemHealth = (): React.JSX.Element => {
             className="font-bold"
             style={{
               fontSize: "clamp(20px, 4vw, 28px)",
-              color: "#FFFFFF",
+              color: "var(--fb-dashboard-stat)",
               lineHeight: "1.2",
             }}
           >
@@ -136,12 +124,12 @@ export const SystemHealth = (): React.JSX.Element => {
       <div className="mb-3 sm:mb-5">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center gap-2 sm:gap-3">
-            <Server className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "rgba(255, 255, 255, 0.4)" }} />
+            <Server className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "var(--fb-text-subtle)" }} />
             <span
               className="font-medium"
               style={{
                 fontSize: "clamp(12px, 2.5vw, 15px)",
-                color: "rgba(255, 255, 255, 0.7)",
+                color: "var(--fb-text-muted)",
               }}
             >
               Database

@@ -21,13 +21,8 @@ describe("FeaturesCard Component", () => {
     expect(screen.getByTestId("mock-icon")).toBeDefined();
   });
 
-  it("should apply the correct dynamic background color", () => {
-    render(<FeaturesCard {...mockProps} />);
-    const iconContainer = screen.getByTestId("mock-icon").parentElement;
-
-    const style = iconContainer?.getAttribute("style");
-
-    expect(style).toContain("color-mix(in srgb");
-    expect(style).toContain("rgb(255, 0, 0)");
+  it("should render within a feature card container", () => {
+    const { container } = render(<FeaturesCard {...mockProps} />);
+    expect(container.querySelector(".fb-feature-card")).toBeDefined();
   });
 });

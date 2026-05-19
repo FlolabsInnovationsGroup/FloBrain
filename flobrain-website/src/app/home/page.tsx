@@ -27,7 +27,7 @@ export default function Brain() {
   }, []);
 
   return (
-    <main className="mt-3 h-[100vh] w-[92%] mx-auto bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] text-slate-300 font-[Inter] overflow-hidden flex flex-col">
+    <main className="mt-3 h-[100vh] w-[92%] mx-auto fb-page text-slate-300 font-[Inter] overflow-hidden flex flex-col dark:text-slate-300 light:text-[#2d1b4e]">
       <div className="flex flex-1 min-h-0 gap-3 overflow-hidden relative">
         <LeftPanel
           variant="modules"

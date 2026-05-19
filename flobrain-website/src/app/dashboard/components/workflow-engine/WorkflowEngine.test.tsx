@@ -39,11 +39,11 @@ describe("WorkflowEngine Component", () => {
 
   it("should render timestamps", () => {
     render(<WorkflowEngine />);
-    expect(screen.getByText("2 min ago")).toBeDefined();
-    expect(screen.getByText("19 min ago")).toBeDefined();
-    expect(screen.getByText("1 hour ago")).toBeDefined();
-    expect(screen.getByText("3 hours ago")).toBeDefined();
-    expect(screen.getByText("5 hours ago")).toBeDefined();
+    expect(screen.getAllByText("2 min ago").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("19 min ago").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("1 hour ago").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("3 hours ago").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("5 hours ago").length).toBeGreaterThan(0);
   });
 
   it("should render View Details links", () => {

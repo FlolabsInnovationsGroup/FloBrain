@@ -57,7 +57,7 @@ describe("Login Component", () => {
   it("should update password input value when user types", () => {
     renderWithAuth(<Login />);
 
-    const passwordInput = screen.getByPlaceholderText("••••••••");
+    const passwordInput = screen.getByPlaceholderText("Enter your password");
     fireEvent.change(passwordInput, { target: { value: "password123" } });
 
     expect(passwordInput).toHaveValue("password123");
@@ -66,7 +66,7 @@ describe("Login Component", () => {
   it("should toggle password visibility when eye icon is clicked", () => {
     renderWithAuth(<Login />);
 
-    const passwordInput = screen.getByPlaceholderText("••••••••");
+    const passwordInput = screen.getByPlaceholderText("Enter your password");
     const toggleButtons = screen.getAllByRole("button");
     const passwordToggle = toggleButtons.find(
       (button) => button.querySelector("svg") && button.getAttribute("type") === "button"
@@ -123,7 +123,7 @@ it("should have proper styling for auth card", () => {
 
     const card = container.querySelector(".rounded-2xl");
     expect(card).toBeInTheDocument();
-    expect(card?.className).toContain("CABEE8");
+    expect(card?.className).toContain("fb-auth-card");
   });
 
   it("should render divider text correctly", () => {
@@ -158,7 +158,7 @@ it("should have proper styling for auth card", () => {
     const { container } = renderWithAuth(<Login />);
 
     const main = container.querySelector("main");
-    expect(main).toHaveClass("bg-[#2E0A4E]");
+    expect(main?.className).toContain("fb-auth-bg");
   });
 
   it("should handle email input blur event", () => {
@@ -174,7 +174,7 @@ it("should have proper styling for auth card", () => {
   it("should handle password input blur event", () => {
     renderWithAuth(<Login />);
 
-    const passwordInput = screen.getByPlaceholderText("••••••••");
+    const passwordInput = screen.getByPlaceholderText("Enter your password");
     fireEvent.change(passwordInput, { target: { value: "mypassword" } });
     fireEvent.blur(passwordInput);
 

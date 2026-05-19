@@ -45,7 +45,7 @@ vi.mock('next/navigation', () => ({
 describe('BrainPage', () => {
   it('renders main layout with sidebar and welcome content', () => {
     render(<BrainPage />);
-    expect(screen.getByTestId('left-panel')).toBeInTheDocument();
+    expect(screen.getAllByTestId('left-panel')[0]).toBeInTheDocument();
     expect(screen.getByText('Welcome to FLOBRAIN')).toBeInTheDocument();
     expect(screen.getByText(/Start a new conversation/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Start New Chat/i })).toBeInTheDocument();

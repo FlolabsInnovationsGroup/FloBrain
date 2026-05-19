@@ -68,10 +68,10 @@ export default function Memory() {
 
   return (
     <div
-      className="flex min-h-[100dvh] flex-col bg-[#08040A] px-3 pb-6 pt-[5rem] md:px-5 md:pb-5 md:pt-[5.5rem] lg:box-border lg:h-[100dvh] lg:max-h-[100dvh] lg:min-h-0 lg:overflow-hidden"
+      className="flex min-h-[100dvh] flex-col fb-page px-3 pb-6 pt-[5rem] md:px-5 md:pb-5 md:pt-[5.5rem] lg:box-border lg:h-[100dvh] lg:max-h-[100dvh] lg:min-h-0 lg:overflow-hidden dark:bg-[#08040A]"
       onClick={handlePageClick}
     >
-      <div className="mx-auto flex my-3 min-h-0 w-full max-w-[1600px] flex-1 flex-col overflow-hidden rounded-2xl border border-[#7B5CFF]/22 bg-[#08040A] shadow-[0_0_80px_rgba(123,92,255,0.14)] backdrop-blur-xl lg:min-h-0">
+      <div className="mx-auto flex my-3 min-h-0 w-full max-w-[1600px] flex-1 flex-col overflow-hidden rounded-2xl border border-[#7B5CFF]/22 shadow-[0_0_80px_rgba(123,92,255,0.14)] backdrop-blur-xl lg:min-h-0 dark:bg-[#08040A] light:bg-white/40">
         <div className="flex min-h-0 my-auto flex-1 flex-col gap-4 overflow-hidden p-4 lg:flex-row lg:gap-6 lg:p-6">
           <aside
             className="flex w-full shrink-0 flex-col gap-4 lg:max-h-full lg:min-h-0 lg:w-[min(100%,320px)] lg:max-w-[360px] lg:overflow-y-auto"
@@ -91,7 +91,7 @@ export default function Memory() {
               onClearFilters={clearFilters}
             />
 
-            <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] px-4 py-3 text-sm text-zinc-400 backdrop-blur-md">
+            <div className="rounded-2xl border border-white/40 bg-white/50 dark:border-white/[0.06] dark:bg-white/[0.03] px-4 py-3 text-sm text-zinc-400 backdrop-blur-md">
               {isLoading && <span className="animate-pulse">Loading memory nodes…</span>}
               {!isLoading && !error && (
                 <span>{legendNodes.length.toLocaleString()} memory nodes loaded</span>
@@ -105,7 +105,7 @@ export default function Memory() {
           </aside>
 
           <section
-            className="relative flex min-h-[50vh] flex-1 flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-[#08040A] lg:min-h-0"
+            className="relative flex min-h-[50vh] flex-1 flex-col overflow-hidden rounded-2xl border border-white/[0.06] fb-page-bg dark:bg-[#08040A] lg:min-h-0"
             onClick={(e) => e.stopPropagation()}
           >
             {(isLoading || error || nodes.length === 0) && (

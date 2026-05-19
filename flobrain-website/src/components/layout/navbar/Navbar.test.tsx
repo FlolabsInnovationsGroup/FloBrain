@@ -1,7 +1,8 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import Navbar from ".";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { renderWithProviders } from "@/test/render";
 
 vi.mock("next/image", () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @next/next/no-img-element
@@ -13,7 +14,7 @@ vi.mock("../../../../assets/images/flolabs-logo.svg", () => ({
 }));
 
 function renderWithAuth(ui: React.ReactElement) {
-  return render(<AuthProvider>{ui}</AuthProvider>);
+  return renderWithProviders(<AuthProvider>{ui}</AuthProvider>);
 }
 
 describe("Navbar Component", () => {
@@ -43,7 +44,7 @@ describe("Navbar Component", () => {
       expect(screen.getByRole("link", { name: /Sign In/i })).toBeInTheDocument();
     });
 
-    const toggleButton = screen.getByRole("button");
+    const toggleButton = screen.getByRole("button", { name: /open menu/i });
     const signInLinksBefore = screen.getAllByText(/Sign In/i);
     expect(signInLinksBefore.length).toBeGreaterThanOrEqual(1);
 
@@ -59,7 +60,7 @@ describe("Navbar Component", () => {
       expect(screen.getByRole("link", { name: /Sign In/i })).toBeInTheDocument();
     });
 
-    const toggleButton = screen.getByRole("button");
+    const toggleButton = screen.getByRole("button", { name: /open menu/i });
     fireEvent.click(toggleButton);
 
     const mobileLinks = screen.getAllByText(/Sign In/i);

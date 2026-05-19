@@ -177,7 +177,13 @@ function ConfidencePanel() {
     { model: 'Gemini 1.5', confidence: 73, latency: '120ms', tokens: '3.4K' },
   ];
   return (
-    <aside className="w-full shrink-0 rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 xl:w-[300px]">
+    <aside
+      className="w-full shrink-0 rounded-xl border p-4 xl:w-[300px] light:border-[#9b8ab8]/40"
+      style={{
+        background: "var(--fb-confidence-panel-bg)",
+        borderColor: "var(--fb-panel-border)",
+      }}
+    >
       <h3 className="mb-3 text-sm font-semibold text-white">Confidence</h3>
       <div className="space-y-3">
         {cards.map((card) => (
@@ -651,7 +657,7 @@ function BrainPageContent() {
   };
 
   return (
-    <main className="mx-auto mb-2 flex h-[calc(100dvh-5rem)] w-full max-w-[1800px] flex-col overflow-y-auto bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-2 pt-[5.5rem] font-[Inter] text-slate-300 sm:px-4 sm:pt-[6.25rem] lg:h-[calc(100vh-5rem)] lg:overflow-hidden lg:px-6">
+    <main className="mx-auto mb-2 flex h-[calc(100dvh-5rem)] w-full max-w-[1800px] flex-col overflow-y-auto fb-page px-2 pt-[5.5rem] font-[Inter] text-slate-300 sm:px-4 sm:pt-[6.25rem] lg:h-[calc(100vh-5rem)] lg:overflow-hidden lg:px-6 dark:text-slate-300 light:text-[#2d1b4e]">
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
           {error}
@@ -737,7 +743,13 @@ function BrainPageContent() {
               </button>
             </div>
           </div>
-          <section className="relative flex min-h-[60dvh] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30 xl:min-h-0">
+          <section
+            className="relative flex min-h-[60dvh] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border xl:min-h-0 backdrop-blur-sm"
+            style={{
+              background: "var(--fb-chat-area-bg)",
+              borderColor: "var(--fb-panel-border)",
+            }}
+          >
             {currentChatId ? (
               <>
                 <ChatArea

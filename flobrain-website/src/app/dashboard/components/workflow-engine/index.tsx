@@ -65,13 +65,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
 
   return (
     <div
-      className="w-full rounded-[16px] sm:rounded-[20px]"
-      style={{
-        background: "rgba(30, 18, 43, 0.6)",
-        padding: "clamp(16px, 4vw, 32px)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
-      }}
+      className="w-full fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
     >
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
@@ -81,7 +75,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "rgba(255, 255, 255, 0.5)",
+              color: "var(--fb-text-muted)",
             }}
           >
             WORKFLOW ENGINE
@@ -89,7 +83,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "rgba(255, 255, 255, 0.35)",
+              color: "var(--fb-text-subtle)",
             }}
           >
             Recent errors & warnings
@@ -176,7 +170,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                   <span
                     style={{
                       fontSize: "11px",
-                      color: "rgba(255, 255, 255, 0.4)",
+                      color: "var(--fb-text-subtle)",
                     }}
                   >
                     {alert.timestamp}
@@ -217,7 +211,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                   className="font-semibold mb-1.5 sm:mb-2"
                   style={{
                     fontSize: "clamp(12px, 2.5vw, 14px)",
-                    color: "#FFFFFF",
+                    color: "#2D1B4E",
                     lineHeight: "1.3",
                     wordBreak: "break-word",
                   }}
@@ -229,7 +223,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                   className="mb-2 sm:mb-3"
                   style={{
                     fontSize: "12px",
-                    color: "rgba(255, 255, 255, 0.5)",
+                    color: "var(--fb-text-muted)",
                     lineHeight: "1.5",
                     wordBreak: "break-word",
                     overflowWrap: "anywhere",
@@ -246,7 +240,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                       padding: "3px 6px",
                       background: "rgba(255, 255, 255, 0.05)",
                       fontSize: "10px",
-                      color: "rgba(255, 255, 255, 0.4)",
+                      color: "var(--fb-text-subtle)",
                       wordBreak: "break-all",
                     }}
                   >
@@ -271,7 +265,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                 <span
                   style={{
                     fontSize: "11px",
-                    color: "rgba(255, 255, 255, 0.4)",
+                    color: "var(--fb-text-subtle)",
                   }}
                 >
                   {alert.timestamp}

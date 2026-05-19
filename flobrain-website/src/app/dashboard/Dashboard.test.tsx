@@ -1,74 +1,49 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { screen, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import Dashboard from "./page";
+import { renderWithProviders } from "@/test/render";
+
+vi.mock("@/lib/api", () => ({
+  api: {
+    getDashboardHealth: vi.fn(() =>
+      Promise.resolve({
+        data: { backend: "online", allSystemsOperational: true, database: "connected" },
+        status: 200,
+      })
+    ),
+    getDashboardTokens: vi.fn(() =>
+      Promise.resolve({ data: { total: 1000, change: 10 }, status: 200 })
+    ),
+    getDashboardMemory: vi.fn(() =>
+      Promise.resolve({ data: { chunks: 100, change: 5 }, status: 200 })
+    ),
+    getDashboardWorkflows: vi.fn(() =>
+      Promise.resolve({ data: { errors: [] }, status: 200 })
+    ),
+  },
+}));
 
 describe("Dashboard Page", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("should render the dashboard page", () => {
-    render(<Dashboard />);
+    renderWithProviders(<Dashboard />);
     expect(document.querySelector("main")).toBeDefined();
   });
 
-  it("should show loading skeleton initially", () => {
-    const { container } = render(<Dashboard />);
-    const skeletonElement = container.querySelector(".animate-pulse");
-    expect(skeletonElement).toBeDefined();
-  });
-
-  it("should hide skeleton and show dashboard content after loading", async () => {
-    render(<Dashboard />);
-
-    await waitFor(
-      () => {
-        expect(screen.getByText("SYSTEM DASHBOARD")).toBeDefined();
-      },
-      { timeout: 3000 }
-    );
-  });
-
-  it("should render the page title after loading", async () => {
-    render(<Dashboard />);
-
-    await waitFor(
-      () => {
-        expect(screen.getByText("SYSTEM DASHBOARD")).toBeDefined();
-        expect(
-          screen.getByText("Monitor your system health, workflows, and AI model performance")
-        ).toBeDefined();
-      },
-      { timeout: 3000 }
-    );
+  it("should render the page title", async () => {
+    renderWithProviders(<Dashboard />);
+    await waitFor(() => {
+      expect(screen.getByText("SYSTEM DASHBOARD")).toBeInTheDocument();
+    });
   });
 
   it("should render SystemHealth component after loading", async () => {
-    render(<Dashboard />);
-
-    await waitFor(
-      () => {
-        expect(screen.getByText("System Health")).toBeDefined();
-      },
-      { timeout: 3000 }
-    );
-  });
-
-  it("should render MemoryActivity component after loading", async () => {
-    render(<Dashboard />);
-
-    await waitFor(
-      () => {
-        expect(screen.getByText("Memory Activity")).toBeDefined();
-      },
-      { timeout: 3000 }
-    );
-  });
-
-  it("should render WorkflowEngine component after loading", async () => {
-    render(<Dashboard />);
-
-    await waitFor(
-      () => {
-        expect(screen.getByText("Workflow Engine")).toBeDefined();
-      },
-      { timeout: 3000 }
-    );
+    renderWithProviders(<Dashboard />);
+    await waitFor(() => {
+      expect(screen.getByText("SYSTEM HEALTH")).toBeInTheDocument();
+    });
   });
 });

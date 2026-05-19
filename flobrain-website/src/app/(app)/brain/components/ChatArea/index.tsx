@@ -56,8 +56,8 @@ function MessageBubble({ message, compactMode = false }: { message: Message; com
       <div
         className={`max-w-[92%] sm:max-w-2xl rounded-2xl ${compactMode ? 'px-3 py-2.5 sm:px-4 sm:py-3' : 'px-4 py-3 sm:px-5 sm:py-4'} ${
           message.type === 'user'
-            ? 'bg-[#7c5dbd]/30 text-white/90'
-            : 'bg-[#3d2b5f]/40 text-white/80'
+            ? 'bg-[var(--fb-chat-bubble-user)] text-white'
+            : 'bg-[var(--fb-chat-bubble-assistant)] fb-text dark:text-white/80'
         }`}
       >
         {message.image && (

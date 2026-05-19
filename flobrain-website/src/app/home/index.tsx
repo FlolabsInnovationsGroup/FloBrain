@@ -11,16 +11,16 @@ import { applications, features } from "./constants";
  */
 export default function HomePage() {
   return (
-    <main className="w-full h-full flex flex-col items-center">
+    <main className="w-full h-full flex flex-col items-center fb-home-page">
       {/* 1. Hero Section */}
       <HeroSection />
 
       {/* 2. Features Grid */}
       <div className="w-full max-w-7xl px-4 py-20">
-        <h1 className="text-[36px] font-bold text-center mb-4 text-[#FFFFFF]">
+        <h1 className="text-[36px] font-bold text-center mb-4 fb-heading">
           Powerful Features, Simple Integration
         </h1>
-        <p className="text-[20px] font-regular text-center text-zinc-400 mb-28">
+        <p className="text-[20px] font-regular text-center fb-text-muted mb-28">
         Everything you need to build intelligent, context-aware applications
         </p>
 
@@ -33,10 +33,10 @@ export default function HomePage() {
 
       {/* 3. Applications / Ecosystem Section */}
       <div className="w-full max-w-7xl px-4 py-20">
-        <h1 className="text-[35px] font-bold text-center mb-4 text-[#FFFFFF]">
+        <h1 className="text-[35px] font-bold text-center mb-4 fb-heading">
           Every Where, All At Once
         </h1>
-        <p className="text-[20px] text-center text-zinc-400 mx-auto w-[80%] md:w-[60%] mb-28">
+        <p className="text-[20px] text-center fb-text-muted mx-auto w-[80%] md:w-[60%] mb-28">
           FloBrain seamlessly integrates with wearables, mobile apps, web platforms, robotics, IoT
           devices, and enterprise systems—all through a unified API
         </p>

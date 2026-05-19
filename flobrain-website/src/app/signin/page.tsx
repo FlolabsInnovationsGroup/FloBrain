@@ -40,7 +40,7 @@ export default function Login() {
   }
 
   return (
-    <main className="min-h-screen bg-[#2E0A4E] flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 relative overflow-hidden">
+    <main className="min-h-screen fb-auth-bg flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 relative overflow-hidden">
       {/* Back button - top left */}
       <Link
         href="/"
@@ -54,7 +54,7 @@ export default function Login() {
 
       <div className="w-full max-w-md relative z-10 flex flex-col items-center">
         {/* Form Card - light lavender */}
-        <div className="w-full bg-[#CABEE8]/90 rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
+        <div className="w-full fb-auth-card rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
           {/* Header - inside card */}
           <div className="text-center">
             <h1 className="text-2xl font-bold text-[#8A2BE2] mb-2">Welcome Back!</h1>

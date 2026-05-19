@@ -48,7 +48,7 @@ describe("Register Component", () => {
   it("should update name input value when user types", () => {
     renderWithAuth(<Register />);
 
-    const nameInput = screen.getByPlaceholderText("John Doe");
+    const nameInput = screen.getByPlaceholderText("Enter your full name");
     fireEvent.change(nameInput, { target: { value: "John Doe" } });
 
     expect(nameInput).toHaveValue("John Doe");
@@ -57,7 +57,7 @@ describe("Register Component", () => {
   it("should update email input value when user types", () => {
     renderWithAuth(<Register />);
 
-    const emailInput = screen.getByPlaceholderText("you@example.com");
+    const emailInput = screen.getByPlaceholderText("Enter your email");
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
 
     expect(emailInput).toHaveValue("test@example.com");
@@ -66,7 +66,7 @@ describe("Register Component", () => {
   it("should update password input value when user types", () => {
     renderWithAuth(<Register />);
 
-    const passwordInputs = screen.getAllByPlaceholderText("••••••••");
+    const passwordInputs = screen.getAllByPlaceholderText(/password/i);
     const passwordInput = passwordInputs[0];
     fireEvent.change(passwordInput, { target: { value: "password123" } });
 
@@ -76,7 +76,7 @@ describe("Register Component", () => {
   it("should update confirm password input value when user types", () => {
     renderWithAuth(<Register />);
 
-    const passwordInputs = screen.getAllByPlaceholderText("••••••••");
+    const passwordInputs = screen.getAllByPlaceholderText(/password/i);
     const confirmPasswordInput = passwordInputs[1];
     fireEvent.change(confirmPasswordInput, { target: { value: "password123" } });
 
@@ -86,7 +86,7 @@ describe("Register Component", () => {
   it("should toggle password visibility when eye icon is clicked", () => {
     renderWithAuth(<Register />);
 
-    const passwordInput = screen.getAllByPlaceholderText("••••••••")[0];
+    const passwordInput = screen.getByPlaceholderText("Create a password");
     const toggleButtons = screen.getAllByRole("button");
     const passwordToggle = toggleButtons.find(
       (button) => button.querySelector("svg") && button.closest("div")?.querySelector("#password")
@@ -106,7 +106,7 @@ describe("Register Component", () => {
   it("should toggle confirm password visibility when eye icon is clicked", () => {
     renderWithAuth(<Register />);
 
-    const confirmPasswordInput = screen.getAllByPlaceholderText("••••••••")[1];
+    const confirmPasswordInput = screen.getByPlaceholderText("Confirm your password");
     const toggleButtons = screen.getAllByRole("button");
     const confirmPasswordToggle = toggleButtons.find(
       (button) =>
@@ -142,9 +142,9 @@ describe("Register Component", () => {
   it("should handle all inputs filled correctly", () => {
     renderWithAuth(<Register />);
 
-    const nameInput = screen.getByPlaceholderText("John Doe");
-    const emailInput = screen.getByPlaceholderText("you@example.com");
-    const passwordInputs = screen.getAllByPlaceholderText("••••••••");
+    const nameInput = screen.getByPlaceholderText("Enter your full name");
+    const emailInput = screen.getByPlaceholderText("Enter your email");
+    const passwordInputs = screen.getAllByPlaceholderText(/password/i);
     const passwordInput = passwordInputs[0];
     const confirmPasswordInput = passwordInputs[1];
 
@@ -164,7 +164,7 @@ describe("Register Component", () => {
 
     const card = container.querySelector(".rounded-2xl");
     expect(card).toBeInTheDocument();
-    expect(card?.className).toContain("CABEE8");
+    expect(card?.className).toContain("fb-auth-card");
   });
 
   it("should render divider text correctly", () => {
@@ -188,12 +188,12 @@ describe("Register Component", () => {
     fireEvent.click(submitButton);
 
     // Verify inputs are still empty (no default behavior)
-    const nameInput = screen.getByPlaceholderText("John Doe");
-    const emailInput = screen.getByPlaceholderText("you@example.com");
+    const nameInput = screen.getByPlaceholderText("Enter your full name");
+    const emailInput = screen.getByPlaceholderText("Enter your email");
 
     expect(nameInput).toHaveValue("");
     expect(emailInput).toHaveValue("");
-    const passwordInputs = screen.getAllByPlaceholderText("••••••••");
+    const passwordInputs = screen.getAllByPlaceholderText(/password/i);
     expect(passwordInputs[0]).toHaveValue("");
     expect(passwordInputs[1]).toHaveValue("");
   });

@@ -64,6 +64,8 @@ describe("HomePage Integration", () => {
 
   it("should render the footer banner with its content", () => {
     render(<HomePage />);
-    expect(screen.getByText(/Whether you're using a wearable/i)).toBeDefined();
+    expect(
+      screen.getByText(/Join thousands of developers building the next generation/i)
+    ).toBeDefined();
   });
 });

@@ -49,7 +49,7 @@ export default function Register() {
   }
 
   return (
-    <main className="min-h-screen bg-[#2E0A4E] flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 relative overflow-hidden">
+    <main className="min-h-screen fb-auth-bg flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 relative overflow-hidden">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(139,92,246,0.15)_0%,_transparent_60%)]" />
 
@@ -63,7 +63,7 @@ export default function Register() {
         </div>
 
         {/* Form Card - light lavender */}
-        <div className="w-full bg-[#CABEE8]/90 rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
+        <div className="w-full fb-auth-card rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
               <p className="text-sm text-red-600 bg-red-100 border border-red-200 rounded-lg px-3 py-2">

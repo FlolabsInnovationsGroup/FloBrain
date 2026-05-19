@@ -50,13 +50,7 @@ export const TokenUsage = (): React.JSX.Element => {
 
   return (
     <div
-      className="w-full lg:w-[830px] rounded-[16px] sm:rounded-[20px]"
-      style={{
-        background: "rgba(30, 18, 43, 0.6)",
-        padding: "clamp(20px, 4vw, 32px)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
-      }}
+      className="w-full lg:w-[830px] fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
     >
       {/* Top Section */}
       <div className="flex items-start justify-between mb-3 sm:mb-4">
@@ -66,7 +60,7 @@ export const TokenUsage = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "rgba(255, 255, 255, 0.5)",
+              color: "var(--fb-text-muted)",
             }}
           >
             TOKEN USAGE
@@ -74,7 +68,7 @@ export const TokenUsage = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "rgba(255, 255, 255, 0.35)",
+              color: "var(--fb-text-subtle)",
             }}
           >
             Last 7 days
@@ -96,7 +90,7 @@ export const TokenUsage = (): React.JSX.Element => {
           className="font-bold mb-2 sm:mb-3"
           style={{
             fontSize: "clamp(32px, 8vw, 53px)",
-            color: "#FFFFFF",
+            color: "#2D1B4E",
             lineHeight: "1",
             letterSpacing: "-0.02em",
           }}
@@ -121,7 +115,7 @@ export const TokenUsage = (): React.JSX.Element => {
           <span
             style={{
               fontSize: "clamp(11px, 2vw, 13px)",
-              color: "rgba(255, 255, 255, 0.4)",
+              color: "var(--fb-text-subtle)",
             }}
           >
             vs. last week

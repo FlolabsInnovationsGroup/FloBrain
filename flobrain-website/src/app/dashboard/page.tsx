@@ -7,15 +7,14 @@ import { WorkflowEngine } from "./components/workflow-engine";
 
 export default function Dashboard() {
   return (
-    <main
-      className="min-h-screen text-white px-4 py-6 sm:px-6 sm:py-8 md:p-8"
-      style={{ background: "linear-gradient(116.21deg, #290036 -1.81%, #070014 100%)" }}
-    >
+    <main className="min-h-screen fb-page px-4 py-6 sm:px-6 sm:py-8 md:p-8">
       <div className="max-w-7xl mx-auto w-full overflow-x-hidden">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">SYSTEM DASHBOARD</h1>
-          <p className="text-zinc-400 text-sm sm:text-base">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 fb-heading dark:text-white">
+            SYSTEM DASHBOARD
+          </h1>
+          <p className="fb-text-muted text-sm sm:text-base">
             Monitor your system health, workflows, and AI model performance
           </p>
         </div>
