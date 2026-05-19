@@ -18,51 +18,51 @@ const iconSize = "w-8 h-8";
 export const features = [
   {
     id: 1,
-    icon: <GitBranch className={iconSize} color="#a78bfa" />,
+    icon: <GitBranch className={iconSize} color="#ffffff" />,
     title: "Workflow Engine",
     description:
       "Orchestrate complex AI workflows with visual drag-and-drop or code-first approaches.",
-    color: "#a78bfa",
+    color: "#3b82f6",
   },
   {
     id: 2,
-    icon: <Database className={iconSize} color="#2dd4bf" />,
+    icon: <Database className={iconSize} color="#ffffff" />,
     title: "Memory System",
     description:
       "Persistent, long-term memory that learns from every interaction and context.",
-    color: "#2dd4bf",
+    color: "#8b5cf6",
   },
   {
     id: 3,
-    icon: <Brain className={iconSize} color="#ec4899" />,
+    icon: <Brain className={iconSize} color="#ffffff" />,
     title: "AI Orchestration",
     description:
       "Route requests to the best model for the job. Multi-model, multi-provider support.",
-    color: "#ec4899",
-  },
-  {
-    id: 4,
-    icon: <RefreshCw className={iconSize} color="#22c55e" />,
-    title: "Real-Time Sync",
-    description:
-      "Keep state synchronized across all devices and platforms in real-time.",
     color: "#22c55e",
   },
   {
+    id: 4,
+    icon: <RefreshCw className={iconSize} color="#ffffff" />,
+    title: "Real-Time Sync",
+    description:
+      "Keep state synchronized across all devices and platforms in real-time.",
+    color: "#f97316",
+  },
+  {
     id: 5,
-    icon: <Layers className={iconSize} color="#f59e0b" />,
+    icon: <Layers className={iconSize} color="#ffffff" />,
     title: "State Management",
     description:
       "Centralized state management that works across web, mobile, IoT, and embedded systems.",
-    color: "#f59e0b",
+    color: "#14b8a6",
   },
   {
     id: 6,
-    icon: <Plug className={iconSize} color="#38bdf8" />,
+    icon: <Plug className={iconSize} color="#ffffff" />,
     title: "Integration Layer",
     description:
       "Pre-built connectors for popular services, APIs, and platforms. Extensible architecture.",
-    color: "#38bdf8",
+    color: "#ef4444",
   },
 ];
 

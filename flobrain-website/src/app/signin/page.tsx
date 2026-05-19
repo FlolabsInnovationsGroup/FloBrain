@@ -57,9 +57,15 @@ export default function Login() {
         <div className="w-full fb-auth-card rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
           {/* Header - inside card */}
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-[#8A2BE2] mb-2">Welcome Back!</h1>
-            <p className="text-zinc-600 text-sm">
-              Sign in to your <span className="font-semibold text-[#8A2BE2]">FloBrain</span> account
+            <h1 className="text-2xl font-bold mb-2" style={{ color: "var(--fb-auth-heading)" }}>
+              Welcome Back!
+            </h1>
+            <p className="text-sm" style={{ color: "var(--fb-auth-text)" }}>
+              Sign in to your{" "}
+              <span className="font-semibold" style={{ color: "var(--fb-auth-heading)" }}>
+                FloBrain
+              </span>{" "}
+              account
             </p>
           </div>
 
@@ -123,7 +129,8 @@ export default function Login() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-[#6B46C1] hover:bg-[#5B36B1] text-white font-semibold rounded-lg shadow-lg disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full h-12 text-white font-semibold rounded-full shadow-lg disabled:opacity-60 flex items-center justify-center gap-2 hover:opacity-95"
+              style={{ background: "var(--fb-auth-btn)" }}
             >
               {loading ? "Signing in…" : "Sign In"}
               <span className="text-lg">→</span>

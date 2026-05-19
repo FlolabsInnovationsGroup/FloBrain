@@ -50,10 +50,10 @@ export default function Contact() {
       {/* Hero Section */}
       <section className="relative z-10 pt-16 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-[#2D1B4E] mb-4 leading-tight">
+          <h1 className="fb-contact-hero-title text-4xl md:text-5xl font-bold mb-4 leading-tight dark:text-[#2D1B4E]">
             Scale Your AI Intelligence
           </h1>
-          <p className="text-base md:text-lg text-[#5C4A72] max-w-2xl leading-relaxed">
+          <p className="fb-contact-hero-body text-base md:text-lg max-w-2xl leading-relaxed dark:text-[#5C4A72]">
             Connect with our engineering team to integrate FloLabs Brain into your workflow, or
             reach out to sales for enterprise solutions and partnerships.
           </p>
@@ -66,9 +66,9 @@ export default function Contact() {
           <div className="grid lg:grid-cols-2 gap-10 items-start">
             {/* Left Column - Contact Form */}
             <div className="space-y-8">
-              <div className="bg-white/60 backdrop-blur-md border border-[#9B8AB8]/40 rounded-xl p-8 shadow-lg">
-                <h2 className="text-xl font-bold text-[#2D1B4E] mb-6">Get in Touch</h2>
-                <p className="text-[#5C4A72] text-sm mb-6">
+              <div className="fb-contact-form-card backdrop-blur-md rounded-xl p-8 shadow-lg border">
+                <h2 className="text-xl font-bold text-white mb-6 dark:text-[#2D1B4E]">Get in Touch</h2>
+                <p className="text-white/80 text-sm mb-6 dark:text-[#5C4A72]">
                   Fill out the form below and we&apos;ll respond within 24 hours.
                 </p>
 
@@ -82,7 +82,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       disabled={isSubmitting}
-                      className="w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="fb-contact-input w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -94,7 +94,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       disabled={isSubmitting}
-                      className="w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="fb-contact-input w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -106,7 +106,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       disabled={isSubmitting}
-                      className="w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="fb-contact-input w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -118,7 +118,7 @@ export default function Contact() {
                       onChange={handleInputChange}
                       required
                       disabled={isSubmitting}
-                      className="w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="fb-contact-input w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <button
@@ -150,12 +150,12 @@ export default function Contact() {
             <div className="space-y-8">
               {/* Direct Contact */}
               <div>
-                <h3 className="text-xl font-bold text-[#2D1B4E] mb-6 uppercase tracking-wider">
+                <h3 className="fb-contact-section-label text-xl font-bold mb-6 uppercase tracking-wider dark:text-[#2D1B4E]">
                   Direct Contact
                 </h3>
                 <div className="space-y-4">
                   {/* Technical Support */}
-                  <div className="relative bg-white/50 backdrop-blur-md border border-[#9B8AB8]/40 rounded-xl p-6 shadow-xl group hover:bg-white/10 transition-all duration-200">
+                  <div className="fb-contact-side-card relative backdrop-blur-md border rounded-xl p-6 shadow-xl group transition-all duration-200 hover:bg-white/10 dark:bg-white/50 dark:border-[#9B8AB8]/40">
                     <div className="absolute top-4 right-4 text-white/30 group-hover:text-white/50 transition-colors">
                       <ExternalLink size={16} />
                     </div>
@@ -179,7 +179,7 @@ export default function Contact() {
                   </div>
 
                   {/* Partnerships */}
-                  <div className="relative bg-white/50 backdrop-blur-md border border-[#9B8AB8]/40 rounded-xl p-6 shadow-xl group hover:bg-white/10 transition-all duration-200">
+                  <div className="fb-contact-side-card relative backdrop-blur-md border rounded-xl p-6 shadow-xl group transition-all duration-200 hover:bg-white/10 dark:bg-white/50 dark:border-[#9B8AB8]/40">
                     <div className="absolute top-4 right-4 text-white/30 group-hover:text-white/50 transition-colors">
                       <ExternalLink size={16} />
                     </div>
@@ -201,7 +201,7 @@ export default function Contact() {
                   </div>
 
                   {/* Press / Media */}
-                  <div className="relative bg-white/50 backdrop-blur-md border border-[#9B8AB8]/40 rounded-xl p-6 shadow-xl group hover:bg-white/10 transition-all duration-200">
+                  <div className="fb-contact-side-card relative backdrop-blur-md border rounded-xl p-6 shadow-xl group transition-all duration-200 hover:bg-white/10 dark:bg-white/50 dark:border-[#9B8AB8]/40">
                     <div className="absolute top-4 right-4 text-white/30 group-hover:text-white/50 transition-colors">
                       <ExternalLink size={16} />
                     </div>
@@ -225,7 +225,7 @@ export default function Contact() {
               </div>
 
               {/* Developer Resources */}
-              <div className="bg-white/50 backdrop-blur-md border border-[#9B8AB8]/40 rounded-2xl p-8 shadow-2xl">
+              <div className="fb-contact-side-card backdrop-blur-md border rounded-2xl p-8 shadow-2xl dark:bg-white/50 dark:border-[#9B8AB8]/40">
                 <h3 className="text-2xl font-bold text-[#2D1B4E] mb-6 uppercase tracking-wider">
                   Developer Resources
                 </h3>

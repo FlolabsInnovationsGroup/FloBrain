@@ -56,9 +56,15 @@ export default function Register() {
       <div className="w-full max-w-md relative z-10 flex flex-col items-center">
         {/* Header - outside card */}
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-[#8A2BE2] mb-2">Create Account</h1>
-          <p className="text-zinc-400 text-sm">
-            Join <span className="font-semibold text-[#8A2BE2]">FloBrain</span> and start your journey
+          <h1 className="text-2xl font-bold mb-2" style={{ color: "var(--fb-auth-heading)" }}>
+            Create Account
+          </h1>
+          <p className="text-sm" style={{ color: "var(--fb-auth-text)" }}>
+            Join{" "}
+            <span className="font-semibold" style={{ color: "var(--fb-auth-heading)" }}>
+              FloBrain
+            </span>{" "}
+            and start your journey
           </p>
         </div>
 
@@ -156,7 +162,8 @@ export default function Register() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-[#6B46C1] hover:bg-[#5B36B1] text-white font-semibold rounded-lg shadow-lg disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full h-12 text-white font-semibold rounded-full shadow-lg disabled:opacity-60 flex items-center justify-center gap-2 hover:opacity-95"
+              style={{ background: "var(--fb-auth-btn)" }}
             >
               {loading ? "Creating account…" : "Create Account"}
               <span className="text-lg">→</span>

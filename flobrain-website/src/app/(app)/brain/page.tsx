@@ -657,7 +657,7 @@ function BrainPageContent() {
   };
 
   return (
-    <main className="mx-auto mb-2 flex h-[calc(100dvh-5rem)] w-full max-w-[1800px] flex-col overflow-y-auto fb-page px-2 pt-[5.5rem] font-[Inter] text-slate-300 sm:px-4 sm:pt-[6.25rem] lg:h-[calc(100vh-5rem)] lg:overflow-hidden lg:px-6 dark:text-slate-300 light:text-[#2d1b4e]">
+    <main className="fb-chat-page mx-auto mb-2 flex h-[calc(100dvh-5rem)] w-full max-w-[1800px] flex-col overflow-y-auto fb-page px-2 pt-[5.5rem] font-[Inter] text-slate-300 sm:px-4 sm:pt-[6.25rem] lg:h-[calc(100vh-5rem)] lg:overflow-hidden lg:px-6 dark:text-slate-300">
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
           {error}
@@ -671,7 +671,7 @@ function BrainPageContent() {
         </div>
       )}
 
-      <div className="relative flex min-h-0 flex-1 gap-2 overflow-visible sm:gap-3 xl:overflow-hidden">
+      <div className="fb-chat-shell relative flex min-h-0 flex-1 gap-2 overflow-visible rounded-2xl p-2 sm:gap-3 sm:p-3 xl:overflow-hidden">
         <div className="hidden lg:flex">
           <LeftPanel
             variant="chats"

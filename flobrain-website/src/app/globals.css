@@ -10,17 +10,18 @@
 @custom-variant dark (&:is(.dark *));
 @custom-variant light (&:is(.light *));
 
-/* ─── Light theme (default class on html when light mode) ─── */
+/* ─── Light theme (mockup palette — May 17 designs) ─── */
 .light {
-  --fb-page-bg: linear-gradient(180deg, #d8b4e2 0%, #e9d5ff 45%, #f0efff 100%);
-  --fb-page-bg-solid: #e0d7f7;
-  --fb-home-bg: linear-gradient(180deg, #d8b4e2 0%, #f0c4f7 100%);
-  --fb-text: #1a0a2e;
-  --fb-text-muted: #5c4a72;
-  --fb-text-subtle: #7c6b94;
-  --fb-heading: #2d1b4e;
-  --fb-hero-accent: #c026d3;
-  --fb-hero-accent-secondary: #6b21a8;
+  --fb-page-bg: #d8b4fe;
+  --fb-page-bg-solid: #d8b4fe;
+  --fb-home-bg: #d8b4fe;
+  --fb-text: #1a1b25;
+  --fb-text-muted: #5e5e6e;
+  --fb-text-subtle: #6b7280;
+  --fb-heading: #1a1b25;
+  --fb-hero-accent: #db2777;
+  --fb-hero-accent-secondary: #db2777;
+  --fb-hero-body: #1a1b25;
 
   --fb-navbar-bg: rgba(15, 12, 27, 0.97);
   --fb-navbar-border: rgba(255, 255, 255, 0.06);
@@ -28,26 +29,29 @@
   --fb-nav-text: #a1a1aa;
   --fb-nav-text-active: #ffffff;
 
-  --fb-sidebar-bg: rgba(126, 109, 154, 0.92);
-  --fb-sidebar-border: rgba(107, 33, 168, 0.15);
-  --fb-panel-bg: rgba(224, 211, 247, 0.75);
-  --fb-panel-border: rgba(107, 33, 168, 0.12);
-  --fb-chat-area-bg: rgba(196, 181, 225, 0.55);
-  --fb-confidence-panel-bg: rgba(209, 196, 233, 0.85);
+  --fb-sidebar-bg: #2d2d3a;
+  --fb-sidebar-border: rgba(255, 255, 255, 0.08);
+  --fb-panel-bg: #ebe6f5;
+  --fb-panel-border: rgba(167, 139, 250, 0.25);
+  --fb-chat-page-bg: #e6e0f8;
+  --fb-chat-shell-bg: #f3f3ff;
+  --fb-chat-shell-border: rgba(167, 139, 250, 0.35);
+  --fb-chat-area-bg: #ebe6f5;
+  --fb-confidence-panel-bg: #f3f3ff;
 
-  --fb-card-bg: rgba(167, 139, 250, 0.42);
-  --fb-card-border: rgba(107, 33, 168, 0.2);
-  --fb-card-inner-bg: #f3e8ff;
-  --fb-feature-card-bg: #6b607a;
-  --fb-feature-card-border: rgba(255, 255, 255, 0.08);
-  --fb-app-card-bg: #6b607a;
-  --fb-app-card-border: rgba(255, 255, 255, 0.1);
+  --fb-card-bg: #a08db1;
+  --fb-card-border: rgba(91, 33, 182, 0.12);
+  --fb-card-inner-bg: #b6a5c4;
+  --fb-feature-card-bg: #3d3649;
+  --fb-feature-card-border: rgba(255, 255, 255, 0.06);
+  --fb-app-card-bg: #4a4558;
+  --fb-app-card-border: rgba(255, 255, 255, 0.08);
 
-  --fb-dashboard-card-bg: rgba(167, 139, 250, 0.48);
-  --fb-dashboard-card-border: rgba(76, 29, 149, 0.25);
-  --fb-dashboard-inner-bg: #f3e8ff;
-  --fb-dashboard-heading: #2d1b4e;
-  --fb-dashboard-stat: #1a0a2e;
+  --fb-dashboard-card-bg: #a08db1;
+  --fb-dashboard-card-border: rgba(91, 33, 182, 0.18);
+  --fb-dashboard-inner-bg: #b6a5c4;
+  --fb-dashboard-heading: #5b21b6;
+  --fb-dashboard-stat: #1a1b25;
 
   --fb-pricing-card-bg: #ffffff;
   --fb-pricing-card-border: rgba(196, 181, 225, 0.65);
@@ -60,15 +64,22 @@
   --fb-pricing-grid-value: #1a1b25;
   --fb-pricing-check: #22c55e;
 
-  --fb-auth-bg: linear-gradient(180deg, #e9d5ff 0%, #d8b4fe 55%, #c4b5fd 100%);
-  --fb-auth-card-bg: rgba(233, 213, 255, 0.95);
-  --fb-auth-card-border: #6b21a8;
-  --fb-auth-heading: #6b21a8;
-  --fb-auth-text: #4c1d95;
+  --fb-auth-bg: #d8b4fe;
+  --fb-auth-card-bg: #e9d5ff;
+  --fb-auth-card-border: #581c87;
+  --fb-auth-heading: #581c87;
+  --fb-auth-text: #4b5563;
+  --fb-auth-input-bg: #f9fafb;
+  --fb-auth-btn: #581c87;
 
-  --fb-contact-form-bg: rgba(255, 255, 255, 0.65);
-  --fb-contact-card-bg: rgba(255, 255, 255, 0.5);
-  --fb-contact-border: rgba(155, 138, 184, 0.45);
+  --fb-contact-hero-title: #ffffff;
+  --fb-contact-hero-body: rgba(255, 255, 255, 0.88);
+  --fb-contact-section-label: rgba(255, 255, 255, 0.72);
+  --fb-contact-form-bg: rgba(255, 255, 255, 0.42);
+  --fb-contact-card-bg: rgba(255, 255, 255, 0.38);
+  --fb-contact-border: rgba(255, 255, 255, 0.35);
+  --fb-contact-input-bg: #c4b5fd;
+  --fb-contact-link: #a855f7;
 
   --fb-chat-bubble-user: #1f1b2e;
   --fb-chat-bubble-assistant: rgba(75, 65, 95, 0.55);
@@ -76,9 +87,11 @@
   --fb-stat-card-bg: rgba(75, 65, 95, 0.35);
   --fb-process-card-bg: #0f0c1b;
 
-  --fb-footer-banner-bg: linear-gradient(135deg, #f0c4f7 0%, #e9d5ff 100%);
-  --fb-footer-text: #2d1b4e;
-  --fb-footer-subtext: #5c4a72;
+  --fb-footer-banner-bg: linear-gradient(135deg, #f0c4f7 0%, #f5d0fe 45%, #e9d5ff 100%);
+  --fb-footer-text: #1a1b25;
+  --fb-footer-subtext: #5e5e6e;
+  --fb-memory-shell-bg: rgba(255, 255, 255, 0.42);
+  --fb-memory-filter-bg: rgba(196, 181, 253, 0.65);
 
   --fb-notfound-bg: radial-gradient(ellipse at center, #ede9fe 0%, #e9d5ff 45%, #f5f3ff 100%);
   --fb-notfound-card-bg: #ffffff;
@@ -132,6 +145,7 @@
   --fb-heading: #ffffff;
   --fb-hero-accent: #cc34ff;
   --fb-hero-accent-secondary: #610081;
+  --fb-hero-body: #e2e8f0;
 
   --fb-navbar-bg: rgba(15, 10, 26, 0.95);
   --fb-navbar-border: rgba(255, 255, 255, 0.05);
@@ -248,6 +262,24 @@ body {
 .fb-page {
   background: var(--fb-page-bg);
   color: var(--fb-text);
+}
+
+.light .fb-page {
+  background: var(--fb-page-bg);
+}
+
+.light .fb-dashboard-card {
+  backdrop-filter: none;
+}
+
+.light .fb-chat-page {
+  background: var(--fb-chat-page-bg);
+}
+
+.light .fb-chat-shell {
+  background: var(--fb-chat-shell-bg);
+  border: 1px solid var(--fb-chat-shell-border);
+  box-shadow: 0 8px 40px rgba(107, 33, 168, 0.12);
 }
 
 .fb-home-page {
@@ -416,15 +448,90 @@ body {
   border: 1px solid var(--fb-profile-shell-border);
 }
 
-.light .fb-feature-card h3,
-.light .fb-feature-card p,
-.light .fb-app-card h3,
-.light .fb-app-card p {
+.light .fb-feature-card .fb-feature-card__header h3 {
   color: #ffffff;
 }
 
-.light .fb-app-card .text-zinc-400 {
+.light .fb-feature-card .fb-feature-card__body p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.light .fb-app-card h3 {
+  color: #ffffff;
+}
+
+.light .fb-app-card p {
   color: rgba(255, 255, 255, 0.75);
+}
+
+.light .fb-app-card__tag {
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+  font-family: inherit;
+}
+
+.light .fb-hero-cta {
+  background: #1a1b25;
+  color: #ffffff;
+}
+
+.light .fb-hero-cta:hover {
+  background: #2d2d3a;
+}
+
+.light .fb-contact-hero-title {
+  color: var(--fb-contact-hero-title);
+}
+
+.light .fb-contact-hero-body {
+  color: var(--fb-contact-hero-body);
+}
+
+.light .fb-contact-section-label {
+  color: var(--fb-contact-section-label);
+}
+
+.light .fb-contact-form-card {
+  background: var(--fb-contact-form-bg);
+  border-color: var(--fb-contact-border);
+}
+
+.light .fb-contact-side-card {
+  background: var(--fb-contact-card-bg);
+  border-color: var(--fb-contact-border);
+}
+
+.light .fb-contact-side-card h3,
+.light .fb-contact-side-card h4 {
+  color: #ffffff;
+}
+
+.light .fb-contact-side-card p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.light .fb-contact-side-card a {
+  color: var(--fb-contact-link);
+}
+
+.light .fb-contact-input {
+  background: var(--fb-contact-input-bg) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  color: #1a1b25 !important;
+}
+
+.light .fb-contact-input::placeholder {
+  color: #6b7280 !important;
+}
+
+.light .fb-contact-section-label {
+  color: var(--fb-contact-section-label);
+}
+
+.light .fb-memory-shell {
+  background: var(--fb-memory-shell-bg);
+  border-color: rgba(167, 139, 250, 0.35);
 }
 
 /* Custom gradient radial background */

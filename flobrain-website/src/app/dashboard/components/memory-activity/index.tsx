@@ -125,7 +125,7 @@ export const MemoryActivity = (): React.JSX.Element => {
             className="font-bold mb-1"
             style={{
               fontSize: "clamp(24px, 5vw, 32px)",
-              color: "#2D1B4E",
+              color: "var(--fb-dashboard-stat)",
               lineHeight: "1",
             }}
           >
@@ -164,7 +164,7 @@ export const MemoryActivity = (): React.JSX.Element => {
             className="font-bold mb-1.5 sm:mb-2"
             style={{
               fontSize: "clamp(24px, 5vw, 32px)",
-              color: "#2D1B4E",
+              color: "var(--fb-dashboard-stat)",
               lineHeight: "1",
             }}
           >
@@ -207,7 +207,7 @@ export const MemoryActivity = (): React.JSX.Element => {
             className="font-bold mb-1"
             style={{
               fontSize: "clamp(24px, 5vw, 32px)",
-              color: "#2D1B4E",
+              color: "var(--fb-dashboard-stat)",
               lineHeight: "1",
             }}
           >

@@ -11,7 +11,10 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto w-full overflow-x-hidden">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 fb-heading dark:text-white">
+          <h1
+            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 uppercase tracking-wide dark:text-white"
+            style={{ color: "var(--fb-dashboard-heading, var(--fb-heading))" }}
+          >
             SYSTEM DASHBOARD
           </h1>
           <p className="fb-text-muted text-sm sm:text-base">
