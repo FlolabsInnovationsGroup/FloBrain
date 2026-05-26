@@ -50,10 +50,10 @@ export default function Contact() {
       {/* Hero Section */}
       <section className="relative z-10 pt-16 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="fb-contact-hero-title text-4xl md:text-5xl font-bold mb-4 leading-tight dark:text-[#2D1B4E]">
+          <h1 className="fb-contact-hero-title text-4xl md:text-5xl font-bold mb-4 leading-tight text-[#2D1B4E] dark:text-white">
             Scale Your AI Intelligence
           </h1>
-          <p className="fb-contact-hero-body text-base md:text-lg max-w-2xl leading-relaxed dark:text-[#5C4A72]">
+          <p className="fb-contact-hero-body text-base md:text-lg max-w-2xl leading-relaxed text-[#5C4A72] dark:text-white/80">
             Connect with our engineering team to integrate FloLabs Brain into your workflow, or
             reach out to sales for enterprise solutions and partnerships.
           </p>
@@ -67,8 +67,8 @@ export default function Contact() {
             {/* Left Column - Contact Form */}
             <div className="space-y-8">
               <div className="fb-contact-form-card backdrop-blur-md rounded-xl p-8 shadow-lg border">
-                <h2 className="text-xl font-bold text-white mb-6 dark:text-[#2D1B4E]">Get in Touch</h2>
-                <p className="text-white/80 text-sm mb-6 dark:text-[#5C4A72]">
+                <h2 className="text-xl font-bold text-[#2D1B4E] mb-6 dark:text-white">Get in Touch</h2>
+                <p className="text-[#5C4A72] text-sm mb-6 dark:text-white/80">
                   Fill out the form below and we&apos;ll respond within 24 hours.
                 </p>
 
@@ -150,13 +150,13 @@ export default function Contact() {
             <div className="space-y-8">
               {/* Direct Contact */}
               <div>
-                <h3 className="fb-contact-section-label text-xl font-bold mb-6 uppercase tracking-wider dark:text-[#2D1B4E]">
+                <h3 className="fb-contact-section-label text-xl font-bold mb-6 uppercase tracking-wider !text-[#2D1B4E] dark:!text-white">
                   Direct Contact
                 </h3>
                 <div className="space-y-4">
                   {/* Technical Support */}
                   <div className="fb-contact-side-card relative backdrop-blur-md border rounded-xl p-6 shadow-xl group transition-all duration-200 hover:bg-white/10 dark:bg-white/50 dark:border-[#9B8AB8]/40">
-                    <div className="absolute top-4 right-4 text-white/30 group-hover:text-white/50 transition-colors">
+                    <div className="absolute top-4 right-4 text-[#7A6890]/50 group-hover:text-[#5C4A72] transition-colors dark:text-white/30 dark:group-hover:text-white/50">
                       <ExternalLink size={16} />
                     </div>
                     <div className="flex items-start gap-4">
@@ -164,8 +164,10 @@ export default function Contact() {
                         <Mail className="text-purple-400" size={20} />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-[#2D1B4E] mb-2">Technical Support</h4>
-                        <p className="text-[#5C4A72] text-sm mb-3">
+                        <h4 className="font-semibold !text-[#2D1B4E] dark:!text-white mb-2">
+                          Technical Support
+                        </h4>
+                        <p className="!text-[#5C4A72] dark:!text-white/80 text-sm mb-3">
                           For developers integrating the SDK
                         </p>
                         <a
@@ -180,7 +182,7 @@ export default function Contact() {
 
                   {/* Partnerships */}
                   <div className="fb-contact-side-card relative backdrop-blur-md border rounded-xl p-6 shadow-xl group transition-all duration-200 hover:bg-white/10 dark:bg-white/50 dark:border-[#9B8AB8]/40">
-                    <div className="absolute top-4 right-4 text-white/30 group-hover:text-white/50 transition-colors">
+                    <div className="absolute top-4 right-4 text-[#7A6890]/50 group-hover:text-[#5C4A72] transition-colors dark:text-white/30 dark:group-hover:text-white/50">
                       <ExternalLink size={16} />
                     </div>
                     <div className="flex items-start gap-4">
@@ -188,8 +190,12 @@ export default function Contact() {
                         <Users className="text-purple-400" size={20} />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-[#2D1B4E] mb-2">Partnerships</h4>
-                        <p className="text-[#5C4A72] text-sm mb-3">For device manufacturers</p>
+                        <h4 className="font-semibold !text-[#2D1B4E] dark:!text-white mb-2">
+                          Partnerships
+                        </h4>
+                        <p className="!text-[#5C4A72] dark:!text-white/80 text-sm mb-3">
+                          For device manufacturers
+                        </p>
                         <a
                           href="mailto:partners@flolabs.ai"
                           className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
@@ -202,7 +208,7 @@ export default function Contact() {
 
                   {/* Press / Media */}
                   <div className="fb-contact-side-card relative backdrop-blur-md border rounded-xl p-6 shadow-xl group transition-all duration-200 hover:bg-white/10 dark:bg-white/50 dark:border-[#9B8AB8]/40">
-                    <div className="absolute top-4 right-4 text-white/30 group-hover:text-white/50 transition-colors">
+                    <div className="absolute top-4 right-4 text-[#7A6890]/50 group-hover:text-[#5C4A72] transition-colors dark:text-white/30 dark:group-hover:text-white/50">
                       <ExternalLink size={16} />
                     </div>
                     <div className="flex items-start gap-4">
@@ -210,8 +216,12 @@ export default function Contact() {
                         <Newspaper className="text-purple-400" size={20} />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-semibold text-[#2D1B4E] mb-2">Press / Media</h4>
-                        <p className="text-[#5C4A72] text-sm mb-3">Media inquiries and press kit</p>
+                        <h4 className="font-semibold !text-[#2D1B4E] dark:!text-white mb-2">
+                          Press / Media
+                        </h4>
+                        <p className="!text-[#5C4A72] dark:!text-white/80 text-sm mb-3">
+                          Media inquiries and press kit
+                        </p>
                         <a
                           href="mailto:press@flolabs.ai"
                           className="text-cyan-400 hover:text-cyan-300 text-sm font-medium transition-colors"
@@ -226,7 +236,7 @@ export default function Contact() {
 
               {/* Developer Resources */}
               <div className="fb-contact-side-card backdrop-blur-md border rounded-2xl p-8 shadow-2xl dark:bg-white/50 dark:border-[#9B8AB8]/40">
-                <h3 className="text-2xl font-bold text-[#2D1B4E] mb-6 uppercase tracking-wider">
+                <h3 className="text-2xl font-bold !text-[#2D1B4E] dark:!text-white mb-6 uppercase tracking-wider">
                   Developer Resources
                 </h3>
 
@@ -238,8 +248,12 @@ export default function Contact() {
                         <FileText className="text-purple-400" size={18} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-[#2D1B4E] text-sm">API Documentation</h4>
-                        <p className="text-[#5C4A72] text-xs">Complete integration guides</p>
+                        <h4 className="font-semibold !text-[#2D1B4E] dark:!text-white text-sm">
+                          API Documentation
+                        </h4>
+                        <p className="!text-[#5C4A72] dark:!text-white/80 text-xs">
+                          Complete integration guides
+                        </p>
                       </div>
                     </div>
                     <ExternalLink
@@ -255,7 +269,9 @@ export default function Contact() {
                         <Activity className="text-green-400" size={18} />
                       </div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-semibold text-[#2D1B4E] text-sm">System Status</h4>
+                        <h4 className="font-semibold !text-[#2D1B4E] dark:!text-white text-sm">
+                          System Status
+                        </h4>
                         <span className="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded-full font-medium">
                           99.9% Uptime
                         </span>
@@ -274,8 +290,10 @@ export default function Contact() {
                         <Github className="text-purple-400" size={18} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-[#2D1B4E] text-sm">GitHub</h4>
-                        <p className="text-[#5C4A72] text-xs">Open source SDKs</p>
+                        <h4 className="font-semibold !text-[#2D1B4E] dark:!text-white text-sm">
+                          GitHub
+                        </h4>
+                        <p className="!text-[#5C4A72] dark:!text-white/80 text-xs">Open source SDKs</p>
                       </div>
                     </div>
                     <ExternalLink
@@ -291,8 +309,12 @@ export default function Contact() {
                         <MessageCircle className="text-purple-400" size={18} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-[#2D1B4E] text-sm">Discord Community</h4>
-                        <p className="text-[#5C4A72] text-xs">Join 5,000+ developers</p>
+                        <h4 className="font-semibold !text-[#2D1B4E] dark:!text-white text-sm">
+                          Discord Community
+                        </h4>
+                        <p className="!text-[#5C4A72] dark:!text-white/80 text-xs">
+                          Join 5,000+ developers
+                        </p>
                       </div>
                     </div>
                     <ExternalLink

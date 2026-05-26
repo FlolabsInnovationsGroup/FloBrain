@@ -74,7 +74,7 @@
 
   --fb-contact-hero-title: #ffffff;
   --fb-contact-hero-body: rgba(255, 255, 255, 0.88);
-  --fb-contact-section-label: rgba(255, 255, 255, 0.72);
+  --fb-contact-section-label: #2d1b4e;
   --fb-contact-form-bg: rgba(255, 255, 255, 0.42);
   --fb-contact-card-bg: rgba(255, 255, 255, 0.38);
   --fb-contact-border: rgba(255, 255, 255, 0.35);
@@ -504,11 +504,11 @@ body {
 
 .light .fb-contact-side-card h3,
 .light .fb-contact-side-card h4 {
-  color: #ffffff;
+  color: #2d1b4e;
 }
 
 .light .fb-contact-side-card p {
-  color: rgba(255, 255, 255, 0.82);
+  color: #5c4a72;
 }
 
 .light .fb-contact-side-card a {
