@@ -96,10 +96,10 @@ export const WorkflowEngine = (): React.JSX.Element => {
             className="rounded-full font-semibold"
             style={{
               padding: "5px 10px",
-              background: "rgba(220, 38, 38, 0.15)",
-              border: "1px solid rgba(220, 38, 38, 0.3)",
+              background: "var(--fb-dashboard-critical-bg)",
+              border: "1px solid var(--fb-dashboard-critical-border)",
               fontSize: "11px",
-              color: "#FCA5A5",
+              color: "var(--fb-dashboard-critical-text)",
             }}
           >
             {criticalCount} Critical
@@ -108,10 +108,10 @@ export const WorkflowEngine = (): React.JSX.Element => {
             className="rounded-full font-semibold"
             style={{
               padding: "5px 10px",
-              background: "rgba(245, 158, 11, 0.15)",
-              border: "1px solid rgba(245, 158, 11, 0.3)",
+              background: "var(--fb-dashboard-warning-bg)",
+              border: "1px solid var(--fb-dashboard-warning-border)",
               fontSize: "11px",
-              color: "#FCD34D",
+              color: "var(--fb-dashboard-warning-text)",
             }}
           >
             {warningCount} Warnings
@@ -129,12 +129,12 @@ export const WorkflowEngine = (): React.JSX.Element => {
               padding: "clamp(12px, 3vw, 20px)",
               background:
                 alert.severity === "critical"
-                  ? "rgba(220, 38, 38, 0.08)"
-                  : "rgba(245, 158, 11, 0.08)",
+                  ? "var(--fb-dashboard-critical-bg)"
+                  : "var(--fb-dashboard-warning-bg)",
               border:
                 alert.severity === "critical"
-                  ? "1px solid rgba(220, 38, 38, 0.2)"
-                  : "1px solid rgba(245, 158, 11, 0.2)",
+                  ? "1px solid var(--fb-dashboard-critical-border)"
+                  : "1px solid var(--fb-dashboard-warning-border)",
             }}
           >
             <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
@@ -150,7 +150,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                         background: "rgba(220, 38, 38, 0.2)",
                       }}
                     >
-                      <AlertCircle className="w-4 h-4" style={{ color: "#FCA5A5" }} />
+                      <AlertCircle className="w-4 h-4" style={{ color: "var(--fb-dashboard-critical-text)" }} />
                     </div>
                   ) : (
                     <div
@@ -161,12 +161,12 @@ export const WorkflowEngine = (): React.JSX.Element => {
                         background: "rgba(245, 158, 11, 0.2)",
                       }}
                     >
-                      <AlertTriangle className="w-4 h-4" style={{ color: "#FCD34D" }} />
+                      <AlertTriangle className="w-4 h-4" style={{ color: "var(--fb-dashboard-warning-text)" }} />
                     </div>
                   )}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Clock className="w-3 h-3" style={{ color: "rgba(255, 255, 255, 0.3)" }} />
+                  <Clock className="w-3 h-3" style={{ color: "var(--fb-dashboard-icon-muted)" }} />
                   <span
                     style={{
                       fontSize: "11px",
@@ -189,7 +189,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                       background: "rgba(220, 38, 38, 0.2)",
                     }}
                   >
-                    <AlertCircle className="w-4 h-4" style={{ color: "#FCA5A5" }} />
+                    <AlertCircle className="w-4 h-4" style={{ color: "var(--fb-dashboard-critical-text)" }} />
                   </div>
                 ) : (
                   <div
@@ -200,7 +200,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                       background: "rgba(245, 158, 11, 0.2)",
                     }}
                   >
-                    <AlertTriangle className="w-4 h-4" style={{ color: "#FCD34D" }} />
+                    <AlertTriangle className="w-4 h-4" style={{ color: "var(--fb-dashboard-warning-text)" }} />
                   </div>
                 )}
               </div>
@@ -211,7 +211,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                   className="font-semibold mb-1.5 sm:mb-2"
                   style={{
                     fontSize: "clamp(12px, 2.5vw, 14px)",
-                    color: "#2D1B4E",
+                    color: "var(--fb-dashboard-stat)",
                     lineHeight: "1.3",
                     wordBreak: "break-word",
                   }}
@@ -238,7 +238,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                     className="rounded font-mono"
                     style={{
                       padding: "3px 6px",
-                      background: "rgba(255, 255, 255, 0.05)",
+                      background: "var(--fb-dashboard-code-bg)",
                       fontSize: "10px",
                       color: "var(--fb-text-subtle)",
                       wordBreak: "break-all",
@@ -250,7 +250,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                     className="font-medium hover:underline"
                     style={{
                       fontSize: "11px",
-                      color: "#A78BFA",
+                      color: "var(--fb-dashboard-link)",
                       cursor: "pointer",
                     }}
                   >
@@ -261,7 +261,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
 
               {/* Desktop Timestamp */}
               <div className="hidden sm:flex items-center gap-1.5 flex-shrink-0">
-                <Clock className="w-3.5 h-3.5" style={{ color: "rgba(255, 255, 255, 0.3)" }} />
+                <Clock className="w-3.5 h-3.5" style={{ color: "var(--fb-dashboard-icon-muted)" }} />
                 <span
                   style={{
                     fontSize: "11px",
@@ -284,7 +284,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
           background: "rgba(139, 92, 246, 0.1)",
           border: "1px solid rgba(139, 92, 246, 0.25)",
           fontSize: "clamp(12px, 2.5vw, 13px)",
-          color: "#A78BFA",
+          color: "var(--fb-dashboard-link)",
           cursor: "pointer",
         }}
         onMouseEnter={(e) => {

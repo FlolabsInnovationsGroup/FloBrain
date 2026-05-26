@@ -90,7 +90,7 @@ export const TokenUsage = (): React.JSX.Element => {
           className="font-bold mb-2 sm:mb-3"
           style={{
             fontSize: "clamp(32px, 8vw, 53px)",
-            color: "#2D1B4E",
+            color: "var(--fb-dashboard-metric)",
             lineHeight: "1",
             letterSpacing: "-0.02em",
           }}
@@ -160,7 +160,7 @@ export const TokenUsage = (): React.JSX.Element => {
               cy={toY(d.y)}
               r="3"
               fill="#8B5CF6"
-              stroke="rgba(30,18,43,0.9)"
+              stroke="var(--fb-dashboard-chart-dot-stroke)"
               strokeWidth="1.5"
             />
           ))}
@@ -173,7 +173,7 @@ export const TokenUsage = (): React.JSX.Element => {
               y={CHART_H - 4}
               textAnchor="middle"
               fontSize="9"
-              fill="rgba(255,255,255,0.35)"
+              fill="var(--fb-dashboard-chart-label)"
             >
               {label}
             </text>

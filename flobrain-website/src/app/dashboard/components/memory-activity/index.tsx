@@ -33,10 +33,10 @@ export const MemoryActivity = (): React.JSX.Element => {
   const heatmapDays = HEATMAP_DAYS;
 
   const getHeatmapColor = (intensity: number): string => {
-    if (intensity > 0.75) return "#FFEA00"; // Bright yellow - high
-    if (intensity > 0.5) return "#E8D000"; // Medium-high yellow
-    if (intensity > 0.25) return "#8B7000"; // Medium yellow/brown
-    return "#3A3547"; // Dark purple - low activity
+    if (intensity > 0.75) return "var(--fb-dashboard-heatmap-4)";
+    if (intensity > 0.5) return "var(--fb-dashboard-heatmap-3)";
+    if (intensity > 0.25) return "var(--fb-dashboard-heatmap-2)";
+    return "var(--fb-dashboard-heatmap-1)";
   };
 
   const todayCount = activity ? formatCount(activity.today_count) : "—";
@@ -47,15 +47,7 @@ export const MemoryActivity = (): React.JSX.Element => {
 
   if (error) {
     return (
-      <div
-        className="w-full rounded-[16px] sm:rounded-[20px]"
-        style={{
-          background: "rgba(30, 18, 43, 0.6)",
-          padding: "clamp(16px, 4vw, 32px)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
-        }}
-      >
+      <div className="w-full fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]">
         <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "var(--fb-text-muted)" }}>
           MEMORY ACTIVITY
         </h2>
@@ -104,12 +96,8 @@ export const MemoryActivity = (): React.JSX.Element => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
         {/* Card 1 - TODAY */}
         <div
-          className="rounded-lg"
-          style={{
-            padding: "clamp(14px, 3vw, 20px)",
-            background: "rgba(255, 255, 255, 0.03)",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-          }}
+          className="rounded-lg fb-dashboard-stat-card"
+          style={{ padding: "clamp(14px, 3vw, 20px)" }}
         >
           <div
             className="mb-1.5 sm:mb-2"
@@ -143,12 +131,8 @@ export const MemoryActivity = (): React.JSX.Element => {
 
         {/* Card 2 - THIS WEEK */}
         <div
-          className="rounded-lg"
-          style={{
-            padding: "clamp(14px, 3vw, 20px)",
-            background: "rgba(255, 255, 255, 0.03)",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-          }}
+          className="rounded-lg fb-dashboard-stat-card"
+          style={{ padding: "clamp(14px, 3vw, 20px)" }}
         >
           <div
             className="mb-1.5 sm:mb-2"
@@ -186,12 +170,8 @@ export const MemoryActivity = (): React.JSX.Element => {
 
         {/* Card 3 - TOTAL */}
         <div
-          className="rounded-lg"
-          style={{
-            padding: "clamp(14px, 3vw, 20px)",
-            background: "rgba(255, 255, 255, 0.03)",
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-          }}
+          className="rounded-lg fb-dashboard-stat-card"
+          style={{ padding: "clamp(14px, 3vw, 20px)" }}
         >
           <div
             className="mb-1.5 sm:mb-2"
@@ -253,7 +233,7 @@ export const MemoryActivity = (): React.JSX.Element => {
                 style={{
                   width: "8px",
                   height: "8px",
-                  background: "#3A3547",
+                  background: "var(--fb-dashboard-heatmap-1)",
                 }}
               />
               <div
@@ -261,7 +241,7 @@ export const MemoryActivity = (): React.JSX.Element => {
                 style={{
                   width: "8px",
                   height: "8px",
-                  background: "#8B7000",
+                  background: "var(--fb-dashboard-heatmap-2)",
                 }}
               />
               <div
@@ -269,7 +249,7 @@ export const MemoryActivity = (): React.JSX.Element => {
                 style={{
                   width: "8px",
                   height: "8px",
-                  background: "#E8D000",
+                  background: "var(--fb-dashboard-heatmap-3)",
                 }}
               />
               <div
@@ -277,7 +257,7 @@ export const MemoryActivity = (): React.JSX.Element => {
                 style={{
                   width: "8px",
                   height: "8px",
-                  background: "#FFEA00",
+                  background: "var(--fb-dashboard-heatmap-4)",
                 }}
               />
             </div>

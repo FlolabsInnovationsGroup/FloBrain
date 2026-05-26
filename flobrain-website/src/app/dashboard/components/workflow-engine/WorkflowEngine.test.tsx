@@ -59,7 +59,9 @@ describe("WorkflowEngine Component", () => {
 
   it("should render the correct number of alert items", () => {
     const { container } = render(<WorkflowEngine />);
-    const alerts = container.querySelectorAll('[style*="rgba(220, 38, 38, 0.08)"], [style*="rgba(245, 158, 11, 0.08)"]');
+    const alerts = container.querySelectorAll(
+      '[style*="var(--fb-dashboard-critical-bg)"], [style*="var(--fb-dashboard-warning-bg)"]'
+    );
     expect(alerts.length).toBeGreaterThan(0);
   });
 });

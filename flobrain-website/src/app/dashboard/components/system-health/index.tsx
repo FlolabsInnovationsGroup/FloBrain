@@ -139,7 +139,7 @@ export const SystemHealth = (): React.JSX.Element => {
             className="font-bold capitalize"
             style={{
               fontSize: "clamp(18px, 4vw, 24px)",
-              color: databaseStatus === "connected" ? "#00D492" : "rgba(255,255,255,0.5)",
+              color: databaseStatus === "connected" ? "#00D492" : "var(--fb-dashboard-disconnected)",
               lineHeight: "1",
             }}
           >
