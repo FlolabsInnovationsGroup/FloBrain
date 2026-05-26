@@ -4,9 +4,9 @@ export const MemorySkeleton = () => {
   return (
     <div
       data-testid="memory-skeleton-root"
-      className="flex min-h-[100dvh] flex-col bg-[#08040A] px-3 py-3 pb-6 md:px-5 md:py-5"
+      className="flex min-h-[100dvh] flex-col bg-[#08040A] px-3 pb-24 pt-[5rem] sm:px-4 sm:pb-28 sm:pt-[5.5rem] md:px-5 md:pb-5 md:pt-[5.5rem]"
     >
-      <div className="mx-auto flex min-h-0 w-full max-w-[1600px] flex-1 flex-col overflow-hidden rounded-2xl border border-[#7B5CFF]/22 bg-[#0a0510]/95 shadow-[0_0_80px_rgba(123,92,255,0.14)] backdrop-blur-xl">
+      <div className="mx-auto my-2 flex min-h-0 w-full max-w-[1600px] flex-1 flex-col overflow-hidden rounded-xl border border-[#7B5CFF]/22 bg-[#0a0510]/95 shadow-[0_0_80px_rgba(123,92,255,0.14)] backdrop-blur-xl sm:my-3 sm:rounded-2xl">
         <header className="flex shrink-0 flex-col gap-4 border-b border-white/[0.06] px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6">
           <div className="h-10 w-48 animate-pulse rounded-lg bg-white/10" />
           <div className="flex gap-2">
@@ -54,7 +54,7 @@ export const MemorySkeleton = () => {
             </div>
           </aside>
 
-          <section className="relative min-h-[min(70vh,640px)] flex-1 overflow-hidden rounded-2xl border border-white/[0.06] bg-[#08040A] lg:min-h-0">
+          <section className="relative min-h-[min(42vh,520px)] flex-1 overflow-hidden rounded-xl border border-white/[0.06] bg-[#08040A] sm:min-h-[min(48vh,560px)] sm:rounded-2xl lg:min-h-0">
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="relative h-[400px] w-full max-w-[600px]">
                 {Array.from({ length: 8 }).map((_, index) => {
