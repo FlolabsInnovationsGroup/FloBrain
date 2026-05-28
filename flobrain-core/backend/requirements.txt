@@ -11,3 +11,4 @@ SQLAlchemy
 sqlparse
 typing_extensions
 tzdata
+pymongo
