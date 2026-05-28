@@ -1,16 +1,33 @@
-version: '3.8'
-services: 
-  mongodb:
-    image: mongo:7
-    container_name: flobrain-workflow-mongo
+services:
+  web:
+    build: .
+    container_name: flobrain_backend_django
     restart: unless-stopped
     ports:
-      - '27017:27017'
+      - '8000:8000'
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
     environment:
-      MONGO_INITDB_DATABASE: flobrain
+      - DB_HOST=db
+
+  db:
+    image: postgres:15
+    container_name: flobrain_backend_db
+    restart: unless-stopped
+    ports:
+      - '5432:5432'
+    env_file:
+      - .env
     volumes:
-      - mongo_data:/data/db
-      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flo_user -d flobrain_db -h localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  mongo_data:
+  postgres_data:

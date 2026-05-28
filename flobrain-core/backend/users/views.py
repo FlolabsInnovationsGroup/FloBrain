@@ -290,12 +290,16 @@ class DeleteAccountView(APIView):
 
 
 class UserPreferencesListCreateView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request, pk=None):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         try:
-            prefs = UserPreferences.objects.filter(user=request.user)
+            prefs = UserPreferences.objects.filter(user=user)
             serializer = UserPreferencesSerializer(prefs, many=True)
             return Response(serializer.data)
         except Exception as e:
@@ -305,11 +309,17 @@ class UserPreferencesListCreateView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    def post(self, request):
+    def post(self, request, pk=None):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         try:
-            serializer = UserPreferencesSerializer(data=request.data, context={'request': request})
+            serializer = UserPreferencesSerializer(data=request.data, context={'request': request, 'user': user})
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(user=user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(
                 {"error": "Validation failed", "details": serializer.errors},
@@ -328,9 +338,15 @@ class UserPreferencesListCreateView(APIView):
             )
 
     def patch(self, request, pk=None):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         try:
-            preference = UserPreferences.objects.get(id=pk, user=request.user)
-            serializer = UserPreferencesSerializer(preference, data=request.data, partial=True, context={'request': request})
+            preference = UserPreferences.objects.get(id=pk, user=user)
+            serializer = UserPreferencesSerializer(preference, data=request.data, partial=True, context={'request': request, 'user': user})
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -351,8 +367,14 @@ class UserPreferencesListCreateView(APIView):
             )
 
     def delete(self, request, pk=None):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         try:
-            preference = UserPreferences.objects.get(id=pk, user=request.user)
+            preference = UserPreferences.objects.get(id=pk, user=user)
             preference.delete()
             return Response({"message": "Preference deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
         except ObjectDoesNotExist:
