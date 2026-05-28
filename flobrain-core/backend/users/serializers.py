@@ -111,5 +111,6 @@ class UserPreferencesSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'updated_at']
 
     def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
+        user = self.context.get('user') or self.context['request'].user
+        validated_data['user'] = user
         return super().create(validated_data)
