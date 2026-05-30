@@ -22,12 +22,20 @@ export default function Register() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (!name.trim()) {
+      setError("Full name is required");
+      return;
+    }
+    if (!email.trim()) {
+      setError("Email is required");
       return;
     }
     if (password.length < 8) {
       setError("Password must be at least 8 characters");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
       return;
     }
     setLoading(true);
@@ -98,10 +106,14 @@ export default function Register() {
                 <input
                   id="name"
                   type="text"
+                  name="name"
+                  autoComplete="name"
+                  required
                   placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",
@@ -118,10 +130,14 @@ export default function Register() {
                 <input
                   id="email"
                   type="email"
+                  name="email"
+                  autoComplete="email"
+                  required
                   placeholder="johndoe@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",
@@ -138,10 +154,15 @@ export default function Register() {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",
@@ -165,10 +186,15 @@ export default function Register() {
                 <input
                   id="confirm-password"
                   type={showConfirmPassword ? "text" : "password"}
+                  name="confirm-password"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",

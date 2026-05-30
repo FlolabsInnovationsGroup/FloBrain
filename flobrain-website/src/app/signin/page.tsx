@@ -21,6 +21,14 @@ export default function Login() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    if (!email.trim()) {
+      setError("Email is required");
+      return;
+    }
+    if (!password) {
+      setError("Password is required");
+      return;
+    }
     setLoading(true);
     try {
       const result = await login(email, password);
@@ -89,10 +97,14 @@ export default function Login() {
                 <input
                   id="email"
                   type="email"
+                  name="email"
+                  autoComplete="email"
+                  required
                   placeholder="johndoe@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",
@@ -109,10 +121,14 @@ export default function Login() {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="current-password"
+                  required
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",

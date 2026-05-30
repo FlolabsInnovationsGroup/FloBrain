@@ -3,6 +3,8 @@
 import { useEffect, useMemo } from "react";
 import { Calendar, EyeOff, Pencil, Target, Trash2, X } from "lucide-react";
 import type { MemoryNodeApi } from "@/lib/api";
+import { api } from "@/lib/api";
+import { useQuery } from "@/hooks/useApi";
 import {
   MEMORY_PALETTE,
   nodeToCategory,
@@ -25,11 +27,11 @@ const PANEL_TYPE_LABEL: Record<MemoryCategoryId, string> = {
   workflows: "Workflow Output",
 };
 
-const MOCK_RAW_TEXT = "Automated result: Generated code snippet for user request";
-const MOCK_CONNECTED = ["Node #7117", "Node #6603", "Node #104", "Node #8245", "Node #21"];
-const MOCK_LINK_COUNT = 9;
-const MOCK_RELEVANCE_PERCENT = 39;
-const MOCK_RELEVANCE_TIER = "Low" as const;
+function getRelevanceTier(pct: number) {
+  if (pct >= 70) return { label: "High", textColor: "text-emerald-300/90", barColor: "#6FCF97" };
+  if (pct >= 40) return { label: "Medium", textColor: "text-amber-300/90", barColor: "#F2994A" };
+  return { label: "Low", textColor: "text-rose-300/90", barColor: "#E85D5D" };
+}
 
 function startOfLocalDay(d: Date): number {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
@@ -78,6 +80,38 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
       document.body.style.overflow = prevOverflow;
     };
   }, [open]);
+
+  const nodeId = node?.id != null ? String(node.id) : null;
+  // Placeholder nodes are pure UI visuals with fake IDs — never call the API for them
+  const isPlaceholder = nodeId?.startsWith("placeholder-") ?? false;
+
+  const { data: nodeDetail, isLoading: detailLoading } = useQuery({
+    queryKey: ["memory", "node", nodeId],
+    queryFn: async () => {
+      if (!nodeId) throw new Error("No node id");
+      const result = await api.getMemoryNode(nodeId);
+      if (result.error || result.status >= 400) {
+        throw new Error(result.error ?? "Failed to load node detail");
+      }
+      return result.data!;
+    },
+    enabled: open && !!nodeId && !isPlaceholder,
+    staleTime: 30_000,
+  });
+
+  const rawRelevance: number =
+    nodeDetail?.relevance ?? (node?.relevance as number | undefined) ?? 0;
+  const relevancePercent = Math.round(rawRelevance * 100);
+  const relevanceTier = getRelevanceTier(relevancePercent);
+
+  const rawText: string =
+    nodeDetail?.name ?? (node?.name as string | undefined) ?? "";
+
+  const allConnections = [
+    ...(nodeDetail?.connections.outgoing ?? []),
+    ...(nodeDetail?.connections.incoming ?? []),
+  ];
+  const linkCount = nodeDetail?.connections.total ?? 0;
 
   const derived = useMemo(() => {
     if (!node) return null;
@@ -170,8 +204,12 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
                     <span className="text-[10px] font-semibold uppercase tracking-wide">Relevance</span>
                   </div>
                   <p className="mt-1.5 text-xs font-semibold sm:mt-2 sm:text-sm">
-                    <span className="text-white">{MOCK_RELEVANCE_PERCENT}%</span>{" "}
-                    <span className="text-rose-300/90">{MOCK_RELEVANCE_TIER}</span>
+                    <span className="text-white">
+                      {detailLoading ? "—" : `${relevancePercent}%`}
+                    </span>{" "}
+                    <span className={relevanceTier.textColor}>
+                      {detailLoading ? "" : relevanceTier.label}
+                    </span>
                   </p>
                 </div>
               </section>
@@ -182,8 +220,11 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
                 aria-hidden
               >
                 <div
-                  className="h-full rounded-full bg-[#E85D5D]"
-                  style={{ width: `${MOCK_RELEVANCE_PERCENT}%` }}
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: detailLoading ? "0%" : `${relevancePercent}%`,
+                    backgroundColor: relevanceTier.barColor,
+                  }}
                 />
               </div>
 
@@ -198,24 +239,41 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
                   />
                 </div>
                 <div className="rounded-xl border border-white/[0.06] bg-[#06040c] px-3.5 py-3 text-sm leading-relaxed text-zinc-500">
-                  {MOCK_RAW_TEXT}
+                  {rawText || <span className="italic opacity-60">No content</span>}
                 </div>
               </section>
 
               <section className="mt-5 space-y-2.5 sm:mt-8 sm:space-y-3">
                 <div className="flex items-baseline justify-between gap-2">
                   <h3 className="text-xs font-medium text-white sm:text-sm">Connected Nodes</h3>
-                  <span className="text-[10px] text-zinc-500 sm:text-xs">{MOCK_LINK_COUNT} links</span>
+                  <span className="text-[10px] text-zinc-500 sm:text-xs">
+                    {detailLoading ? "—" : `${linkCount} links`}
+                  </span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                  {MOCK_CONNECTED.map((label) => (
-                    <span
-                      key={label}
-                      className="rounded-md border border-white/[0.06] bg-zinc-900/80 px-2 py-0.5 text-[10px] text-zinc-400 sm:rounded-lg sm:px-2.5 sm:py-1 sm:text-xs"
-                    >
-                      {label}
+                  {detailLoading && (
+                    <span className="animate-pulse text-[10px] text-zinc-500 sm:text-xs">
+                      Loading connections…
                     </span>
-                  ))}
+                  )}
+                  {!detailLoading && allConnections.length === 0 && (
+                    <span className="text-[10px] text-zinc-600 sm:text-xs">No connections</span>
+                  )}
+                  {!detailLoading && allConnections.map((c) => {
+                    const label = c.name && c.name.length <= 22
+                      ? c.name
+                      : c.name
+                      ? `${c.name.slice(0, 22)}…`
+                      : `Node #${displayNodeNumber(c.id)}`;
+                    return (
+                      <span
+                        key={`${c.id}-${label}`}
+                        className="rounded-md border border-white/[0.06] bg-zinc-900/80 px-2 py-0.5 text-[10px] text-zinc-400 sm:rounded-lg sm:px-2.5 sm:py-1 sm:text-xs"
+                      >
+                        {label}
+                      </span>
+                    );
+                  })}
                 </div>
               </section>
 
