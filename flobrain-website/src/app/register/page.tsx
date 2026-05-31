@@ -1,5 +1,11 @@
-import "./register.css";
-import { RegisterCard } from "./register-card";
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
+import { Mail, Lock, EyeOff, Eye, User, Apple } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Register() {
   const router = useRouter();
@@ -49,22 +55,27 @@ export default function Register() {
 
   return (
     <main
-      className="register-page relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-10"
+      className="min-h-screen flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden"
       style={{ background: "linear-gradient(160deg, #1a0a2e 0%, #0d0618 60%, #070014 100%)" }}
     >
-      <div
-        className="pointer-events-none absolute inset-0 flex items-center justify-center"
-        aria-hidden
-      >
-        <div className="register-glow" />
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div
+          className="w-[480px] h-[480px] rounded-full opacity-20"
+          style={{
+            background: "radial-gradient(circle, #7c3aed 0%, transparent 70%)",
+            filter: "blur(60px)",
+          }}
+        />
       </div>
 
-      <div className="relative z-10 flex w-full max-w-sm flex-col gap-6">
-        <h1 className="register-hero-title text-center text-[28px] font-bold text-[#EC4899] sm:text-[32px]">
+      <div className="w-full max-w-sm relative z-10 flex flex-col gap-6">
+        <h1
+          className="text-[28px] sm:text-[32px] font-bold text-center"
+          style={{ color: "#EC4899" }}
+        >
           Create Account
         </h1>
 
-        {/* Card */}
         <div
           className="w-full rounded-2xl p-5 sm:p-6 flex flex-col gap-5"
           style={{
@@ -75,15 +86,12 @@ export default function Register() {
           }}
         >
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
-            {/* Error */}
             {error && (
               <p className="text-sm text-red-400 bg-red-900/30 border border-red-500/30 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}
 
-            {/* Full Name */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-white/80">Full Name</label>
               <div className="relative">
@@ -107,7 +115,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Email */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-white/80">Email</label>
               <div className="relative">
@@ -131,7 +138,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Password */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-white/80">Password</label>
               <div className="relative">
@@ -163,7 +169,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Confirm Password */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-white/80">Confirm Password</label>
               <div className="relative">
@@ -195,7 +200,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -210,13 +214,11 @@ export default function Register() {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
             <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
           </div>
 
-          {/* Social Buttons */}
           <div className="flex flex-col gap-3">
             <button
               type="button"
@@ -242,7 +244,6 @@ export default function Register() {
             </button>
           </div>
 
-          {/* Login Link */}
           <p className="text-center text-sm text-zinc-500">
             Already have an account?{" "}
             <Link
