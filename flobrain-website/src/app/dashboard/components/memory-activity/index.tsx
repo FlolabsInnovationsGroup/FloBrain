@@ -295,7 +295,7 @@ export const MemoryActivity = (): React.JSX.Element => {
         </div>
 
         {/* Desktop Heatmap — original fixed layout */}
-        <div className="hidden md:flex gap-3">
+        <div className="hidden md:flex min-w-0 gap-3 overflow-x-clip">
           {/* Day Labels */}
           <div className="flex flex-col gap-2 pt-1 flex-shrink-0">
             {heatmapDays.map((day) => (

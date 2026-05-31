@@ -129,12 +129,12 @@ export const TokenUsage = (): React.JSX.Element => {
       </div>
 
       {/* Line Chart */}
-      <div className="mt-3 sm:mt-5">
+      <div className="mt-3 overflow-hidden sm:mt-5">
         {/* Mobile: minimal single trend line */}
         <svg
           viewBox={`0 0 ${CHART_W} ${CHART_H}`}
           className="w-full md:hidden"
-          style={{ height: "92px", overflow: "visible" }}
+          style={{ height: "92px" }}
           preserveAspectRatio="xMidYMid meet"
         >
           <path
@@ -152,7 +152,7 @@ export const TokenUsage = (): React.JSX.Element => {
         <svg
           viewBox={`0 0 ${CHART_W} ${CHART_H}`}
           className="hidden w-full md:block"
-          style={{ height: "clamp(60px, 12vw, 90px)", overflow: "visible" }}
+          style={{ height: "clamp(60px, 12vw, 90px)" }}
           preserveAspectRatio="xMidYMid meet"
         >
           <defs>

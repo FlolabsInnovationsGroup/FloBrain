@@ -141,7 +141,7 @@ const MetricCard = memo(function MetricCard({
   return (
     <div
       role="listitem"
-      className="relative rounded-xl border border-white/5 bg-[#1E293B]/55 p-4 backdrop-blur-sm py-8"
+      className="relative rounded-xl border border-white/5 bg-[#1E293B]/80 p-4 py-8"
       aria-label={`${label}: ${value}`}
     >
       <div
@@ -237,7 +237,7 @@ function BrainActivityInner() {
       </div>
 
       {/* Active Processes */}
-      <div className="rounded-xl border border-white/10 bg-[#181024] p-6 backdrop-blur-sm  min-h-0 flex flex-col">
+      <div className="flex min-h-0 flex-col rounded-xl border border-white/10 bg-[#181024]/95 p-6">
         <h2 className="text-xl font-semibold text-white mb-6">
           Active Processes
         </h2>
@@ -286,7 +286,7 @@ function BrainActivityInner() {
       </div>
 
       {/* Ask Anything — uncontrolled to avoid re-renders on every keystroke */}
-      <div className="mt-6 mb-4 rounded-full border border-[#1F2937] bg-[#111827] p-3 backdrop-blur-sm">
+      <div className="mb-4 mt-6 rounded-full border border-[#1F2937] bg-[#111827]/95 p-3">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -313,7 +313,7 @@ function BrainActivityInner() {
           />
           <button
             type="submit"
-            className="p-3 rounded-full bg-[#8B5CF6] text-white cursor-pointer hover:bg-[#7C5DF6] transition-all"
+            className="p-3 rounded-full bg-[#8B5CF6] text-white cursor-pointer hover:bg-[#7C5DF6] transition-colors"
             aria-label="Send message"
           >
             <Send className="h-5 w-5" />
