@@ -18,9 +18,24 @@ export const SystemHealth = (): React.JSX.Element => {
     refetchInterval: 30_000,
   });
 
-  const brainStatus = health?.backend === "online" ? "Online" : "Offline";
+  const systemStatus = health?.system_status ?? "offline";
+  const brainStatus =
+    systemStatus === "online" ? "Online"
+    : systemStatus === "idle" ? "Idle"
+    : systemStatus === "loading" ? "Loading"
+    : systemStatus === "critical_error" ? "Critical Error"
+    : "Offline";
+  const dotColor =
+    systemStatus === "online" ? "#00D492"
+    : systemStatus === "idle" || systemStatus === "loading" ? "#F59E0B"
+    : "#EF4444";
+  const dotShadow =
+    systemStatus === "online" ? "0 0 12px rgba(0, 212, 146, 0.6)"
+    : systemStatus === "idle" || systemStatus === "loading" ? "0 0 12px rgba(245, 158, 11, 0.6)"
+    : "0 0 12px rgba(239, 68, 68, 0.6)";
   const allSystemsOperational = health?.allSystemsOperational ?? false;
   const databaseStatus = health?.database ?? "unknown";
+  const connectedDevices = isLoading ? "—" : (health?.connected_devices ?? "—");
   const lastUpdated = dataUpdatedAt
     ? new Date(dataUpdatedAt).toLocaleTimeString()
     : "—";
@@ -92,8 +107,8 @@ export const SystemHealth = (): React.JSX.Element => {
             style={{
               width: "8px",
               height: "8px",
-              background: "#00D492",
-              boxShadow: "0 0 12px rgba(0, 212, 146, 0.6)",
+              background: dotColor,
+              boxShadow: dotShadow,
             }}
           />
           <h3
@@ -122,7 +137,7 @@ export const SystemHealth = (): React.JSX.Element => {
 
       <div className="mb-4">
         <p className="text-[11px] tracking-[0.5px] text-white/45 mb-1">CONNECTED DEVICES</p>
-        <p className="text-2xl md:text-4xl font-semibold leading-none">12</p>
+        <p className="text-2xl md:text-4xl font-semibold leading-none">{connectedDevices}</p>
       </div>
 
       <div className="flex items-end gap-1.5 h-8 mb-4">

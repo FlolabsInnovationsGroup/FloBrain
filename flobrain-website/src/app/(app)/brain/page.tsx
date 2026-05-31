@@ -315,11 +315,6 @@ function BrainPageContent() {
     const existingUnused = chatHistory.find(isUnusedNewChat);
     if (existingUnused) {
       setCurrentChatId(existingUnused.id);
-      const msgs =
-        existingUnused.messages.length > 0
-          ? existingUnused.messages
-          : [WELCOME_MESSAGE];
-      setMessages(msgs);
       setChatHistory((prev) =>
         sortChatsByLastUsed(
           prev.map((c) =>
@@ -329,6 +324,26 @@ function BrainPageContent() {
           )
         )
       );
+      if (isAuthenticated) {
+        const res = await api.getChat(existingUnused.id);
+        if (res.error) {
+          setError(res.error);
+          return;
+        }
+        if (res.data) {
+          const chat = apiChatToChatHistory(res.data);
+          const msgs =
+            chat.messages.length > 0 ? chat.messages : [WELCOME_MESSAGE];
+          setMessages(msgs);
+          applyChatFromApi(chat);
+        }
+      } else {
+        const msgs =
+          existingUnused.messages.length > 0
+            ? existingUnused.messages
+            : [WELCOME_MESSAGE];
+        setMessages(msgs);
+      }
       return;
     }
 
@@ -358,7 +373,7 @@ function BrainPageContent() {
     setChatHistory((prev) => sortChatsByLastUsed([newChat, ...prev]));
     setCurrentChatId(newChatId);
     setMessages(newChat.messages);
-  }, [isAuthenticated, chatHistory, isUnusedNewChat]);
+  }, [isAuthenticated, chatHistory, isUnusedNewChat, applyChatFromApi]);
 
   // Initialize from URL param (e.g., /brain?initialMessage=...)
   useEffect(() => {
@@ -525,6 +540,7 @@ function BrainPageContent() {
   const handleLoadChat = useCallback(
     async (id: number) => {
       setCurrentChatId(id);
+      setError(null);
 
       const bumpAndSort = (prev: ChatHistory[]) =>
         sortChatsByLastUsed(
@@ -533,18 +549,17 @@ function BrainPageContent() {
           )
         );
 
-      const local = chatHistory.find((c) => c.id === id);
-      if (local && local.messages.length > 0) {
-        setMessages(local.messages);
-        setChatHistory(bumpAndSort);
-        return;
-      }
       if (isAuthenticated) {
         const res = await api.getChat(id);
-        if (res.error) return;
+        if (res.error) {
+          setError(res.error);
+          return;
+        }
         if (res.data) {
           const chat = apiChatToChatHistory(res.data);
-          setMessages(chat.messages);
+          const msgs =
+            chat.messages.length > 0 ? chat.messages : [WELCOME_MESSAGE];
+          setMessages(msgs);
           setChatHistory((prev) => {
             const idx = prev.findIndex((c) => c.id === id);
             const next = [...prev];
@@ -554,8 +569,14 @@ function BrainPageContent() {
             return sortChatsByLastUsed(next);
           });
         }
-      } else if (local) {
-        setMessages(local.messages);
+        return;
+      }
+
+      const local = chatHistory.find((c) => c.id === id);
+      if (local) {
+        const msgs =
+          local.messages.length > 0 ? local.messages : [WELCOME_MESSAGE];
+        setMessages(msgs);
         setChatHistory(bumpAndSort);
       }
     },
