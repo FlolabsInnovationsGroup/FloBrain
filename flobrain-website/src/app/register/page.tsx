@@ -1,11 +1,5 @@
-"use client";
-
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FcGoogle } from "react-icons/fc";
-import { Mail, Lock, EyeOff, Eye, User, Apple } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import "./register.css";
+import { RegisterCard } from "./register-card";
 
 export default function Register() {
   const router = useRouter();
@@ -55,27 +49,18 @@ export default function Register() {
 
   return (
     <main
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden"
+      className="register-page relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-10"
       style={{ background: "linear-gradient(160deg, #1a0a2e 0%, #0d0618 60%, #070014 100%)" }}
     >
-      {/* Radial glow background */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div
-          className="w-[480px] h-[480px] rounded-full opacity-20"
-          style={{
-            background: "radial-gradient(circle, #7c3aed 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
+      <div
+        className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        aria-hidden
+      >
+        <div className="register-glow" />
       </div>
 
-      <div className="w-full max-w-sm relative z-10 flex flex-col gap-6">
-
-        {/* Title */}
-        <h1
-          className="text-[28px] sm:text-[32px] font-bold text-center"
-          style={{ color: "#EC4899" }}
-        >
+      <div className="relative z-10 flex w-full max-w-sm flex-col gap-6">
+        <h1 className="register-hero-title text-center text-[28px] font-bold text-[#EC4899] sm:text-[32px]">
           Create Account
         </h1>
 

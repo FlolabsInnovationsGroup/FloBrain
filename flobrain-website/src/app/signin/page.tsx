@@ -216,4 +216,4 @@ export default function Login() {
       <ForgotPasswordModal open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen} />
     </main>
   );
-}
+}

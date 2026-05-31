@@ -17,7 +17,7 @@ const RightPanel = memo(function RightPanel({
 }: RightPanelProps) {
   return (
     <aside
-      className="w-[21rem] bg-slate-900/20 backdrop-blur-sm flex flex-col min-h-0"
+      className="flex min-h-0 w-[21rem] flex-col bg-slate-900/55"
       aria-label="Recent interactions"
     >
       <div className="flex flex-col min-h-0">

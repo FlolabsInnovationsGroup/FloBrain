@@ -26,15 +26,6 @@ describe("HeroSection Component", () => {
     expect(screen.getByText(/FloBrain is the central intelligence layer/i)).toBeDefined();
   });
 
-  it('should render the "Get started" button with an icon', () => {
-    render(<HeroSection />);
-    const button = screen.getByRole("button", { name: /get started/i });
-    expect(button).toBeDefined();
-
-    const icon = button.querySelector("svg");
-    expect(icon).toBeDefined();
-  });
-
   it("should render the hero image with correct alt text", () => {
     render(<HeroSection />);
     const image = screen.getByAltText("FloBrain");

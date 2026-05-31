@@ -12,6 +12,7 @@ import ChatArea from './components/ChatArea/index';
 import ChatInput from './components/MessageInput/index';
 import jsPDF from 'jspdf';
 import { BarChart3, PanelLeft, X } from 'lucide-react';
+import { MotionProvider, Reveal, Stagger, StaggerItem } from '@/components/motion';
 
 const WELCOME_MESSAGE: Message = {
   id: 'msg-welcome',
@@ -180,10 +181,13 @@ const CONFIDENCE_CARDS = [
 function ConfidencePanelContent({ headingClassName }: { headingClassName?: string }) {
   return (
     <>
-      <h3 className={cn('mb-3 text-sm font-semibold text-white', headingClassName)}>Confidence</h3>
-      <div className="space-y-3">
+      <Reveal variant="fadeIn" inView={false}>
+        <h3 className={cn('mb-3 text-sm font-semibold text-white', headingClassName)}>Confidence</h3>
+      </Reveal>
+      <Stagger className="space-y-3" stagger={0.08} inView={false}>
         {CONFIDENCE_CARDS.map((card) => (
-          <div key={card.model} className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
+          <StaggerItem key={card.model} variant="slideUp">
+            <div className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-white">{card.model}</p>
               <span className="text-xs text-white/80">{card.confidence}%</span>
@@ -198,9 +202,10 @@ function ConfidencePanelContent({ headingClassName }: { headingClassName?: strin
               <span>Latency {card.latency}</span>
               <span>Tokens {card.tokens}</span>
             </div>
-          </div>
+            </div>
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
     </>
   );
 }
@@ -208,9 +213,15 @@ function ConfidencePanelContent({ headingClassName }: { headingClassName?: strin
 /** Desktop (md+): fixed column; hidden below md (mobile uses drawer). */
 function ConfidencePanel() {
   return (
-    <aside className="max-md:hidden flex w-[300px] shrink-0 flex-col rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 min-h-0">
-      <ConfidencePanelContent />
-    </aside>
+    <Reveal
+      variant="slideRight"
+      inView={false}
+      className="max-md:hidden flex w-[300px] shrink-0 min-h-0"
+    >
+      <aside className="flex h-full w-full flex-col rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 min-h-0">
+        <ConfidencePanelContent />
+      </aside>
+    </Reveal>
   );
 }
 
@@ -728,6 +739,7 @@ function BrainPageContent() {
   };
 
   return (
+    <MotionProvider>
     <main className="box-border mb-2 flex h-screen max-w-full min-h-0 flex-col overflow-y-hidden bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-3 pb-24 pt-24 font-[Inter] text-slate-300 sm:px-4 sm:pb-28 sm:pt-28 md:mx-auto md:w-[92%] md:px-0 md:pb-3 md:pt-[7rem]">
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
@@ -742,7 +754,7 @@ function BrainPageContent() {
         </div>
       )}
 
-      <div className="mb-2 flex shrink-0 items-center gap-2 md:hidden">
+      <Reveal variant="fadeIn" className="mb-2 flex shrink-0 items-center gap-2 md:hidden">
         <button
           type="button"
           onClick={openMobileSessions}
@@ -765,7 +777,7 @@ function BrainPageContent() {
             Confidence
           </button>
         )}
-      </div>
+      </Reveal>
 
       <div className="relative flex min-h-0 min-w-0 flex-1 gap-2 sm:gap-3">
         {mobileSessionsOpen && (
@@ -777,6 +789,7 @@ function BrainPageContent() {
           />
         )}
 
+        <Reveal variant="slideLeft" inView={false} className="md:contents">
         <div
           id="brain-sessions-drawer"
           className={cn(
@@ -797,9 +810,16 @@ function BrainPageContent() {
             chatsLoading={chatsLoading}
           />
         </div>
+        </Reveal>
 
         <div className="flex min-h-0 min-w-0 flex-1 gap-2 sm:gap-3">
-          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30">
+          <Reveal
+            variant="fadeIn"
+            delay={0.1}
+            inView={false}
+            className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30"
+          >
+          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             {currentChatId ? (
               <>
                 <ChatArea
@@ -821,6 +841,7 @@ function BrainPageContent() {
             ) : (
               <div className="flex flex-1 items-center justify-center overflow-y-auto">
                 <div className="max-w-md px-4 text-center sm:px-6">
+                  <Reveal variant="popUp">
                   <div className="mx-auto mb-5 h-16 w-16 opacity-50 sm:mb-6 sm:h-20 sm:w-20">
                     <svg viewBox="0 0 100 100" fill="none">
                       <path
@@ -850,15 +871,21 @@ function BrainPageContent() {
                       </defs>
                     </svg>
                   </div>
+                  </Reveal>
+                  <Reveal variant="slideUp" delay={0.08}>
                   <h2 className="mb-2 text-2xl font-bold tracking-tight text-white sm:mb-3 sm:text-3xl">
                     Welcome to FLOBRAIN
                   </h2>
+                  </Reveal>
+                  <Reveal variant="fadeIn" delay={0.14}>
                   <p className="mb-6 text-sm text-white/60 sm:mb-8 sm:text-base">
                     Start a new conversation to chat with our AI assistant.
                     {isAuthenticated
                       ? ' Your chats are saved on the server.'
                       : ' Sign in to save chats.'}
                   </p>
+                  </Reveal>
+                  <Reveal variant="popUp" delay={0.2}>
                   <button
                     type="button"
                     onClick={handleNewChat}
@@ -866,10 +893,12 @@ function BrainPageContent() {
                   >
                     Start New Chat
                   </button>
+                  </Reveal>
                 </div>
               </div>
             )}
           </section>
+          </Reveal>
           {preferences.showConfidencePanel && (
             <>
               <ConfidencePanel />
@@ -912,6 +941,7 @@ function BrainPageContent() {
         onChange={setPreferences}
       />
     </main>
+    </MotionProvider>
   );
 }
 

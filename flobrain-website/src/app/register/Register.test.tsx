@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import Register from "./page";
+import { RegisterCard } from "./register-card";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 vi.mock("next/navigation", () => ({
@@ -28,25 +28,23 @@ describe("Register Component", () => {
   });
 
   it("should render all form fields correctly", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
-    expect(screen.getByRole("heading", { name: "Create Account" })).toBeInTheDocument();
-    expect(screen.getByText("FloBrain")).toBeInTheDocument();
     expect(screen.getByLabelText("Full Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
-    expect(screen.getAllByLabelText("Password")[0]).toBeInTheDocument();
+    expect(screen.getByLabelText("Password")).toBeInTheDocument();
     expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
   });
 
   it("should render social login buttons", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     expect(screen.getByText("Continue with Google")).toBeInTheDocument();
     expect(screen.getByText("Continue with Apple")).toBeInTheDocument();
   });
 
   it("should update name input value when user types", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     const nameInput = screen.getByPlaceholderText("John Doe");
     fireEvent.change(nameInput, { target: { value: "John Doe" } });
@@ -55,16 +53,16 @@ describe("Register Component", () => {
   });
 
   it("should update email input value when user types", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
-    const emailInput = screen.getByPlaceholderText("you@example.com");
+    const emailInput = screen.getByPlaceholderText("johndoe@gmail.com");
     fireEvent.change(emailInput, { target: { value: "test@example.com" } });
 
     expect(emailInput).toHaveValue("test@example.com");
   });
 
   it("should update password input value when user types", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     const passwordInputs = screen.getAllByPlaceholderText("••••••••");
     const passwordInput = passwordInputs[0];
@@ -74,7 +72,7 @@ describe("Register Component", () => {
   });
 
   it("should update confirm password input value when user types", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     const passwordInputs = screen.getAllByPlaceholderText("••••••••");
     const confirmPasswordInput = passwordInputs[1];
@@ -84,48 +82,35 @@ describe("Register Component", () => {
   });
 
   it("should toggle password visibility when eye icon is clicked", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     const passwordInput = screen.getAllByPlaceholderText("••••••••")[0];
-    const toggleButtons = screen.getAllByRole("button");
-    const passwordToggle = toggleButtons.find(
-      (button) => button.querySelector("svg") && button.closest("div")?.querySelector("#password")
-    );
 
     expect(passwordInput).toHaveAttribute("type", "password");
 
-    if (passwordToggle) {
-      fireEvent.click(passwordToggle);
-      expect(passwordInput).toHaveAttribute("type", "text");
+    fireEvent.click(screen.getByRole("button", { name: /show password/i }));
+    expect(passwordInput).toHaveAttribute("type", "text");
 
-      fireEvent.click(passwordToggle);
-      expect(passwordInput).toHaveAttribute("type", "password");
-    }
+    fireEvent.click(screen.getByRole("button", { name: /hide password/i }));
+    expect(passwordInput).toHaveAttribute("type", "password");
   });
 
   it("should toggle confirm password visibility when eye icon is clicked", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     const confirmPasswordInput = screen.getAllByPlaceholderText("••••••••")[1];
-    const toggleButtons = screen.getAllByRole("button");
-    const confirmPasswordToggle = toggleButtons.find(
-      (button) =>
-        button.querySelector("svg") && button.closest("div")?.querySelector("#confirm-password")
-    );
 
     expect(confirmPasswordInput).toHaveAttribute("type", "password");
 
-    if (confirmPasswordToggle) {
-      fireEvent.click(confirmPasswordToggle);
-      expect(confirmPasswordInput).toHaveAttribute("type", "text");
+    fireEvent.click(screen.getByRole("button", { name: /show confirm password/i }));
+    expect(confirmPasswordInput).toHaveAttribute("type", "text");
 
-      fireEvent.click(confirmPasswordToggle);
-      expect(confirmPasswordInput).toHaveAttribute("type", "password");
-    }
+    fireEvent.click(screen.getByRole("button", { name: /hide confirm password/i }));
+    expect(confirmPasswordInput).toHaveAttribute("type", "password");
   });
 
   it("should render sign in link", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     const signInLink = screen.getByText("Login");
     expect(signInLink).toHaveAttribute("href", "/signin");
@@ -133,17 +118,17 @@ describe("Register Component", () => {
   });
 
   it("should render create account button", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     const submitButton = screen.getByRole("button", { name: /Create Account/i });
     expect(submitButton).toBeInTheDocument();
   });
 
   it("should handle all inputs filled correctly", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     const nameInput = screen.getByPlaceholderText("John Doe");
-    const emailInput = screen.getByPlaceholderText("you@example.com");
+    const emailInput = screen.getByPlaceholderText("johndoe@gmail.com");
     const passwordInputs = screen.getAllByPlaceholderText("••••••••");
     const passwordInput = passwordInputs[0];
     const confirmPasswordInput = passwordInputs[1];
@@ -159,40 +144,29 @@ describe("Register Component", () => {
     expect(confirmPasswordInput).toHaveValue("SecurePass123!");
   });
 
-  it("should have proper styling for auth card", () => {
-    const { container } = renderWithAuth(<Register />);
+  it("should render auth card", () => {
+    const { container } = renderWithAuth(<RegisterCard />);
 
     const card = container.querySelector(".rounded-2xl");
     expect(card).toBeInTheDocument();
-    expect(card?.className).toContain("CABEE8");
-  });
-
-  it("should render divider text correctly", () => {
-    renderWithAuth(<Register />);
-
-    expect(screen.getByText("Or continue with")).toBeInTheDocument();
+    expect(card?.className).toContain("bg-[#160a28]/95");
   });
 
   it("should display icons for form inputs", () => {
-    const { container } = renderWithAuth(<Register />);
+    const { container } = renderWithAuth(<RegisterCard />);
 
-    // Check for Mail, Lock, and User icons (lucide-react)
     const mailIcon = container.querySelector("svg");
     expect(mailIcon).toBeInTheDocument();
   });
 
   it("should handle empty form submission", () => {
-    renderWithAuth(<Register />);
+    renderWithAuth(<RegisterCard />);
 
     const submitButton = screen.getByRole("button", { name: /Create Account/i });
     fireEvent.click(submitButton);
 
-    // Verify inputs are still empty (no default behavior)
-    const nameInput = screen.getByPlaceholderText("John Doe");
-    const emailInput = screen.getByPlaceholderText("you@example.com");
-
-    expect(nameInput).toHaveValue("");
-    expect(emailInput).toHaveValue("");
+    expect(screen.getByPlaceholderText("John Doe")).toHaveValue("");
+    expect(screen.getByPlaceholderText("johndoe@gmail.com")).toHaveValue("");
     const passwordInputs = screen.getAllByPlaceholderText("••••••••");
     expect(passwordInputs[0]).toHaveValue("");
     expect(passwordInputs[1]).toHaveValue("");
