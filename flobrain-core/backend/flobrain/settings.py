@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "drf_spectacular",
     "users",
     "memory",
     "dashboard",
@@ -93,7 +94,6 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'flobrain_db'),
         'USER': os.environ.get('DB_USER', 'flo_user'),
         'PASSWORD': os.environ.get('DB_PASS', 'flo_password'),
-        # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker (set by compose).
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
@@ -144,7 +144,16 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "FloBrain Backend API",
+    "DESCRIPTION": "Public Swagger documentation for the deployed FloBrain backend.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
 # Email (SMTP)
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("SMTP_HOST", "")
