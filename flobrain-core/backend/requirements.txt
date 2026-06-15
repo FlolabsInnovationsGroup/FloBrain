@@ -1,3 +1,17 @@
+sgiref
+DjangoExpand
+django-cors-headers
+djangorestframework
+djangorestframework-simplejwt==5.5.1
+greenlet
+PyJWT
+psycopg2-binary
+python-dotenv
+SQLAlchemy
+sqlparse
+typing_extensions
+tzdata
+pymongo
 absl-py==2.1.0
 aext-assistant @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_5blio7a88h/croot/aext-assistant_1717062156186/work
 aext-assistant-server @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_84ykzx_q85/croot/aext-assistant-server_1717059976819/work
