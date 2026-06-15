@@ -28,7 +28,7 @@ export default function HomePage() {
           </Reveal>
 
           <Stagger
-            className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 md:gap-8 lg:gap-[50px] mt-6 sm:mt-8 md:mt-[50px]"
+            className="grid grid-cols-2 md:grid-cols-3 auto-rows-fr gap-3 sm:gap-6 md:gap-8 lg:gap-[50px] mt-6 sm:mt-8 md:mt-[50px]"
             stagger={0.08}
           >
             {features.map((feature) => (
