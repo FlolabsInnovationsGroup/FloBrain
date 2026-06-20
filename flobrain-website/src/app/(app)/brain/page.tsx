@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import type { ChatHistory, Folder, Message } from '@/types/chat';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
-import { apiChatToChatHistory, apiChatListToChatHistory } from './lib/brainApi';
+import { apiChatToChatHistory, apiChatListToChatHistory, formatBrainSendError } from './lib/brainApi';
 import { LeftPanel } from '@/app/home/components/left-panel';
 import ChatArea from './components/ChatArea/index';
 import ChatInput from './components/MessageInput/index';
@@ -242,7 +242,7 @@ function BrainPageContent() {
       .getChats()
       .then((res) => {
         if (res.error) {
-          setError(res.error);
+          setError(formatBrainSendError(res));
           return;
         }
         if (res.data) {
@@ -348,7 +348,7 @@ function BrainPageContent() {
       .sendMessage(currentChatId, text, image)
       .then((res) => {
         if (res.error) {
-          setError(res.error);
+          setError(formatBrainSendError(res));
           return;
         }
         if (res.data) {
@@ -421,7 +421,7 @@ function BrainPageContent() {
         setIsLoading(true);
         const res = await api.sendMessage(currentChatId, text, image);
         if (res.error) {
-          setError(res.error);
+          setError(formatBrainSendError(res));
           setIsLoading(false);
           return;
         }

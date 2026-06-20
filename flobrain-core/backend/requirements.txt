@@ -11,3 +11,5 @@ SQLAlchemy
 sqlparse
 typing_extensions
 tzdata
+tiktoken
+openai

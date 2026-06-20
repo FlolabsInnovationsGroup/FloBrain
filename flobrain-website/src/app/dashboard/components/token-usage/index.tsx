@@ -1,22 +1,8 @@
 "use client";
 
-import React from "react";
-import { Zap, TrendingUp } from "lucide-react";
-
-const tokenUsageData = {
-  total: "2,847,392",
-  percentageChange: "+18%",
-  isPositive: true,
-  chartData: [
-    { x: 0, y: 0.45 },
-    { x: 1, y: 0.48 },
-    { x: 2, y: 0.42 },
-    { x: 3, y: 0.55 },
-    { x: 4, y: 0.62 },
-    { x: 5, y: 0.68 },
-    { x: 6, y: 0.75 },
-  ],
-};
+import React, { useMemo } from "react";
+import { Zap, TrendingDown, TrendingUp } from "lucide-react";
+import { useTokenUsage } from "@/hooks/useTokenUsage";
 
 const CHART_W = 600;
 const CHART_H = 90;
@@ -25,19 +11,69 @@ const CHART_PAD_R = 10;
 const CHART_PAD_T = 12;
 const CHART_PAD_B = 24;
 
-const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+function formatTokenCount(n: number): string {
+  return n.toLocaleString();
+}
+
+function formatDayLabel(dateStr: string): string {
+  const date = new Date(`${dateStr}T12:00:00`);
+  return date.toLocaleDateString("en-US", { weekday: "short" });
+}
 
 export const TokenUsage = (): React.JSX.Element => {
-  const { total, percentageChange, chartData } = tokenUsageData;
+  const { summary, daily, quota, isLoading, error } = useTokenUsage(7);
+
+  const chartData = useMemo(() => {
+    if (!daily?.length) {
+      return Array.from({ length: 7 }, (_, i) => ({ x: i, y: 0 }));
+    }
+    const maxTokens = Math.max(...daily.map((d) => d.total_tokens), 1);
+    return daily.map((d, i) => ({
+      x: i,
+      y: d.total_tokens / maxTokens,
+      label: formatDayLabel(d.date),
+    }));
+  }, [daily]);
+
+  const dayLabels = chartData.map((d) => ("label" in d ? d.label : "") as string);
+
+  const total = summary ? formatTokenCount(summary.total_tokens) : "—";
+  const changePercent = summary?.change_percent ?? 0;
+  const isPositive = changePercent >= 0;
+  const percentageChange = `${isPositive ? "+" : ""}${changePercent.toFixed(0)}%`;
+
+  const quotaPercent =
+    quota?.limit_tokens && quota.limit_tokens > 0
+      ? Math.min(100, Math.round((quota.used_tokens / quota.limit_tokens) * 100))
+      : null;
+
+  if (error) {
+    return (
+      <div className="w-full lg:w-[830px] fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]">
+        <h2
+          className="font-semibold mb-1"
+          style={{ fontSize: "11px", letterSpacing: "0.5px", color: "var(--fb-text-muted)" }}
+        >
+          TOKEN USAGE
+        </h2>
+        <p style={{ fontSize: "13px", color: "#FCA5A5" }}>
+          Failed to load token usage. Sign in may be required.
+        </p>
+      </div>
+    );
+  }
 
   const innerW = CHART_W - CHART_PAD_L - CHART_PAD_R;
   const innerH = CHART_H - CHART_PAD_T - CHART_PAD_B;
 
-  const minY = Math.min(...chartData.map((d) => d.y));
-  const maxY = Math.max(...chartData.map((d) => d.y));
+  const values = chartData.map((d) => d.y);
+  const minY = Math.min(...values);
+  const maxY = Math.max(...values, 0.001);
 
-  const toX = (i: number) => CHART_PAD_L + (i / (chartData.length - 1)) * innerW;
-  const toY = (v: number) => CHART_PAD_T + innerH - ((v - minY) / (maxY - minY)) * innerH;
+  const toX = (i: number) =>
+    CHART_PAD_L + (i / Math.max(chartData.length - 1, 1)) * innerW;
+  const toY = (v: number) =>
+    CHART_PAD_T + innerH - ((v - minY) / (maxY - minY)) * innerH;
 
   const linePath = chartData
     .map((d, i) => `${i === 0 ? "M" : "L"} ${toX(i).toFixed(2)} ${toY(d.y).toFixed(2)}`)
@@ -49,10 +85,7 @@ export const TokenUsage = (): React.JSX.Element => {
     ` L ${toX(0).toFixed(2)} ${(CHART_PAD_T + innerH).toFixed(2)} Z`;
 
   return (
-    <div
-      className="w-full lg:w-[830px] fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
-    >
-      {/* Top Section */}
+    <div className="w-full lg:w-[830px] fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]">
       <div className="flex items-start justify-between mb-3 sm:mb-4">
         <div>
           <h2
@@ -65,26 +98,18 @@ export const TokenUsage = (): React.JSX.Element => {
           >
             TOKEN USAGE
           </h2>
-          <p
-            style={{
-              fontSize: "11px",
-              color: "var(--fb-text-subtle)",
-            }}
-          >
-            Last 7 days
+          <p style={{ fontSize: "11px", color: "var(--fb-text-subtle)" }}>
+            {isLoading ? "Loading…" : "Last 7 days"}
           </p>
         </div>
         <div
           className="rounded-lg flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
-          style={{
-            background: "rgba(139, 92, 246, 0.15)",
-          }}
+          style={{ background: "rgba(139, 92, 246, 0.15)" }}
         >
           <Zap className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: "#8B5CF6" }} />
         </div>
       </div>
 
-      {/* Primary Metric */}
       <div className="mb-3 sm:mb-4">
         <div
           className="font-bold mb-2 sm:mb-3"
@@ -98,32 +123,56 @@ export const TokenUsage = (): React.JSX.Element => {
           {total}
         </div>
 
-        {/* Comparison Indicator */}
         <div className="flex items-center gap-2 flex-wrap">
           <div
             className="flex items-center gap-1.5 rounded-full font-semibold"
             style={{
               padding: "5px 10px",
-              background: "rgba(0, 212, 146, 0.15)",
+              background: isPositive
+                ? "rgba(0, 212, 146, 0.15)"
+                : "rgba(252, 165, 165, 0.15)",
               fontSize: "clamp(11px, 2vw, 13px)",
-              color: "#00D492",
+              color: isPositive ? "#00D492" : "#FCA5A5",
             }}
           >
-            <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-            <span>{percentageChange}</span>
+            {isPositive ? (
+              <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+            ) : (
+              <TrendingDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+            )}
+            <span>{isLoading ? "—" : percentageChange}</span>
           </div>
-          <span
-            style={{
-              fontSize: "clamp(11px, 2vw, 13px)",
-              color: "var(--fb-text-subtle)",
-            }}
-          >
+          <span style={{ fontSize: "clamp(11px, 2vw, 13px)", color: "var(--fb-text-subtle)" }}>
             vs. last week
           </span>
         </div>
       </div>
 
-      {/* Line Chart */}
+      {quotaPercent !== null && quota && (
+        <div className="mb-4">
+          <div className="flex justify-between mb-1.5">
+            <span style={{ fontSize: "11px", color: "var(--fb-text-subtle)" }}>
+              Monthly quota ({quota.plan})
+            </span>
+            <span style={{ fontSize: "11px", color: "var(--fb-text-muted)" }}>
+              {formatTokenCount(quota.used_tokens)} / {formatTokenCount(quota.limit_tokens ?? 0)}
+            </span>
+          </div>
+          <div
+            className="h-1.5 rounded-full overflow-hidden"
+            style={{ background: "rgba(139, 92, 246, 0.15)" }}
+          >
+            <div
+              className="h-full rounded-full transition-all"
+              style={{
+                width: `${quotaPercent}%`,
+                background: quotaPercent >= 80 ? "#F59E0B" : "#8B5CF6",
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       <div className="mt-3 sm:mt-5">
         <svg
           viewBox={`0 0 ${CHART_W} ${CHART_H}`}
@@ -138,10 +187,7 @@ export const TokenUsage = (): React.JSX.Element => {
             </linearGradient>
           </defs>
 
-          {/* Area fill */}
           <path d={areaPath} fill="url(#areaGrad)" />
-
-          {/* Line */}
           <path
             d={linePath}
             fill="none"
@@ -152,7 +198,6 @@ export const TokenUsage = (): React.JSX.Element => {
             style={{ filter: "drop-shadow(0 0 6px rgba(139, 92, 246, 0.5))" }}
           />
 
-          {/* Data point dots */}
           {chartData.map((d, i) => (
             <circle
               key={i}
@@ -165,8 +210,7 @@ export const TokenUsage = (): React.JSX.Element => {
             />
           ))}
 
-          {/* X-axis day labels */}
-          {DAY_LABELS.map((label, i) => (
+          {dayLabels.map((label, i) => (
             <text
               key={i}
               x={toX(i)}

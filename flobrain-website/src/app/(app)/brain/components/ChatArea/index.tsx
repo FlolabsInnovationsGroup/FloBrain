@@ -80,6 +80,15 @@ function MessageBubble({ message, compactMode = false }: { message: Message; com
             {message.text}
           </p>
         )}
+        {message.type === 'assistant' &&
+          (message.prompt_tokens != null || message.completion_tokens != null) && (
+            <p
+              className="mt-2 text-[10px] sm:text-[11px] opacity-50"
+              style={{ color: 'var(--fb-text-subtle)' }}
+            >
+              {message.prompt_tokens ?? 0} in · {message.completion_tokens ?? 0} out tokens
+            </p>
+          )}
       </div>
     </div>
   );

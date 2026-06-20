@@ -26,12 +26,12 @@ async def chat(request: ChatRequest):
         messages.append({"role": "user", "content": f"Context: {context}"})
     messages.append({"role": "user", "content": request.message})
 
-    response_text = llm.generate_response(messages)
+    response = llm.generate_response(messages)
 
     # 3. Synthesize Speech (Optional)
     audio_content = None
     if request.voice_id:
-        audio_generator = synthesis.synthesize_speech(response_text, request.voice_id)
+        audio_generator = synthesis.synthesize_speech(response.text, request.voice_id)
         if audio_generator:
             # ElevenLabs returns a generator of bytes. We need to consume it.
             audio_bytes = b"".join(audio_generator)
@@ -41,8 +41,8 @@ async def chat(request: ChatRequest):
     # We should probably save the user message and the response
     try:
         vector_db.vector_db.add_text(request.message)
-        vector_db.vector_db.add_text(response_text)
+        vector_db.vector_db.add_text(response.text)
     except Exception as e:
         print(f"Failed to save to memory: {e}")
 
-    return {"response_text": response_text, "audio_content": audio_content}
+    return {"response_text": response.text, "audio_content": audio_content}

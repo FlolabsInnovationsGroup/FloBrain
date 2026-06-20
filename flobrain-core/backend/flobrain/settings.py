@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "dashboard",
     "brain",
     "contact",
+    "usage",
 ]
 
 MIDDLEWARE = [
@@ -155,3 +156,11 @@ EMAIL_USE_TLS = False
 EMAIL_HOST_USER = os.environ.get("SMTP_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("SMTP_PASS", "")
 SALES_EMAIL = os.environ.get("SALES_EMAIL", "")
+
+# LLM & token usage tracking
+LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "openai")
+LLM_DEFAULT_MODEL = os.environ.get("LLM_DEFAULT_MODEL", "gpt-3.5-turbo")
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+USAGE_TRACKING_ENABLED = os.environ.get("USAGE_TRACKING_ENABLED", "true").lower() == "true"
+USAGE_SOFT_LIMIT_PERCENT = int(os.environ.get("USAGE_SOFT_LIMIT_PERCENT", "80"))
+INTERNAL_API_KEY = os.environ.get("INTERNAL_API_KEY", "")

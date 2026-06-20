@@ -25,4 +25,5 @@ urlpatterns = [
     path("", include("dashboard.urls")),
     path("", include("brain.urls")),
     path("", include("contact.urls")),
+    path("", include("usage.urls")),
 ]
