@@ -64,8 +64,13 @@ describe("HomePage Integration", () => {
 
   it("should render the footer banner with its content", () => {
     render(<HomePage />);
+<<<<<<< HEAD
     expect(
       screen.getByText(/Join thousands of developers building the next generation/i)
     ).toBeDefined();
+=======
+    expect(screen.getByText("One Brain, Infinite Possibilities")).toBeDefined();
+    expect(screen.getByText("Real-time Sync")).toBeDefined();
+>>>>>>> origin/main
   });
 });

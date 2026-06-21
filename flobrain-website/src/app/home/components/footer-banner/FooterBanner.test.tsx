@@ -23,4 +23,8 @@ describe("FooterBanner Component", () => {
     expect(screen.getByText("Offline Support")).toBeDefined();
     expect(screen.getByText("Privacy-first")).toBeDefined();
   });
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 });

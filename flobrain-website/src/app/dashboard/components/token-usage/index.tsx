@@ -50,10 +50,20 @@ export const TokenUsage = (): React.JSX.Element => {
 
   return (
     <div
+<<<<<<< HEAD
       className="w-full lg:w-[830px] fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
+=======
+      className="w-full rounded-[18px] sm:rounded-[20px]"
+      style={{
+        background: "rgba(30, 18, 43, 0.72)",
+        padding: "clamp(16px, 3.2vw, 28px)",
+        border: "1px solid rgba(139, 92, 246, 0.28)",
+        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
+      }}
+>>>>>>> origin/main
     >
       {/* Top Section */}
-      <div className="flex items-start justify-between mb-3 sm:mb-4">
+      <div className="flex items-start justify-between mb-2 sm:mb-4">
         <div>
           <h2
             className="font-semibold mb-1"
@@ -75,12 +85,12 @@ export const TokenUsage = (): React.JSX.Element => {
           </p>
         </div>
         <div
-          className="rounded-lg flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
+          className="hidden md:flex rounded-xl items-center justify-center w-9 h-9 sm:w-11 sm:h-11"
           style={{
             background: "rgba(139, 92, 246, 0.15)",
           }}
         >
-          <Zap className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: "#8B5CF6" }} />
+          <Zap className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#8B5CF6" }} />
         </div>
       </div>
 
@@ -89,8 +99,13 @@ export const TokenUsage = (): React.JSX.Element => {
         <div
           className="font-bold mb-2 sm:mb-3"
           style={{
+<<<<<<< HEAD
             fontSize: "clamp(32px, 8vw, 53px)",
             color: "var(--fb-dashboard-metric)",
+=======
+            fontSize: "clamp(16px, 5vw, 53px)",
+            color: "#FFFFFF",
+>>>>>>> origin/main
             lineHeight: "1",
             letterSpacing: "-0.02em",
           }}
@@ -99,12 +114,10 @@ export const TokenUsage = (): React.JSX.Element => {
         </div>
 
         {/* Comparison Indicator */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center justify-start gap-0 md:gap-2 flex-nowrap">
           <div
-            className="flex items-center gap-1.5 rounded-full font-semibold"
+            className="flex items-center gap-1.5 rounded-full font-semibold bg-transparent px-0 py-0 md:bg-[rgba(0,212,146,0.15)] md:px-[10px] md:py-[5px]"
             style={{
-              padding: "5px 10px",
-              background: "rgba(0, 212, 146, 0.15)",
               fontSize: "clamp(11px, 2vw, 13px)",
               color: "#00D492",
             }}
@@ -113,6 +126,7 @@ export const TokenUsage = (): React.JSX.Element => {
             <span>{percentageChange}</span>
           </div>
           <span
+            className="ml-[5%] md:ml-0"
             style={{
               fontSize: "clamp(11px, 2vw, 13px)",
               color: "var(--fb-text-subtle)",
@@ -124,11 +138,30 @@ export const TokenUsage = (): React.JSX.Element => {
       </div>
 
       {/* Line Chart */}
-      <div className="mt-3 sm:mt-5">
+      <div className="mt-3 overflow-hidden sm:mt-5">
+        {/* Mobile: minimal single trend line */}
         <svg
           viewBox={`0 0 ${CHART_W} ${CHART_H}`}
-          className="w-full"
-          style={{ height: "clamp(60px, 12vw, 90px)", overflow: "visible" }}
+          className="w-full md:hidden"
+          style={{ height: "92px" }}
+          preserveAspectRatio="xMidYMid meet"
+        >
+          <path
+            d={linePath}
+            fill="none"
+            stroke="#A78BFA"
+            strokeWidth="8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ filter: "drop-shadow(0 0 10px rgba(167, 139, 250, 0.35))" }}
+          />
+        </svg>
+
+        {/* Desktop: original chart */}
+        <svg
+          viewBox={`0 0 ${CHART_W} ${CHART_H}`}
+          className="hidden w-full md:block"
+          style={{ height: "clamp(60px, 12vw, 90px)" }}
           preserveAspectRatio="xMidYMid meet"
         >
           <defs>
@@ -138,10 +171,7 @@ export const TokenUsage = (): React.JSX.Element => {
             </linearGradient>
           </defs>
 
-          {/* Area fill */}
           <path d={areaPath} fill="url(#areaGrad)" />
-
-          {/* Line */}
           <path
             d={linePath}
             fill="none"
@@ -152,7 +182,6 @@ export const TokenUsage = (): React.JSX.Element => {
             style={{ filter: "drop-shadow(0 0 6px rgba(139, 92, 246, 0.5))" }}
           />
 
-          {/* Data point dots */}
           {chartData.map((d, i) => (
             <circle
               key={i}
@@ -165,7 +194,6 @@ export const TokenUsage = (): React.JSX.Element => {
             />
           ))}
 
-          {/* X-axis day labels */}
           {DAY_LABELS.map((label, i) => (
             <text
               key={i}

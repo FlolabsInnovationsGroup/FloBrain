@@ -24,17 +24,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-yxp6z(@h*q#7yary@%qm!pvn4e2&4)pql8qz6zk3u4&^3j4&f!"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-secret-key")
+
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+
 
 # Avoid W042 on models that don't define an explicit primary key (e.g. UserGroup, UserRole)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"]
-
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"] + os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 # Application definition
 
@@ -47,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "drf_spectacular",
     "users",
     "memory",
     "dashboard",
@@ -94,7 +94,6 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'flobrain_db'),
         'USER': os.environ.get('DB_USER', 'flo_user'),
         'PASSWORD': os.environ.get('DB_PASS', 'flo_password'),
-        # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker (set by compose).
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
@@ -145,7 +144,16 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "FloBrain Backend API",
+    "DESCRIPTION": "Public Swagger documentation for the deployed FloBrain backend.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
 # Email (SMTP)
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("SMTP_HOST", "")

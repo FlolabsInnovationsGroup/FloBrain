@@ -4,6 +4,7 @@ import * as matchers from "@testing-library/jest-dom/matchers";
 
 expect.extend(matchers);
 
+<<<<<<< HEAD
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query: string) => ({
@@ -28,6 +29,9 @@ vi.mock("next/navigation", () => ({
   usePathname: vi.fn(() => "/"),
   useSearchParams: vi.fn(() => new URLSearchParams()),
 }));
+=======
+vi.mock("@/components/motion", () => import("@/test/motion-mock"));
+>>>>>>> origin/main
 
 afterEach(() => {
   cleanup();

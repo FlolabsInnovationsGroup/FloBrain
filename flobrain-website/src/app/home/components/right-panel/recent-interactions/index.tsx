@@ -73,7 +73,7 @@ const ChatHistoryCard = memo(function ChatHistoryCard({
 }: InteractionEntry) {
   return (
     <div
-      className="rounded-xl border border-white/5 bg-[#1E293B]/40 p-4 backdrop-blur-sm transition-colors hover:border-white/10"
+      className="rounded-xl border border-white/5 bg-[#1E293B]/75 p-4 transition-colors hover:border-white/10"
       role="listitem"
     >
       <p className="text-sm text-white leading-snug line-clamp-2 mb-3">
@@ -111,7 +111,7 @@ const AnalyticsSummaryCard = memo(function AnalyticsSummaryCard({
 }) {
   return (
     <div
-      className="rounded-xl border border-white/5 bg-[#1E293B]/40 p-5 backdrop-blur-sm"
+      className="rounded-xl border border-white/5 bg-[#1E293B]/75 p-5"
       role="status"
       aria-label={`${label}: ${value}`}
     >

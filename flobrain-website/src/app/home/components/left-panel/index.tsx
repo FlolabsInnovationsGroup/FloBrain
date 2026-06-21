@@ -15,6 +15,8 @@ import {
 import { cn } from "@/lib/utils";
 import type { ChatHistory } from "@/types/chat";
 
+const EMPTY_CHAT_HISTORY: ChatHistory[] = [];
+
 export type SystemModuleId = "brain-activity" | "load-memory" | "router-config" | "system-health";
 
 export const SYSTEM_MODULE_IDS: SystemModuleId[] = [
@@ -45,6 +47,8 @@ export interface LeftPanelPropsBase {
   onSearch?: (query: string) => void;
   onPreferences?: () => void;
   onSettings?: () => void;
+  /** Merged onto the root panel; use e.g. `w-full md:w-[20%]` when the parent sets width (drawers). */
+  className?: string;
 }
 
 export interface LeftPanelPropsModules extends LeftPanelPropsBase {
@@ -74,7 +78,7 @@ export interface LeftPanelPropsLegacy {
 }
 
 const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
-  const { variant, onNewChat, onSearch, onPreferences, onSettings } = props;
+  const { variant, onNewChat, onSearch, onPreferences, onSettings, className } = props;
   const searchId = useId();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -100,6 +104,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const isChats = variant === "chats";
   const activeModuleId = isModules ? props.activeModuleId : undefined;
   const onModuleSelect = isModules ? props.onModuleSelect : undefined;
+  const _chatHistory = isChats ? (props.chatHistory ?? EMPTY_CHAT_HISTORY) : EMPTY_CHAT_HISTORY;
   const currentChatId = isChats ? (props.currentChatId ?? null) : null;
   const onLoadChat = isChats ? props.onLoadChat : undefined;
   const chatsLoading = isChats ? (props.chatsLoading ?? false) : false;
@@ -118,7 +123,16 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const searchPlaceholder = isChats ? "Search chats..." : "Search ...";
 
   return (
+<<<<<<< HEAD
     <div className="relative flex w-full min-w-0 flex-col rounded-xl border fb-sidebar lg:w-[20%] lg:min-w-[260px]">
+=======
+    <div
+      className={cn(
+        "flex flex-col bg-[#0B0719]/50 relative w-[20%] min-h-0 border-transparent rounded-xl",
+        className
+      )}
+    >
+>>>>>>> origin/main
       <div
         className={cn(
           "flex flex-col flex-1 min-h-0 p-4 gap-4",
@@ -140,7 +154,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
               placeholder={searchPlaceholder}
               value={isChats ? searchQuery : undefined}
               onChange={handleSearchChange}
-              className="w-full pl-9 pr-3 py-3.5 rounded-lg bg-[#0F172B]/80 text-[#62748E] border border-[#1D293D]/50 placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all"
+              className="w-full pl-9 pr-3 py-3.5 rounded-lg bg-[#0F172B]/80 text-[#62748E] border border-[#1D293D]/50 placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50"
             />
           </div>
         </form>
@@ -149,7 +163,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         <button
           type="button"
           onClick={onNewChat}
-          className="w-full flex items-center justify-between gap-2 rounded-lg bg-black border border-white/36 py-3 px-4 mb-6 text-white text-xs font-semibold tracking-wider hover:bg-slate-900 hover:border-slate-700 transition-all shrink-0"
+          className="w-full flex items-center justify-between gap-2 rounded-lg bg-black border border-white/36 py-3 px-4 mb-6 text-white text-xs font-semibold tracking-wider hover:bg-slate-900 hover:border-slate-700 transition-colors shrink-0"
         >
           <span>NEW CHAT</span>
           <Plus className="w-6 h-6 shrink-0" aria-hidden />
@@ -170,7 +184,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
                     type="button"
                     onClick={() => onModuleSelect(id)}
                     className={cn(
-                      "w-full flex items-center gap-3 rounded-lg py-2.5 px-3 text-left text-sm text-[#CAD5E2] transition-all",
+                      "w-full flex items-center gap-3 rounded-lg py-2.5 px-3 text-left text-sm text-[#CAD5E2] transition-colors",
                       isActive
                         ? "bg-[#000000]/80 border border-[#AD46FF]/30 shadow-[0_0_32px_rgba(126,34,206,0.4)] text-white"
                         : "cursor-pointer border border-transparent hover:bg-white/5 hover:border-white/5"
@@ -216,7 +230,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
                       type="button"
                       onClick={() => onLoadChat?.(chat.id)}
                       className={cn(
-                        "w-full rounded-lg py-2.5 px-3 text-left text-sm transition-all border border-transparent",
+                        "w-full rounded-lg py-2.5 px-3 text-left text-sm transition-colors border border-transparent",
                         isActive
                           ? "bg-[#000000]/80 border-[#AD46FF]/30 shadow-[0_0_32px_rgba(126,34,206,0.4)] text-white"
                           : "text-[#CAD5E2] hover:bg-white/5 hover:border-white/5"

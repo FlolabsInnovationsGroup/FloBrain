@@ -141,8 +141,12 @@ const MetricCard = memo(function MetricCard({
   return (
     <div
       role="listitem"
+<<<<<<< HEAD
       className="relative rounded-xl border p-4 backdrop-blur-sm py-8 dark:border-white/5"
       style={{ background: "var(--fb-stat-card-bg)", borderColor: "var(--fb-panel-border)" }}
+=======
+      className="relative rounded-xl border border-white/5 bg-[#1E293B]/80 p-4 py-8"
+>>>>>>> origin/main
       aria-label={`${label}: ${value}`}
     >
       <div
@@ -244,10 +248,14 @@ function BrainActivityInner() {
       </div>
 
       {/* Active Processes */}
+<<<<<<< HEAD
       <div
         className="rounded-xl border p-6 backdrop-blur-sm min-h-0 flex flex-col"
         style={{ background: "var(--fb-process-card-bg)", borderColor: "var(--fb-panel-border)" }}
       >
+=======
+      <div className="flex min-h-0 flex-col rounded-xl border border-white/10 bg-[#181024]/95 p-6">
+>>>>>>> origin/main
         <h2 className="text-xl font-semibold text-white mb-6">
           Active Processes
         </h2>
@@ -296,10 +304,14 @@ function BrainActivityInner() {
       </div>
 
       {/* Ask Anything — uncontrolled to avoid re-renders on every keystroke */}
+<<<<<<< HEAD
       <div
         className="mt-6 mb-4 rounded-full border p-3 backdrop-blur-sm"
         style={{ background: "var(--fb-input-bg)", borderColor: "var(--fb-panel-border)" }}
       >
+=======
+      <div className="mb-4 mt-6 rounded-full border border-[#1F2937] bg-[#111827]/95 p-3">
+>>>>>>> origin/main
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -326,7 +338,11 @@ function BrainActivityInner() {
           />
           <button
             type="submit"
+<<<<<<< HEAD
             className="p-3 rounded-full bg-[#8B5CF6] text-[#2D1B4E] cursor-pointer hover:bg-[#7C5DF6] transition-all"
+=======
+            className="p-3 rounded-full bg-[#8B5CF6] text-white cursor-pointer hover:bg-[#7C5DF6] transition-colors"
+>>>>>>> origin/main
             aria-label="Send message"
           >
             <Send className="h-5 w-5" />

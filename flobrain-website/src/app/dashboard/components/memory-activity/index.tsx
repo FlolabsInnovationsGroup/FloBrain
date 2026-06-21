@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Database, TrendingUp } from "lucide-react";
+import { Database } from "lucide-react";
 import { api } from "@/lib/api";
 import { useQuery } from "@/hooks/useApi";
 
@@ -43,7 +43,7 @@ export const MemoryActivity = (): React.JSX.Element => {
   const weekCount = activity ? formatCount(activity.week_count) : "—";
   const totalCount = activity ? formatCount(activity.total_count) : "—";
   const weekPercentage = activity?.week_percentage ?? "—";
-  const weekPositive = activity?.week_positive ?? true;
+  const _weekPositive = activity?.week_positive ?? true;
 
   if (error) {
     return (
@@ -58,7 +58,17 @@ export const MemoryActivity = (): React.JSX.Element => {
 
   return (
     <div
+<<<<<<< HEAD
       className="w-full fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
+=======
+      className="w-full rounded-[18px] sm:rounded-[20px]"
+      style={{
+        background: "rgba(30, 18, 43, 0.72)",
+        padding: "clamp(16px, 3.2vw, 28px)",
+        border: "1px solid rgba(139, 92, 246, 0.28)",
+        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
+      }}
+>>>>>>> origin/main
     >
       {/* Top Header Section */}
       <div className="flex items-start justify-between mb-4 sm:mb-6">
@@ -83,21 +93,27 @@ export const MemoryActivity = (): React.JSX.Element => {
           </p>
         </div>
         <div
-          className="rounded-lg flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12"
-          style={{
-            background: "rgba(255, 234, 0, 0.12)",
-          }}
+          className="rounded-xl flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 bg-[#6E11B080] md:bg-[rgba(255,234,0,0.12)]"
         >
-          <Database className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: "#FFEA00" }} />
+          <Database className="w-4 h-4 sm:w-5 sm:h-5 text-[#C4B4FF] md:text-[#FFEA00]" />
         </div>
       </div>
 
       {/* Stats Summary Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <div className="grid grid-cols-3 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
         {/* Card 1 - TODAY */}
         <div
+<<<<<<< HEAD
           className="rounded-lg fb-dashboard-stat-card"
           style={{ padding: "clamp(14px, 3vw, 20px)" }}
+=======
+          className="rounded-lg"
+          style={{
+            padding: "clamp(14px, 3vw, 20px)",
+            background: "rgba(124, 58, 237, 0.18)",
+            border: "1px solid rgba(168, 85, 247, 0.3)",
+          }}
+>>>>>>> origin/main
         >
           <div
             className="mb-1.5 sm:mb-2"
@@ -112,17 +128,28 @@ export const MemoryActivity = (): React.JSX.Element => {
           <div
             className="font-bold mb-1"
             style={{
+<<<<<<< HEAD
               fontSize: "clamp(24px, 5vw, 32px)",
               color: "var(--fb-dashboard-stat)",
+=======
+              fontSize: "clamp(18px, 5vw, 32px)",
+              color: "#FFFFFF",
+>>>>>>> origin/main
               lineHeight: "1",
             }}
           >
             {todayCount}
           </div>
           <div
+            className="whitespace-nowrap"
             style={{
+<<<<<<< HEAD
               fontSize: "11px",
               color: "var(--fb-text-subtle)",
+=======
+              fontSize: "10px",
+              color: "rgba(255, 255, 255, 0.35)",
+>>>>>>> origin/main
             }}
           >
             chunks created
@@ -131,8 +158,17 @@ export const MemoryActivity = (): React.JSX.Element => {
 
         {/* Card 2 - THIS WEEK */}
         <div
+<<<<<<< HEAD
           className="rounded-lg fb-dashboard-stat-card"
           style={{ padding: "clamp(14px, 3vw, 20px)" }}
+=======
+          className="rounded-lg"
+          style={{
+            padding: "clamp(14px, 3vw, 20px)",
+            background: "rgba(124, 58, 237, 0.18)",
+            border: "1px solid rgba(168, 85, 247, 0.3)",
+          }}
+>>>>>>> origin/main
         >
           <div
             className="mb-1.5 sm:mb-2"
@@ -147,31 +183,42 @@ export const MemoryActivity = (): React.JSX.Element => {
           <div
             className="font-bold mb-1.5 sm:mb-2"
             style={{
+<<<<<<< HEAD
               fontSize: "clamp(24px, 5vw, 32px)",
               color: "var(--fb-dashboard-stat)",
+=======
+              fontSize: "clamp(18px, 5vw, 32px)",
+              color: "#FFFFFF",
+>>>>>>> origin/main
               lineHeight: "1",
             }}
           >
             {weekCount}
           </div>
-          <div className="flex items-center gap-1">
-            <TrendingUp className="w-3 h-3" style={{ color: weekPositive ? "#00D492" : "#FCA5A5" }} />
-            <span
-              className="font-semibold"
-              style={{
-                fontSize: "11px",
-                color: weekPositive ? "#00D492" : "#FCA5A5",
-              }}
-            >
-              {weekPercentage}
-            </span>
+          <div
+            className="whitespace-nowrap"
+            style={{
+              fontSize: "10px",
+              color: "rgba(255, 255, 255, 0.35)",
+            }}
+          >
+            {weekPercentage} trend
           </div>
         </div>
 
         {/* Card 3 - TOTAL */}
         <div
+<<<<<<< HEAD
           className="rounded-lg fb-dashboard-stat-card"
           style={{ padding: "clamp(14px, 3vw, 20px)" }}
+=======
+          className="rounded-lg"
+          style={{
+            padding: "clamp(14px, 3vw, 20px)",
+            background: "rgba(124, 58, 237, 0.18)",
+            border: "1px solid rgba(168, 85, 247, 0.3)",
+          }}
+>>>>>>> origin/main
         >
           <div
             className="mb-1.5 sm:mb-2"
@@ -186,17 +233,28 @@ export const MemoryActivity = (): React.JSX.Element => {
           <div
             className="font-bold mb-1"
             style={{
+<<<<<<< HEAD
               fontSize: "clamp(24px, 5vw, 32px)",
               color: "var(--fb-dashboard-stat)",
+=======
+              fontSize: "clamp(18px, 5vw, 32px)",
+              color: "#FFFFFF",
+>>>>>>> origin/main
               lineHeight: "1",
             }}
           >
             {totalCount}
           </div>
           <div
+            className="whitespace-nowrap"
             style={{
+<<<<<<< HEAD
               fontSize: "11px",
               color: "var(--fb-text-subtle)",
+=======
+              fontSize: "10px",
+              color: "rgba(255, 255, 255, 0.35)",
+>>>>>>> origin/main
             }}
           >
             all time
@@ -273,7 +331,7 @@ export const MemoryActivity = (): React.JSX.Element => {
         </div>
 
         {/* Desktop Heatmap — original fixed layout */}
-        <div className="hidden md:flex gap-3">
+        <div className="hidden md:flex min-w-0 gap-3 overflow-x-clip">
           {/* Day Labels */}
           <div className="flex flex-col gap-2 pt-1 flex-shrink-0">
             {heatmapDays.map((day) => (

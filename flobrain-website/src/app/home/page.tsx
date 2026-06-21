@@ -1,5 +1,7 @@
-"use client";
+import "./home-dashboard.css";
+import { HomeDashboard } from "./home-dashboard";
 
+<<<<<<< HEAD
 import React, { useState, useCallback } from "react";
 import { BrainActivity } from "./components/brain-activity";
 import { LeftPanel } from "./components/left-panel";
@@ -45,4 +47,8 @@ export default function Brain() {
       </div>
     </main>
   );
+=======
+export default function Home() {
+  return <HomeDashboard />;
+>>>>>>> origin/main
 }
