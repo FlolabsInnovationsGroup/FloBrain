@@ -23,7 +23,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <main className="min-h-screen fb-auth-bg flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 relative overflow-hidden">
+    <main className="min-h-screen bg-[#2E0A4E] flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 relative overflow-hidden">
       {/* Back button */}
       <Link
         href="/signin"
@@ -36,7 +36,7 @@ export default function ForgotPassword() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(139,92,246,0.15)_0%,_transparent_60%)]" />
 
       <div className="w-full max-w-md relative z-10">
-        <div className="w-full fb-auth-card rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
+        <div className="w-full bg-[#CABEE8]/90 rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-[#5F298F]">Reset your password</h1>
             <p className="text-zinc-600 text-sm mt-2">

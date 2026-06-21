@@ -17,22 +17,6 @@ export default function Dashboard() {
   const { isAuthenticated, isLoading } = useAuth();
 
   return (
-<<<<<<< HEAD
-    <main className="min-h-screen fb-page fb-page--dashboard px-4 py-6 sm:px-6 sm:py-8 md:p-8">
-      <div className="max-w-7xl mx-auto w-full overflow-x-hidden">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1
-            className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 uppercase tracking-wide"
-            style={{ color: "var(--fb-dashboard-heading, var(--fb-heading))" }}
-          >
-            SYSTEM DASHBOARD
-          </h1>
-          <p className="fb-text-muted text-sm sm:text-base">
-            Monitor your system health, workflows, and AI model performance
-          </p>
-        </div>
-=======
     <MotionProvider>
       <main
         className="min-h-screen text-white px-4 pt-6 pb-24 sm:px-6 sm:pt-8 sm:pb-28 md:p-8"
@@ -62,7 +46,6 @@ export default function Dashboard() {
                 )}
               </button>
             </div>
->>>>>>> origin/main
 
             {isMenuOpen && (
               <div className="mb-5 rounded-2xl border border-white/10 bg-[#140522]/95 p-4 shadow-lg">

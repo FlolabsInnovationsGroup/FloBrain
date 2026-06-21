@@ -194,11 +194,6 @@ export function MemoryTypesLegend({ nodes }: { nodes: MemoryNodeApi[] }) {
       className="rounded-xl border border-white/[0.08] bg-[#0c0614]/92 p-2.5 max-lg:backdrop-blur-none lg:rounded-2xl lg:bg-white/[0.03] lg:p-4 lg:backdrop-blur-md"
       onClick={(e) => e.stopPropagation()}
     >
-<<<<<<< HEAD
-      <div className="mb-3 flex items-center gap-2">
-        <span className="size-1.5 rounded-full bg-[#7B5CFF]" aria-hidden />
-        <h2 className="text-sm font-semibold text-[#2D1B4E]">Memory Types</h2>
-=======
       <div className="mb-2 flex items-center justify-between gap-2 lg:mb-3 lg:justify-start">
         <div className="flex items-center gap-2">
           <span className="size-1.5 rounded-full bg-[#7B5CFF]" aria-hidden />
@@ -207,7 +202,6 @@ export function MemoryTypesLegend({ nodes }: { nodes: MemoryNodeApi[] }) {
         <span className="shrink-0 text-[11px] font-semibold tabular-nums text-white lg:hidden">
           {total.toLocaleString()} total
         </span>
->>>>>>> origin/main
       </div>
 
       <MobileFlipTypes counts={counts} />
@@ -228,28 +222,22 @@ export function MemoryTypesLegend({ nodes }: { nodes: MemoryNodeApi[] }) {
                 <Icon className="size-4" strokeWidth={1.75} />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-sm font-medium text-[#2D1B4E]">{title}</div>
-                <div className="text-xs text-[#7A6890]">{subtitle}</div>
-                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-[#7A6890]">
+                <div className="text-sm font-medium text-white">{title}</div>
+                <div className="text-xs text-zinc-500">{subtitle}</div>
+                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-zinc-500">
                   <span>Size: {size}</span>
-                  <span className="text-[#7A6890]">·</span>
-                  <span className="text-[#5C4A72]">{n.toLocaleString()} nodes</span>
+                  <span className="text-zinc-600">·</span>
+                  <span className="text-zinc-400">{n.toLocaleString()} nodes</span>
                 </div>
               </div>
             </li>
           );
         })}
       </ul>
-<<<<<<< HEAD
-      <div className="mt-4 flex items-center justify-between border-t border-white/[0.06] pt-3">
-        <span className="text-xs text-[#7A6890]">Total Memory Nodes</span>
-        <span className="text-lg font-semibold tabular-nums text-[#2D1B4E]">{total.toLocaleString()}</span>
-=======
 
       <div className="mt-3 hidden items-center justify-between border-t border-white/[0.06] pt-3 lg:flex">
         <span className="text-xs text-zinc-500">Total Memory Nodes</span>
         <span className="text-lg font-semibold tabular-nums text-white">{total.toLocaleString()}</span>
->>>>>>> origin/main
       </div>
     </div>
   );

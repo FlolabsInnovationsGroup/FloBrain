@@ -16,13 +16,9 @@ export const ApplicationsCard = ({
   tags,
 }: ApplicationsCardProps) => {
   return (
-<<<<<<< HEAD
-    <div className="w-full rounded-2xl p-6 md:p-7 fb-app-card text-left transition-colors">
-=======
     <div
       className="w-full rounded-2xl p-3 md:p-6 bg-[#181024] border border-white/[0.08] text-left transition-colors"
     >
->>>>>>> origin/main
       <div className="flex flex-col gap-4">
         <div className="flex flex-row items-center gap-4">
           <div
@@ -38,10 +34,11 @@ export const ApplicationsCard = ({
       <div className="mt-6 flex flex-wrap gap-2">
         {tags.map((tag) => (
           <span
-            className="fb-app-card__tag inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-medium text-zinc-300"
+            className="inline-flex items-center rounded-lg border border-white/20 bg-[#FFFFFF0D] px-3 py-1.5 text-xs font-medium text-[#9CA3AF]"
+            style={{ fontFamily: "Consolas, monospace" }}
             key={tag}
           >
-            {tag}
+            &lt;{tag} /&gt;
           </span>
         ))}
       </div>

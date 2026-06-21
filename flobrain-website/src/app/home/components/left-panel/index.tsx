@@ -123,16 +123,12 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const searchPlaceholder = isChats ? "Search chats..." : "Search ...";
 
   return (
-<<<<<<< HEAD
-    <div className="relative flex w-full min-w-0 flex-col rounded-xl border fb-sidebar lg:w-[20%] lg:min-w-[260px]">
-=======
     <div
       className={cn(
         "flex flex-col bg-[#0B0719]/50 relative w-[20%] min-h-0 border-transparent rounded-xl",
         className
       )}
     >
->>>>>>> origin/main
       <div
         className={cn(
           "flex flex-col flex-1 min-h-0 p-4 gap-4",

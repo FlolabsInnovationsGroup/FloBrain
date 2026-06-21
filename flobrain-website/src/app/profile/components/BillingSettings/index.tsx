@@ -32,86 +32,85 @@ export default function BillingSettings() {
   ];
 
   return (
-    <div className="space-y-6">
-      <section className="fb-profile-card rounded-2xl p-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div className="space-y-8">
+      <h2 className="text-3xl font-bold text-white">Billing</h2>
+
+      {/* Current Plan */}
+      <section className="rounded-xl border border-purple-500/30 bg-indigo-950/50 p-6 space-y-3">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <p className="fb-profile-label text-sm">Current plan</p>
-            <div className="mt-1 flex flex-wrap items-baseline gap-2">
-              <span className="fb-profile-title text-xl font-semibold">
+            <p className="text-sm text-white/60">Current plan</p>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className="text-xl font-semibold text-white">
                 {planDefinition?.name ?? CURRENT_PLAN_NAME}
               </span>
-              <span className="fb-profile-title">
+              <span className="text-white/80">
                 {price}
-                <span className="fb-profile-label text-sm">{period}</span>
+                <span className="text-sm text-white/60">{period}</span>
               </span>
             </div>
-            <p className="mt-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
-              Active
-            </p>
-            <p className="fb-profile-label mt-1 text-xs">Renews on Mar 15, 2026</p>
+            <p className="mt-1 text-sm text-emerald-400">Active</p>
+            <p className="mt-1 text-xs text-white/60">Renews on Mar 15, 2026</p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
+
+          <div className="flex flex-col sm:flex-row gap-3">
             <Link
               href="/pricing"
-              className="fb-profile-btn-primary inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium transition-colors"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-[#8b5cf6] to-[#c084fc] text-white text-sm font-medium hover:shadow-lg hover:shadow-[#8b5cf6]/40 transition-all"
             >
               Change plan
             </Link>
             <Link
               href="/payment"
-              className="fb-profile-btn-secondary inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium transition-colors"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-purple-500/40 text-white text-sm font-medium hover:bg-purple-900/30 transition-all"
             >
-              Update payment
+              Update payment method
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="fb-profile-card rounded-2xl p-6">
-        <h3 className="fb-profile-title mb-4 text-lg font-semibold">Usage</h3>
+      {/* Usage Summary */}
+      <section className="rounded-xl border border-purple-500/30 bg-indigo-950/50 p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">Usage</h3>
         <div className="grid gap-4 md:grid-cols-3">
-          {(
-            [
-              ["API calls", usage.apiCalls],
-              ["Devices", usage.devices],
-              ["Memory storage", usage.memoryStorage],
-            ] as const
-          ).map(([label, data]) => (
-            <div
-              key={label}
-              className="rounded-xl border px-4 py-4"
-              style={{
-                background: "var(--fb-profile-field-bg)",
-                borderColor: "var(--fb-profile-field-border)",
-              }}
-            >
-              <p className="fb-profile-label mb-1 text-xs uppercase tracking-wide">
-                {label}
-              </p>
-              <p className="fb-profile-title text-lg font-semibold">
-                {data.used}
-                <span className="fb-profile-label text-sm font-normal"> / {data.limit}</span>
-              </p>
-            </div>
-          ))}
+          <div className="rounded-lg border border-purple-500/30 bg-indigo-950/60 p-4">
+            <p className="text-xs uppercase tracking-wide text-white/50 mb-1">API calls</p>
+            <p className="text-white text-lg font-semibold">
+              {usage.apiCalls.used}
+              <span className="text-sm text-white/60"> / {usage.apiCalls.limit}</span>
+            </p>
+          </div>
+          <div className="rounded-lg border border-purple-500/30 bg-indigo-950/60 p-4">
+            <p className="text-xs uppercase tracking-wide text-white/50 mb-1">Devices</p>
+            <p className="text-white text-lg font-semibold">
+              {usage.devices.used}
+              <span className="text-sm text-white/60"> / {usage.devices.limit}</span>
+            </p>
+          </div>
+          <div className="rounded-lg border border-purple-500/30 bg-indigo-950/60 p-4">
+            <p className="text-xs uppercase tracking-wide text-white/50 mb-1">Memory storage</p>
+            <p className="text-white text-lg font-semibold">
+              {usage.memoryStorage.used}
+              <span className="text-sm text-white/60"> / {usage.memoryStorage.limit}</span>
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="fb-profile-card rounded-2xl p-6">
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="fb-profile-title text-lg font-semibold">Billing history</h3>
-          <button
-            type="button"
-            className="fb-profile-label text-xs underline underline-offset-4 hover:opacity-80"
-          >
-            Download all
+      {/* Invoices */}
+      <section className="rounded-xl border border-purple-500/30 bg-indigo-950/50 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-white">Billing history</h3>
+          <button className="text-xs text-white/70 underline underline-offset-4 hover:text-white">
+            Download all invoices
           </button>
         </div>
+
         <div className="overflow-x-auto">
-          <table className="min-w-full text-left text-sm">
-            <thead>
-              <tr className="fb-profile-label border-b text-xs uppercase tracking-wide" style={{ borderColor: "var(--fb-profile-divider)" }}>
+          <table className="min-w-full text-sm text-left text-white/80">
+            <thead className="text-xs uppercase tracking-wide text-white/50 border-b border-purple-500/30">
+              <tr>
                 <th className="py-2 pr-4">Invoice</th>
                 <th className="py-2 pr-4">Date</th>
                 <th className="py-2 pr-4">Amount</th>
@@ -120,16 +119,12 @@ export default function BillingSettings() {
             </thead>
             <tbody>
               {invoices.map((invoice) => (
-                <tr
-                  key={invoice.id}
-                  className="border-b last:border-0"
-                  style={{ borderColor: "var(--fb-profile-divider)" }}
-                >
-                  <td className="fb-profile-title py-3 pr-4 font-mono">{invoice.id}</td>
-                  <td className="fb-profile-body py-3 pr-4">{invoice.date}</td>
-                  <td className="fb-profile-title py-3 pr-4">{invoice.amount}</td>
-                  <td className="py-3 pr-4">
-                    <span className="inline-flex rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                <tr key={invoice.id} className="border-b border-purple-500/10 last:border-0">
+                  <td className="py-2 pr-4 font-mono text-white">{invoice.id}</td>
+                  <td className="py-2 pr-4 text-white/80">{invoice.date}</td>
+                  <td className="py-2 pr-4 text-white">{invoice.amount}</td>
+                  <td className="py-2 pr-4">
+                    <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-400">
                       {invoice.status}
                     </span>
                   </td>
@@ -140,45 +135,39 @@ export default function BillingSettings() {
         </div>
       </section>
 
-      <section
-        className="rounded-2xl border p-6"
-        style={{
-          background: "var(--fb-profile-danger-bg)",
-          borderColor: "var(--fb-profile-danger-border)",
-        }}
-      >
-        <h3 className="mb-2 text-lg font-semibold" style={{ color: "var(--fb-profile-danger)" }}>
-          Plan management
-        </h3>
-        <p className="fb-profile-body mb-4 text-sm">
-          You can downgrade to the free Personal plan at any time. Your current billing period
-          remains active until the end of the cycle.
+      {/* Plan management */}
+      <section className="rounded-xl border border-red-500/30 bg-red-950/30 p-6 space-y-4">
+        <h3 className="text-lg font-semibold text-red-200">Plan management</h3>
+        <p className="text-sm text-red-100/80">
+          You can downgrade to the free Developer plan at any time. Your current billing period
+          will remain active until the end of the cycle.
         </p>
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
             type="button"
             onClick={() => {
-              if (confirm("Are you sure you want to downgrade to the Personal plan?")) {
-                console.warn("Downgrading plan");
+              // TODO: Call API to downgrade
+              if (confirm("Are you sure you want to downgrade to the Developer plan?")) {
+                console.warn("Downgrading plan to Developer");
               }
             }}
-            className="fb-profile-btn-danger rounded-xl px-4 py-2.5 text-sm font-medium"
+            className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-red-400/60 text-red-100 text-sm font-medium hover:bg-red-900/40 transition-all"
           >
-            Downgrade to Personal
+            Downgrade to Developer
           </button>
           <button
             type="button"
             onClick={() => {
+              // TODO: Call API to cancel subscription
               if (
                 confirm(
-                  "Cancel your subscription? Access remains until the end of the billing period."
+                  "Are you sure you want to cancel your subscription? Your access will remain until the end of the current billing period."
                 )
               ) {
                 console.warn("Cancelling subscription");
               }
             }}
-            className="rounded-xl px-4 py-2.5 text-sm font-medium text-white transition-colors"
-            style={{ background: "var(--fb-profile-danger)" }}
+            className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-red-600/80 text-white text-sm font-medium hover:bg-red-600 transition-all"
           >
             Cancel subscription
           </button>
@@ -187,3 +176,4 @@ export default function BillingSettings() {
     </div>
   );
 }
+

@@ -54,7 +54,7 @@ describe("Login Component", () => {
   it("should update password input value when user types", () => {
     renderWithAuth(<SignInCard />);
 
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
     fireEvent.change(passwordInput, { target: { value: "password123" } });
 
     expect(passwordInput).toHaveValue("password123");
@@ -63,16 +63,8 @@ describe("Login Component", () => {
   it("should toggle password visibility when eye icon is clicked", () => {
     renderWithAuth(<SignInCard />);
 
-<<<<<<< HEAD
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
-    const toggleButtons = screen.getAllByRole("button");
-    const passwordToggle = toggleButtons.find(
-      (button) => button.querySelector("svg") && button.getAttribute("type") === "button"
-    );
-=======
     const passwordInput = screen.getByPlaceholderText("••••••••");
     const toggleButton = screen.getByRole("button", { name: /show password/i });
->>>>>>> origin/main
 
     expect(passwordInput).toHaveAttribute("type", "password");
 
@@ -122,17 +114,7 @@ describe("Login Component", () => {
 
     const card = container.querySelector(".rounded-2xl");
     expect(card).toBeInTheDocument();
-<<<<<<< HEAD
-    expect(card?.className).toContain("fb-auth-card");
-  });
-
-  it("should render divider text correctly", () => {
-    renderWithAuth(<Login />);
-
-    expect(screen.getByText("Or continue with")).toBeInTheDocument();
-=======
     expect(card?.className).toContain("bg-[#160a28]/95");
->>>>>>> origin/main
   });
 
   it("should display icons for form inputs", () => {
@@ -148,24 +130,8 @@ describe("Login Component", () => {
     const submitButton = screen.getByRole("button", { name: /Sign In/i });
     fireEvent.click(submitButton);
 
-<<<<<<< HEAD
-    // Verify inputs are still empty (no default behavior)
-    const emailInput = screen.getByPlaceholderText("your.email@email.com");
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
-
-    expect(emailInput).toHaveValue("");
-    expect(passwordInput).toHaveValue("");
-  });
-
-  it("should have dark purple background", () => {
-    const { container } = renderWithAuth(<Login />);
-
-    const main = container.querySelector("main");
-    expect(main?.className).toContain("fb-auth-bg");
-=======
     expect(screen.getByPlaceholderText("johndoe@gmail.com")).toHaveValue("");
     expect(screen.getByPlaceholderText("••••••••")).toHaveValue("");
->>>>>>> origin/main
   });
 
   it("should handle email input blur event", () => {
@@ -181,7 +147,7 @@ describe("Login Component", () => {
   it("should handle password input blur event", () => {
     renderWithAuth(<SignInCard />);
 
-    const passwordInput = screen.getByPlaceholderText("Enter your password");
+    const passwordInput = screen.getByPlaceholderText("••••••••");
     fireEvent.change(passwordInput, { target: { value: "mypassword" } });
     fireEvent.blur(passwordInput);
 

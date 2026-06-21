@@ -91,7 +91,7 @@ const ProcessStatusBadge = memo(function ProcessStatusBadge({
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-600/30 font-extralight border border-slate-600/50 px-3 py-1 text-[10px] font-light tracking-wider text-[#5C4A72]">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-600/30 font-extralight border border-slate-600/50 px-3 py-1 text-[10px] font-light tracking-wider text-slate-400">
       <Clock className="h-3.5 w-3.5" />
       Queued
     </span>
@@ -141,12 +141,7 @@ const MetricCard = memo(function MetricCard({
   return (
     <div
       role="listitem"
-<<<<<<< HEAD
-      className="relative rounded-xl border p-4 backdrop-blur-sm py-8 dark:border-white/5"
-      style={{ background: "var(--fb-stat-card-bg)", borderColor: "var(--fb-panel-border)" }}
-=======
       className="relative rounded-xl border border-white/5 bg-[#1E293B]/80 p-4 py-8"
->>>>>>> origin/main
       aria-label={`${label}: ${value}`}
     >
       <div
@@ -161,7 +156,7 @@ const MetricCard = memo(function MetricCard({
           <Icon className={cn("h-5 w-5", iconColor)} />
         </div>
         <div>
-          <p className="text-2xl font-semibold fb-heading dark:text-white">{value}</p>
+          <p className="text-2xl font-semibold text-white">{value}</p>
           <p className="text-xs font-light mt-2 tracking-wider text-[#90A1B9]">
             {label}
           </p>
@@ -184,11 +179,11 @@ const ProcessRow = memo(function ProcessRow({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex flex-row items-center gap-2 mb-3">
-          <span className="text-base font-extralight text-white/90">{name}</span>
+          <span className="text-base font-extralight text-white">{name}</span>
           <ProcessStatusBadge status={status} />
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-[#5C4A72] w-8 text-right">
+          <span className="text-xs font-mono text-slate-400 w-8 text-right">
             {progress}%
           </span>
         </div>
@@ -219,19 +214,13 @@ function BrainActivityInner() {
   }, [router]);
 
   return (
-    <div
-      className="flex flex-col min-h-0 w-full max-w-3xl mx-auto px-6 py-5 overflow-y-auto border rounded-xl font-[inter] backdrop-blur-sm"
-      style={{
-        background: "var(--fb-panel-bg)",
-        borderColor: "var(--fb-panel-border)",
-      }}
-    >
+    <div className="flex flex-col min-h-0 w-full max-w-3xl mx-auto px-6 py-5 overflow-y-auto border border-[#767676]/38 rounded-xl font-[inter]">
       {/* Header */}
       <header className="my-6">
-        <h1 className="text-3xl font-bold tracking-tight fb-heading dark:text-white">
+        <h1 className="text-3xl font-bold text-white tracking-tight">
           Brain Activity
         </h1>
-        <p className="text-base fb-text-muted my-4 dark:text-[#90A1B9]">
+        <p className="text-base text-[#90A1B9] my-4">
           Real-time orchestration of AI processes
         </p>
       </header>
@@ -248,14 +237,7 @@ function BrainActivityInner() {
       </div>
 
       {/* Active Processes */}
-<<<<<<< HEAD
-      <div
-        className="rounded-xl border p-6 backdrop-blur-sm min-h-0 flex flex-col"
-        style={{ background: "var(--fb-process-card-bg)", borderColor: "var(--fb-panel-border)" }}
-      >
-=======
       <div className="flex min-h-0 flex-col rounded-xl border border-white/10 bg-[#181024]/95 p-6">
->>>>>>> origin/main
         <h2 className="text-xl font-semibold text-white mb-6">
           Active Processes
         </h2>
@@ -304,14 +286,7 @@ function BrainActivityInner() {
       </div>
 
       {/* Ask Anything — uncontrolled to avoid re-renders on every keystroke */}
-<<<<<<< HEAD
-      <div
-        className="mt-6 mb-4 rounded-full border p-3 backdrop-blur-sm"
-        style={{ background: "var(--fb-input-bg)", borderColor: "var(--fb-panel-border)" }}
-      >
-=======
       <div className="mb-4 mt-6 rounded-full border border-[#1F2937] bg-[#111827]/95 p-3">
->>>>>>> origin/main
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -338,11 +313,7 @@ function BrainActivityInner() {
           />
           <button
             type="submit"
-<<<<<<< HEAD
-            className="p-3 rounded-full bg-[#8B5CF6] text-[#2D1B4E] cursor-pointer hover:bg-[#7C5DF6] transition-all"
-=======
             className="p-3 rounded-full bg-[#8B5CF6] text-white cursor-pointer hover:bg-[#7C5DF6] transition-colors"
->>>>>>> origin/main
             aria-label="Send message"
           >
             <Send className="h-5 w-5" />

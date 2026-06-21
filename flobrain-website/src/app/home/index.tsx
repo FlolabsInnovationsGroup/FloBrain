@@ -11,20 +11,6 @@ import { MotionProvider, Reveal, Stagger, StaggerItem } from "@/components/motio
  */
 export default function HomePage() {
   return (
-<<<<<<< HEAD
-    <main className="w-full h-full flex flex-col items-center fb-home-page">
-      {/* 1. Hero Section */}
-      <HeroSection />
-
-      {/* 2. Features Grid */}
-      <div className="w-full max-w-7xl px-4 py-20">
-        <h1 className="text-[36px] font-bold text-center mb-4 fb-heading">
-          Powerful Features, Simple Integration
-        </h1>
-        <p className="text-[20px] font-regular text-center fb-text-muted mb-28">
-        Everything you need to build intelligent, context-aware applications
-        </p>
-=======
     <MotionProvider>
       <main className="w-full h-full flex flex-col items-center">
         <HeroSection />
@@ -40,7 +26,6 @@ export default function HomePage() {
               Everything you need to build intelligent, context-aware applications
             </p>
           </Reveal>
->>>>>>> origin/main
 
           <Stagger
             className="grid grid-cols-2 md:grid-cols-3 auto-rows-fr gap-3 sm:gap-6 md:gap-8 lg:gap-[50px] mt-6 sm:mt-8 md:mt-[50px]"
@@ -54,17 +39,6 @@ export default function HomePage() {
           </Stagger>
         </div>
 
-<<<<<<< HEAD
-      {/* 3. Applications / Ecosystem Section */}
-      <div className="w-full max-w-7xl px-4 py-20">
-        <h1 className="text-[35px] font-bold text-center mb-4 fb-heading">
-          Every Where, All At Once
-        </h1>
-        <p className="text-[20px] text-center fb-text-muted mx-auto w-[80%] md:w-[60%] mb-28">
-          FloBrain seamlessly integrates with wearables, mobile apps, web platforms, robotics, IoT
-          devices, and enterprise systems—all through a unified API
-        </p>
-=======
         <div className="w-full max-w-7xl px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
           <Reveal variant="slideUp" inView>
             <h1 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[35px] font-bold text-center mb-3 sm:mb-4 text-[#FFFFFF]">
@@ -77,7 +51,6 @@ export default function HomePage() {
               IoT devices, and enterprise systems—all through a unified API
             </p>
           </Reveal>
->>>>>>> origin/main
 
           <Stagger
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-[50px] mt-6 sm:mt-8 md:mt-[80px]"

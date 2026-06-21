@@ -43,9 +43,15 @@ export const SystemHealth = (): React.JSX.Element => {
   if (error) {
     return (
       <div
-        className="w-full fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
+        className="w-full lg:w-[830px] rounded-[16px] sm:rounded-[20px]"
+        style={{
+          background: "rgba(30, 18, 43, 0.6)",
+          padding: "clamp(20px, 4vw, 32px)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
+        }}
       >
-        <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "var(--fb-text-muted)" }}>
+        <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "rgba(255, 255, 255, 0.5)" }}>
           SYSTEM HEALTH
         </h2>
         <p style={{ fontSize: "13px", color: "#FCA5A5" }}>Unable to reach backend. Check that the API is running.</p>
@@ -55,9 +61,6 @@ export const SystemHealth = (): React.JSX.Element => {
 
   return (
     <div
-<<<<<<< HEAD
-      className="w-full lg:w-[830px] fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
-=======
       className="w-full rounded-[18px] sm:rounded-[20px]"
       style={{
         background: "rgba(30, 18, 43, 0.72)",
@@ -65,7 +68,6 @@ export const SystemHealth = (): React.JSX.Element => {
         border: "1px solid rgba(139, 92, 246, 0.28)",
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
       }}
->>>>>>> origin/main
     >
       <div className="flex items-start justify-between mb-4 sm:mb-6">
         <div>
@@ -74,7 +76,7 @@ export const SystemHealth = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "var(--fb-text-muted)",
+              color: "rgba(255, 255, 255, 0.5)",
             }}
           >
             SYSTEM HEALTH
@@ -82,7 +84,7 @@ export const SystemHealth = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "var(--fb-text-subtle)",
+              color: "rgba(255, 255, 255, 0.35)",
             }}
           >
             {isLoading ? "Loading…" : `Last updated: ${lastUpdated}`}
@@ -112,13 +114,8 @@ export const SystemHealth = (): React.JSX.Element => {
           <h3
             className="font-bold"
             style={{
-<<<<<<< HEAD
-              fontSize: "clamp(20px, 4vw, 28px)",
-              color: "var(--fb-dashboard-stat)",
-=======
               fontSize: "clamp(14px, 3.6vw, 24px)",
               color: "#FFFFFF",
->>>>>>> origin/main
               lineHeight: "1.2",
             }}
           >
@@ -138,23 +135,6 @@ export const SystemHealth = (): React.JSX.Element => {
         )}
       </div>
 
-<<<<<<< HEAD
-      {/* Bottom Section - Backend & Database */}
-      <div className="mb-3 sm:mb-5">
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Server className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "var(--fb-text-subtle)" }} />
-            <span
-              className="font-medium"
-              style={{
-                fontSize: "clamp(12px, 2.5vw, 15px)",
-                color: "var(--fb-text-muted)",
-              }}
-            >
-              Database
-            </span>
-          </div>
-=======
       <div className="mb-4">
         <p className="text-[11px] tracking-[0.5px] text-white/45 mb-1">CONNECTED DEVICES</p>
         <p className="text-2xl md:text-4xl font-semibold leading-none">{connectedDevices}</p>
@@ -162,19 +142,12 @@ export const SystemHealth = (): React.JSX.Element => {
 
       <div className="flex items-end gap-1.5 h-8 mb-4">
         {[14, 22, 16, 26, 13, 20, 24, 15, 21, 18, 25, 17].map((height, index) => (
->>>>>>> origin/main
           <div
             key={index}
             className="w-[7px] rounded-full"
             style={{
-<<<<<<< HEAD
-              fontSize: "clamp(18px, 4vw, 24px)",
-              color: databaseStatus === "connected" ? "#00D492" : "var(--fb-dashboard-disconnected)",
-              lineHeight: "1",
-=======
               height: `${height}px`,
               background: "linear-gradient(180deg, #A855F7 0%, #7C3AED 100%)",
->>>>>>> origin/main
             }}
           />
         ))}

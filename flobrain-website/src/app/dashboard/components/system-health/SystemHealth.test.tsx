@@ -1,48 +1,35 @@
-import { screen, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
 import { SystemHealth } from ".";
-import { renderWithProviders } from "@/test/render";
-
-vi.mock("@/lib/api", () => ({
-  api: {
-    getDashboardHealth: vi.fn(() =>
-      Promise.resolve({
-        data: {
-          backend: "online",
-          allSystemsOperational: true,
-          database: "connected",
-        },
-        error: undefined,
-        status: 200,
-      })
-    ),
-  },
-}));
 
 describe("SystemHealth Component", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  it("should render the System Health title", () => {
+    render(<SystemHealth />);
+    expect(screen.getByText("System Health")).toBeDefined();
   });
 
-  it("should render the System Health title", async () => {
-    renderWithProviders(<SystemHealth />);
-    await waitFor(() => {
-      expect(screen.getByText("SYSTEM HEALTH")).toBeInTheDocument();
-    });
+  it("should render Brain Status section", () => {
+    render(<SystemHealth />);
+    expect(screen.getByText("Brain Status")).toBeDefined();
+    expect(screen.getByText("Online")).toBeDefined();
   });
 
-  it("should render Brain Status section", async () => {
-    renderWithProviders(<SystemHealth />);
-    await waitFor(() => {
-      expect(screen.getByText(/Brain Status: Online/i)).toBeInTheDocument();
-    });
+  it("should render Connected Devices section", () => {
+    render(<SystemHealth />);
+    expect(screen.getByText("Connected Devices")).toBeDefined();
+    expect(screen.getByText("12")).toBeDefined();
   });
 
-  it("should render Database section", async () => {
-    renderWithProviders(<SystemHealth />);
-    await waitFor(() => {
-      expect(screen.getByText("Database")).toBeInTheDocument();
-      expect(screen.getByText("connected")).toBeInTheDocument();
-    });
+  it("should render Total tokens section with count and percentage", () => {
+    render(<SystemHealth />);
+    expect(screen.getByText("Total tokens today")).toBeDefined();
+    expect(screen.getByText("2,847,392")).toBeDefined();
+    expect(screen.getByText("+18%")).toBeDefined();
+  });
+
+  it("should render Brain Status as a link to /brain", () => {
+    render(<SystemHealth />);
+    const link = screen.getByRole("link");
+    expect(link.getAttribute("href")).toBe("/brain");
   });
 });

@@ -7,6 +7,9 @@ import { Trash2, Pencil, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 
+const inputClass =
+  "w-full px-4 py-3 bg-[#281C30] border border-zinc-500/50 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-zinc-400/70";
+
 export default function ProfileSettings() {
   const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
@@ -17,6 +20,7 @@ export default function ProfileSettings() {
   const [formData, setFormData] = useState({ fullName: "", email: "" });
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
+  /** Field-level validation errors from API (key: fullName | email, value: message) */
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
@@ -75,6 +79,7 @@ export default function ProfileSettings() {
     };
   }, [isAuthenticated]);
 
+  /** Parse API details into field-level errors. Backend may send "username" for fullName. */
   function parseFieldErrors(details: unknown): Record<string, string> {
     if (!details || typeof details !== "object" || Array.isArray(details)) return {};
     const out: Record<string, string> = {};
@@ -178,19 +183,19 @@ export default function ProfileSettings() {
   const currentPlan = { name: "Developer", price: "Free" };
 
   if (isLoading) {
-    return <p className="fb-profile-body text-sm">Loading profile…</p>;
+    return (
+      <div className="text-white/80 text-sm">Loading profile…</div>
+    );
   }
 
   if (loadError && isAuthenticated) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-red-500" role="alert">
-          {loadError}
-        </p>
+        <p className="text-red-400 text-sm">{loadError}</p>
         <button
           type="button"
           onClick={fetchProfile}
-          className="fb-profile-btn-secondary rounded-xl px-4 py-2 text-sm font-medium"
+          className="px-4 py-2 bg-zinc-600 hover:bg-zinc-500 text-white rounded-lg text-sm"
         >
           Retry
         </button>
@@ -199,73 +204,61 @@ export default function ProfileSettings() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {!isAuthenticated && (
-        <div
-          className="rounded-xl border px-4 py-3 text-sm"
-          style={{
-            background: "var(--fb-profile-field-bg)",
-            borderColor: "var(--fb-profile-field-border)",
-            color: "var(--fb-profile-warning)",
-          }}
-        >
-          <Link href="/signin" className="font-medium underline" style={{ color: "var(--fb-profile-link)" }}>
-            Sign in
-          </Link>{" "}
-          to view and edit your profile.
-        </div>
+        <p className="text-amber-400/90 text-sm">Sign in to view and edit your profile.</p>
       )}
 
+      {/* Name and email with Edit on the right */}
       <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1 space-y-5">
-          <div>
-            <p className="fb-profile-label mb-1 text-sm">Full Name</p>
-            <p className="fb-profile-title truncate font-medium">
-              {profile?.fullName || "—"}
-            </p>
-          </div>
-          <div>
-            <p className="fb-profile-label mb-1 text-sm">Email Address</p>
-            <p className="fb-profile-title truncate">{profile?.email || "—"}</p>
-          </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-zinc-400 text-sm">Full Name</p>
+          <p className="text-white font-medium truncate">
+            {profile?.fullName || "—"}
+          </p>
+          <p className="text-zinc-400 text-sm mt-3">Email Address</p>
+          <p className="text-white truncate">
+            {profile?.email || "—"}
+          </p>
         </div>
         {isAuthenticated && (
           <button
             type="button"
             onClick={openEditModal}
-            className="fb-profile-btn-primary flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors"
+            className="flex items-center gap-2 shrink-0 px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg text-sm transition-colors"
           >
-            <Pencil className="h-4 w-4" />
+            <Pencil className="w-4 h-4" />
             Edit
           </button>
         )}
       </div>
 
+      {/* Edit profile modal */}
       {modalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-          style={{ background: "var(--fb-profile-modal-overlay)" }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="edit-profile-title"
         >
-          <div className="fb-profile-modal w-full max-w-md rounded-2xl p-6 shadow-xl">
-            <div className="mb-6 flex items-center justify-between">
-              <h3 id="edit-profile-title" className="fb-profile-title text-lg font-semibold">
+          <div className="bg-[#1a1525] border border-zinc-500/50 rounded-xl shadow-xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 id="edit-profile-title" className="text-xl font-semibold text-white">
                 Edit profile
-              </h3>
+              </h2>
               <button
                 type="button"
                 onClick={closeEditModal}
-                className="fb-profile-btn-secondary rounded-lg p-1.5 transition-colors"
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Close"
               >
-                <X className="h-5 w-5" />
+                <X className="w-5 h-5" />
               </button>
             </div>
+
             <form onSubmit={handleModalSubmit} className="space-y-4">
               <div>
-                <label htmlFor="modal-fullName" className="fb-profile-label mb-2 block text-sm font-medium">
+                <label htmlFor="modal-fullName" className="block text-white text-sm font-medium mb-2">
                   Full Name
                 </label>
                 <input
@@ -275,17 +268,19 @@ export default function ProfileSettings() {
                   value={formData.fullName}
                   onChange={handleModalChange}
                   placeholder="John Doe"
-                  className={`fb-profile-field w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#9333ea]/40 ${fieldErrors.fullName ? "border-red-400" : ""}`}
+                  className={`${inputClass} ${fieldErrors.fullName ? "border-red-400/70" : ""}`}
                   disabled={saveStatus === "saving"}
+                  aria-invalid={!!fieldErrors.fullName}
+                  aria-describedby={fieldErrors.fullName ? "modal-fullName-error" : undefined}
                 />
                 {fieldErrors.fullName && (
-                  <p className="mt-1 text-sm text-red-500" role="alert">
+                  <p id="modal-fullName-error" className="text-red-400 text-sm mt-1" role="alert">
                     {fieldErrors.fullName}
                   </p>
                 )}
               </div>
               <div>
-                <label htmlFor="modal-email" className="fb-profile-label mb-2 block text-sm font-medium">
+                <label htmlFor="modal-email" className="block text-white text-sm font-medium mb-2">
                   Email Address
                 </label>
                 <input
@@ -295,30 +290,34 @@ export default function ProfileSettings() {
                   value={formData.email}
                   onChange={handleModalChange}
                   placeholder="john.doe@example.com"
-                  className={`fb-profile-field w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#9333ea]/40 ${fieldErrors.email ? "border-red-400" : ""}`}
+                  className={`${inputClass} ${fieldErrors.email ? "border-red-400/70" : ""}`}
                   disabled={saveStatus === "saving"}
+                  aria-invalid={!!fieldErrors.email}
+                  aria-describedby={fieldErrors.email ? "modal-email-error" : undefined}
                 />
                 {fieldErrors.email && (
-                  <p className="mt-1 text-sm text-red-500" role="alert">
+                  <p id="modal-email-error" className="text-red-400 text-sm mt-1" role="alert">
                     {fieldErrors.email}
                   </p>
                 )}
               </div>
+
               {saveError && (
-                <p className="text-sm text-red-500" role="alert">
+                <p className="text-red-400 text-sm" role="alert">
                   {saveError}
                 </p>
               )}
               {saveStatus === "saved" && (
-                <p className="text-sm text-emerald-600 dark:text-emerald-400" role="status">
+                <p className="text-green-400 text-sm" role="status">
                   Saved.
                 </p>
               )}
+
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={closeEditModal}
-                  className="fb-profile-btn-secondary flex-1 rounded-xl px-4 py-2.5 text-sm font-medium"
+                  className="flex-1 px-4 py-2.5 bg-zinc-600 hover:bg-zinc-500 text-white font-medium rounded-lg text-sm transition-colors"
                   disabled={saveStatus === "saving"}
                 >
                   Cancel
@@ -326,7 +325,7 @@ export default function ProfileSettings() {
                 <button
                   type="submit"
                   disabled={saveStatus === "saving"}
-                  className="fb-profile-btn-primary flex-1 rounded-xl px-4 py-2.5 text-sm font-medium disabled:opacity-50"
+                  className="flex-1 px-4 py-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm transition-colors"
                 >
                   {saveStatus === "saving" ? "Saving…" : "Save"}
                 </button>
@@ -337,71 +336,65 @@ export default function ProfileSettings() {
       )}
 
       <div>
-        <p className="fb-profile-label mb-2 text-sm font-medium">Current Plan</p>
-        <div className="fb-profile-card rounded-xl px-4 py-4">
+        <label className="block text-white text-sm font-medium mb-2">Current Plan</label>
+        <div className="px-4 py-3 bg-[#281C30] border border-zinc-500/50 rounded-lg">
           <div className="flex items-center justify-between">
-            <span className="fb-profile-title font-semibold">{currentPlan.name}</span>
-            <span className="fb-profile-title">{currentPlan.price}</span>
+            <span className="text-white font-medium">{currentPlan.name}</span>
+            <span className="text-white">{currentPlan.price}</span>
           </div>
-          <div className="mt-2 text-right">
+          <div className="mt-1 text-right">
             <Link
               href="/pricing"
-              className="text-sm font-medium transition-colors hover:opacity-80"
-              style={{ color: "var(--fb-profile-link)" }}
+              className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
             >
-              Upgrade now →
+              Upgrade Now
             </Link>
           </div>
         </div>
       </div>
 
       <div>
-        <p className="fb-profile-label mb-2 text-sm font-medium">Support</p>
-        <Link
-          href="/contact"
-          className="fb-profile-card flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-colors hover:opacity-90"
-          style={{ color: "var(--fb-profile-title)" }}
-        >
-          Contact us
-          <span style={{ color: "var(--fb-profile-link)" }}>→</span>
-        </Link>
-      </div>
-
-      <div className="fb-profile-divider border-t pt-6">
-        <p className="fb-profile-label mb-3 text-sm">Danger zone</p>
+        <label className="block text-white text-sm font-medium mb-2">Contact Us</label>
         <button
           type="button"
-          onClick={openDeleteModal}
-          className="fb-profile-btn-danger flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+          className={`${inputClass} w-full text-left cursor-pointer hover:border-zinc-400/60 transition-colors`}
         >
-          <Trash2 className="h-4 w-4" />
-          Delete account
+          Contact Us
         </button>
       </div>
 
+      <button
+        type="button"
+        onClick={openDeleteModal}
+        className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-[#E07A5F] hover:bg-[#d96b4f] text-white font-medium rounded-lg transition-colors"
+      >
+        <Trash2 className="w-5 h-5" />
+        Delete Account
+      </button>
+
+      {/* Delete account confirmation modal */}
       {deleteModalOpen && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
-          style={{ background: "var(--fb-profile-modal-overlay)" }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-labelledby="delete-account-title"
         >
-          <div className="fb-profile-modal w-full max-w-md rounded-2xl p-6 shadow-xl">
-            <div className="mb-6 flex items-center justify-between">
-              <h3 id="delete-account-title" className="fb-profile-title text-lg font-semibold">
+          <div className="bg-[#1a1525] border border-zinc-500/50 rounded-xl shadow-xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 id="delete-account-title" className="text-xl font-semibold text-white">
                 Delete account
-              </h3>
+              </h2>
               <button
                 type="button"
                 onClick={closeDeleteModal}
-                className="fb-profile-btn-secondary rounded-lg p-1.5"
+                className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
                 aria-label="Close"
               >
-                <X className="h-5 w-5" />
+                <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="fb-profile-body mb-4 text-sm">
+            <p className="text-white/80 text-sm mb-4">
               This action cannot be undone. All your data will be permanently removed. Enter your
               password to confirm.
             </p>
@@ -409,7 +402,7 @@ export default function ProfileSettings() {
               <div>
                 <label
                   htmlFor="delete-account-password"
-                  className="fb-profile-label mb-2 block text-sm font-medium"
+                  className="block text-white text-sm font-medium mb-2"
                 >
                   Password
                 </label>
@@ -422,13 +415,13 @@ export default function ProfileSettings() {
                     setDeleteError(null);
                   }}
                   placeholder="Enter your password"
-                  className="fb-profile-field w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30"
+                  className={inputClass}
                   autoComplete="current-password"
                   disabled={deleteStatus === "deleting"}
                 />
               </div>
               {deleteError && (
-                <p className="text-sm text-red-500" role="alert">
+                <p className="text-red-400 text-sm" role="alert">
                   {deleteError}
                 </p>
               )}
@@ -436,7 +429,7 @@ export default function ProfileSettings() {
                 <button
                   type="button"
                   onClick={closeDeleteModal}
-                  className="fb-profile-btn-secondary flex-1 rounded-xl px-4 py-2.5 text-sm font-medium"
+                  className="flex-1 px-4 py-2.5 bg-zinc-600 hover:bg-zinc-500 text-white font-medium rounded-lg text-sm transition-colors"
                   disabled={deleteStatus === "deleting"}
                 >
                   Cancel
@@ -444,8 +437,7 @@ export default function ProfileSettings() {
                 <button
                   type="submit"
                   disabled={deleteStatus === "deleting"}
-                  className="flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-white transition-colors disabled:opacity-50"
-                  style={{ background: "var(--fb-profile-danger)" }}
+                  className="flex-1 px-4 py-2.5 bg-[#E07A5F] hover:bg-[#d96b4f] disabled:opacity-50 text-white font-medium rounded-lg text-sm transition-colors"
                 >
                   {deleteStatus === "deleting" ? "Deleting…" : "Delete account"}
                 </button>

@@ -26,7 +26,7 @@ describe("BillingSettings Component", () => {
 
     const changePlanLink = screen.getByRole("link", { name: /change plan/i });
     const paymentMethodLink = screen.getByRole("link", {
-      name: /update payment/i,
+      name: /update payment method/i,
     });
 
     expect(changePlanLink.getAttribute("href")).toBe("/pricing");

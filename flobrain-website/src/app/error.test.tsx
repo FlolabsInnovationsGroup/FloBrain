@@ -32,6 +32,13 @@ describe("Error Component", () => {
     expect(mockReset).toHaveBeenCalledTimes(1);
   });
 
+  it("should render Go Home link", () => {
+    const { getByText } = render(<ErrorPage error={mockError} reset={mockReset} />);
+    const goHomeLink = getByText("Go Home");
+    expect(goHomeLink).toBeDefined();
+    expect(goHomeLink.closest("a")).toHaveProperty("href");
+  });
+
   it("should display alert icon", () => {
     const { container } = render(<ErrorPage error={mockError} reset={mockReset} />);
     const alertIcon = container.querySelector("svg");

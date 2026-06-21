@@ -54,30 +54,6 @@ export default function Register() {
   }
 
   return (
-<<<<<<< HEAD
-    <main className="min-h-screen fb-auth-bg flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 relative overflow-hidden">
-      {/* Subtle background pattern */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,_rgba(139,92,246,0.15)_0%,_transparent_60%)]" />
-
-      <div className="w-full max-w-md relative z-10 flex flex-col items-center">
-        {/* Header - outside card */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold mb-2" style={{ color: "var(--fb-auth-heading)" }}>
-            Create Account
-          </h1>
-          <p className="text-sm" style={{ color: "var(--fb-auth-text)" }}>
-            Join{" "}
-            <span className="font-semibold" style={{ color: "var(--fb-auth-heading)" }}>
-              FloBrain
-            </span>{" "}
-            and start your journey
-          </p>
-        </div>
-
-        {/* Form Card - light lavender */}
-        <div className="w-full fb-auth-card rounded-2xl shadow-xl p-6 sm:p-8 space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-5">
-=======
     <main
       className="min-h-screen flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden"
       style={{ background: "linear-gradient(160deg, #1a0a2e 0%, #0d0618 60%, #070014 100%)" }}
@@ -110,7 +86,6 @@ export default function Register() {
           }}
         >
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
->>>>>>> origin/main
             {error && (
               <p className="text-sm text-red-400 bg-red-900/30 border border-red-500/30 rounded-lg px-3 py-2">
                 {error}
@@ -228,16 +203,11 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-<<<<<<< HEAD
-              className="w-full h-12 text-white font-semibold rounded-full shadow-lg disabled:opacity-60 flex items-center justify-center gap-2 hover:opacity-95"
-              style={{ background: "var(--fb-auth-btn)" }}
-=======
               className="w-full h-12 rounded-xl font-semibold text-white text-[15px] flex items-center justify-center gap-2 mt-1 transition-opacity disabled:opacity-60 cursor-pointer"
               style={{
                 background: "linear-gradient(90deg, #7c3aed 0%, #a855f7 100%)",
                 boxShadow: "0 0 24px rgba(168, 85, 247, 0.5), 0 4px 16px rgba(124, 58, 237, 0.4)",
               }}
->>>>>>> origin/main
             >
               {loading ? "Creating account…" : "Create Account"}
               {!loading && <span className="text-base">→</span>}

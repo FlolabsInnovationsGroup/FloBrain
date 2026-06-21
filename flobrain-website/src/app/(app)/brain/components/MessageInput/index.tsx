@@ -186,7 +186,7 @@ export default function ChatInput({
 
   return (
     <div className="backdrop-blur-sm shrink-0">
-      <div className={`mx-auto max-w-4xl px-3 sm:px-4 md:px-6 ${compactMode ? 'py-2.5' : 'py-3 sm:py-4'}`}>
+      <div className={`max-w-4xl mx-auto px-6 ${compactMode ? 'py-2.5' : 'py-4'}`}>
         {/* Image Preview */}
         {imagePreview && (
           <div className="mb-3 relative inline-block">
@@ -207,22 +207,13 @@ export default function ChatInput({
         )}
 
         <div
-<<<<<<< HEAD
-          className={`flex items-center gap-1.5 rounded-2xl border border-[#1F2937] bg-[#111827] px-2 sm:gap-3 sm:rounded-full ${
-=======
           className={`flex items-end gap-3 rounded-2xl border border-[#1F2937] bg-[#111827] px-2 ${
->>>>>>> origin/main
             compactMode ? 'py-1.5' : 'py-2'
           }`}
         >
           {/* Lightning icon (left) */}
-<<<<<<< HEAD
-          <div className="shrink-0 text-amber-400/90" aria-hidden>
-            <Zap className="ml-2 h-4 w-4 sm:ml-4 sm:h-5 sm:w-5" fill="none" />
-=======
           <div className="mb-1 shrink-0 text-amber-400/90" aria-hidden>
             <Zap className="ml-4 h-5 w-5" fill="none" />
->>>>>>> origin/main
           </div>
 
           {/* Text Input */}
@@ -235,46 +226,26 @@ export default function ChatInput({
               placeholder="How does this LLM work?"
               disabled={disabled}
               rows={1}
-<<<<<<< HEAD
-              className={`h-10 w-full min-w-0 resize-none pl-1 pr-1 text-sm text-white placeholder:text-white focus:outline-none sm:pl-2 sm:pr-4 sm:text-base
-                       disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ${
-                         compactMode ? 'py-2.5' : 'sm:h-12 py-2.5 sm:py-3'
-=======
               className={`max-h-[220px] w-full min-w-0 resize-none overflow-y-auto pl-2 pr-4 text-base text-white
                        transition-[height] duration-150 ease-out placeholder:text-white/45 focus:outline-none
                        disabled:cursor-not-allowed disabled:opacity-50 ${
                          compactMode ? 'min-h-10 py-2.5' : 'min-h-12 py-3'
->>>>>>> origin/main
                        }`}
             />
           </div>
 
-<<<<<<< HEAD
-          {/* Secondary actions (image, voice) - compact */}
-          <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
-            {allowImageUpload && (
-              <>
-=======
           {(allowImageUpload || allowVoiceInput) && (
             <>
               {allowVoiceInput && isRecording ? (
->>>>>>> origin/main
                 <button
                   type="button"
                   onClick={() => void toggleRecording()}
                   disabled={disabled}
-<<<<<<< HEAD
-                  className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50 sm:p-2"
-                  title="Upload image"
-                >
-                  <ImageIcon size={16} />
-=======
                   className="mb-1 shrink-0 rounded-lg p-2 text-red-400 transition-colors animate-pulse hover:bg-white/5 hover:text-red-300 disabled:opacity-50"
                   title="Stop recording"
                   aria-label="Stop recording"
                 >
                   <MicOff size={18} />
->>>>>>> origin/main
                 </button>
               ) : (
                 <>
@@ -367,45 +338,18 @@ export default function ChatInput({
                   onChange={handleImageSelect}
                   className="hidden"
                 />
-<<<<<<< HEAD
-              </>
-            )}
-            {allowVoiceInput && (
-              <button
-                onClick={toggleRecording}
-                disabled={disabled}
-                className={`rounded-lg p-1.5 transition-colors disabled:opacity-50 sm:p-2 ${
-                  isRecording
-                    ? 'text-red-400 hover:text-red-300 animate-pulse'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-                }`}
-                title={isRecording ? 'Stop recording' : 'Voice input'}
-              >
-                {isRecording ? <MicOff size={16} /> : <Mic size={16} />}
-              </button>
-            )}
-          </div>
-=======
               )}
             </>
           )}
->>>>>>> origin/main
 
           {/* Send Button - circular purple with arrow up */}
           <button
             onClick={handleSend}
             disabled={(!inputValue.trim() && !imagePreview) || disabled}
-<<<<<<< HEAD
-            className={`shrink-0 rounded-full bg-[#9333ea] hover:bg-[#a855f7] text-white
-                     flex items-center justify-center font-medium hover:opacity-90 transition-all duration-200
-                     disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#9333ea]/30 ${
-                       compactMode ? 'h-9 w-9 sm:h-10 sm:w-10' : 'h-10 w-10 sm:h-12 sm:w-12'
-=======
             className={`mb-1 shrink-0 rounded-full bg-[#9333ea] text-white shadow-lg shadow-[#9333ea]/30 transition-all duration-200
                      hover:bg-[#a855f7] hover:opacity-90 flex items-center justify-center font-medium
                      disabled:cursor-not-allowed disabled:opacity-50 ${
                        compactMode ? 'h-10 w-10' : 'h-12 w-12'
->>>>>>> origin/main
                      }`}
             aria-label="Send message"
           >

@@ -50,9 +50,6 @@ export const TokenUsage = (): React.JSX.Element => {
 
   return (
     <div
-<<<<<<< HEAD
-      className="w-full lg:w-[830px] fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
-=======
       className="w-full rounded-[18px] sm:rounded-[20px]"
       style={{
         background: "rgba(30, 18, 43, 0.72)",
@@ -60,7 +57,6 @@ export const TokenUsage = (): React.JSX.Element => {
         border: "1px solid rgba(139, 92, 246, 0.28)",
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
       }}
->>>>>>> origin/main
     >
       {/* Top Section */}
       <div className="flex items-start justify-between mb-2 sm:mb-4">
@@ -70,7 +66,7 @@ export const TokenUsage = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "var(--fb-text-muted)",
+              color: "rgba(255, 255, 255, 0.5)",
             }}
           >
             TOKEN USAGE
@@ -78,7 +74,7 @@ export const TokenUsage = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "var(--fb-text-subtle)",
+              color: "rgba(255, 255, 255, 0.35)",
             }}
           >
             Last 7 days
@@ -99,13 +95,8 @@ export const TokenUsage = (): React.JSX.Element => {
         <div
           className="font-bold mb-2 sm:mb-3"
           style={{
-<<<<<<< HEAD
-            fontSize: "clamp(32px, 8vw, 53px)",
-            color: "var(--fb-dashboard-metric)",
-=======
             fontSize: "clamp(16px, 5vw, 53px)",
             color: "#FFFFFF",
->>>>>>> origin/main
             lineHeight: "1",
             letterSpacing: "-0.02em",
           }}
@@ -129,7 +120,7 @@ export const TokenUsage = (): React.JSX.Element => {
             className="ml-[5%] md:ml-0"
             style={{
               fontSize: "clamp(11px, 2vw, 13px)",
-              color: "var(--fb-text-subtle)",
+              color: "rgba(255, 255, 255, 0.4)",
             }}
           >
             vs. last week
@@ -189,7 +180,7 @@ export const TokenUsage = (): React.JSX.Element => {
               cy={toY(d.y)}
               r="3"
               fill="#8B5CF6"
-              stroke="var(--fb-dashboard-chart-dot-stroke)"
+              stroke="rgba(30,18,43,0.9)"
               strokeWidth="1.5"
             />
           ))}
@@ -201,7 +192,7 @@ export const TokenUsage = (): React.JSX.Element => {
               y={CHART_H - 4}
               textAnchor="middle"
               fontSize="9"
-              fill="var(--fb-dashboard-chart-label)"
+              fill="rgba(255,255,255,0.35)"
             >
               {label}
             </text>

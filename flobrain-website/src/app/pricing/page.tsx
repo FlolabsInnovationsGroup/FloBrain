@@ -50,22 +50,6 @@ export default function Pricing() {
   };
 
   return (
-<<<<<<< HEAD
-    <main className="flex min-h-screen flex-col items-center justify-start px-4 py-8 sm:px-6 md:p-12 fb-page">
-      {/* Header */}
-      <div className="mb-10 max-w-3xl text-center md:mb-12">
-        <h1 className="mb-4 text-3xl font-bold sm:text-4xl md:text-5xl">
-          <span style={{ color: "var(--fb-pricing-title)" }}>Pricing Built for </span>
-          <span className="bg-gradient-to-r from-[#7c3aed] via-[#a855f7] to-[#c026d3] bg-clip-text text-transparent dark:from-[#e879f9] dark:via-[#c084fc] dark:to-[#a78bfa]">
-            Every Stage of Growth
-          </span>
-        </h1>
-        <p className="mt-4 text-base sm:text-lg" style={{ color: "var(--fb-pricing-body)" }}>
-          From individual user to enterprise teams, FloBrain scales with you. Start free and upgrade
-          as you grow.
-        </p>
-      </div>
-=======
     <MotionProvider>
       <main className="flex min-h-screen flex-col items-center justify-start px-4 py-8 sm:px-6 md:p-12">
         <div className="mb-10 max-w-3xl text-center md:mb-12">
@@ -84,7 +68,6 @@ export default function Pricing() {
             </p>
           </Reveal>
         </div>
->>>>>>> origin/main
 
         <Stagger
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl mb-8 items-stretch"

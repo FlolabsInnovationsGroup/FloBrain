@@ -18,51 +18,51 @@ const iconSize = "w-8 h-8";
 export const features = [
   {
     id: 1,
-    icon: <GitBranch className={iconSize} color="#ffffff" />,
+    icon: <GitBranch className={iconSize} color="#a78bfa" />,
     title: "Workflow Engine",
     description:
       "Orchestrate complex AI workflows with visual drag-and-drop or code-first approaches.",
-    color: "#3b82f6",
+    color: "#a78bfa",
   },
   {
     id: 2,
-    icon: <Database className={iconSize} color="#ffffff" />,
+    icon: <Database className={iconSize} color="#2dd4bf" />,
     title: "Memory System",
     description:
       "Persistent, long-term memory that learns from every interaction and context.",
-    color: "#8b5cf6",
+    color: "#2dd4bf",
   },
   {
     id: 3,
-    icon: <Brain className={iconSize} color="#ffffff" />,
+    icon: <Brain className={iconSize} color="#ec4899" />,
     title: "AI Orchestration",
     description:
       "Route requests to the best model for the job. Multi-model, multi-provider support.",
-    color: "#22c55e",
+    color: "#ec4899",
   },
   {
     id: 4,
-    icon: <RefreshCw className={iconSize} color="#ffffff" />,
+    icon: <RefreshCw className={iconSize} color="#22c55e" />,
     title: "Real-Time Sync",
     description:
       "Keep state synchronized across all devices and platforms in real-time.",
-    color: "#f97316",
+    color: "#22c55e",
   },
   {
     id: 5,
-    icon: <Layers className={iconSize} color="#ffffff" />,
+    icon: <Layers className={iconSize} color="#f59e0b" />,
     title: "State Management",
     description:
       "Centralized state management that works across web, mobile, IoT, and embedded systems.",
-    color: "#14b8a6",
+    color: "#f59e0b",
   },
   {
     id: 6,
-    icon: <Plug className={iconSize} color="#ffffff" />,
+    icon: <Plug className={iconSize} color="#38bdf8" />,
     title: "Integration Layer",
     description:
       "Pre-built connectors for popular services, APIs, and platforms. Extensible architecture.",
-    color: "#ef4444",
+    color: "#38bdf8",
   },
 ];
 

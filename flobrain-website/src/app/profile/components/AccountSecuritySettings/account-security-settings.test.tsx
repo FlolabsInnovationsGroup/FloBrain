@@ -22,7 +22,7 @@ describe("AccountSecuritySettings Component", () => {
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeDefined();
     expect(screen.getByLabelText(/current password/i)).toBeDefined();
-    expect(document.getElementById("modal-new")).toBeDefined();
+    expect(document.getElementById("modal-newPassword")).toBeDefined();
     expect(screen.getByLabelText(/confirm new password/i)).toBeDefined();
   });
 
@@ -30,7 +30,7 @@ describe("AccountSecuritySettings Component", () => {
     render(<AccountSecuritySettings />);
     fireEvent.click(screen.getByRole("button", { name: /change password/i }));
     expect(screen.getByLabelText(/current password/i).getAttribute("type")).toBe("password");
-    expect(document.getElementById("modal-new")?.getAttribute("type")).toBe("password");
+    expect(document.getElementById("modal-newPassword")?.getAttribute("type")).toBe("password");
     expect(screen.getByLabelText(/confirm new password/i).getAttribute("type")).toBe("password");
   });
 
@@ -45,7 +45,7 @@ describe("AccountSecuritySettings Component", () => {
   it("should update new password when user types in modal", () => {
     render(<AccountSecuritySettings />);
     fireEvent.click(screen.getByRole("button", { name: /change password/i }));
-    const input = screen.getByLabelText(/^new password$/i) as HTMLInputElement;
+    const input = screen.getByPlaceholderText(/enter new password/i) as HTMLInputElement;
     fireEvent.change(input, { target: { value: "newpassword456" } });
     expect(input.value).toBe("newpassword456");
   });
@@ -82,25 +82,24 @@ describe("AccountSecuritySettings Component", () => {
 
   it("should render 2FA section with title and description", () => {
     render(<AccountSecuritySettings />);
-    expect(screen.getByText(/two-factor authentication/i)).toBeDefined();
+    expect(screen.getByText(/two-factor authentication \(2fa\)/i)).toBeDefined();
     expect(screen.getByText(/add an extra layer of security to your account/i)).toBeDefined();
   });
 
   it("should render 2FA toggle in disabled state by default", () => {
-    render(<AccountSecuritySettings />);
-    const toggle = screen.getByRole("button", {
-      name: /toggle two-factor authentication/i,
-    });
-    expect(toggle.className).toMatch(/bg-zinc-400|bg-zinc-600/);
+    const { container } = render(<AccountSecuritySettings />);
+    const toggle = container.querySelector('button[class*="bg-gray-600"]');
+    expect(toggle).toBeTruthy();
   });
 
   it("should toggle 2FA to enabled when clicked", () => {
-    render(<AccountSecuritySettings />);
-    const toggle = screen.getByRole("button", {
-      name: /toggle two-factor authentication/i,
-    });
-    fireEvent.click(toggle);
-    expect(toggle.className).toContain("bg-emerald-500");
+    const { container } = render(<AccountSecuritySettings />);
+    const toggle = container.querySelector('button[class*="rounded-full"]');
+    expect(toggle).toBeTruthy();
+    if (toggle) {
+      fireEvent.click(toggle);
+      expect(toggle.className).toContain("bg-green-500");
+    }
   });
 
   it("should have modal title Change password", () => {

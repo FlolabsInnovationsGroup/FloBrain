@@ -11,12 +11,8 @@ import { LeftPanel } from '@/app/home/components/left-panel';
 import ChatArea from './components/ChatArea/index';
 import ChatInput from './components/MessageInput/index';
 import jsPDF from 'jspdf';
-<<<<<<< HEAD
-import { Menu, X } from 'lucide-react';
-=======
 import { BarChart3, PanelLeft, X } from 'lucide-react';
 import { MotionProvider, Reveal, Stagger, StaggerItem } from '@/components/motion';
->>>>>>> origin/main
 
 const WELCOME_MESSAGE: Message = {
   id: 'msg-welcome',
@@ -184,19 +180,6 @@ const CONFIDENCE_CARDS = [
 
 function ConfidencePanelContent({ headingClassName }: { headingClassName?: string }) {
   return (
-<<<<<<< HEAD
-    <aside
-      className="w-full shrink-0 rounded-xl border p-4 xl:w-[300px] light:border-[#9b8ab8]/40"
-      style={{
-        background: "var(--fb-confidence-panel-bg)",
-        borderColor: "var(--fb-panel-border)",
-      }}
-    >
-      <h3 className="mb-3 text-sm font-semibold text-white">Confidence</h3>
-      <div className="space-y-3">
-        {cards.map((card) => (
-          <div key={card.model} className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
-=======
     <>
       <Reveal variant="fadeIn" inView={false}>
         <h3 className={cn('mb-3 text-sm font-semibold text-white', headingClassName)}>Confidence</h3>
@@ -205,7 +188,6 @@ function ConfidencePanelContent({ headingClassName }: { headingClassName?: strin
         {CONFIDENCE_CARDS.map((card) => (
           <StaggerItem key={card.model} variant="slideUp">
             <div className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
->>>>>>> origin/main
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-white">{card.model}</p>
               <span className="text-xs text-white/80">{card.confidence}%</span>
@@ -254,7 +236,6 @@ function BrainPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [preferences, setPreferences] = useState<BrainPreferences>(DEFAULT_PREFERENCES);
   const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
   const [mobileConfidenceOpen, setMobileConfidenceOpen] = useState(false);
@@ -558,7 +539,6 @@ function BrainPageContent() {
 
   const handleLoadChat = useCallback(
     async (id: number) => {
-      setIsMobileMenuOpen(false);
       setCurrentChatId(id);
       setError(null);
 
@@ -759,12 +739,8 @@ function BrainPageContent() {
   };
 
   return (
-<<<<<<< HEAD
-    <main className="fb-chat-page mx-auto mb-2 flex h-[calc(100dvh-5rem)] w-full max-w-[1800px] flex-col overflow-y-auto fb-page px-2 pt-[5.5rem] font-[Inter] text-slate-300 sm:px-4 sm:pt-[6.25rem] lg:h-[calc(100vh-5rem)] lg:overflow-hidden lg:px-6 dark:text-slate-300">
-=======
     <MotionProvider>
     <main className="box-border mb-2 flex h-screen max-w-full min-h-0 flex-col overflow-y-hidden bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-3 pb-24 pt-24 font-[Inter] text-slate-300 sm:px-4 sm:pb-28 sm:pt-28 md:mx-auto md:w-[92%] md:px-0 md:pb-3 md:pt-[7rem]">
->>>>>>> origin/main
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
           {error}
@@ -778,87 +754,6 @@ function BrainPageContent() {
         </div>
       )}
 
-<<<<<<< HEAD
-      <div className="fb-chat-shell relative flex min-h-0 flex-1 gap-2 overflow-visible rounded-2xl p-2 sm:gap-3 sm:p-3 xl:overflow-hidden">
-        <div className="hidden lg:flex">
-          <LeftPanel
-            variant="chats"
-            chatHistory={chatHistory}
-            currentChatId={currentChatId}
-            onLoadChat={handleLoadChat}
-            onNewChat={handleNewChat}
-            onSearch={() => {}}
-            onPreferences={() => setIsPreferencesOpen(true)}
-            onSettings={() => {}}
-            chatsLoading={chatsLoading}
-          />
-        </div>
-
-        {isMobileMenuOpen && (
-          <div
-            className="fixed inset-0 z-[100] bg-black/60 lg:hidden"
-            onClick={() => setIsMobileMenuOpen(false)}
-            aria-hidden
-          />
-        )}
-
-        <div
-          className={`fixed inset-y-0 left-0 z-[110] w-[84%] max-w-xs transform transition-transform duration-200 lg:hidden ${
-            isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
-        >
-          <div className="h-full bg-[#0B0719]">
-            <div className="flex items-center justify-end px-4 pt-4">
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="rounded-md p-2 text-white/80 hover:bg-white/10 hover:text-white"
-                aria-label="Close menu"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <LeftPanel
-              variant="chats"
-              chatHistory={chatHistory}
-              currentChatId={currentChatId}
-              onLoadChat={handleLoadChat}
-              onNewChat={() => {
-                setIsMobileMenuOpen(false);
-                void handleNewChat();
-              }}
-              onSearch={() => {}}
-              onPreferences={() => {
-                setIsMobileMenuOpen(false);
-                setIsPreferencesOpen(true);
-              }}
-              onSettings={() => {}}
-              chatsLoading={chatsLoading}
-            />
-          </div>
-        </div>
-
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 sm:gap-3 xl:flex-row">
-          <div className="lg:hidden">
-            <div className="flex items-center">
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="rounded-lg border border-white/20 bg-[#0B0719]/80 p-2 text-white/90 hover:bg-[#1b1032]"
-                aria-label="Open menu"
-              >
-                <Menu className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-          <section
-            className="relative flex min-h-[60dvh] min-w-0 flex-1 flex-col overflow-hidden rounded-xl border xl:min-h-0 backdrop-blur-sm"
-            style={{
-              background: "var(--fb-chat-area-bg)",
-              borderColor: "var(--fb-panel-border)",
-            }}
-          >
-=======
       <Reveal variant="fadeIn" className="mb-2 flex shrink-0 items-center gap-2 md:hidden">
         <button
           type="button"
@@ -925,7 +820,6 @@ function BrainPageContent() {
             className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30"
           >
           <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
->>>>>>> origin/main
             {currentChatId ? (
               <>
                 <ChatArea
@@ -945,16 +839,10 @@ function BrainPageContent() {
                 />
               </>
             ) : (
-<<<<<<< HEAD
-              <div className="flex flex-1 items-center justify-center overflow-y-auto p-4 sm:p-6">
-                <div className="max-w-md text-center">
-                  <div className="mx-auto mb-4 h-16 w-16 opacity-50 sm:mb-6 sm:h-20 sm:w-20">
-=======
               <div className="flex flex-1 items-center justify-center overflow-y-auto">
                 <div className="max-w-md px-4 text-center sm:px-6">
                   <Reveal variant="popUp">
                   <div className="mx-auto mb-5 h-16 w-16 opacity-50 sm:mb-6 sm:h-20 sm:w-20">
->>>>>>> origin/main
                     <svg viewBox="0 0 100 100" fill="none">
                       <path
                         d="M50 10L20 25V45C20 62.5 35 77.5 50 82.5C65 77.5 80 62.5 80 45V25L50 10Z"
@@ -983,11 +871,6 @@ function BrainPageContent() {
                       </defs>
                     </svg>
                   </div>
-<<<<<<< HEAD
-                  <h2 className="mb-3 text-2xl font-bold text-white sm:text-3xl">
-                    Welcome to FLOBRAIN
-                  </h2>
-=======
                   </Reveal>
                   <Reveal variant="slideUp" delay={0.08}>
                   <h2 className="mb-2 text-2xl font-bold tracking-tight text-white sm:mb-3 sm:text-3xl">
@@ -995,7 +878,6 @@ function BrainPageContent() {
                   </h2>
                   </Reveal>
                   <Reveal variant="fadeIn" delay={0.14}>
->>>>>>> origin/main
                   <p className="mb-6 text-sm text-white/60 sm:mb-8 sm:text-base">
                     Start a new conversation to chat with our AI assistant.
                     {isAuthenticated
@@ -1007,11 +889,7 @@ function BrainPageContent() {
                   <button
                     type="button"
                     onClick={handleNewChat}
-<<<<<<< HEAD
-                    className="w-full rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] px-6 py-3 text-base font-semibold text-white shadow-lg shadow-[#8B5CF6]/30 transition-all duration-200 hover:opacity-90 hover:shadow-[#8B5CF6]/50 sm:w-auto sm:px-8 sm:py-4 sm:text-lg"
-=======
                     className="rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] px-6 py-3 text-base font-semibold text-white shadow-lg shadow-[#8B5CF6]/30 transition-all duration-200 hover:opacity-90 hover:shadow-[#8B5CF6]/50 sm:px-8 sm:py-4 sm:text-lg"
->>>>>>> origin/main
                   >
                     Start New Chat
                   </button>

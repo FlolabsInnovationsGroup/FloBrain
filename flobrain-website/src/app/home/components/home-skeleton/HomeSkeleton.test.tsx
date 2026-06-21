@@ -20,15 +20,15 @@ describe("HomeSkeleton Component", () => {
     expect(skeletonElements.length).toBeGreaterThan(0);
   });
 
-  it("should render workflow step skeletons", () => {
+  it("should render 6 feature card skeletons", () => {
     const { container } = render(<HomeSkeleton />);
-    const workflowSteps = container.querySelectorAll(".rounded-full.border-2");
-    expect(workflowSteps.length).toBe(3);
+    const featureCards = container.querySelectorAll("[key^='feature-']");
+    expect(featureCards.length).toBe(6);
   });
 
-  it("should render sidebar sections", () => {
+  it("should render 6 application card skeletons", () => {
     const { container } = render(<HomeSkeleton />);
-    const sidebars = container.querySelectorAll("aside");
-    expect(sidebars.length).toBe(2);
+    const appCards = container.querySelectorAll("[key^='app-']");
+    expect(appCards.length).toBe(6);
   });
 });

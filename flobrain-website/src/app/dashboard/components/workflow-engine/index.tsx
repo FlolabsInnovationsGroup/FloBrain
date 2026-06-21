@@ -61,9 +61,6 @@ export const WorkflowEngine = (): React.JSX.Element => {
 
   return (
     <div
-<<<<<<< HEAD
-      className="w-full fb-dashboard-card p-6 sm:p-8 rounded-[16px] sm:rounded-[20px]"
-=======
       className="w-full rounded-[18px] sm:rounded-[20px]"
       style={{
         background: "rgba(30, 18, 43, 0.72)",
@@ -71,7 +68,6 @@ export const WorkflowEngine = (): React.JSX.Element => {
         border: "1px solid rgba(139, 92, 246, 0.28)",
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
       }}
->>>>>>> origin/main
     >
       {/* Header Section */}
       <div className="grid grid-cols-[1fr_auto] items-start gap-3 sm:flex sm:items-start sm:justify-between sm:gap-0 mb-4 sm:mb-6">
@@ -81,7 +77,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "var(--fb-text-muted)",
+              color: "rgba(255, 255, 255, 0.5)",
             }}
           >
             WORKFLOW ENGINE
@@ -89,7 +85,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "var(--fb-text-subtle)",
+              color: "rgba(255, 255, 255, 0.35)",
             }}
           >
             {isLoading ? "Loading…" : "Recent errors & warnings"}
@@ -102,10 +98,10 @@ export const WorkflowEngine = (): React.JSX.Element => {
             className="inline-flex w-fit justify-self-start rounded-full font-semibold"
             style={{
               padding: "5px 10px",
-              background: "var(--fb-dashboard-critical-bg)",
-              border: "1px solid var(--fb-dashboard-critical-border)",
+              background: "rgba(220, 38, 38, 0.15)",
+              border: "1px solid rgba(220, 38, 38, 0.3)",
               fontSize: "11px",
-              color: "var(--fb-dashboard-critical-text)",
+              color: "#FCA5A5",
             }}
           >
             {isLoading ? "—" : `${criticalCount} Critical`}
@@ -114,10 +110,10 @@ export const WorkflowEngine = (): React.JSX.Element => {
             className="inline-flex w-fit justify-self-start rounded-full font-semibold"
             style={{
               padding: "5px 10px",
-              background: "var(--fb-dashboard-warning-bg)",
-              border: "1px solid var(--fb-dashboard-warning-border)",
+              background: "rgba(245, 158, 11, 0.15)",
+              border: "1px solid rgba(245, 158, 11, 0.3)",
               fontSize: "11px",
-              color: "var(--fb-dashboard-warning-text)",
+              color: "#FCD34D",
             }}
           >
             {isLoading ? "—" : `${warningCount} Warnings`}
@@ -126,29 +122,6 @@ export const WorkflowEngine = (): React.JSX.Element => {
       </div>
 
       {/* Error List Section */}
-<<<<<<< HEAD
-      <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-        {alerts.map((alert: WorkflowAlert) => (
-          <div
-            key={alert.id}
-            className="rounded-lg sm:rounded-xl"
-            style={{
-              padding: "clamp(12px, 3vw, 20px)",
-              background:
-                alert.severity === "critical"
-                  ? "var(--fb-dashboard-critical-bg)"
-                  : "var(--fb-dashboard-warning-bg)",
-              border:
-                alert.severity === "critical"
-                  ? "1px solid var(--fb-dashboard-critical-border)"
-                  : "1px solid var(--fb-dashboard-warning-border)",
-            }}
-          >
-            <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
-              {/* Top row on mobile: Icon + Timestamp */}
-              <div className="flex items-center justify-between sm:hidden">
-                <div className="flex-shrink-0">
-=======
       {!isLoading && alerts.length === 0 ? (
         <p style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>No recent errors or warnings.</p>
       ) : (
@@ -199,31 +172,22 @@ export const WorkflowEngine = (): React.JSX.Element => {
 
                 {/* Desktop Icon */}
                 <div className="flex-shrink-0 mt-0.5 hidden sm:block">
->>>>>>> origin/main
                   {alert.severity === "critical" ? (
                     <div
                       className="rounded-full flex items-center justify-center"
                       style={{ width: "24px", height: "24px", background: "rgba(220, 38, 38, 0.2)" }}
                     >
-                      <AlertCircle className="w-4 h-4" style={{ color: "var(--fb-dashboard-critical-text)" }} />
+                      <AlertCircle className="w-4 h-4" style={{ color: "#FCA5A5" }} />
                     </div>
                   ) : (
                     <div
                       className="rounded-full flex items-center justify-center"
                       style={{ width: "24px", height: "24px", background: "rgba(245, 158, 11, 0.2)" }}
                     >
-                      <AlertTriangle className="w-4 h-4" style={{ color: "var(--fb-dashboard-warning-text)" }} />
+                      <AlertTriangle className="w-4 h-4" style={{ color: "#FCD34D" }} />
                     </div>
                   )}
                 </div>
-<<<<<<< HEAD
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-3 h-3" style={{ color: "var(--fb-dashboard-icon-muted)" }} />
-                  <span
-                    style={{
-                      fontSize: "11px",
-                      color: "var(--fb-text-subtle)",
-=======
 
                 {/* Main Content */}
                 <div className="flex-1 min-w-0">
@@ -234,7 +198,6 @@ export const WorkflowEngine = (): React.JSX.Element => {
                       color: "#FFFFFF",
                       lineHeight: "1.3",
                       wordBreak: "break-word",
->>>>>>> origin/main
                     }}
                   >
                     {alert.title}
@@ -265,132 +228,10 @@ export const WorkflowEngine = (): React.JSX.Element => {
                   </span>
                 </div>
               </div>
-<<<<<<< HEAD
-
-              {/* Desktop Icon */}
-              <div className="flex-shrink-0 mt-0.5 hidden sm:block">
-                {alert.severity === "critical" ? (
-                  <div
-                    className="rounded-full flex items-center justify-center"
-                    style={{
-                      width: "24px",
-                      height: "24px",
-                      background: "rgba(220, 38, 38, 0.2)",
-                    }}
-                  >
-                    <AlertCircle className="w-4 h-4" style={{ color: "var(--fb-dashboard-critical-text)" }} />
-                  </div>
-                ) : (
-                  <div
-                    className="rounded-full flex items-center justify-center"
-                    style={{
-                      width: "24px",
-                      height: "24px",
-                      background: "rgba(245, 158, 11, 0.2)",
-                    }}
-                  >
-                    <AlertTriangle className="w-4 h-4" style={{ color: "var(--fb-dashboard-warning-text)" }} />
-                  </div>
-                )}
-              </div>
-
-              {/* Main Content */}
-              <div className="flex-1 min-w-0">
-                <h3
-                  className="font-semibold mb-1.5 sm:mb-2"
-                  style={{
-                    fontSize: "clamp(12px, 2.5vw, 14px)",
-                    color: "var(--fb-dashboard-stat)",
-                    lineHeight: "1.3",
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {alert.title}
-                </h3>
-
-                <p
-                  className="mb-2 sm:mb-3"
-                  style={{
-                    fontSize: "12px",
-                    color: "var(--fb-text-muted)",
-                    lineHeight: "1.5",
-                    wordBreak: "break-word",
-                    overflowWrap: "anywhere",
-                  }}
-                >
-                  {alert.description}
-                </p>
-
-                {/* Tag + Link */}
-                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                  <code
-                    className="rounded font-mono"
-                    style={{
-                      padding: "3px 6px",
-                      background: "var(--fb-dashboard-code-bg)",
-                      fontSize: "10px",
-                      color: "var(--fb-text-subtle)",
-                      wordBreak: "break-all",
-                    }}
-                  >
-                    {alert.component}
-                  </code>
-                  <button
-                    className="font-medium hover:underline"
-                    style={{
-                      fontSize: "11px",
-                      color: "var(--fb-dashboard-link)",
-                      cursor: "pointer",
-                    }}
-                  >
-                    View Details →
-                  </button>
-                </div>
-              </div>
-
-              {/* Desktop Timestamp */}
-              <div className="hidden sm:flex items-center gap-1.5 flex-shrink-0">
-                <Clock className="w-3.5 h-3.5" style={{ color: "var(--fb-dashboard-icon-muted)" }} />
-                <span
-                  style={{
-                    fontSize: "11px",
-                    color: "var(--fb-text-subtle)",
-                  }}
-                >
-                  {alert.timestamp}
-                </span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Footer Section */}
-      <button
-        className="w-full rounded-lg sm:rounded-xl font-medium transition-all"
-        style={{
-          padding: "clamp(10px, 2vw, 14px)",
-          background: "rgba(139, 92, 246, 0.1)",
-          border: "1px solid rgba(139, 92, 246, 0.25)",
-          fontSize: "clamp(12px, 2.5vw, 13px)",
-          color: "var(--fb-dashboard-link)",
-          cursor: "pointer",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(139, 92, 246, 0.15)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(139, 92, 246, 0.1)";
-        }}
-      >
-        View All Errors & Logs
-      </button>
-=======
             </div>
           ))}
         </div>
       )}
->>>>>>> origin/main
     </div>
   );
 };
