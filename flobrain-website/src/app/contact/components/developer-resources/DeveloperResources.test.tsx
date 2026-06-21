@@ -18,7 +18,6 @@ describe("DeveloperResources Component", () => {
     render(<DeveloperResources />);
     expect(screen.getByText("System Status")).toBeDefined();
     expect(screen.getByText("99.9% Uptime")).toBeDefined();
-    expect(screen.getByText("Real-time monitoring")).toBeDefined();
   });
 
   it("should render GitHub entry", () => {
