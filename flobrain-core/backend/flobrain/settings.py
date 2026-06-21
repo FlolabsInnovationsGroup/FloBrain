@@ -158,9 +158,13 @@ EMAIL_HOST_PASSWORD = os.environ.get("SMTP_PASS", "")
 SALES_EMAIL = os.environ.get("SALES_EMAIL", "")
 
 # LLM & token usage tracking
-LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "openai")
+# Use "multimodal" to route chat through the deployed AI service (flobrain-cloud).
+LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "multimodal")
 LLM_DEFAULT_MODEL = os.environ.get("LLM_DEFAULT_MODEL", "gpt-3.5-turbo")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+MULTIMODAL_SERVICE_URL = os.environ.get("MULTIMODAL_SERVICE_URL", "http://localhost:8001")
+MULTIMODAL_API_KEY = os.environ.get("MULTIMODAL_API_KEY", "")
+MULTIMODAL_SERVICE_TIMEOUT = int(os.environ.get("MULTIMODAL_SERVICE_TIMEOUT", "60"))
 USAGE_TRACKING_ENABLED = os.environ.get("USAGE_TRACKING_ENABLED", "true").lower() == "true"
 USAGE_SOFT_LIMIT_PERCENT = int(os.environ.get("USAGE_SOFT_LIMIT_PERCENT", "80"))
 INTERNAL_API_KEY = os.environ.get("INTERNAL_API_KEY", "")
