@@ -13,11 +13,24 @@ class TranscriptionResponse(BaseModel):
     segments: List[TranscriptionSegment] = []
 
 
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+
 class ChatRequest(BaseModel):
-    message: str
-    voice_id: Optional[str] = "JBFqnCBsd6RMkjVDRZzb"
+    message: Optional[str] = None
+    messages: Optional[List[ChatMessage]] = None
+    model: Optional[str] = None
+    voice_id: Optional[str] = None
 
 
 class ChatResponse(BaseModel):
     response_text: str
     audio_content: Optional[str] = None  # Base64 encoded audio
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    total_tokens: int = 0
+    model: str = "gpt-3.5-turbo"
+    provider: str = "openai"
+    estimated: bool = False
