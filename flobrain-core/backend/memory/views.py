@@ -7,6 +7,11 @@ from users.views import get_user_from_request
 
 from .models import MemoryLink, MemoryNode
 
+from rest_framework import status
+from .sorter import distribute_to_tiers
+from .tier_1 import save_to_active_buffer
+from .tier_2 import save_to_associative_layer
+from .tier_3 import migrate_to_cold_storage
 
 def _parse_date_range(date_range: str):
     """Return (start, end) datetime or (None, None) for 'All Time'."""
@@ -155,3 +160,37 @@ class MemoryNodeDetailView(APIView):
             })
         except MemoryNode.DoesNotExist:
             return Response({"error": "Node not found"}, status=404)
+
+class MemorySaveView(APIView):
+   
+    def post(self, request):
+        user = get_user_from_request(request)
+        if not user:
+            return Response({"error": "Auth required"}, status=401)
+        
+        try:
+            # Распределяем по уровням
+            node = distribute_to_tiers(request.data)
+            
+            # Получаем эмбеддинг из запроса (если его нет, передаем пустой список)
+            embedding = request.data.get('embedding', [])
+
+            # Cold Storage
+            migrate_to_cold_storage(node)
+
+            # Associative Layer (Tier 2) - теперь передаем embedding
+            if node.tier_level in [1, 2]:
+                save_to_associative_layer(node, embedding)
+
+            # Active Buffer (Tier 1)
+            if node.tier_level == 1:
+                save_to_active_buffer(node)
+                
+            return Response({
+                "status": "saved",
+                "binary_index": node.binary_index,
+                "tier": node.tier_level,
+                "node_id": node.id
+            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)

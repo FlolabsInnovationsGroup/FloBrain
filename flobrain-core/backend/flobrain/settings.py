@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "rest_framework.authtoken",
     "users",
     "memory",
     "dashboard",
@@ -94,13 +95,11 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'flobrain_db'),
         'USER': os.environ.get('DB_USER', 'flo_user'),
         'PASSWORD': os.environ.get('DB_PASS', 'flo_password'),
-        # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker (set by compose).
+         #Default 'localhost' for running outside Docker; use DB_HOST=db in Docker (set by compose).
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
@@ -142,6 +141,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # REST framework
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
