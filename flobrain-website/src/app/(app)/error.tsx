@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { AlertTriangle, RefreshCw } from "lucide-react";
+import { captureException } from "@/lib/sentry";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -10,8 +11,7 @@ interface ErrorProps {
 
 export default function Error({ error, reset }: ErrorProps) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error("Error:", error);
+    captureException(error);
   }, [error]);
 
   return (

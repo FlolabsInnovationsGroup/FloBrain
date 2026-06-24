@@ -13,6 +13,7 @@ import ChatInput from './components/MessageInput/index';
 import jsPDF from 'jspdf';
 import { BarChart3, PanelLeft, X } from 'lucide-react';
 import { MotionProvider, Reveal, Stagger, StaggerItem } from '@/components/motion';
+import { setBrainConversationId } from '@/lib/sentry';
 
 const WELCOME_MESSAGE: Message = {
   id: 'msg-welcome',
@@ -241,6 +242,10 @@ function BrainPageContent() {
   const [mobileConfidenceOpen, setMobileConfidenceOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setBrainConversationId(currentChatId);
+  }, [currentChatId]);
 
   const closeMobileSidebars = useCallback(() => {
     setMobileSessionsOpen(false);
