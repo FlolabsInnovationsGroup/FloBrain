@@ -31,13 +31,13 @@ services:
       - .:/app   # This syncs the local folder to the container
     ports:
       - "8000:8000"
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     environment:
       - DB_NAME=flobrain_db
       - DB_USER=flo_user
       - DB_PASS=flo_password
-      - DB_HOST=db # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker 
+      - DB_HOST=localhost # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker 
       - DB_PORT=5432
     depends_on:
       - db
