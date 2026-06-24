@@ -24,7 +24,9 @@ export default function RootLayout({
             <Footer />
           </RootBackground>
         </AuthProviderWrapper>
-        <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+        {GA_MEASUREMENT_ID ? (
+          <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
+        ) : null}
       </body>
     </html>
   );
