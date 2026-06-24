@@ -1,3 +1,2 @@
-/** Google Analytics 4 measurement ID (override via NEXT_PUBLIC_GA_MEASUREMENT_ID). */
-export const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-X9ESGZKX26";
+/** Google Analytics 4 measurement ID — set via GA_MEASUREMENT_ID in .env.local / deployment env. */
+export const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID;
