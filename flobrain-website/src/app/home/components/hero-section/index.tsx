@@ -26,6 +26,7 @@ export const HeroSection = () => {
           </p>
         </Reveal>
       </div>
+      
       <Reveal variant="popUp" delay={0.12} className="flex-shrink-0">
         <Image
           src={brainImage}
