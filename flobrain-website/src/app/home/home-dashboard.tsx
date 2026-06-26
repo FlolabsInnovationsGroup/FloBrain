@@ -1,17 +1,11 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { BrainActivity } from "./components/brain-activity";
 import { LeftPanel } from "./components/left-panel";
 import { RightPanel } from "./components/right-panel";
-import type { SystemModuleId } from "./components/left-panel";
 
 export function HomeDashboard() {
-  const [activeModuleId, setActiveModuleId] = useState<SystemModuleId>("brain-activity");
-
-  const handleModuleSelect = useCallback((id: SystemModuleId) => {
-    setActiveModuleId(id);
-  }, []);
   const handleNewChat = useCallback(() => {
     // TODO: implement new chat action
   }, []);
@@ -32,8 +26,6 @@ export function HomeDashboard() {
           <LeftPanel
             variant="modules"
             className="h-full w-full min-h-0"
-            activeModuleId={activeModuleId}
-            onModuleSelect={handleModuleSelect}
             onNewChat={handleNewChat}
             onSearch={handleSearch}
             onPreferences={handlePreferences}

@@ -14,6 +14,7 @@ import jsPDF from 'jspdf';
 import { BarChart3, PanelLeft, X } from 'lucide-react';
 import { MotionProvider, Reveal, Stagger, StaggerItem } from '@/components/motion';
 import { setBrainConversationId } from '@/lib/sentry';
+import SettingsDialog from '@/app/profile/components/SettingsDialog';
 
 const WELCOME_MESSAGE: Message = {
   id: 'msg-welcome',
@@ -237,6 +238,7 @@ function BrainPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [preferences, setPreferences] = useState<BrainPreferences>(DEFAULT_PREFERENCES);
   const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
   const [mobileConfidenceOpen, setMobileConfidenceOpen] = useState(false);
@@ -601,6 +603,11 @@ function BrainPageContent() {
     setMobileSessionsOpen(false);
   }, [handleNewChat]);
 
+  const handleSettings = useCallback(() => {
+    setMobileSessionsOpen(false);
+    setIsSettingsOpen(true);
+  }, []);
+
   const openMobileSessions = useCallback(() => {
     setMobileConfidenceOpen(false);
     setMobileSessionsOpen(true);
@@ -811,7 +818,7 @@ function BrainPageContent() {
             onNewChat={handleNewChatMobile}
             onSearch={() => {}}
             onPreferences={() => setIsPreferencesOpen(true)}
-            onSettings={() => {}}
+            onSettings={handleSettings}
             chatsLoading={chatsLoading}
           />
         </div>
@@ -944,6 +951,10 @@ function BrainPageContent() {
         preferences={preferences}
         onClose={() => setIsPreferencesOpen(false)}
         onChange={setPreferences}
+      />
+      <SettingsDialog
+        open={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
     </main>
     </MotionProvider>
