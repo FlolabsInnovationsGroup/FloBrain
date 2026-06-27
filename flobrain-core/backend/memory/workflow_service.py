@@ -109,3 +109,32 @@ def add_workflow_step(workflow_id, step_type, input_data=None, output_data=None,
         )
 
     return str(result.inserted_id)
+
+def save_message(user_id, session_id, workflow_id, role, content, metadata=None):
+    message = {
+        "user_id": user_id,
+        "session_id": session_id,
+        "workflow_id": workflow_id,
+        "role": role,
+        "content": content,
+        "metadata": metadata or {},
+        "created_at": _now()
+    }
+
+    result = db.messages.insert_one(message)
+    return str(result.inserted_id)
+
+
+def save_llm_call(user_id, workflow_id, prompt, response, model="unknown", metadata=None):
+    llm_call = {
+        "user_id": user_id,
+        "workflow_id": workflow_id,
+        "prompt": prompt,
+        "response": response,
+        "model": model,
+        "metadata": metadata or {},
+        "created_at": _now()
+    }
+
+    result = db.llmcalls.insert_one(llm_call)
+    return str(result.inserted_id)
