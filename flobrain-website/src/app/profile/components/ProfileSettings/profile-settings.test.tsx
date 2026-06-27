@@ -8,10 +8,15 @@ const mockProfile = {
   email: "john.doe@example.com",
 };
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 vi.mock("@/contexts/AuthContext", () => ({
   useAuth: () => ({
     userId: "1",
     isAuthenticated: true,
+    logout: vi.fn(),
   }),
 }));
 
@@ -113,41 +118,14 @@ describe("ProfileSettings Component", () => {
     expect(upgradeLink.getAttribute("href")).toBe("/pricing");
   });
 
-  it("should show confirmation dialog when delete account is clicked", async () => {
-    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+  it("should open delete account modal when delete account is clicked", async () => {
     render(<ProfileSettings />);
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /delete account/i })).toBeDefined();
     });
-    const deleteButton = screen.getByRole("button", { name: /delete account/i });
-    fireEvent.click(deleteButton);
-    expect(confirmSpy).toHaveBeenCalledWith(
-      "Are you sure you want to delete your account? This action cannot be undone."
-    );
-  });
-
-  it("should log deletion when user confirms delete", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(true);
-    const consoleSpy = vi.spyOn(console, "warn");
-    render(<ProfileSettings />);
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /delete account/i })).toBeDefined();
-    });
-    const deleteButton = screen.getByRole("button", { name: /delete account/i });
-    fireEvent.click(deleteButton);
-    expect(consoleSpy).toHaveBeenCalledWith("Deleting account...");
-  });
-
-  it("should not log deletion when user cancels confirmation", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(false);
-    const consoleSpy = vi.spyOn(console, "warn");
-    render(<ProfileSettings />);
-    await waitFor(() => {
-      expect(screen.getByRole("button", { name: /delete account/i })).toBeDefined();
-    });
-    const deleteButton = screen.getByRole("button", { name: /delete account/i });
-    fireEvent.click(deleteButton);
-    expect(consoleSpy).not.toHaveBeenCalledWith("Deleting account...");
+    fireEvent.click(screen.getByRole("button", { name: /delete account/i }));
+    expect(screen.getByRole("dialog")).toBeDefined();
+    expect(screen.getByLabelText(/password/i)).toBeDefined();
   });
 
   it("should have proper input types in Edit modal", async () => {
@@ -162,13 +140,24 @@ describe("ProfileSettings Component", () => {
     expect(emailInput.getAttribute("type")).toBe("email");
   });
 
-  it("should apply correct styling to delete button", async () => {
+  it("should apply destructive styling to delete button", async () => {
     render(<ProfileSettings />);
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /delete account/i })).toBeDefined();
     });
     const deleteButton = screen.getByRole("button", { name: /delete account/i });
-    expect(deleteButton.className).toContain("E07A5F");
+    expect(deleteButton.className).toContain("red-600");
+  });
+
+  it("should close delete account modal when Cancel is clicked", async () => {
+    render(<ProfileSettings />);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /delete account/i })).toBeDefined();
+    });
+    fireEvent.click(screen.getByRole("button", { name: /delete account/i }));
+    expect(screen.getByRole("dialog")).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("should show Save button in Edit modal", async () => {
