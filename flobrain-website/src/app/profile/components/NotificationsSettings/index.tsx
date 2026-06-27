@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { settingsCardClass, settingsInputClass } from "../settings-styles";
 
 type NotificationOption = "push" | "email" | "off";
 
@@ -18,26 +19,23 @@ export default function NotificationsSettings() {
   ]);
 
   const handleSettingChange = (id: string, value: NotificationOption) => {
-    setSettings(settings.map(s => (s.id === id ? { ...s, value } : s)));
+    setSettings(settings.map((s) => (s.id === id ? { ...s, value } : s)));
   };
 
   return (
     <div className="space-y-4">
       {settings.map((setting) => (
-        <div
-          key={setting.id}
-          className="flex items-center justify-between p-4 bg-[#281C30] border border-zinc-500/50 rounded-lg"
-        >
-          <span className="text-white font-medium">{setting.label}</span>
+        <div key={setting.id} className={`flex items-center justify-between ${settingsCardClass}`}>
+          <span className="font-medium text-white">{setting.label}</span>
           <select
             value={setting.value}
             onChange={(e) => handleSettingChange(setting.id, e.target.value as NotificationOption)}
-            className="px-4 py-2 bg-[#281C30] border border-zinc-500/50 rounded-lg text-white focus:outline-none focus:border-zinc-400/70 cursor-pointer"
+            className={`cursor-pointer px-4 py-2 ${settingsInputClass}`}
           >
-              <option value="push">Push</option>
-              <option value="email">Email</option>
-              <option value="off">Off</option>
-            </select>
+            <option value="push">Push</option>
+            <option value="email">Email</option>
+            <option value="off">Off</option>
+          </select>
         </div>
       ))}
     </div>
