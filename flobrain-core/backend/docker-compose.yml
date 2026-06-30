@@ -37,7 +37,7 @@ services:
       - DB_NAME=flobrain_db
       - DB_USER=flo_user
       - DB_PASS=flo_password
-      - DB_HOST=localhost # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker 
+      - DB_HOST=db # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker 
       - DB_PORT=5432
     depends_on:
       - db
