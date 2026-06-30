@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 
+from .anthropic_adapter import AnthropicLLMAdapter
 from .mock_adapter import MockLLMAdapter
 from .multimodal_adapter import MultimodalLLMAdapter
 from .openai_adapter import OpenAILLMAdapter
@@ -15,4 +16,6 @@ def get_llm_adapter():
         return MultimodalLLMAdapter()
     if provider == "openai":
         return OpenAILLMAdapter()
+    if provider in ("anthropic", "claude"):
+        return AnthropicLLMAdapter()
     return MockLLMAdapter()

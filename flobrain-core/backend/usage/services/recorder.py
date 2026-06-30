@@ -7,6 +7,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from usage.models import TokenUsageRecord, UserUsageSummary
+from usage.pricing import compute_cost_usd
 
 
 @dataclass
@@ -30,6 +31,10 @@ class UsageRecorder:
         last_day = calendar.monthrange(today.year, today.month)[1]
         month_end = today.replace(day=last_day)
 
+        cost = usage.estimated_cost_usd
+        if cost is None:
+            cost = compute_cost_usd(usage.model, usage.prompt_tokens, usage.completion_tokens)
+
         with transaction.atomic():
             record = TokenUsageRecord.objects.create(
                 user=user,
@@ -41,7 +46,7 @@ class UsageRecorder:
                 prompt_tokens=usage.prompt_tokens,
                 completion_tokens=usage.completion_tokens,
                 total_tokens=usage.total_tokens,
-                estimated_cost_usd=usage.estimated_cost_usd,
+                estimated_cost_usd=cost,
                 metadata=usage.metadata,
             )
 

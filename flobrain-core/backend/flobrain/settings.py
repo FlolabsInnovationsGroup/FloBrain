@@ -96,7 +96,7 @@ DATABASES = {
         'USER': os.environ.get('DB_USER', 'flo_user'),
         'PASSWORD': os.environ.get('DB_PASS', 'flo_password'),
         # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker (set by compose).
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'HOST': os.environ.get('DB_HOST', 'db'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
@@ -158,10 +158,12 @@ EMAIL_HOST_PASSWORD = os.environ.get("SMTP_PASS", "")
 SALES_EMAIL = os.environ.get("SALES_EMAIL", "")
 
 # LLM & token usage tracking
-# Use "multimodal" to route chat through the deployed AI service (flobrain-cloud).
+# Providers: "openai" | "anthropic" | "multimodal" | "mock"
+# Set LLM_PROVIDER + the matching API key in the environment / .env file.
 LLM_PROVIDER = os.environ.get("LLM_PROVIDER", "multimodal")
 LLM_DEFAULT_MODEL = os.environ.get("LLM_DEFAULT_MODEL", "gpt-3.5-turbo")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 MULTIMODAL_SERVICE_URL = os.environ.get("MULTIMODAL_SERVICE_URL", "http://localhost:8001")
 MULTIMODAL_API_KEY = os.environ.get("MULTIMODAL_API_KEY", "")
 MULTIMODAL_SERVICE_TIMEOUT = int(os.environ.get("MULTIMODAL_SERVICE_TIMEOUT", "60"))
