@@ -46,16 +46,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
-<<<<<<< HEAD
-    "drf_spectacular",
-=======
     "rest_framework.authtoken",
->>>>>>> 4e405ea (feat(memory): integrate tri-tier core and apply DB index fixes)
+    "drf_spectacular",
     "users",
     "memory",
     "dashboard",
     "brain",
     "contact",
+    "devices",
+    "errorlog",
 ]
 
 MIDDLEWARE = [
@@ -98,10 +97,7 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'flobrain_db'),
         'USER': os.environ.get('DB_USER', 'flo_user'),
         'PASSWORD': os.environ.get('DB_PASS', 'flo_password'),
-<<<<<<< HEAD
-=======
-         #Default 'localhost' for running outside Docker; use DB_HOST=db in Docker (set by compose).
->>>>>>> 4e405ea (feat(memory): integrate tri-tier core and apply DB index fixes)
+        # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker (set by compose).
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
@@ -163,6 +159,21 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Public Swagger documentation for the deployed FloBrain backend.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "db_log": {
+            "level": "WARNING",
+            "class": "errorlog.handlers.DatabaseLogHandler",
+        },
+    },
+    "root": {
+        "handlers": ["db_log"],
+        "level": "WARNING",
+    },
 }
 
 # Email (SMTP)
