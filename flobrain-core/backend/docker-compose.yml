@@ -41,19 +41,17 @@ services:
       - DB_PORT=5432
     depends_on:
       - db
-<<<<<<< HEAD
       - mongodb
+      - redis
 
   mongodb:
-      image: mongo:latest
+    image: mongo:latest
 
-=======
   redis:
     image: redis:7-alpine
     container_name: flobrain_backend_redis
     ports:
       - "6379:6379"
     restart: always
->>>>>>> 4e405ea (feat(memory): integrate tri-tier core and apply DB index fixes)
 volumes:
   postgres_data:
