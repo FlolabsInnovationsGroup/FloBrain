@@ -1,13 +1,4 @@
-import {
-  Activity,
-  ExternalLink,
-  FileText,
-  Github,
-  Mail,
-  MessageCircle,
-  Newspaper,
-  Users,
-} from "lucide-react";
+import { ExternalLink, Mail, Newspaper, Users } from "lucide-react";
 
 const DIRECT_CONTACT_ITEMS = [
   {
