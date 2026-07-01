@@ -218,7 +218,7 @@ function ConfidencePanel() {
     <Reveal
       variant="slideRight"
       inView={false}
-      className="max-md:hidden flex w-[300px] shrink-0 min-h-0"
+      className="max-md:hidden flex w-[min(300px,26vw)] shrink-0 min-h-0"
     >
       <aside className="flex h-full w-full flex-col rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 min-h-0">
         <ConfidencePanelContent />

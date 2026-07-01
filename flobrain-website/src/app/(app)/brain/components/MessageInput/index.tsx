@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, KeyboardEvent as ReactKeyboardEvent, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
-import { Mic, MicOff, Image as ImageIcon, X, Zap, Plus } from 'lucide-react';
+import { Mic, MicOff, Image as ImageIcon, X, Zap, Plus, ArrowUp } from 'lucide-react';
 import Image from 'next/image';
 
 interface ChatInputProps {
@@ -86,7 +86,7 @@ export default function ChatInput({
 
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') return;
-    const mq = window.matchMedia('(min-width: 768px)');
+    const mq = window.matchMedia('(min-width: 1280px)');
     const onChange = () => {
       if (mq.matches) setAttachMenuOpen(false);
     };
@@ -185,8 +185,12 @@ export default function ChatInput({
   };
 
   return (
-    <div className="backdrop-blur-sm shrink-0">
-      <div className={`max-w-4xl mx-auto px-6 ${compactMode ? 'py-2.5' : 'py-4'}`}>
+    <div className="w-full min-w-0 max-w-full shrink-0 overflow-hidden backdrop-blur-sm">
+      <div
+        className={`mx-auto w-full min-w-0 max-w-4xl px-3 sm:px-4 lg:px-6 ${
+          compactMode ? 'py-2.5' : 'py-3 lg:py-4'
+        }`}
+      >
         {/* Image Preview */}
         {imagePreview && (
           <div className="mb-3 relative inline-block">
@@ -207,13 +211,16 @@ export default function ChatInput({
         )}
 
         <div
-          className={`flex items-end gap-3 rounded-2xl border border-[#1F2937] bg-[#111827] px-2 ${
+          className={`flex w-full min-w-0 items-end gap-1.5 rounded-2xl border border-[#1F2937] bg-[#111827] px-1.5 sm:gap-2 sm:px-2 xl:gap-3 ${
             compactMode ? 'py-1.5' : 'py-2'
           }`}
         >
-          {/* Lightning icon (left) */}
-          <div className="mb-1 shrink-0 text-amber-400/90" aria-hidden>
-            <Zap className="ml-4 h-5 w-5" fill="none" />
+          {/* Lightning icon (left) — hidden when space is tight */}
+          <div
+            className="mb-1 hidden shrink-0 items-center justify-center rounded-lg p-1.5 text-amber-400/90 xl:flex xl:p-2"
+            aria-hidden
+          >
+            <Zap size={18} fill="none" />
           </div>
 
           {/* Text Input */}
@@ -226,10 +233,10 @@ export default function ChatInput({
               placeholder="How does this LLM work?"
               disabled={disabled}
               rows={1}
-              className={`max-h-[220px] w-full min-w-0 resize-none overflow-y-auto pl-2 pr-4 text-base text-white
+              className={`max-h-[220px] w-full min-w-0 resize-none overflow-y-auto pl-1 pr-2 text-sm text-white
                        transition-[height] duration-150 ease-out placeholder:text-white/45 focus:outline-none
-                       disabled:cursor-not-allowed disabled:opacity-50 ${
-                         compactMode ? 'min-h-10 py-2.5' : 'min-h-12 py-3'
+                       disabled:cursor-not-allowed disabled:opacity-50 sm:pl-2 xl:pr-4 xl:text-base ${
+                         compactMode ? 'min-h-10 py-2.5' : 'min-h-10 py-2.5 xl:min-h-12 xl:py-3'
                        }`}
             />
           </div>
@@ -241,7 +248,7 @@ export default function ChatInput({
                   type="button"
                   onClick={() => void toggleRecording()}
                   disabled={disabled}
-                  className="mb-1 shrink-0 rounded-lg p-2 text-red-400 transition-colors animate-pulse hover:bg-white/5 hover:text-red-300 disabled:opacity-50"
+                  className="mb-1 shrink-0 rounded-lg p-1.5 text-red-400 transition-colors animate-pulse hover:bg-white/5 hover:text-red-300 disabled:opacity-50 xl:p-2"
                   title="Stop recording"
                   aria-label="Stop recording"
                 >
@@ -249,8 +256,8 @@ export default function ChatInput({
                 </button>
               ) : (
                 <>
-                  {/* Mobile: + menu */}
-                  <div ref={attachMenuContainerRef} className="relative mb-1 shrink-0 md:hidden">
+                  {/* Compact: + menu when inline controls would overflow */}
+                  <div ref={attachMenuContainerRef} className="relative mb-1 shrink-0 xl:hidden">
                     <button
                       type="button"
                       data-testid="chat-mobile-attach-button"
@@ -260,7 +267,7 @@ export default function ChatInput({
                       aria-haspopup="menu"
                       aria-label="Attach"
                       title="Attach"
-                      className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+                      className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50 xl:p-2"
                     >
                       <Plus size={20} strokeWidth={2.25} />
                     </button>
@@ -300,14 +307,14 @@ export default function ChatInput({
                       </div>
                     )}
                   </div>
-                  {/* Desktop: inline image + voice (original layout) */}
-                  <div className="mb-1 hidden shrink-0 items-center gap-1 md:flex">
+                  {/* Wide screens: inline image + voice */}
+                  <div className="mb-1 hidden shrink-0 items-center gap-0.5 xl:flex xl:gap-1">
                     {allowImageUpload && (
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={disabled}
-                        className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+                        className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50 xl:p-2"
                         title="Upload image"
                         aria-label="Upload image"
                       >
@@ -319,7 +326,7 @@ export default function ChatInput({
                         type="button"
                         onClick={() => void toggleRecording()}
                         disabled={disabled}
-                        className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50"
+                        className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50 xl:p-2"
                         title="Voice input"
                         aria-label="Voice input"
                       >
@@ -342,29 +349,14 @@ export default function ChatInput({
             </>
           )}
 
-          {/* Send Button - circular purple with arrow up */}
+          {/* Send Button */}
           <button
             onClick={handleSend}
             disabled={(!inputValue.trim() && !imagePreview) || disabled}
-            className={`mb-1 shrink-0 rounded-full bg-[#9333ea] text-white shadow-lg shadow-[#9333ea]/30 transition-all duration-200
-                     hover:bg-[#a855f7] hover:opacity-90 flex items-center justify-center font-medium
-                     disabled:cursor-not-allowed disabled:opacity-50 ${
-                       compactMode ? 'h-10 w-10' : 'h-12 w-12'
-                     }`}
+            className="mb-1 flex shrink-0 items-center justify-center rounded-lg bg-[#9333ea] p-1.5 text-white shadow-lg shadow-[#9333ea]/30 transition-all duration-200 hover:bg-[#a855f7] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 xl:p-2"
             aria-label="Send message"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12 19V5M5 12l7-7 7 7" />
-            </svg>
+            <ArrowUp size={18} strokeWidth={2} />
           </button>
         </div>
       </div>
