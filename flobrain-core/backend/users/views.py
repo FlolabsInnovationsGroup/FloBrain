@@ -128,7 +128,11 @@ class LogoutView(APIView):
                 )
 
             refresh_token = request.data.get("refresh_token") or request.data.get("refresh")
-            if refresh_token:
+            if not refresh_token:
+                return Response(
+                    {"error": "refresh_token is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
                 payload = decode_token(refresh_token)
                 if payload and payload.get("type") == "refresh" and payload.get("sub") == user_id:
                     exp = payload.get("exp")
