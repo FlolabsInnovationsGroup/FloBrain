@@ -134,7 +134,7 @@ def get_error_logs(user_id, limit=50):
     """
     Return recent warning/error events from MongoDB workflow collections.
     """
-    user_ids = [str(user_id), user_id, None]
+    user_ids = [str(user_id), user_id]
     event_query = {
         "$or": [
             {"status": {"$in": ["error", "warning", "failed", "failure", "warn"]}},
