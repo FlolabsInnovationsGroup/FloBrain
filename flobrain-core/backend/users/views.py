@@ -104,17 +104,30 @@ def _hash_refresh_token(token: str) -> str:
 
 
 class LogoutView(APIView):
-    """POST with userId and refresh_token (optional). Invalidates the refresh token server-side."""
+    """POST with userId and refresh_token. Requires Bearer token matching userId."""
 
     def post(self, request):
         try:
+            user = get_user_from_request(request)
+            if not user:
+                return Response(
+                    {"error": "Authentication required", "details": "Valid Bearer token required"},
+                    status=status.HTTP_401_UNAUTHORIZED,
+                )
+
             user_id = request.data.get("userId")
             if not user_id:
                 return Response(
                     {"error": "userId is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            refresh_token = request.data.get("refresh_token")
+            if str(user.id) != str(user_id):
+                return Response(
+                    {"error": "Forbidden", "details": "userId does not match authenticated user"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
+            refresh_token = request.data.get("refresh_token") or request.data.get("refresh")
             if refresh_token:
                 payload = decode_token(refresh_token)
                 if payload and payload.get("type") == "refresh" and payload.get("sub") == user_id:

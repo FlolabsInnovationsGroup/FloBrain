@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 
 from users.views import get_user_from_request
 
+from .llm_service import generate_assistant_reply
 from .models import Chat, Message
 from .serializers import (
     ChatCreateSerializer,
@@ -128,8 +129,9 @@ class SendMessageView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Create user message
-        user_msg = Message.objects.create(
+        history = list(chat.messages.order_by("created_at"))
+
+        Message.objects.create(
             chat=chat,
             role=Message.ROLE_USER,
             text=text or None,
@@ -141,18 +143,16 @@ class SendMessageView(APIView):
             chat.title = (text[:30] + "..." if len(text) > 30 else text)
             chat.save(update_fields=["title", "updated_at"])
 
-        # Placeholder assistant reply (replace with real LLM call later)
-        assistant_text = (
-            f'I received your message: "{text[:100]}". '
-            "This is a placeholder response. Connect an LLM for real replies."
+        assistant_text = generate_assistant_reply(
+            user.id,
+            text or "[image message]",
+            history,
         )
-        assistant_msg = Message.objects.create(
+        Message.objects.create(
             chat=chat,
             role=Message.ROLE_ASSISTANT,
             text=assistant_text,
         )
-
-        # Bump chat.updated_at so "last used" order is correct
         chat.save(update_fields=["updated_at"])
 
         # Return full chat with messages so frontend can sync

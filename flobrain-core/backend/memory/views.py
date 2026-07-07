@@ -175,7 +175,6 @@ class MemoryNodeDetailView(APIView):
         except MemoryNode.DoesNotExist:
             return Response({"error": "Node not found"}, status=404)
 
-<<<<<<< HEAD
     def patch(self, request, pk):
         user = get_user_from_request(request)
         if not user:
@@ -186,7 +185,7 @@ class MemoryNodeDetailView(APIView):
         except MemoryNode.DoesNotExist:
             return Response({"error": "Node not found"}, status=404)
 
-        allowed_fields = {"name", "val", "group", "memory_type", "relevance"}
+        allowed_fields = {"name", "memory_type", "relevance"}
         updates = {}
         for field in allowed_fields:
             if field in request.data:
@@ -197,15 +196,13 @@ class MemoryNodeDetailView(APIView):
 
         before = {
             "name": node.name,
-            "val": node.val,
-            "group": node.group,
             "memory_type": node.memory_type,
             "relevance": node.relevance,
         }
 
         for field, value in updates.items():
             setattr(node, field, value)
-        node.save(update_fields=list(updates.keys()))
+        node.save(update_fields=list(updates.keys()) + ["updated_at"])
 
         _log_memory_event(
             user_id=getattr(user, "id", None),
@@ -228,38 +225,33 @@ class MemoryNodeDetailView(APIView):
                 "created_at": node.created_at.isoformat(),
             }
         )
-=======
+
+
 class MemorySaveView(APIView):
-   
+
     def post(self, request):
         user = get_user_from_request(request)
         if not user:
             return Response({"error": "Auth required"}, status=401)
-        
-        try:
-            # Распределяем по уровням
-            node = distribute_to_tiers(request.data)
-            
-            # Получаем эмбеддинг из запроса (если его нет, передаем пустой список)
-            embedding = request.data.get('embedding', [])
 
-            # Cold Storage
+        try:
+            node = distribute_to_tiers(request.data)
+            embedding = request.data.get("embedding", [])
+
             migrate_to_cold_storage(node)
 
-            # Associative Layer (Tier 2) - теперь передаем embedding
             if node.tier_level in [1, 2]:
                 save_to_associative_layer(node, embedding)
 
-            # Active Buffer (Tier 1)
             if node.tier_level == 1:
                 save_to_active_buffer(node)
-                
+
             return Response({
                 "status": "saved",
                 "binary_index": node.binary_index,
                 "tier": node.tier_level,
-                "node_id": node.id
+                "node_id": node.id,
             })
         except Exception as e:
             return Response({"error": str(e)}, status=500)
->>>>>>> 4e405ea (feat(memory): integrate tri-tier core and apply DB index fixes)
+
