@@ -259,5 +259,5 @@ class MemorySaveView(APIView):
                 "node_id": node.id,
             })
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            return Response({"error": "Save failed"}, status=500)
 
