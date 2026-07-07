@@ -45,6 +45,14 @@ def _log_memory_event(user_id, event_type, status="success", payload=None):
     )
 
 
+def _get_owned_node(user, pk):
+    """Return a memory node only when it belongs to the authenticated user."""
+    try:
+        return MemoryNode.objects.get(id=pk, owner_id=str(user.id)), None
+    except MemoryNode.DoesNotExist:
+        return None, Response({"error": "Node not found"}, status=404)
+
+
 class MemoryGraphView(APIView):
     """
     GET /api/memory/graph/
@@ -69,7 +77,7 @@ class MemoryGraphView(APIView):
         except (TypeError, ValueError):
             min_relevance = 0.0
 
-        qs = MemoryNode.objects.all()
+        qs = MemoryNode.objects.filter(owner_id=str(user.id))
 
         if search:
             # Map display names (searchable in UI) to DB memory_type values
@@ -139,51 +147,47 @@ class MemoryNodeDetailView(APIView):
     Returns single node + all connections for detail panel.
     """
     def get(self, request, pk):
-        from users.views import get_user_from_request
-        
         user = get_user_from_request(request)
         if not user:
             return Response({"error": "Authentication required"}, status=401)
-        
-        try:
-            node = MemoryNode.objects.get(id=pk)
-            
-            # All connections (not filtered)
-            outgoing = [
-                {"id": link.target.id, "name": link.target.name, "group": link.target.group}
-                for link in node.outgoing_links.all()
-            ]
-            incoming = [
-                {"id": link.source.id, "name": link.source.name, "group": link.source.group}
-                for link in node.incoming_links.all()
-            ]
-            
-            return Response({
-                "id": node.id,
-                "name": node.name,
-                "val": node.val,
-                "group": node.group,
-                "memory_type": node.memory_type,
-                "relevance": node.relevance,
-                "created_at": node.created_at.isoformat(),
-                "connections": {
-                    "outgoing": outgoing,
-                    "incoming": incoming,
-                    "total": len(outgoing) + len(incoming)
-                }
-            })
-        except MemoryNode.DoesNotExist:
-            return Response({"error": "Node not found"}, status=404)
+
+        node, err = _get_owned_node(user, pk)
+        if err:
+            return err
+
+        # All connections (not filtered)
+        outgoing = [
+            {"id": link.target.id, "name": link.target.name, "group": link.target.group}
+            for link in node.outgoing_links.all()
+        ]
+        incoming = [
+            {"id": link.source.id, "name": link.source.name, "group": link.source.group}
+            for link in node.incoming_links.all()
+        ]
+
+        return Response({
+            "id": node.id,
+            "name": node.name,
+            "val": node.val,
+            "group": node.group,
+            "memory_type": node.memory_type,
+            "relevance": node.relevance,
+            "created_at": node.created_at.isoformat(),
+            "connections": {
+                "outgoing": outgoing,
+                "incoming": incoming,
+                "total": len(outgoing) + len(incoming)
+            }
+        })
 
     def patch(self, request, pk):
         user = get_user_from_request(request)
         if not user:
             return Response({"error": "Authentication required"}, status=401)
 
-        try:
-            node = MemoryNode.objects.get(id=pk)
-        except MemoryNode.DoesNotExist:
-            return Response({"error": "Node not found"}, status=404)
+        node, err = _get_owned_node(user, pk)
+        if err:
+            return err
 
         allowed_fields = {"name", "memory_type", "relevance"}
         updates = {}
@@ -235,7 +239,9 @@ class MemorySaveView(APIView):
             return Response({"error": "Auth required"}, status=401)
 
         try:
-            node = distribute_to_tiers(request.data)
+            payload = dict(request.data or {})
+            payload["owner_id"] = str(user.id)
+            node = distribute_to_tiers(payload)
             embedding = request.data.get("embedding", [])
 
             migrate_to_cold_storage(node)
