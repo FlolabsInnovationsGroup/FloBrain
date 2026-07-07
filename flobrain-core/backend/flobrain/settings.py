@@ -24,10 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-yxp6z(@h*q#7yary@%qm!pvn4e2&4)pql8qz6zk3u4&^3j4&f!"
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 # Avoid W042 on models that don't define an explicit primary key (e.g. UserGroup, UserRole)
