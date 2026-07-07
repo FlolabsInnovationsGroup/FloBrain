@@ -33,18 +33,21 @@ def _log_llm_event(user_id, workflow_id, status, message, payload=None):
 
 
 def _record_llm_call(workflow_id, user_id, model, messages, reply, status, error=None):
-    mongo_db.llmcalls.insert_one(
-        {
-            "workflow_id": workflow_id,
-            "user_id": str(user_id),
-            "model": model,
-            "status": status,
-            "input": messages,
-            "output": reply,
-            "error": error,
-            "created_at": timezone.now(),
-        }
-    )
+    try:
+        mongo_db.llmcalls.insert_one(
+            {
+                "workflow_id": workflow_id,
+                "user_id": str(user_id),
+                "model": model,
+                "status": status,
+                "input": messages,
+                "output": reply,
+                "error": error,
+                "created_at": timezone.now(),
+            }
+        )
+    except Exception:
+        logger.exception("Failed to record LLM call")
 
 
 def _build_messages(chat_messages, user_text, context):
