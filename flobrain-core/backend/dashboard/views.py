@@ -40,7 +40,6 @@ class DashboardHealthView(APIView):
             "status": "ok" if all_systems_operational else "degraded",
             "backend": "online" if all_systems_operational else "degraded",
             "database": "connected" if db_ok else "disconnected",
-            "mongodb": "connected" if mongo_ok else "disconnected",
             "allSystemsOperational": all_systems_operational,
             "system_status": system_status,
             "connected_devices": connected_devices,

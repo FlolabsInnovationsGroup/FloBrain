@@ -44,6 +44,29 @@ def get_connected_devices_count():
     return guest_devices + auth_devices
 
 
+def _is_system_loading():
+    """
+    Return True when core services are up but the system is actively processing.
+    """
+    now = timezone.now()
+    loading_window = now - timedelta(minutes=3)
+
+    from memory.models import MemoryNode
+
+    if MemoryNode.objects.filter(updated_at__gte=loading_window).exists():
+        return True
+
+    try:
+        return mongo_db.workflow_steps.count_documents(
+            {
+                "created_at": {"$gte": loading_window},
+                "step_type": {"$in": ["validate_input", "llm_call"]},
+            }
+        ) > 0
+    except Exception:
+        return False
+
+
 def derive_system_status(db_ok, mongo_ok, connected_devices):
     """
     Map infrastructure checks to a frontend system_status value.
@@ -54,6 +77,8 @@ def derive_system_status(db_ok, mongo_ok, connected_devices):
         return "critical_error"
     if not mongo_ok:
         return "offline"
+    if _is_system_loading():
+        return "loading"
 
     from memory.models import MemoryNode
 
