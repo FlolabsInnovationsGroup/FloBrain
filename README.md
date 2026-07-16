@@ -29,15 +29,19 @@ Old firmware and frontend code is archived in `./legacy`.
 
 ## 🐳 Local Docker (recommended)
 
-One-command local stack (Windows Docker Desktop):
+**Goal:** build Docker images, start containers, open the websites in your browser.
+
+Start here: **[START_HERE.md](./START_HERE.md)**
 
 ```powershell
 Copy-Item .env.example .env
 .\scripts\start-flobrain-local.ps1
 ```
 
-- Website → http://localhost:3000  
-- Backend → http://localhost:8000  
-- Cloud → http://localhost:8001  
+Then open:
 
-See [DOCKER_LOCAL.md](./DOCKER_LOCAL.md) and [FLOBrain_LOCAL_SETUP.md](./FLOBrain_LOCAL_SETUP.md).
+- Website UI → http://localhost:3000  
+- API Swagger → http://localhost:8000/api/swagger/  
+- Cloud docs → http://localhost:8001/docs  
+
+More detail: [DOCKER_LOCAL.md](./DOCKER_LOCAL.md) · [FLOBrain_LOCAL_SETUP.md](./FLOBrain_LOCAL_SETUP.md)
