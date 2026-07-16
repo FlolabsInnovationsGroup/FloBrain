@@ -1,0 +1,128 @@
+# FloBrain DEMO stack (standalone — built images, no source bind-mounts).
+# Usage (from repo root):
+#   docker compose -f docker-compose.demo.yml up --build
+# Or on Windows: .\scripts\start-flobrain-demo.ps1
+#
+# Code changes will NOT hot-reload; rebuild to pick them up.
+
+name: flobrain_local_demo
+
+services:
+  db:
+    image: postgres:15
+    container_name: flobrain_demo_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-flobrain_db}
+      POSTGRES_USER: ${POSTGRES_USER:-flo_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-flo_password}
+    volumes:
+      - flobrain_demo_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mongodb:
+    image: mongo:7
+    container_name: flobrain_demo_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: flobrain
+    volumes:
+      - flobrain_demo_mongo_data:/data/db
+      - ./flobrain-core/backend/01-init-collections.js:/docker-entrypoint-initdb.d/01-init-collections.js:ro
+      - ./flobrain-core/backend/02-indexes.js:/docker-entrypoint-initdb.d/02-indexes.js:ro
+      - ./flobrain-core/backend/03-seed.js:/docker-entrypoint-initdb.d/03-seed.js:ro
+
+  redis:
+    image: redis:7-alpine
+    container_name: flobrain_demo_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./flobrain-core/backend
+      dockerfile: Dockerfile
+    container_name: flobrain_demo_django
+    restart: unless-stopped
+    command: >
+      sh -c "
+      until pg_isready -h db -p 5432;
+      do
+        echo 'Waiting for PostgreSQL...';
+        sleep 1;
+      done;
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DB_NAME: ${POSTGRES_DB:-flobrain_db}
+      DB_USER: ${POSTGRES_USER:-flo_user}
+      DB_PASS: ${POSTGRES_PASSWORD:-flo_password}
+      DB_HOST: db
+      DB_PORT: 5432
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+      redis:
+        condition: service_started
+
+  cloud:
+    build:
+      context: ./flobrain-cloud
+      dockerfile: Dockerfile
+      target: production
+    container_name: flobrain_demo_cloud
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:-}
+
+  website:
+    build:
+      context: ./flobrain-website
+      dockerfile: Dockerfile
+      target: production
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+    container_name: flobrain_demo_website
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+    depends_on:
+      - backend
+
+volumes:
+  flobrain_demo_postgres_data:
+  flobrain_demo_mongo_data:
+
+networks:
+  default:
+    name: flobrain_demo_network

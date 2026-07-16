@@ -1,22 +1,24 @@
-# 1. Use an official lightweight Python image
+# FloBrain Django backend
+# Used by root docker-compose.yml and by flobrain-core/backend/docker-compose.yml
+
 FROM python:3.11-slim
 
-# 2. Set environment variables to prevent python from writing .pyc files
-# and to buffer stdout/stderr (logs appear immediately)
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# 3. Set the working directory inside the container
 WORKDIR /app
 
-# 4. Copy requirements and install dependencies
+# postgresql-client provides pg_isready (used by compose wait loop)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt /app/
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-RUN apt-get update && apt-get install -y postgresql-client
-
-# 5. Copy the rest of your project code
 COPY . /app/
 
-# 6. Command to run the server (listening on all interfaces)
+EXPOSE 8000
+
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

@@ -1,0 +1,158 @@
+# FloBrain local DEV stack (hot reload).
+# Usage (from repo root):
+#   docker compose up --build
+# Or on Windows: .\scripts\start-flobrain-local.ps1
+#
+# Services:
+#   website  -> http://localhost:3000
+#   backend  -> http://localhost:8000  (Swagger: /api/swagger/)
+#   cloud    -> http://localhost:8001  (FastAPI docs: /docs)
+#   db       -> Postgres 5432
+#   mongodb  -> MongoDB 27017
+#   redis    -> Redis 6379
+
+name: flobrain_local
+
+services:
+  db:
+    image: postgres:15
+    container_name: flobrain_backend_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-flobrain_db}
+      POSTGRES_USER: ${POSTGRES_USER:-flo_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-flo_password}
+    volumes:
+      - flobrain_backend_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mongodb:
+    image: mongo:7
+    container_name: flobrain_backend_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: flobrain
+    volumes:
+      - flobrain_mongo_data:/data/db
+      - ./flobrain-core/backend/01-init-collections.js:/docker-entrypoint-initdb.d/01-init-collections.js:ro
+      - ./flobrain-core/backend/02-indexes.js:/docker-entrypoint-initdb.d/02-indexes.js:ro
+      - ./flobrain-core/backend/03-seed.js:/docker-entrypoint-initdb.d/03-seed.js:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: flobrain_backend_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./flobrain-core/backend
+      dockerfile: Dockerfile
+    container_name: flobrain_backend_django
+    restart: unless-stopped
+    command: >
+      sh -c "
+      until pg_isready -h db -p 5432;
+      do
+        echo 'Waiting for PostgreSQL...';
+        sleep 1;
+      done;
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      # Hot reload: edit code on your laptop, container sees changes
+      - ./flobrain-core/backend:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DB_NAME: ${POSTGRES_DB:-flobrain_db}
+      DB_USER: ${POSTGRES_USER:-flo_user}
+      DB_PASS: ${POSTGRES_PASSWORD:-flo_password}
+      DB_HOST: db
+      DB_PORT: 5432
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+      redis:
+        condition: service_healthy
+
+  cloud:
+    build:
+      context: ./flobrain-cloud
+      dockerfile: Dockerfile
+      target: development
+    container_name: flobrain_cloud_api
+    restart: unless-stopped
+    volumes:
+      - ./flobrain-cloud:/app
+    ports:
+      - "8001:8001"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:-}
+
+  website:
+    build:
+      context: ./flobrain-website
+      dockerfile: Dockerfile
+      target: development
+    container_name: flobrain_website
+    restart: unless-stopped
+    volumes:
+      - ./flobrain-website:/app
+      - website_node_modules:/app/node_modules
+      - website_next_cache:/app/.next
+    ports:
+      - "3000:3000"
+    environment:
+      # Browser on your host calls Django via published port
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+      # Needed so Next.js file watching works with Docker Desktop on Windows
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - backend
+
+volumes:
+  flobrain_backend_postgres_data:
+    name: flobrain_backend_postgres_data
+  flobrain_mongo_data:
+    name: flobrain_mongo_data
+  website_node_modules:
+  website_next_cache:
+
+networks:
+  default:
+    name: flobrain_local_network
