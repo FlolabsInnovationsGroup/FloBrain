@@ -2,6 +2,8 @@
 
 Use these commands from the repository root on **Windows PowerShell** with **Docker Desktop**.
 
+**Want the shortest path?** → [START_HERE.md](./START_HERE.md) (build images → start containers → open websites).
+
 For the full Docker guide and junior learning checklist, see [DOCKER_LOCAL.md](./DOCKER_LOCAL.md).
 
 ## Branch
