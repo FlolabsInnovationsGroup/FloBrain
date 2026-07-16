@@ -1,5 +1,7 @@
 # FloBrain Docker Local Guide
 
+> New here? Read **[START_HERE.md](./START_HERE.md)** first — build images, start containers, open the websites.
+
 Run the full local stack from the **repo root** with one command.
 
 | Service | URL | Role |
