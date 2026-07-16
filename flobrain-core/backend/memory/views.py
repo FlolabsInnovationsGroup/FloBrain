@@ -175,7 +175,6 @@ class MemoryNodeDetailView(APIView):
         except MemoryNode.DoesNotExist:
             return Response({"error": "Node not found"}, status=404)
 
-<<<<<<< HEAD
     def patch(self, request, pk):
         user = get_user_from_request(request)
         if not user:
@@ -228,7 +227,8 @@ class MemoryNodeDetailView(APIView):
                 "created_at": node.created_at.isoformat(),
             }
         )
-=======
+
+
 class MemorySaveView(APIView):
    
     def post(self, request):
@@ -262,4 +262,3 @@ class MemorySaveView(APIView):
             })
         except Exception as e:
             return Response({"error": str(e)}, status=500)
->>>>>>> 4e405ea (feat(memory): integrate tri-tier core and apply DB index fixes)

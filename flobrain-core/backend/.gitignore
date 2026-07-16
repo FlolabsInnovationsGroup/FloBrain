@@ -24,10 +24,9 @@ db.sqlite3
 dummy.sqlite3
 staticfiles/
 media/
+vector_db/
 
-# Django migrations (keep __init__.py)
-migrations/
-!migrations/__init__.py
+# Django migrations are part of the project schema and should be committed.
 
 # ================================
 # SQLAlchemy / Alembic
