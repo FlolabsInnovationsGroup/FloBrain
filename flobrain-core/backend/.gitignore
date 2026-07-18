@@ -62,3 +62,8 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
+
+# FloBrain data directories (binary, never commit)
+cold_vault/
+vault/
+vector_db/
