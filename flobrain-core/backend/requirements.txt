@@ -1,12 +1,13 @@
+Django>=5.0,<5.3
+djangorestframework>=3.15
+django-cors-headers>=4.0
+psycopg2-binary>=2.9
+pymongo>=4.0
+python-dotenv>=1.0
+PyJWT>=2.0
 asgiref
-Django
-django-cors-headers
-djangorestframework
 djangorestframework-simplejwt==5.5.1
 greenlet
-PyJWT
-psycopg2-binary
-python-dotenv
 SQLAlchemy
 sqlparse
 typing_extensions
@@ -25,3 +26,15 @@ django-redis>=5.4.0
 tiktoken>=0.5.0
 celery>=5.3.0
 prometheus_client>=0.19.0
+openai>=1.30.0
+sentence-transformers>=2.7.0
+pydantic>=2.5.0
+drf-spectacular>=0.27.0
+requests>=2.31.0
+
+# === Phase 1 / Week 1 additions ===
+qdrant-client>=1.12.0
+django-celery-beat>=2.6.0
+
+# === Phase 3 additions ===
+neo4j>=5.23.0
