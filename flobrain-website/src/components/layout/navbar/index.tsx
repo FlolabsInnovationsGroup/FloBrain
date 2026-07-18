@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Home, DollarSign } from "lucide-react";
+import { Menu, X, Home } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
@@ -21,7 +21,6 @@ export default function Navbar() {
   const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
   const isDashboardRoute = pathname === "/dashboard";
   const isHomeActive = pathname === "/" || pathname === "/home";
-  const isPricingActive = pathname === "/pricing";
 
   return (
     <header
@@ -107,7 +106,7 @@ export default function Navbar() {
                 <Home className={navIconClass} />
                 Home
               </Link>
-              <Link
+              {/* <Link
                 href="/pricing"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isPricingActive ? activeLinkClass : inactiveLinkClass
                   }`}
@@ -115,7 +114,7 @@ export default function Navbar() {
                 <DollarSign className={navIconClass} />
                 Pricing
               </Link>
-              {/* <Link
+              <Link
                 href="/contact"
                 className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isContactActive ? activeLinkClass : inactiveLinkClass
                   }`}
@@ -188,14 +187,14 @@ export default function Navbar() {
               >
                 Home
               </Link>
-              <Link
+              {/* <Link
                 href="/pricing"
                 className={`rounded-lg px-2 py-2.5 ${isPricingActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
               >
                 Pricing
               </Link>
-              {/* <Link
+              <Link
                 href="/contact"
                 className={`rounded-lg px-2 py-2.5 ${isContactActive ? "font-medium text-white" : "text-zinc-300"}`}
                 onClick={() => setIsOpen(false)}
