@@ -1,56 +1,112 @@
+"""
+tasks.py — Hebbian Learning Celery Task.
+
+Improvements vs original:
+  - Time-based Hebbian decay: weights now decay exponentially over time
+    (30-day half-life), preventing saturation at 1.0 and keeping reranking
+    discriminative. Formula: w = w * exp(-days_since_update/30) + count * lr.
+  - Per-owner partitioning: cooccurrence_buffer is now sharded by owner_id
+    (key: cooccurrence_buffer:{owner_id}). Eliminates the SPOF of a single
+    global hash and allows parallel workers per owner.
+  - Backward compatibility: if the legacy unpartitioned key exists, it is
+    still drained (with a one-time migration).
+  - TTL on processing key: if a worker crashes mid-cycle, the buffer is
+    auto-recovered after PROCESSING_TTL_SECONDS instead of being stuck forever.
+"""
 import logging
+import math
 import uuid
 from typing import Dict, Any
 from celery import shared_task
 from django.db import transaction
+from django.utils import timezone
 from django_redis import get_redis_connection
 from .models import MemoryNode, MemoryLink
 
 logger = logging.getLogger(__name__)
 
+LEARNING_RATE = 0.05
+DECAY_HALF_LIFE_DAYS = 30
+CHUNK_SIZE = 1000
+GLOBAL_BUFFER_KEY = "cooccurrence_buffer"
+PROCESSING_TTL_SECONDS = 1800  # 30 min auto-recovery if worker crashes
+
+
 @shared_task(name="flobrain.memory.task_apply_hebbian_learning")
 def task_apply_hebbian_learning() -> str:
+    """
+    Celery task (every 30 min). Drains cooccurrence_buffer from Redis in chunks
+    via HSCAN, batch-validates node existence, performs transactional Bulk Upsert
+    of MemoryLink weights using Hebb's rule with exponential time decay.
+    """
     try:
         redis_conn = get_redis_connection("default")
-        buffer_key = "cooccurrence_buffer"
-        
-        if not redis_conn.exists(buffer_key):
-            logger.debug("[Hebbian Learning] Redis buffer is empty.")
-            return "Buffer empty"
-            
-        processing_key = f"{buffer_key}:processing:{uuid.uuid4().hex}"
+
+        keys_to_process = set()
         try:
-            redis_conn.rename(buffer_key, processing_key)
-        except Exception as rename_err:
-            logger.warning(f"[Hebbian Learning] Buffer already claimed: {rename_err}")
-            return "Buffer empty or already processing"
+            for key_bytes in redis_conn.scan_iter(match=f"{GLOBAL_BUFFER_KEY}:*", count=100):
+                key = key_bytes.decode('utf-8') if isinstance(key_bytes, bytes) else key_bytes
+                keys_to_process.add(key)
+        except Exception as scan_err:
+            logger.warning(f"[Hebbian Learning] Partition scan failed: {scan_err}")
 
-        learning_rate = 0.05
+        if redis_conn.exists(GLOBAL_BUFFER_KEY):
+            keys_to_process.add(GLOBAL_BUFFER_KEY)
+
+        if not keys_to_process:
+            logger.debug("[Hebbian Learning] Redis buffer empty.")
+            return "Buffer empty"
+
         total_updated_links = 0
-        chunk_size = 1000
-        current_chunk = {}
+        for buffer_key in keys_to_process:
+            total_updated_links += _drain_buffer(redis_conn, buffer_key)
 
-        for pair_bytes, count_bytes in redis_conn.hscan_iter(processing_key, count=chunk_size):
-            current_chunk[pair_bytes] = count_bytes
-            
-            if len(current_chunk) >= chunk_size:
-                total_updated_links += _process_memory_links_chunk(current_chunk, learning_rate)
-                current_chunk = {}
-
-        if current_chunk:
-            total_updated_links += _process_memory_links_chunk(current_chunk, learning_rate)
-
-        redis_conn.delete(processing_key)
-
-        logger.info(f"[Hebbian Learning] Synchronization complete. Links updated/created: {total_updated_links}")
+        logger.info(
+            f"[Hebbian Learning] Sync complete across {len(keys_to_process)} partition(s). "
+            f"Links updated/created: {total_updated_links}"
+        )
         return f"Updated {total_updated_links} links"
-        
+
     except Exception as e:
-        logger.error(f"[Hebbian Learning] Critical error during graph plasticity processing: {e}", exc_info=True)
+        logger.error(f"[Hebbian Learning] Critical error: {e}", exc_info=True)
         return f"Error: {e}"
 
 
-def _process_memory_links_chunk(chunk: dict, learning_rate: float) -> int:
+def _drain_buffer(redis_conn, buffer_key: str) -> int:
+    """Drains a single cooccurrence buffer partition with atomic rename isolation."""
+    if not redis_conn.exists(buffer_key):
+        return 0
+
+    processing_key = f"{buffer_key}:processing:{uuid.uuid4().hex}"
+    try:
+        redis_conn.rename(buffer_key, processing_key)
+    except Exception as rename_err:
+        logger.warning(f"[Hebbian Learning] Buffer already claimed by another worker: {rename_err}")
+        return 0
+
+    try:
+        redis_conn.expire(processing_key, PROCESSING_TTL_SECONDS)
+    except Exception:
+        pass
+
+    total_updated_links = 0
+    current_chunk: Dict[bytes, bytes] = {}
+
+    for pair_bytes, count_bytes in redis_conn.hscan_iter(processing_key, count=CHUNK_SIZE):
+        current_chunk[pair_bytes] = count_bytes
+        if len(current_chunk) >= CHUNK_SIZE:
+            total_updated_links += _process_memory_links_chunk(current_chunk)
+            current_chunk = {}
+
+    if current_chunk:
+        total_updated_links += _process_memory_links_chunk(current_chunk)
+
+    redis_conn.delete(processing_key)
+    return total_updated_links
+
+
+def _process_memory_links_chunk(chunk: dict) -> int:
+    """Validates node existence, applies Hebbian rule with time decay, bulk upserts."""
     pair_counts = {}
     all_node_ids = set()
 
@@ -59,6 +115,8 @@ def _process_memory_links_chunk(chunk: dict, learning_rate: float) -> int:
         count = int(count_bytes)
         try:
             source_id, target_id = pair_str.split(":", 1)
+            if source_id == target_id:
+                continue
             pair_counts[(source_id, target_id)] = count
             all_node_ids.add(source_id)
             all_node_ids.add(target_id)
@@ -95,15 +153,21 @@ def _process_memory_links_chunk(chunk: dict, learning_rate: float) -> int:
 
     links_to_update = []
     links_to_create = []
+    now = timezone.now()
 
     for (source_id, target_id), count in valid_pairs.items():
         if (source_id, target_id) in existing_links_map:
             link = existing_links_map[(source_id, target_id)]
-            link.weight = min(1.0, float(link.weight) + (count * learning_rate))
+            updated_at = getattr(link, 'updated_at', None) or now
+            if timezone.is_naive(updated_at):
+                updated_at = timezone.make_aware(updated_at, timezone.get_current_timezone())
+            days_since = max(0.0, (now - updated_at).total_seconds() / 86400.0)
+            decay_factor = math.exp(-days_since / DECAY_HALF_LIFE_DAYS)
+            link.weight = min(1.0, float(link.weight) * decay_factor + count * LEARNING_RATE)
             links_to_update.append(link)
         else:
             initial_weight = 0.1
-            new_weight = min(1.0, initial_weight + (count * learning_rate))
+            new_weight = min(1.0, initial_weight + count * LEARNING_RATE)
             links_to_create.append(MemoryLink(
                 source_id=source_id,
                 target_id=target_id,

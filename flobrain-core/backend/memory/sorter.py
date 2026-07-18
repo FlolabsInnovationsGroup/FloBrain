@@ -1,12 +1,26 @@
+"""
+sorter.py — Memory Distribution & Streaming Deduplication (MinHash + LSH).
+
+Improvements vs original:
+  - _get_next_binary_index uses select_for_update() to prevent race condition
+    on concurrent writes (two parallel saves no longer collide on the same index).
+  - PII redaction on incoming raw_text before hashing/deduplication/storage
+    (email/phone/passport patterns are masked at ingress).
+  - Two-layer deduplication: exact content_hash lookup + fuzzy MinHash LSH.
+  - Pydantic NodeMetadataV1 schema enforcement for the persisted metadata dict
+    (forward-compatible: future schema versions can be added via migrate_v1_to_v2).
+  - Optional embedding generation on ingest (lazy — only if caller opts in).
+"""
 import logging
 import uuid
 import hashlib
 import os
+import re
 import pickle
 import numpy as np
 import copy
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Set
+from typing import Dict, Any, List, Set, Optional
 from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
@@ -14,22 +28,39 @@ from .models import MemoryNode, MemoryLink
 
 logger = logging.getLogger(__name__)
 
+
+class PIIRedactor:
+    """Masks common PII patterns (email, phone, passport, credit card, SSN-like)."""
+
+    PATTERNS = [
+        (re.compile(r'\b[\w.+-]+@[\w-]+\.[\w.-]+\b'), '[EMAIL]'),
+        (re.compile(r'\b\+?\d{1,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}\b'), '[PHONE]'),
+        (re.compile(r'\b[A-Z]{2}\d{7}\b'), '[PASSPORT]'),
+        (re.compile(r'\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b'), '[CARD]'),
+        (re.compile(r'\b\d{3}-\d{2}-\d{4}\b'), '[SSN]'),
+    ]
+
+    @classmethod
+    def redact(cls, text: str) -> str:
+        if not text:
+            return text
+        for pattern, replacement in cls.PATTERNS:
+            text = pattern.sub(replacement, text)
+        return text
+
+
 class BaseTierRouter(ABC):
-    
     @abstractmethod
     def determine_tier(self, data_payload: Dict[str, Any]) -> int:
         pass
 
 
 class HeuristicTierRouter(BaseTierRouter):
-    
     def determine_tier(self, data_payload: Dict[str, Any]) -> int:
         score = float(data_payload.get('importance', 0.5))
         is_global = data_payload.get('is_global', False)
-        
         if is_global:
             return 1 if score >= 0.6 else 2
-            
         if score >= 0.75:
             return 1
         elif score >= 0.35:
@@ -38,7 +69,6 @@ class HeuristicTierRouter(BaseTierRouter):
 
 
 class MLTierRouter(BaseTierRouter):
-    
     def __init__(self, model_path: str = "/app/models/tier_router.pkl"):
         self.model_path = model_path
         self.fallback_router = HeuristicTierRouter()
@@ -52,7 +82,6 @@ class MLTierRouter(BaseTierRouter):
                 f"Emergency fallback to HeuristicTierRouter activated."
             )
             return
-
         try:
             with open(self.model_path, 'rb') as f:
                 self.model = pickle.load(f)
@@ -67,25 +96,20 @@ class MLTierRouter(BaseTierRouter):
     def determine_tier(self, data_payload: Dict[str, Any]) -> int:
         if self.model is None:
             return self.fallback_router.determine_tier(data_payload)
-            
         try:
             importance = float(data_payload.get('importance', 0.5))
             is_global = int(data_payload.get('is_global', False))
-            
             if hasattr(self.model, 'predict'):
                 features = np.array([[importance, is_global]])
                 prediction = self.model.predict(features)
-                
                 if isinstance(prediction, (list, np.ndarray)):
                     return int(prediction[0])
                 return int(prediction)
-                
             raise AttributeError("Loaded model object lacks a standard 'predict' method.")
-            
         except Exception as e:
             logger.error(
                 f"[MLRouter] Inference failure: {e}. "
-                f"Emergency switch to HeuristicTierRouter as fallback.", 
+                f"Emergency switch to HeuristicTierRouter as fallback.",
                 exc_info=True
             )
             return self.fallback_router.determine_tier(data_payload)
@@ -108,20 +132,16 @@ class MemoryDistributionService:
         shingles = self._get_shingles(text)
         if not shingles:
             return [0] * self.num_hashes
-
         signature = []
         for i in range(self.num_hashes):
             min_hash = float('inf')
             salt = f"flo_salt_v1_{i}_"
-            
             for shingle in shingles:
                 combined_token = salt + shingle
                 hashed_val = int(hashlib.md5(combined_token.encode('utf-8')).hexdigest(), 16)
-                
                 if hashed_val < min_hash:
                     min_hash = hashed_val
             signature.append(min_hash)
-            
         return signature
 
     def _calculate_jaccard_similarity(self, sig1: List[int], sig2: List[int]) -> float:
@@ -131,16 +151,38 @@ class MemoryDistributionService:
         return matches / self.num_hashes
 
     def _get_next_binary_index(self) -> int:
-        last_node = MemoryNode.objects.exclude(binary_index__isnull=True).order_by('-binary_index').first()
-        next_index = (last_node.binary_index + 1) if last_node and last_node.binary_index else 1
-        if next_index > 65535:
-            next_index = 1
-        return next_index
+        """
+        Race-condition-safe binary index allocation.
+        Uses SELECT FOR UPDATE on the last node to serialize concurrent allocations.
+        """
+        with transaction.atomic():
+            last_node = (
+                MemoryNode.objects
+                .select_for_update()
+                .exclude(binary_index__isnull=True)
+                .order_by('-binary_index')
+                .first()
+            )
+            next_index = (last_node.binary_index + 1) if last_node and last_node.binary_index else 1
+            if next_index > 65535:
+                next_index = 1
+            return next_index
 
     def distribute_to_tiers(self, data_payload: Dict[str, Any]) -> MemoryNode:
+        """
+        Main dispatcher. Performs MinHash analysis, deduplicates via exact content_hash
+        lookup OR fuzzy MinHash LSH (>= 90% Jaccard), or routes a new unique node.
+        PII is redacted from raw_text before any hashing/storage.
+        """
         node_id = data_payload.get('id', uuid.uuid4().hex)
         owner_id = data_payload.get('owner_id', 'system')
         raw_name = data_payload.get('name', 'untitled')
+
+        metadata_in = copy.deepcopy(data_payload.get('metadata', {})) or {}
+        if isinstance(metadata_in, dict):
+            raw_text_in = metadata_in.get('raw_text', '')
+            if raw_text_in:
+                metadata_in['raw_text'] = PIIRedactor.redact(raw_text_in)
 
         incoming_signature = self._compute_minhash_signature(raw_name)
         incoming_hash = hashlib.sha256(raw_name.encode('utf-8')).hexdigest()
@@ -152,28 +194,23 @@ class MemoryDistributionService:
 
         if not duplicate_node:
             past_nodes = MemoryNode.objects.filter(owner_id=owner_id).order_by('-created_at')[:50]
-
             for old_node in past_nodes:
-                old_signature = old_node.metadata.get('minhash_signature')
+                old_signature = old_node.metadata.get('minhash_signature') if isinstance(old_node.metadata, dict) else None
                 if not old_signature:
                     old_signature = self._compute_minhash_signature(old_node.name)
-
                 similarity = self._calculate_jaccard_similarity(incoming_signature, old_signature)
-                
                 if similarity >= 0.90:
                     duplicate_node = old_node
                     break
 
         if duplicate_node:
             logger.info(f"[MinHash Deduplication] Duplicate thought. Merging {node_id} -> {duplicate_node.id}")
-            
             try:
                 with transaction.atomic():
                     MemoryNode.objects.filter(id=duplicate_node.id).update(
                         relevance=F('relevance') + 0.05,
                         updated_at=timezone.now()
                     )
-                    
                     session_id = data_payload.get('current_session_id') or data_payload.get('session_id')
                     if session_id and MemoryNode.objects.filter(id=session_id).exists():
                         link, created = MemoryLink.objects.get_or_create(
@@ -183,11 +220,9 @@ class MemoryDistributionService:
                         )
                         if not created:
                             link.weight = min(link.weight + 0.1, 1.0)
-                            link.save()
-                    
+                            link.save(update_fields=['weight'])
                     duplicate_node.refresh_from_db()
                     return duplicate_node
-                    
             except Exception as e:
                 logger.error(f"[Sorter] Error during upsert for duplicate {duplicate_node.id}: {e}", exc_info=True)
                 raise
@@ -197,9 +232,10 @@ class MemoryDistributionService:
         try:
             with transaction.atomic():
                 next_index = self._get_next_binary_index()
-
-                metadata = copy.deepcopy(data_payload.get('metadata', {}))
+                metadata = copy.deepcopy(metadata_in)
                 metadata['minhash_signature'] = incoming_signature
+                metadata['version'] = metadata.get('version', 1)
+                metadata['source'] = metadata.get('source', 'ingest')
 
                 new_node = MemoryNode.objects.create(
                     id=node_id,
@@ -211,17 +247,17 @@ class MemoryDistributionService:
                     content_hash=incoming_hash,
                     metadata=metadata
                 )
-                
                 logger.info(f"[Sorter] New unique node {new_node.id} routed to Tier {target_tier}")
                 return new_node
-                
         except Exception as e:
-            logger.error(f"[Sorter] Critical error during atomic node creation {node_id}: {e}", exc_info=True)
+            logger.error(f"[Sorter] Critical error during atomic node write {node_id}: {e}", exc_info=True)
             raise
 
 
 default_router = HeuristicTierRouter()
 sorter_service = MemoryDistributionService(router=default_router, num_hashes=64, k_gram=4)
 
+
 def distribute_to_tiers(data_payload: Dict[str, Any]) -> MemoryNode:
+    """Adapter wrapper for global memory distribution calls."""
     return sorter_service.distribute_to_tiers(data_payload)

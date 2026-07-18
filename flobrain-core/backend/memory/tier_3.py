@@ -1,3 +1,14 @@
+"""
+tier_3.py — Cold Vault Manager (Tier 3: S3 + AES-256-GCM + Zstd).
+
+Improvements vs original:
+  - migrate_node() is now idempotent: a node already at Tier 3 returns True
+    without re-archiving; a freshly created node (< MIN_AGE_SECONDS) is
+    skipped to avoid the views.py anti-pattern of calling migrate_to_cold_storage
+    on every save. The migration is now safe to call from any code path.
+  - retrieve_node() handles None/empty URIs gracefully.
+  - Public methods migrate_node() and retrieve_node() match the global adapters.
+"""
 import os
 import uuid
 import time
@@ -7,10 +18,14 @@ import functools
 import zstandard as zstd
 import boto3
 from botocore.exceptions import ClientError, BotoCoreError
+from datetime import timedelta
 from typing import Dict, Any, Optional
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
+
+MIN_AGE_SECONDS = 300
 
 
 def retry_on_network_error(max_retries: int = 4, initial_delay: float = 1.0, backoff_factor: float = 2.0):
@@ -28,7 +43,6 @@ def retry_on_network_error(max_retries: int = 4, initial_delay: float = 1.0, bac
                             f"Critical error: {e}", exc_info=True
                         )
                         raise e
-
                     sleep_time = delay * random.uniform(0.5, 1.5)
                     logger.warning(
                         f"[Retry Policy] Error in {func.__name__} (Attempt {attempt}/{max_retries}): {e}. "
@@ -64,12 +78,19 @@ class SecureCipher:
 class S3StorageBackend:
     def __init__(self, bucket_name: str):
         self.bucket_name = bucket_name
-        self.s3_client = boto3.client(
-            's3',
-            endpoint_url=os.getenv("S3_ENDPOINT_URL", None),
-            aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-            aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
-        )
+        # Filter empty strings — boto3 rejects endpoint_url="" with ValueError.
+        # Only pass endpoint_url if it's a non-empty string.
+        endpoint_url = os.getenv("S3_ENDPOINT_URL") or None
+        aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID") or None
+        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY") or None
+        client_kwargs = {'service_name': 's3'}
+        if endpoint_url:
+            client_kwargs['endpoint_url'] = endpoint_url
+        if aws_access_key_id:
+            client_kwargs['aws_access_key_id'] = aws_access_key_id
+        if aws_secret_access_key:
+            client_kwargs['aws_secret_access_key'] = aws_secret_access_key
+        self.s3_client = boto3.client(**client_kwargs)
 
     @retry_on_network_error(max_retries=4, initial_delay=1.0)
     def put_object(self, key: str, data: bytes) -> str:
@@ -80,7 +101,6 @@ class S3StorageBackend:
     def get_object(self, uri: str) -> bytes:
         if not uri.startswith(f"s3://{self.bucket_name}/"):
             raise ValueError(f"Invalid S3 URI: {uri}")
-
         key = uri.replace(f"s3://{self.bucket_name}/", "")
         response = self.s3_client.get_object(Bucket=self.bucket_name, Key=key)
         return response['Body'].read()
@@ -97,16 +117,25 @@ class Tier3ColdStorageManager:
         try:
             if not raw_text:
                 return None
-
             compressed = self.compressor.compress(raw_text.encode('utf-8'))
             encrypted = self.cipher.encrypt(compressed)
             key = f"archive/node_{node_id}_{uuid.uuid4().hex[:8]}.zst.enc"
-            vault_uri = self.storage.put_object(key, encrypted)
-
-            return vault_uri
+            return self.storage.put_object(key, encrypted)
         except Exception as e:
             logger.error(f"[Tier 3] Critical migration error for node {node_id}: {e}", exc_info=True)
             return None
+
+    def _is_node_recently_created(self, node) -> bool:
+        try:
+            created_at = getattr(node, 'created_at', None)
+            if not created_at:
+                return False
+            if timezone.is_naive(created_at):
+                created_at = timezone.make_aware(created_at, timezone.get_current_timezone())
+            age_seconds = (timezone.now() - created_at).total_seconds()
+            return age_seconds < MIN_AGE_SECONDS
+        except Exception:
+            return False
 
     def migrate_node(self, node) -> bool:
         try:
@@ -114,9 +143,20 @@ class Tier3ColdStorageManager:
                 logger.error("[Tier 3] migrate_node called with None instead of a node.")
                 return False
 
+            current_tier = getattr(node, 'tier_level', None)
+            if current_tier == 3:
+                logger.debug(f"[Tier 3] Node {getattr(node, 'id', '?')} already at Tier 3 — idempotent no-op.")
+                return True
+
+            if self._is_node_recently_created(node):
+                logger.info(
+                    f"[Tier 3] Node {getattr(node, 'id', '?')} created less than {MIN_AGE_SECONDS}s ago — "
+                    f"skipping cold migration (call from save path is a no-op; GC will handle it later)."
+                )
+                return True
+
             metadata = getattr(node, 'metadata', None) or {}
             raw_text = metadata.get('raw_text', '') or getattr(node, 'name', '') or ''
-
             if not raw_text:
                 raw_text = getattr(node, 'name', '') or ''
 
@@ -214,6 +254,11 @@ cold_storage_service = Tier3ColdStorageManager(storage=_storage_backend, cipher=
 
 
 def migrate_to_cold_storage(node) -> bool:
+    """
+    Global adapter. Idempotent — safe to call from any path (including save handlers).
+    A node already at Tier 3 or created within the last MIN_AGE_SECONDS returns True
+    without performing real migration.
+    """
     try:
         return cold_storage_service.migrate_node(node)
     except Exception as e:

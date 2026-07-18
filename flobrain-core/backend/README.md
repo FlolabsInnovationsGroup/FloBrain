@@ -1,107 +1,209 @@
-#  Backend Structure
-```
-backend/
-├── venv/                 <-- Your isolated Python environment
-├── .gitignore            <-- VERY IMPORTANT (keeps venv out of Git)
-├── requirements.txt      <-- Dependencies list
-├── manage.py             <-- The command center
-├── flobrain/             <-- The "Project Configuration" (Settings, URLs)
-│   ├── __init__.py
-│   ├── asgi.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-└── users/                <-- Your Django App (Business logic)
-    ├── __init__.py
-    ├── admin.py
-    ├── apps.py
-    ├── migrations/
-    ├── models.py
-    ├── tests.py
-    └── views.py
-```
+# FloBrain Memory Subsystem
 
-# FloBrain Backend API
+Production-grade three-tier memory system for AI applications: Tier 1 (RAM/rANS), Tier 2 (vector DB + BM25 + Hebbian), Tier 3 (S3 + AES-256-GCM).
 
-This is the Django + PostgreSQL backend for the FloBrain application. It is fully containerized using Docker to ensure a consistent development environment.
+## Quick Start
 
-## Quick Start Guide
+### Prerequisites
+- Docker Desktop 4.30+
+- WSL2 (Windows) or native Docker (Linux/Mac)
+- 8 GB RAM minimum
 
-**Prerequisites:**
-* Docker Desktop (installed and running)
-* Git
-
-### 1. Navigate to the Directory
-Since this is part of the main monorepo, you must first move into the backend folder (from repo root: `Caipo-FloLabs`):
-```bash
-cd flobrain-core/backend
-```
-Or from `flobrain-core`: `cd backend`. All `docker compose` commands must be run from this `backend/` directory.
-### 2. First-Time Setup (Build & Run)
-- To download the dependencies, build the containers, and start the app` for the first time`, run:
-or 
-- Rebuild (Maintenance): Run this only if you added a new library to requirements.txt or changed the Dockerfile
+### Setup
 
 ```bash
-docker compose up --build 
-```
-What this does: Pulls the Postgres image, installs Python requirements, and starts the Django server.
-Success: You will see `Watching for file changes with StatReloader in the terminal.`
+# 1. Copy env template
+cp .env.example .env
 
-#### Verify: Open http://localhost:8000 in your browser.
+# 2. Build and start
+docker compose up -d --build
 
-### 3. If you have already built the image once, you just need to start it:
-Start the Server
-
-```bash 
-docker compose up
-``` 
-
-### 4. Running Django Commands
-`⚠️ Important Rule: The containers must be running (docker compose up) for these commands to work. We use exec to send commands into the running Linux container.
-`
-```bash
-docker compose exec web python manage.py "any command"
-# examples 
-docker compose exec web python manage.py makemigrations
+# 3. Apply migrations (automatic on web container start)
 docker compose exec web python manage.py migrate
+
+# 4. Run tests
+docker compose exec web python manage.py test memory.tests_integration
+docker compose exec web python manage.py test memory.tests
 ```
 
-### 5. Database Access (PostgreSQL)
-`⚠️ Important Rule:: The database container (db) must be running.`
+## SuperMemory Integration
 
-Connect directly to the database inside the container:
+### Stub Mode (default — no SuperMemory required)
 
-Bash
+When `SUPERMEMORY_BASE_URL` is empty (default in `.env.example`), the system runs in stub mode:
+- All SuperMemory connector methods return stub responses
+- Semantic layer (chunker, entity extractor) uses local fallback
+- Memory stored in FloBrain's own Tier 1/2/3 storage
+
+This mode is **fully functional** — you can `memorize`, `recall`, and `forget` memories without SuperMemory.
+
+### Remote Mode (when SuperMemory is ready)
+
+When another developer sends you the SuperMemory URL:
+
 ```bash
-docker compose exec db psql -U flo_user -d flobrain_db
+# 1. Edit .env
+SUPERMEMORY_BASE_URL=http://supermemory-server:8787
+SUPERMEMORY_API_KEY=optional_token
+SUPERMEMORY_TIMEOUT=2
+
+# 2. Restart
+docker compose restart web celery-worker
+
+# 3. Validate connection
+docker compose exec web python scripts/validate_supermemory_connection.py
 ```
-- some commands 
-   - List tables: \dt
-   - any sql query(select * from users_table;)
-   - Quit: \q
 
-### 6. Troubleshooting & Reset
-"I broke the database / I want a fresh start"
-If you want to delete the database volume and start completely fresh (WARNING: This deletes all data):
+All 5+ checks should pass. If any fail — coordinate with the SuperMemory developer.
+
+### Validation Script
 
 ```bash
-docker compose down -v
-docker compose up --build
-``` 
-"Port is already allocated"
-If you see an error about port 5432 or 8000 being in use, make sure you don't have another Postgres instance or Django server running on your machine.
+# Run in stub mode (default)
+docker compose exec web python scripts/validate_supermemory_connection.py
 
-### 7. Running without Docker (local venv)
-If you run Django on your machine (e.g. `python manage.py runserver`) instead of in Docker:
+# Run in remote mode (after setting SUPERMEMORY_BASE_URL)
+docker compose exec web python scripts/validate_supermemory_connection.py
+```
 
-1. **Install dependencies** (note: file is `requirements.txt` and you need the `-r` flag):
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   ```
-   *(Wrong: `pip install requirments.txt` — that tries to install a package named "requirments.txt".)*
+Expected output (stub mode):
+```
+=== SuperMemory connection check (mode=stub) ===
+  [OK]   health()                                  0ms
+  [OK]   create_document(validation_...)           0ms
+  [OK]   search(validation)                        0ms
+  [OK]   get_document(validation_...)              0ms
+  [OK]   get_profile(validation)                   0ms
+  [OK]   list_connections()                        0ms
+  [OK]   delete_document(validation_...)           0ms
+=== Done ===
+  RESULT: ALL CHECKS PASSED ✅
+```
 
-2. **PostgreSQL** must be running locally, and in `flobrain/settings.py` (or via env) set `DB_HOST=localhost` (or `127.0.0.1`). Otherwise you'll see `Error loading psycopg2 or psycopg module` if the driver isn't installed, or connection errors if Postgres isn't running.
+## Vector Backend (ChromaDB → Qdrant)
 
-**Recommended:** Use Docker (`docker compose up`) so Postgres and the app run together without local installs.
+The system supports two vector backends, switchable via `VECTOR_BACKEND` env var:
+
+| Backend | Setting | Use case |
+|---|---|---|
+| ChromaDB (default) | `VECTOR_BACKEND=chromadb` | Dev, embedded, no extra service |
+| Qdrant | `VECTOR_BACKEND=qdrant` | Production, scalable, filtered search |
+
+### Switch to Qdrant
+
+```bash
+# 1. Set in .env
+VECTOR_BACKEND=qdrant
+QDRANT_URL=http://qdrant:6333
+
+# 2. Run migration script (idempotent)
+docker compose exec web python scripts/migrate_chromadb_to_qdrant.py --dry-run
+docker compose exec web python scripts/migrate_chromadb_to_qdrant.py
+
+# 3. Restart web
+docker compose restart web
+```
+
+## API Endpoints
+
+### SuperMemory-compatible (semantic layer)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/memory/sm/memorize` | Store a memory (auto-chunked, entity extraction) |
+| POST | `/api/memory/sm/recall?scope=personal\|team\|all` | Retrieve relevant memories |
+| DELETE | `/api/memory/sm/memories/{id}` | Forget a memory |
+| GET | `/api/memory/sm/entities` | List known entities for user |
+| GET | `/api/memory/sm/entities/search?text=X` | Find memories mentioning entity X |
+| GET | `/api/memory/sm/health` | Adapter + connector status |
+
+### Team Memory
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/teams/` | Create team |
+| GET | `/api/teams/` | List user's teams |
+| GET | `/api/teams/{id}` | Team detail with members |
+| POST | `/api/teams/{id}/members` | Add member (admin only) |
+| DELETE | `/api/teams/{id}/members/{user_id}` | Remove member (admin only) |
+| GET | `/api/teams/{id}/memories` | List team memories |
+| POST | `/api/teams/{id}/memories` | Create team memory (admin only) |
+
+### Phase 3 — Graph + Health
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/memory/graph/query` | Execute Cypher query (Neo4j) |
+| POST | `/api/health/measurements` | Store health measurement (wearable) |
+| GET | `/api/health/measurements?type=heart_rate` | List user's measurements |
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│  AI Agents / Frontend / Wearables                   │
+└──────────────────┬──────────────────────────────────┘
+                   │ REST API
+                   ▼
+┌─────────────────────────────────────────────────────┐
+│  SuperMemory Adapter (STUB ↔ REMOTE auto-switch)    │
+│  - semantic_chunker.py (sentence-based, overlap)    │
+│  - entity_extractor.py (regex NER + known-orgs)     │
+│  - supermemory_connector.py (HTTP client, 2s timeout)│
+└──────────────────┬──────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────────┐
+│  FloBrain Storage Backend                           │
+│  - Tier 1: Redis + rANS compression + LRU eviction  │
+│  - Tier 2: ChromaDB|Qdrant + BM25 + Hebbian decay   │
+│  - Tier 3: S3 + AES-256-GCM + Zstd                  │
+│  - PII Redaction at ingress                         │
+│  - Audit log (MongoDB)                              │
+└─────────────────────────────────────────────────────┘
+```
+
+## Testing
+
+```bash
+# Integration tests (16 tests, ~15s)
+docker compose exec web python manage.py test memory.tests_integration
+
+# Connector mock tests (12 tests, <1s)
+docker compose exec web python manage.py test memory.tests.test_supermemory_connector
+
+# Team memory ACL tests (6 tests, <1s)
+docker compose exec web python manage.py test memory.tests.test_team_memory
+```
+
+## Troubleshooting
+
+### Q: `ModuleNotFoundError: No module named 'qdrant_client'`
+A: `pip install qdrant-client` or set `VECTOR_BACKEND=chromadb` (default).
+
+### Q: `redis.exceptions.ConnectionError`
+A: `docker compose up -d redis` then `docker compose restart web`.
+
+### Q: SuperMemory health check fails with `unreachable`
+A: Verify `SUPERMEMORY_BASE_URL` is reachable from web container. Test:
+```bash
+docker compose exec web curl -s http://supermemory-server:8787/health
+```
+
+### Q: Tests skip with "Redis not available"
+A: Run `docker compose up -d redis` and `docker compose restart web`. Tests check Redis availability at runtime.
+
+## Documentation
+
+- [ADR 0001 — SuperMemory Integration](docs/adr/0001-supermemory-integration.md)
+- [ADR 0002 — Vector Backend: Qdrant](docs/adr/0002-vector-backend-qdrant.md)
+- [ADR 0003 — Neo4j for Knowledge Graph](docs/adr/0003-neo4j-for-graph.md)
+
+## Phase Status
+
+- ✅ **Phase 1 W1**: Celery worker/beat + Qdrant + .env.example
+- ✅ **Phase 1 W2**: Connector (get_profile, list_connections, upload_file) + Assembler patch
+- ✅ **Phase 1 W3**: Team Memory + ACL + scope param
+- ✅ **Phase 1 W4**: Prometheus metrics + README
+- ✅ **Phase 3 (MVP)**: Neo4j graph_sync + Redis Streams events + Health Buddy API + Oura importer
+- ⛔ **Phase 2**: BLOCKED — requires live SuperMemory server
