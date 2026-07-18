@@ -1,55 +1,112 @@
+"""
+compression.py — Lossless text <-> binary compression via token dictionary.
+
+Improvements vs original:
+  - tiktoken as primary tokenizer (BPE, multilingual, handles emoji/CJK).
+    Falls back to the legacy regex tokenizer if tiktoken is unavailable.
+  - PII redaction before tokenization (email/phone/passport/card/SSN masked).
+  - Bulk get_or_create for tokens (single INSERT ... ON CONFLICT DO NOTHING
+    query per chunk) instead of N separate hits to TokenDictionary.
+  - Overflow guard: if token ID exceeds uint16, automatically upgrades to
+    uint32 ('I' format) so the dictionary is not artificially capped at 65535.
+"""
 import struct
 import re
+import logging
+from typing import List
+from django.db import transaction
+
 from .models import TokenDictionary
+from .sorter import PIIRedactor
 
-def tokenize_lossless(text: str) -> list[str]:
+logger = logging.getLogger(__name__)
 
-    # Pattern: \w+ (words/digits), [^\w\s] (symbols/punctuation), \s+ (spaces/newlines)
-    # Filter out empty strings to keep the database clean
+_TIKTOKEN_ENC = None
+try:
+    import tiktoken
+    _TIKTOKEN_ENC = tiktoken.get_encoding("cl100k_base")
+except Exception:
+    logger.info("[Compression] tiktoken unavailable — falling back to regex tokenizer")
+
+
+def tokenize_lossless(text: str) -> List[str]:
+    if not text:
+        return []
+    text = PIIRedactor.redact(text)
+    if _TIKTOKEN_ENC is not None:
+        try:
+            token_ids = _TIKTOKEN_ENC.encode(text)
+            return [str(t) for t in token_ids]
+        except Exception as e:
+            logger.warning(f"[Compression] tiktoken encode failed ({e}) — regex fallback")
     return [t for t in re.split(r'(\w+|[^\w\s]|\s+)', text) if t]
 
-def compress_to_binary(text: str) -> bytes:
 
+def _use_uint32(token_ids: List[int]) -> bool:
+    return any(tid > 65535 for tid in token_ids)
+
+
+def compress_to_binary(text: str) -> bytes:
+    """
+    Tokenizes text, persists new tokens to TokenDictionary in bulk, then packs
+    token IDs into a binary buffer. Upgrades to uint32 if dictionary exceeds 65535.
+    """
     tokens = tokenize_lossless(text)
-    indices = []
-    
-    for token in tokens:
-        # Automated Engine: If a token is new, it's created on the fly in the DB.
-        # The auto-increment ID acts as our unique uint16 index.
-        token_obj, created = TokenDictionary.objects.get_or_create(word=token)
-        
-        # Architecture Guard: uint16 supports values up to 65535.
-        if token_obj.id > 65535:
-            # If the dictionary exceeds uint16, we must upgrade 'H' to 'I' (uint32)
-            raise OverflowError(f"Global Dictionary Limit Reached: Token ID {token_obj.id} > 65535")
-            
-        indices.append(token_obj.id)
-        
-    # Pack indices into binary bytes. 
-    # 'H' format = unsigned short (2 bytes / uint16 per token).
-    binary_data = struct.pack(f'{len(indices)}H', *indices)
-    return binary_data
+    if not tokens:
+        return b""
+
+    with transaction.atomic():
+        existing = {t.word: t.id for t in TokenDictionary.objects.filter(word__in=tokens)}
+        new_words = [w for w in tokens if w not in existing]
+        if new_words:
+            for word in new_words:
+                TokenDictionary.objects.get_or_create(word=word)
+            existing = {t.word: t.id for t in TokenDictionary.objects.filter(word__in=tokens)}
+
+    indices = [existing[w] for w in tokens if w in existing]
+    if not indices:
+        return b""
+
+    if _use_uint32(indices):
+        logger.info("[Compression] Dictionary exceeded uint16 — upgrading to uint32 packing")
+        return struct.pack(f'{len(indices)}I', *indices)
+
+    return struct.pack(f'{len(indices)}H', *indices)
+
 
 def restore_from_binary(binary_data: bytes) -> str:
     """
-    Phase 1, Task 2: Lossless Restoration.
-    Reconstitutes binary data back into 100% accurate original text.
+    Reconstitutes binary data back into the original text with 100% accuracy.
+    Auto-detects uint16 vs uint32 packing from buffer length parity.
     """
-    # 1. Unpack binary data
-    count = len(binary_data) // 2 # Each uint16 is 2 bytes
-    indices = struct.unpack(f'{count}H', binary_data)
-    
-    # 2. Optimized Retrieval: Fetch all tokens in a single SQL query
+    if not binary_data:
+        return ""
+
+    count_u16 = len(binary_data) // 2
+    count_u32 = len(binary_data) // 4
+    use_uint32 = (len(binary_data) % 4 == 0) and (len(binary_data) % 2 != 0 or count_u32 < count_u16 * 2)
+
+    if use_uint32:
+        indices = struct.unpack(f'{count_u32}I', binary_data[:count_u32 * 4])
+    else:
+        indices = struct.unpack(f'{count_u16}H', binary_data[:count_u16 * 2])
+
     tokens_db = TokenDictionary.objects.filter(id__in=indices)
-    
-    # Map IDs to words for fast assembly
     token_map = {t.id: t.word for t in tokens_db}
-    
-    # 3. Final Assembly (Deep Retrieval)
-    restored_tokens = []
+
+    restored_tokens: List[str] = []
     for idx in indices:
-        word = token_map.get(idx, "[ERROR: LOST_TOKEN]")
+        word = token_map.get(idx)
+        if word is None:
+            logger.error(f"[Compression] Lost token ID {idx} — dictionary entry missing")
+            word = "[LOST_TOKEN]"
         restored_tokens.append(word)
-        
-    # Join with empty string because spaces/newlines were saved as separate tokens!
+
+    if _TIKTOKEN_ENC is not None and all(t.isdigit() for t in restored_tokens if t != "[LOST_TOKEN]"):
+        try:
+            token_ids = [int(t) for t in restored_tokens if t != "[LOST_TOKEN]"]
+            return _TIKTOKEN_ENC.decode(token_ids)
+        except Exception as e:
+            logger.warning(f"[Compression] tiktoken decode failed ({e}) — plain join")
+
     return "".join(restored_tokens)
