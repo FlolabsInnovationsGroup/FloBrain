@@ -4,21 +4,56 @@ services:
     container_name: flobrain_backend_db
     restart: always
     ports:
-      - "5432:5432"   # Expose so Django on host can use DB_HOST=localhost
+      - "5432:5432"
     environment:
       - POSTGRES_DB=flobrain_db
       - POSTGRES_USER=flo_user
       - POSTGRES_PASSWORD=flo_password
     volumes:
       - postgres_data:/var/lib/postgresql
-  
+
+  redis:
+    image: redis:7-alpine
+    container_name: flobrain_backend_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  mongo:
+    image: mongo:7
+    container_name: flobrain_backend_mongo
+    ports:
+      - "27017:27017"
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.4
+    container_name: flobrain_backend_qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    restart: always
+    volumes:
+      - qdrant_data:/qdrant/storage
+
   web:
     build: .
     container_name: flobrain_backend_django
     restart: always
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "
+      until pg_isready -h db -p 5432;
+      do
+        echo 'Waiting for PostgreSQL...';
+        sleep 1;
+      done;
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
     volumes:
-      - .:/app  # This syncs the local folder to the container
+      - .:/app
     ports:
       - "8000:8000"
     env_file:
@@ -29,13 +64,67 @@ services:
       - DB_PASS=flo_password
       - DB_HOST=db
       - DB_PORT=5432
+      - VECTOR_BACKEND=chromadb
+      - QDRANT_URL=http://qdrant:6333
     depends_on:
       - db
-  redis:
-    image: redis:7-alpine
-    container_name: flobrain_backend_redis
-    ports:
-      - "6379:6379"
+      - redis
+      - mongo
+      - qdrant
+
+  celery-worker:
+    build: .
+    container_name: flobrain_backend_celery_worker
     restart: always
+    command: celery -A flobrain worker -l info --without-gossip --without-mingle --without-heartbeat
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=flobrain_db
+      - DB_USER=flo_user
+      - DB_PASS=flo_password
+      - DB_HOST=db
+      - DB_PORT=5432
+      - VECTOR_BACKEND=chromadb
+      - QDRANT_URL=http://qdrant:6333
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build: .
+    container_name: flobrain_backend_celery_beat
+    restart: always
+    command: celery -A flobrain beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=flobrain_db
+      - DB_USER=flo_user
+      - DB_PASS=flo_password
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - celery-worker
+
+  neo4j:
+    image: neo4j:5
+    container_name: flobrain_backend_neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    restart: always
+    environment:
+      - NEO4J_AUTH=neo4j/flobrainpassword
+    volumes:
+      - neo4j_data:/data
+
 volumes:
   postgres_data:
+  mongo_data:
+  qdrant_data:
+  neo4j_data:
