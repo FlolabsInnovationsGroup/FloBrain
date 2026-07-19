@@ -52,7 +52,19 @@ class MemoryNode(models.Model):
         db_table = "memory_nodes"
         indexes = [
             models.Index(fields=['tier_level', 'created_at']),
-            models.Index(fields=['owner_id', 'tier_level']),  
+            models.Index(fields=['owner_id', 'tier_level']),
+        ]
+
+    @property
+    def val(self):
+        """Graph node size derived from relevance."""
+        return float(self.relevance or 1.0)
+
+    @property
+    def group(self):
+        """Graph color group derived from memory type."""
+        groups = {"chunk": 1, "summary": 2, "interaction": 3, "workflow": 4}
+        return groups.get(self.memory_type, 1)
 
     def __str__(self):
         return self.name

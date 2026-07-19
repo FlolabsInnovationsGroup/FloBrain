@@ -6,12 +6,21 @@ from datetime import timedelta
 
 from django.db import connection
 from django.db.models import Count
+from django.db.models.functions import ExtractHour, ExtractWeekDay
 from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from memory.models import MemoryNode
 from users.views import get_user_from_request
+
+from .services import (
+    check_mongodb,
+    check_postgres,
+    derive_system_status,
+    get_connected_devices_count,
+    get_error_logs,
+)
 
 
 class DashboardHealthView(APIView):
@@ -21,21 +30,19 @@ class DashboardHealthView(APIView):
     """
 
     def get(self, request):
-        db_ok = True
-        try:
-            connection.ensure_connection()
-        except Exception:
-            db_ok = False
+        db_ok = check_postgres(connection)
+        mongo_ok = check_mongodb()
+        connected_devices = get_connected_devices_count()
+        all_systems_operational = db_ok and mongo_ok
+        system_status = derive_system_status(db_ok, mongo_ok, connected_devices)
 
-        # system_status, connected_devices, and latest_errors are mocked until real sources are wired up.
-        # system_status possible values: "online" | "idle" | "loading" | "offline" | "critical_error"
         return Response({
-            "status": "ok" if db_ok else "degraded",
-            "backend": "online",
+            "status": "ok" if all_systems_operational else "degraded",
+            "backend": "online" if all_systems_operational else "degraded",
             "database": "connected" if db_ok else "disconnected",
-            "allSystemsOperational": db_ok,
-            "system_status": "online",
-            "connected_devices": 3,
+            "allSystemsOperational": all_systems_operational,
+            "system_status": system_status,
+            "connected_devices": connected_devices,
         })
 
 
@@ -79,8 +86,6 @@ class DashboardMemoryActivityView(APIView):
 
         # Heatmap: activity by day of week (0=Monday) and hour (0-23)
         # Last 7 days of data, aggregate by weekday + hour
-        from django.db.models.functions import ExtractHour, ExtractWeekDay
-
         heatmap_qs = (
             qs.filter(created_at__gte=week_start)
             .annotate(weekday=ExtractWeekDay("created_at"), hour=ExtractHour("created_at"))
@@ -129,12 +134,6 @@ class DashboardErrorLogView(APIView):
                 {"error": "Authentication Required", "details": "valid Bearer token required"},
                 status=401,
             )
-        # Mocked error log data 
         return Response({
-            "error-logs":[
-                {"level": "warning", "message": "Memory node sync delayed by 3s", "timestamp": "06/03/26"},
-                {"level": "error",   "message": "Device XIAO-ESP32-S3 lost connection", "timestamp": "06/03/26"},
-                {"level": "warning", "message": "High CPU usage detected on brain core (87%)", "timestamp": "05/03/26"},
-                {"level": "error",   "message": "Failed to upload audio chunk to GCS", "timestamp": "05/03/26"},
-            ]
+            "error-logs": get_error_logs(user.id),
         })

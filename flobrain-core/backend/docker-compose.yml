@@ -13,6 +13,22 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
+  mongodb:
+    image: mongo:latest
+    container_name: flobrain_backend_mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: flobrain_backend_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
   web:
     build: .
     container_name: flobrain_backend_django
@@ -37,23 +53,14 @@ services:
       - DB_NAME=flobrain_db
       - DB_USER=flo_user
       - DB_PASS=flo_password
-      - DB_HOST=db # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker 
+      - DB_HOST=db # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker
       - DB_PORT=5432
+      - MONGO_URI=mongodb://mongodb:27017/
     depends_on:
       - db
-<<<<<<< HEAD
       - mongodb
+      - redis
 
-  mongodb:
-      image: mongo:latest
-
-=======
-  redis:
-    image: redis:7-alpine
-    container_name: flobrain_backend_redis
-    ports:
-      - "6379:6379"
-    restart: always
->>>>>>> 4e405ea (feat(memory): integrate tri-tier core and apply DB index fixes)
 volumes:
   postgres_data:
+  mongo_data:
