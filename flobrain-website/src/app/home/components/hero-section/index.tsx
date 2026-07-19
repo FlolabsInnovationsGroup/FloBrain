@@ -12,9 +12,8 @@ export const HeroSection = () => {
           FOR EVERY DEVICE
         </h1>
         <p className="mt-4 sm:mt-6 md:mt-[30px] w-full max-w-[490px] mx-auto sm:mx-0 text-[15px] sm:text-[17px] md:text-[19px] lg:text-[22px] text-[#FFFFFF] leading-relaxed">
-          FloBrain is the central intelligence layer that powers AI-enabled devices and
-          applications. Build smarter products with workflow orchestration, persistent memory, and
-          real-time AI—all privacy-first.
+          FloBrain is the AI operating system for memory, model routing, and
+            multi-agent workflows.
         </p>
       </div>
       <div className="flex-shrink-0">

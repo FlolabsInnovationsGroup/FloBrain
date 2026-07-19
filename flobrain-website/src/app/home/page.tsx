@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useCallback } from "react";
 import { BrainActivity } from "./components/brain-activity";
 import { LeftPanel } from "./components/left-panel";
