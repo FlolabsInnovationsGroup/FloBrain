@@ -39,13 +39,9 @@ services:
       - DB_PASS=flo_password
       - DB_HOST=db # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker
       - DB_PORT=5432
-      - LLM_PROVIDER=openai
-      - LLM_DEFAULT_MODEL=gpt-3.5-turbo
-      - MULTIMODAL_SERVICE_URL=http://mock-multimodal:8001
     depends_on:
       - db
       - mongodb
-      - mock-multimodal
 
   mock-multimodal:
     build:
