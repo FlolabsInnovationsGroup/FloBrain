@@ -8,6 +8,10 @@ const mockProfile = {
   email: "john.doe@example.com",
 };
 
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 vi.mock("@/contexts/AuthContext", () => ({
   useAuth: () => ({
     userId: "1",
@@ -86,23 +90,66 @@ describe("ProfileSettings Component", () => {
     expect(screen.getByText(/free/i)).toBeDefined();
   });
 
-  it("should open delete account modal when delete is clicked", async () => {
+  it("should have upgrade link to pricing page", async () => {
+    render(<ProfileSettings />);
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: /upgrade now/i })).toBeDefined();
+    });
+    const upgradeLink = screen.getByRole("link", {
+      name: /upgrade now/i,
+    }) as HTMLAnchorElement;
+    expect(upgradeLink.getAttribute("href")).toBe("/pricing");
+  });
+
+  it("should open delete account modal when delete account is clicked", async () => {
     render(<ProfileSettings />);
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /delete account/i })).toBeDefined();
     });
     fireEvent.click(screen.getByRole("button", { name: /delete account/i }));
-    expect(screen.getByRole("dialog", { name: /delete account/i })).toBeDefined();
-    expect(screen.getByLabelText(/^password$/i)).toBeDefined();
+    expect(screen.getByRole("dialog")).toBeDefined();
+    expect(screen.getByLabelText(/password/i)).toBeDefined();
   });
 
-  it("should apply danger styling to delete button", async () => {
+  it("should have proper input types in Edit modal", async () => {
+    render(<ProfileSettings />);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /edit/i })).toBeDefined();
+    });
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    const nameInput = screen.getByLabelText(/full name/i);
+    const emailInput = screen.getByLabelText(/email address/i);
+    expect(nameInput.getAttribute("type")).toBe("text");
+    expect(emailInput.getAttribute("type")).toBe("email");
+  });
+
+  it("should apply destructive styling to delete button", async () => {
     render(<ProfileSettings />);
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /delete account/i })).toBeDefined();
     });
     const deleteButton = screen.getByRole("button", { name: /delete account/i });
-    expect(deleteButton.className).toContain("fb-profile-btn-danger");
+    expect(deleteButton.className).toContain("red-600");
+  });
+
+  it("should close delete account modal when Cancel is clicked", async () => {
+    render(<ProfileSettings />);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /delete account/i })).toBeDefined();
+    });
+    fireEvent.click(screen.getByRole("button", { name: /delete account/i }));
+    expect(screen.getByRole("dialog")).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("should show Save button in Edit modal", async () => {
+    render(<ProfileSettings />);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /edit/i })).toBeDefined();
+    });
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    expect(screen.getByRole("button", { name: /^save$/i })).toBeDefined();
   });
 
   it("should close Edit modal when Cancel is clicked", async () => {

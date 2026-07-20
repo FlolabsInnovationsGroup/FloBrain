@@ -3,9 +3,20 @@
 import { useState, useEffect, useCallback, type ChangeEvent, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Trash2, Pencil, X } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
+import { SettingsNestedModal } from "../SettingsNestedModal";
+import {
+  settingsBtnDestructive,
+  settingsBtnPrimary,
+  settingsBtnSecondary,
+  settingsCardClass,
+  settingsInputClass,
+  settingsTextLabel,
+  settingsTextMuted,
+} from "../settings-styles";
+import { cn } from "@/lib/utils";
 
 export default function ProfileSettings() {
   const { isAuthenticated, logout } = useAuth();
@@ -178,20 +189,16 @@ export default function ProfileSettings() {
   const currentPlan = { name: "Developer", price: "Free" };
 
   if (isLoading) {
-    return <p className="fb-profile-body text-sm">Loading profile…</p>;
+    return <div className={settingsTextMuted}>Loading profile…</div>;
   }
 
   if (loadError && isAuthenticated) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-red-500" role="alert">
+        <p className="text-sm text-red-400" role="alert">
           {loadError}
         </p>
-        <button
-          type="button"
-          onClick={fetchProfile}
-          className="fb-profile-btn-secondary rounded-xl px-4 py-2 text-sm font-medium"
-        >
+        <button type="button" onClick={fetchProfile} className={settingsBtnSecondary}>
           Retry
         </button>
       </div>
@@ -201,39 +208,21 @@ export default function ProfileSettings() {
   return (
     <div className="space-y-8">
       {!isAuthenticated && (
-        <div
-          className="rounded-xl border px-4 py-3 text-sm"
-          style={{
-            background: "var(--fb-profile-field-bg)",
-            borderColor: "var(--fb-profile-field-border)",
-            color: "var(--fb-profile-warning)",
-          }}
-        >
-          <Link href="/signin" className="font-medium underline" style={{ color: "var(--fb-profile-link)" }}>
-            Sign in
-          </Link>{" "}
-          to view and edit your profile.
-        </div>
+        <p className="text-sm text-amber-400/90">Sign in to view and edit your profile.</p>
       )}
 
       <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1 space-y-5">
-          <div>
-            <p className="fb-profile-label mb-1 text-sm">Full Name</p>
-            <p className="fb-profile-title truncate font-medium">
-              {profile?.fullName || "—"}
-            </p>
-          </div>
-          <div>
-            <p className="fb-profile-label mb-1 text-sm">Email Address</p>
-            <p className="fb-profile-title truncate">{profile?.email || "—"}</p>
-          </div>
+        <div className="min-w-0 flex-1">
+          <p className={settingsTextMuted}>Full Name</p>
+          <p className="truncate font-medium text-white">{profile?.fullName || "—"}</p>
+          <p className={cn(settingsTextMuted, "mt-3")}>Email Address</p>
+          <p className="truncate text-white">{profile?.email || "—"}</p>
         </div>
         {isAuthenticated && (
           <button
             type="button"
             onClick={openEditModal}
-            className="fb-profile-btn-primary flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors"
+            className={cn("flex shrink-0 items-center gap-2", settingsBtnPrimary)}
           >
             <Pencil className="h-4 w-4" />
             Edit
@@ -241,113 +230,100 @@ export default function ProfileSettings() {
         )}
       </div>
 
-      {modalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-          style={{ background: "var(--fb-profile-modal-overlay)" }}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="edit-profile-title"
-        >
-          <div className="fb-profile-modal w-full max-w-md rounded-2xl p-6 shadow-xl">
-            <div className="mb-6 flex items-center justify-between">
-              <h3 id="edit-profile-title" className="fb-profile-title text-lg font-semibold">
-                Edit profile
-              </h3>
-              <button
-                type="button"
-                onClick={closeEditModal}
-                className="fb-profile-btn-secondary rounded-lg p-1.5 transition-colors"
-                aria-label="Close"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <form onSubmit={handleModalSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="modal-fullName" className="fb-profile-label mb-2 block text-sm font-medium">
-                  Full Name
-                </label>
-                <input
-                  id="modal-fullName"
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleModalChange}
-                  placeholder="John Doe"
-                  className={`fb-profile-field w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#9333ea]/40 ${fieldErrors.fullName ? "border-red-400" : ""}`}
-                  disabled={saveStatus === "saving"}
-                />
-                {fieldErrors.fullName && (
-                  <p className="mt-1 text-sm text-red-500" role="alert">
-                    {fieldErrors.fullName}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label htmlFor="modal-email" className="fb-profile-label mb-2 block text-sm font-medium">
-                  Email Address
-                </label>
-                <input
-                  id="modal-email"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleModalChange}
-                  placeholder="john.doe@example.com"
-                  className={`fb-profile-field w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#9333ea]/40 ${fieldErrors.email ? "border-red-400" : ""}`}
-                  disabled={saveStatus === "saving"}
-                />
-                {fieldErrors.email && (
-                  <p className="mt-1 text-sm text-red-500" role="alert">
-                    {fieldErrors.email}
-                  </p>
-                )}
-              </div>
-              {saveError && (
-                <p className="text-sm text-red-500" role="alert">
-                  {saveError}
-                </p>
-              )}
-              {saveStatus === "saved" && (
-                <p className="text-sm text-emerald-600 dark:text-emerald-400" role="status">
-                  Saved.
-                </p>
-              )}
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={closeEditModal}
-                  className="fb-profile-btn-secondary flex-1 rounded-xl px-4 py-2.5 text-sm font-medium"
-                  disabled={saveStatus === "saving"}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saveStatus === "saving"}
-                  className="fb-profile-btn-primary flex-1 rounded-xl px-4 py-2.5 text-sm font-medium disabled:opacity-50"
-                >
-                  {saveStatus === "saving" ? "Saving…" : "Save"}
-                </button>
-              </div>
-            </form>
+      <SettingsNestedModal
+        open={modalOpen}
+        onClose={closeEditModal}
+        title="Edit profile"
+        titleId="edit-profile-title"
+      >
+        <form onSubmit={handleModalSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="modal-fullName" className={cn(settingsTextLabel, "mb-2 block")}>
+              Full Name
+            </label>
+            <input
+              id="modal-fullName"
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleModalChange}
+              placeholder="John Doe"
+              className={cn(settingsInputClass, fieldErrors.fullName && "border-red-400/70")}
+              disabled={saveStatus === "saving"}
+              aria-invalid={!!fieldErrors.fullName}
+              aria-describedby={fieldErrors.fullName ? "modal-fullName-error" : undefined}
+            />
+            {fieldErrors.fullName && (
+              <p id="modal-fullName-error" className="mt-1 text-sm text-red-400" role="alert">
+                {fieldErrors.fullName}
+              </p>
+            )}
           </div>
-        </div>
-      )}
+          <div>
+            <label htmlFor="modal-email" className={cn(settingsTextLabel, "mb-2 block")}>
+              Email Address
+            </label>
+            <input
+              id="modal-email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleModalChange}
+              placeholder="john.doe@example.com"
+              className={cn(settingsInputClass, fieldErrors.email && "border-red-400/70")}
+              disabled={saveStatus === "saving"}
+              aria-invalid={!!fieldErrors.email}
+              aria-describedby={fieldErrors.email ? "modal-email-error" : undefined}
+            />
+            {fieldErrors.email && (
+              <p id="modal-email-error" className="mt-1 text-sm text-red-400" role="alert">
+                {fieldErrors.email}
+              </p>
+            )}
+          </div>
+
+          {saveError && (
+            <p className="text-sm text-red-400" role="alert">
+              {saveError}
+            </p>
+          )}
+          {saveStatus === "saved" && (
+            <p className="text-sm text-green-400" role="status">
+              Saved.
+            </p>
+          )}
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={closeEditModal}
+              className={cn("flex-1", settingsBtnSecondary)}
+              disabled={saveStatus === "saving"}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saveStatus === "saving"}
+              className={cn("flex-1", settingsBtnPrimary)}
+            >
+              {saveStatus === "saving" ? "Saving…" : "Save"}
+            </button>
+          </div>
+        </form>
+      </SettingsNestedModal>
 
       <div>
-        <p className="fb-profile-label mb-2 text-sm font-medium">Current Plan</p>
-        <div className="fb-profile-card rounded-xl px-4 py-4">
+        <label className={cn(settingsTextLabel, "mb-2 block")}>Current Plan</label>
+        <div className={settingsCardClass}>
           <div className="flex items-center justify-between">
-            <span className="fb-profile-title font-semibold">{currentPlan.name}</span>
-            <span className="fb-profile-title">{currentPlan.price}</span>
+            <span className="font-medium text-white">{currentPlan.name}</span>
+            <span className="text-white">{currentPlan.price}</span>
           </div>
           <div className="mt-2 text-right">
             <Link
               href="/pricing"
-              className="text-sm font-medium transition-colors hover:opacity-80"
-              style={{ color: "var(--fb-profile-link)" }}
+              className="text-sm text-violet-400 transition-colors hover:text-violet-300"
             >
               Upgrade now →
             </Link>
@@ -356,104 +332,84 @@ export default function ProfileSettings() {
       </div>
 
       <div>
-        <p className="fb-profile-label mb-2 text-sm font-medium">Support</p>
-        <Link
-          href="/contact"
-          className="fb-profile-card flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-colors hover:opacity-90"
-          style={{ color: "var(--fb-profile-title)" }}
-        >
-          Contact us
-          <span style={{ color: "var(--fb-profile-link)" }}>→</span>
-        </Link>
-      </div>
-
-      <div className="fb-profile-divider border-t pt-6">
-        <p className="fb-profile-label mb-3 text-sm">Danger zone</p>
+        <label className={cn(settingsTextLabel, "mb-2 block")}>Contact Us</label>
         <button
           type="button"
-          onClick={openDeleteModal}
-          className="fb-profile-btn-danger flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+          className={cn(
+            settingsInputClass,
+            "w-full cursor-pointer text-left transition-colors hover:border-white/20"
+          )}
         >
           <Trash2 className="h-4 w-4" />
           Delete account
         </button>
       </div>
 
-      {deleteModalOpen && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 backdrop-blur-sm"
-          style={{ background: "var(--fb-profile-modal-overlay)" }}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="delete-account-title"
-        >
-          <div className="fb-profile-modal w-full max-w-md rounded-2xl p-6 shadow-xl">
-            <div className="mb-6 flex items-center justify-between">
-              <h3 id="delete-account-title" className="fb-profile-title text-lg font-semibold">
-                Delete account
-              </h3>
-              <button
-                type="button"
-                onClick={closeDeleteModal}
-                className="fb-profile-btn-secondary rounded-lg p-1.5"
-                aria-label="Close"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <p className="fb-profile-body mb-4 text-sm">
-              This action cannot be undone. All your data will be permanently removed. Enter your
-              password to confirm.
-            </p>
-            <form onSubmit={handleDeleteAccountSubmit} className="space-y-4">
-              <div>
-                <label
-                  htmlFor="delete-account-password"
-                  className="fb-profile-label mb-2 block text-sm font-medium"
-                >
-                  Password
-                </label>
-                <input
-                  id="delete-account-password"
-                  type="password"
-                  value={deletePassword}
-                  onChange={(e) => {
-                    setDeletePassword(e.target.value);
-                    setDeleteError(null);
-                  }}
-                  placeholder="Enter your password"
-                  className="fb-profile-field w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30"
-                  autoComplete="current-password"
-                  disabled={deleteStatus === "deleting"}
-                />
-              </div>
-              {deleteError && (
-                <p className="text-sm text-red-500" role="alert">
-                  {deleteError}
-                </p>
-              )}
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={closeDeleteModal}
-                  className="fb-profile-btn-secondary flex-1 rounded-xl px-4 py-2.5 text-sm font-medium"
-                  disabled={deleteStatus === "deleting"}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={deleteStatus === "deleting"}
-                  className="flex-1 rounded-xl px-4 py-2.5 text-sm font-medium text-white transition-colors disabled:opacity-50"
-                  style={{ background: "var(--fb-profile-danger)" }}
-                >
-                  {deleteStatus === "deleting" ? "Deleting…" : "Delete account"}
-                </button>
-              </div>
-            </form>
+      <button
+        type="button"
+        onClick={openDeleteModal}
+        className={cn("flex w-full items-center justify-center gap-2 px-6 py-3", settingsBtnDestructive)}
+      >
+        <Trash2 className="h-5 w-5" />
+        Delete Account
+      </button>
+
+      <SettingsNestedModal
+        open={deleteModalOpen}
+        onClose={closeDeleteModal}
+        title="Delete account"
+        titleId="delete-account-title"
+      >
+        <p className={cn(settingsTextMuted, "mb-4")}>
+          This action cannot be undone. All your data will be permanently removed. Enter your
+          password to confirm.
+        </p>
+        <form onSubmit={handleDeleteAccountSubmit} className="space-y-4">
+          <div>
+            <label
+              htmlFor="delete-account-password"
+              className={cn(settingsTextLabel, "mb-2 block")}
+            >
+              Password
+            </label>
+            <input
+              id="delete-account-password"
+              type="password"
+              value={deletePassword}
+              onChange={(e) => {
+                setDeletePassword(e.target.value);
+                setDeleteError(null);
+              }}
+              placeholder="Enter your password"
+              className={settingsInputClass}
+              autoComplete="current-password"
+              disabled={deleteStatus === "deleting"}
+            />
           </div>
-        </div>
-      )}
+          {deleteError && (
+            <p className="text-sm text-red-400" role="alert">
+              {deleteError}
+            </p>
+          )}
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={closeDeleteModal}
+              className={cn("flex-1", settingsBtnSecondary)}
+              disabled={deleteStatus === "deleting"}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={deleteStatus === "deleting"}
+              className={cn("flex-1", settingsBtnDestructive)}
+            >
+              {deleteStatus === "deleting" ? "Deleting…" : "Delete account"}
+            </button>
+          </div>
+        </form>
+      </SettingsNestedModal>
     </div>
   );
 }

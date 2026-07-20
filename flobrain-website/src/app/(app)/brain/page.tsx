@@ -13,6 +13,8 @@ import ChatInput from './components/MessageInput/index';
 import jsPDF from 'jspdf';
 import { BarChart3, PanelLeft, X } from 'lucide-react';
 import { MotionProvider, Reveal, Stagger, StaggerItem } from '@/components/motion';
+import { setBrainConversationId } from '@/lib/sentry';
+import SettingsDialog from '@/app/profile/components/SettingsDialog';
 
 const WELCOME_MESSAGE: Message = {
   id: 'msg-welcome',
@@ -216,7 +218,7 @@ function ConfidencePanel() {
     <Reveal
       variant="slideRight"
       inView={false}
-      className="max-md:hidden flex w-[300px] shrink-0 min-h-0"
+      className="max-md:hidden flex w-[min(300px,26vw)] shrink-0 min-h-0"
     >
       <aside className="flex h-full w-full flex-col rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 min-h-0">
         <ConfidencePanelContent />
@@ -236,11 +238,16 @@ function BrainPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [preferences, setPreferences] = useState<BrainPreferences>(DEFAULT_PREFERENCES);
   const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
   const [mobileConfidenceOpen, setMobileConfidenceOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setBrainConversationId(currentChatId);
+  }, [currentChatId]);
 
   const closeMobileSidebars = useCallback(() => {
     setMobileSessionsOpen(false);
@@ -596,6 +603,11 @@ function BrainPageContent() {
     setMobileSessionsOpen(false);
   }, [handleNewChat]);
 
+  const handleSettings = useCallback(() => {
+    setMobileSessionsOpen(false);
+    setIsSettingsOpen(true);
+  }, []);
+
   const openMobileSessions = useCallback(() => {
     setMobileConfidenceOpen(false);
     setMobileSessionsOpen(true);
@@ -806,7 +818,7 @@ function BrainPageContent() {
             onNewChat={handleNewChatMobile}
             onSearch={() => {}}
             onPreferences={() => setIsPreferencesOpen(true)}
-            onSettings={() => {}}
+            onSettings={handleSettings}
             chatsLoading={chatsLoading}
           />
         </div>
@@ -939,6 +951,10 @@ function BrainPageContent() {
         preferences={preferences}
         onClose={() => setIsPreferencesOpen(false)}
         onChange={setPreferences}
+      />
+      <SettingsDialog
+        open={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
     </main>
     </MotionProvider>
