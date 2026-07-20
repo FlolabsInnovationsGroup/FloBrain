@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { AlertTriangle, RefreshCw } from "lucide-react";
+import { captureException } from "@/lib/sentry";
 
 interface GlobalErrorProps {
   error: Error & { digest?: string };
@@ -10,7 +11,7 @@ interface GlobalErrorProps {
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
-    console.error("Global Error:", error);
+    captureException(error);
   }, [error]);
 
   return (
