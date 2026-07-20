@@ -111,8 +111,8 @@ class MemoryGraphView(APIView):
             {
                 "id": n.id,
                 "name": n.name,
-                "val": n.val,
-                "group": n.group,
+                "val": n.relevance,
+                "group": n.memory_type,
                 "memory_type": n.memory_type,
                 "relevance": n.relevance,
                 "created_at": n.created_at.isoformat() if n.created_at else None,
@@ -150,19 +150,19 @@ class MemoryNodeDetailView(APIView):
             
             # All connections (not filtered)
             outgoing = [
-                {"id": link.target.id, "name": link.target.name, "group": link.target.group}
+                {"id": link.target.id, "name": link.target.name, "group": link.target.memory_type}
                 for link in node.outgoing_links.all()
             ]
             incoming = [
-                {"id": link.source.id, "name": link.source.name, "group": link.source.group}
+                {"id": link.source.id, "name": link.source.name, "group": link.source.memory_type}
                 for link in node.incoming_links.all()
             ]
-            
+
             return Response({
                 "id": node.id,
                 "name": node.name,
-                "val": node.val,
-                "group": node.group,
+                "val": node.relevance,
+                "group": node.memory_type,
                 "memory_type": node.memory_type,
                 "relevance": node.relevance,
                 "created_at": node.created_at.isoformat(),
@@ -185,7 +185,7 @@ class MemoryNodeDetailView(APIView):
         except MemoryNode.DoesNotExist:
             return Response({"error": "Node not found"}, status=404)
 
-        allowed_fields = {"name", "val", "group", "memory_type", "relevance"}
+        allowed_fields = {"name", "memory_type", "relevance"}
         updates = {}
         for field in allowed_fields:
             if field in request.data:
@@ -196,8 +196,6 @@ class MemoryNodeDetailView(APIView):
 
         before = {
             "name": node.name,
-            "val": node.val,
-            "group": node.group,
             "memory_type": node.memory_type,
             "relevance": node.relevance,
         }
@@ -220,8 +218,8 @@ class MemoryNodeDetailView(APIView):
             {
                 "id": node.id,
                 "name": node.name,
-                "val": node.val,
-                "group": node.group,
+                "val": node.relevance,
+                "group": node.memory_type,
                 "memory_type": node.memory_type,
                 "relevance": node.relevance,
                 "created_at": node.created_at.isoformat(),
