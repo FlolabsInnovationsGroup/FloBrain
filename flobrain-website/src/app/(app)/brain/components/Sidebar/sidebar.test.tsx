@@ -1,12 +1,12 @@
 // __tests__/Sidebar.test.tsx
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import { describe, expect, vi, beforeEach } from 'vitest';
 import Sidebar from '../Sidebar';
 import type { ChatHistory, Folder } from '@/types/chat';
 
 // Mock lucide-react icons
-jest.mock('lucide-react', () => ({
+vi.mock('lucide-react', () => ({
   Trash2: () => <div data-testid="trash-icon">Trash2</div>,
   Edit2: () => <div data-testid="edit-icon">Edit2</div>,
   Download: () => <div data-testid="download-icon">Download</div>,
@@ -19,17 +19,17 @@ jest.mock('lucide-react', () => ({
 }));
 
 describe('Sidebar Component', () => {
-  const mockOnToggle = jest.fn();
-  const mockOnNewChat = jest.fn();
-  const mockOnLoadChat = jest.fn();
-  const mockOnDeleteChat = jest.fn();
-  const mockOnRenameChat = jest.fn();
-  const mockOnClearAllChats = jest.fn();
-  const mockOnMoveToFolder = jest.fn();
-  const mockOnCreateFolder = jest.fn();
-  const mockOnDeleteFolder = jest.fn();
-  const mockOnRenameFolder = jest.fn();
-  const mockOnExportChat = jest.fn();
+  const mockOnToggle = vi.fn();
+  const mockOnNewChat = vi.fn();
+  const mockOnLoadChat = vi.fn();
+  const mockOnDeleteChat = vi.fn();
+  const mockOnRenameChat = vi.fn();
+  const mockOnClearAllChats = vi.fn();
+  const mockOnMoveToFolder = vi.fn();
+  const mockOnCreateFolder = vi.fn();
+  const mockOnDeleteFolder = vi.fn();
+  const mockOnRenameFolder = vi.fn();
+  const mockOnExportChat = vi.fn();
 
   const mockChatHistory: ChatHistory[] = [
     { id: 1, title: 'First Chat', folderId: null, timestamp: new Date(), messages: [] },
@@ -61,9 +61,9 @@ describe('Sidebar Component', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Mock window.confirm
-    window.confirm = jest.fn(() => true);
+    window.confirm = vi.fn(() => true);
   });
 
   describe('Basic Rendering', () => {
@@ -80,7 +80,10 @@ describe('Sidebar Component', () => {
     test('renders header with title and close button', () => {
       render(<Sidebar {...defaultProps} />);
       expect(screen.getByText('Chats')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /close/i })).toBeInTheDocument();
+      const closeButton = screen.getByText('Chats').parentElement?.querySelector('button');
+      expect(closeButton).toBeTruthy();
+      fireEvent.click(closeButton!);
+      expect(mockOnToggle).toHaveBeenCalled();
     });
 
     test('renders New Chat button', () => {
@@ -193,15 +196,8 @@ describe('Sidebar Component', () => {
   describe('Chat Actions', () => {
     test('deletes chat with confirmation', () => {
       render(<Sidebar {...defaultProps} />);
-      
-      // Find and click delete button
-      const deleteButtons = screen.getAllByTestId('trash-icon');
-      const deleteButton = deleteButtons[0].closest('button');
-      
-      if (deleteButton) {
-        fireEvent.click(deleteButton);
-      }
-      
+      const firstChatRow = screen.getByText('First Chat').closest('.group') as HTMLElement;
+      fireEvent.click(within(firstChatRow).getByTitle('Delete'));
       expect(window.confirm).toHaveBeenCalledWith('Delete this chat?');
       expect(mockOnDeleteChat).toHaveBeenCalledWith(1);
     });
@@ -308,20 +304,7 @@ describe('Sidebar Component', () => {
 
     test('deletes folder', () => {
       render(<Sidebar {...defaultProps} />);
-      
-      // Find folder delete button
-      const folderItems = screen.getAllByText('Work');
-      const workFolder = folderItems[0];
-      const _folderContainer = workFolder.closest('.group');
-      
-      // The delete button should be within the folder container
-      const deleteButtons = screen.getAllByTestId('trash-icon');
-      const folderDeleteButton = deleteButtons[2]?.closest('button'); // Skip chat delete buttons
-      
-      if (folderDeleteButton) {
-        fireEvent.click(folderDeleteButton);
-      }
-      
+      fireEvent.click(screen.getAllByTitle('Delete folder')[0]);
       expect(mockOnDeleteFolder).toHaveBeenCalledWith(1);
     });
   });

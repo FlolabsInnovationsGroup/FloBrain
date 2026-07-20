@@ -34,10 +34,10 @@ const PLAN_ICONS = [
 ] as const;
 
 const PLAN_ICON_BG = [
-  "bg-emerald-500/80",   // Developer - green
-  "bg-[#7c3aed]/80",     // Pro - purple
-  "bg-orange-500/80",    // Business - orange
-  "bg-blue-500/80",      // Enterprise - blue
+  "bg-emerald-500/80",
+  "bg-[#7c3aed]/80",
+  "bg-orange-500/80",
+  "bg-blue-500/80",
 ] as const;
 
 export default function PricingCard({ tier, index }: PricingCardProps) {
@@ -46,85 +46,108 @@ export default function PricingCard({ tier, index }: PricingCardProps) {
 
   return (
     <div
-      className={`relative flex flex-col h-full rounded-2xl border transition-all duration-300 ${
+      className={`relative flex h-full flex-col rounded-2xl border transition-all duration-300 fb-pricing-card ${
         tier.badge
-          ? "bg-[#1e1b2e]/95 border-[#e879f9]/50 shadow-[0_0_30px_rgba(232,121,249,0.25)]"
-          : "bg-[#1a1525]/90 border-white/10"
+          ? "dark:bg-[#1e1b2e]/95 dark:border-[#e879f9]/50 dark:shadow-[0_0_30px_rgba(232,121,249,0.25)] light:border-[#c4b5fd]/80 light:shadow-[0_4px_24px_rgba(167,139,250,0.2)]"
+          : "dark:bg-[#1a1525]/90 dark:border-white/10"
       }`}
     >
-      {/* Most Popular - pill above card, overlapping top edge */}
       {tier.badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-          <span className="inline-block rounded-full bg-gradient-to-b from-[#7c3aed] to-[#e879f9] px-4 py-1.5 text-white text-sm font-semibold shadow-lg">
+        <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2">
+          <span className="inline-block rounded-full bg-gradient-to-b from-[#7c3aed] to-[#a855f7] px-4 py-1.5 text-sm font-semibold text-white shadow-lg">
             {tier.badge}
           </span>
         </div>
       )}
 
       <div className="flex h-full flex-col p-5 sm:p-6">
-        {/* Icon - per-plan color */}
-        <div className={`w-11 h-11 rounded-xl mb-4 flex items-center justify-center flex-shrink-0 ${iconBg}`}>
-          <Icon className="w-5 h-5 text-white" />
+        <div className={`mb-4 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${iconBg}`}>
+          <Icon className="h-5 w-5 text-white" />
         </div>
 
-        <h3 className="mb-1 text-xl font-bold text-white">{tier.name}</h3>
-        <p className="mb-4 min-h-[2.5rem] text-sm text-zinc-400">{tier.description}</p>
+        <h3
+          className="mb-1 text-xl font-bold"
+          style={{ color: "var(--fb-pricing-title)" }}
+        >
+          {tier.name}
+        </h3>
+        <p
+          className="mb-4 min-h-[2.5rem] text-sm leading-snug"
+          style={{ color: "var(--fb-pricing-body)" }}
+        >
+          {tier.description}
+        </p>
 
-        {/* Price */}
         <div className="mb-4 flex flex-wrap items-baseline gap-1">
-          <span className="text-3xl font-bold text-white">{tier.price}</span>
+          <span
+            className="text-3xl font-bold"
+            style={{ color: "var(--fb-pricing-title)" }}
+          >
+            {tier.price}
+          </span>
           {tier.period && (
-            <span className="text-zinc-400 text-sm">{tier.period}</span>
+            <span className="text-sm" style={{ color: "var(--fb-pricing-muted)" }}>
+              {tier.period}
+            </span>
           )}
           {tier.priceSuffix && (
-            <span className="text-zinc-400 text-sm">{tier.priceSuffix}</span>
+            <span className="text-sm" style={{ color: "var(--fb-pricing-muted)" }}>
+              {tier.priceSuffix}
+            </span>
           )}
         </div>
 
-        {/* 2x2 Key features grid */}
         <div className="mb-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-center">
-            <div className="text-zinc-500 text-xs mb-0.5">Devices</div>
-            <div className="break-words text-sm font-medium text-white">{tier.devices}</div>
-          </div>
-          <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-center">
-            <div className="text-zinc-500 text-xs mb-0.5">Calls</div>
-            <div className="break-words text-sm font-medium text-white">{tier.calls}</div>
-          </div>
-          <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-center">
-            <div className="text-zinc-500 text-xs mb-0.5">Memory</div>
-            <div className="break-words text-sm font-medium text-white">{tier.memory}</div>
-          </div>
-          <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-center">
-            <div className="text-zinc-500 text-xs mb-0.5">Workflows</div>
-            <div className="break-words text-sm font-medium text-white">{tier.workflows}</div>
-          </div>
+          {(
+            [
+              ["Devices", tier.devices],
+              ["Calls", tier.calls],
+              ["Memory", tier.memory],
+              ["Workflows", tier.workflows],
+            ] as const
+          ).map(([label, value]) => (
+            <div
+              key={label}
+              className="rounded-lg border p-3 text-center"
+              style={{
+                background: "var(--fb-pricing-grid-bg)",
+                borderColor: "var(--fb-pricing-grid-border)",
+              }}
+            >
+              <div
+                className="mb-0.5 text-xs"
+                style={{ color: "var(--fb-pricing-grid-label)" }}
+              >
+                {label}
+              </div>
+              <div
+                className="break-words text-sm font-medium"
+                style={{ color: "var(--fb-pricing-grid-value)" }}
+              >
+                {value}
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* CTA Button */}
-        {/* <button
-          onClick={onSelect}
-          className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 flex-shrink-0 ${
-            tier.isPrimary
-              ? "bg-gradient-to-r from-[#8b5cf6] via-[#7c3aed] to-[#6d28d9] text-white shadow-lg shadow-[#7c3aed]/40 hover:opacity-95"
-              : "bg-[#2a2139] border border-white/20 text-white hover:bg-[#352a45]"
-          }`}
-        >
-          {tier.buttonText}
-          <span>→</span>
-        </button> */}
-
-        {/* Feature list with checkmarks */}
-        <div className="mt-5 space-y-2 flex-1 min-h-0">
+        <div className="mt-5 min-h-0 flex-1 space-y-2">
           {tier.inheritsFromPlan && (
-            <p className="text-white/80 text-sm font-medium mb-2">
+            <p
+              className="mb-2 text-sm font-medium"
+              style={{ color: "var(--fb-pricing-body)" }}
+            >
               All in {tier.inheritsFromPlan} plus:
             </p>
           )}
           {tier.features.map((feature, featureIndex) => (
             <div key={featureIndex} className="flex items-start gap-2">
-              <Check className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-              <span className="text-zinc-400 text-sm">{feature}</span>
+              <Check
+                className="mt-0.5 h-4 w-4 shrink-0"
+                style={{ color: "var(--fb-pricing-check)" }}
+              />
+              <span className="text-sm" style={{ color: "var(--fb-pricing-body)" }}>
+                {feature}
+              </span>
             </div>
           ))}
         </div>

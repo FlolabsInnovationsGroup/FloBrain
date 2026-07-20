@@ -2,78 +2,63 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CreditCard, Menu, PanelLeftClose, X, User, Shield, Bell, HelpCircle, LogOut } from "lucide-react";
+import { CreditCard, User, Shield, Bell, HelpCircle, LogOut } from "lucide-react";
 import ProfileSettings from "./components/ProfileSettings";
 import AccountSecuritySettings from "./components/AccountSecuritySettings";
 import NotificationsSettings from "./components/NotificationsSettings";
 import HelpSettings from "./components/HelpSettings";
 import BillingSettings from "./components/BillingSettings";
 import { useAuth } from "@/contexts/AuthContext";
-
-const MOBILE_BREAKPOINT = 768;
+import { cn } from "@/lib/utils";
 
 type SettingsTab = "profile" | "account" | "notifications" | "billing" | "help";
 
 const navItems: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
-  { id: "profile", label: "Profile", icon: <User className="w-5 h-5" /> },
-  { id: "account", label: "Account & Security", icon: <Shield className="w-5 h-5" /> },
-  { id: "notifications", label: "Notifications", icon: <Bell className="w-5 h-5" /> },
-  { id: "billing", label: "Billing", icon: <CreditCard className="w-5 h-5" /> },
-  { id: "help", label: "Help", icon: <HelpCircle className="w-5 h-5" /> },
+  { id: "profile", label: "Profile", icon: <User className="h-5 w-5 shrink-0" /> },
+  { id: "account", label: "Account & Security", icon: <Shield className="h-5 w-5 shrink-0" /> },
+  { id: "notifications", label: "Notifications", icon: <Bell className="h-5 w-5 shrink-0" /> },
+  { id: "billing", label: "Billing", icon: <CreditCard className="h-5 w-5 shrink-0" /> },
+  { id: "help", label: "Help", icon: <HelpCircle className="h-5 w-5 shrink-0" /> },
 ];
+
+const tabTitles: Record<SettingsTab, string> = {
+  profile: "Profile",
+  account: "Account & Security",
+  notifications: "Notifications",
+  billing: "Billing",
+  help: "Help",
+};
 
 export default function SettingsPage() {
   const router = useRouter();
   const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
-  const [isOpen, setIsOpen] = useState(true);
-  const [isMenuVisible, setIsMenuVisible] = useState(true);
-  const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== "undefined" ? window.innerWidth < MOBILE_BREAKPOINT : false
-  );
 
   useEffect(() => {
-    let wasMobile = window.innerWidth < MOBILE_BREAKPOINT;
-
-    const handleResize = () => {
-      const mobile = window.innerWidth < MOBILE_BREAKPOINT;
-      setIsMobile(mobile);
-      if (mobile && !wasMobile) {
-        setIsMenuVisible(false);
-      } else if (!mobile && wasMobile) {
-        setIsMenuVisible(true);
-      }
-      wasMobile = mobile;
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("isAuthenticated", "true");
+    }
   }, []);
-
-  const handleClose = () => {
-    setIsOpen(false);
-    window.history.back();
-  };
 
   const handleLogout = async () => {
     await logout();
-    setIsOpen(false);
     router.push("/");
   };
 
-  const renderNav = () => (
-    <nav className="space-y-1">
+  const navButtonClass = (id: SettingsTab) =>
+    cn(
+      "fb-profile-nav-item flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors",
+      activeTab === id && "fb-profile-nav-item--active"
+    );
+
+  const renderNavButtons = (className?: string) => (
+    <nav className={cn("space-y-1", className)}>
       {navItems.map((item) => (
         <button
           key={item.id}
-          onClick={() => {
-            setActiveTab(item.id);
-            if (isMobile) setIsMenuVisible(false);
-          }}
-          className={`w-full flex items-center gap-3 px-4 py-3 rounded-r-lg transition-colors text-left ${
-            activeTab === item.id
-              ? "bg-[#3D2C4D] text-white"
-              : "text-white/80 hover:text-white hover:bg-purple-900/40"
-          }`}
+          type="button"
+          onClick={() => setActiveTab(item.id)}
+          className={navButtonClass(item.id)}
         >
           {item.icon}
           <span>{item.label}</span>
@@ -82,109 +67,81 @@ export default function SettingsPage() {
     </nav>
   );
 
-  if (!isOpen) return null;
-
   return (
-    /* Grey blurred overlay */
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-400/30 backdrop-blur-xl p-4">
-      {/* Fixed % dimensions - does not change when switching tabs */}
-      <div
-        className="relative flex flex-col rounded-2xl shadow-2xl overflow-hidden"
-        style={{ width: "85%", maxWidth: "900px", height: "90vh" }}
-      >
-        <div className="flex flex-1 min-h-0 bg-[#2E1E3A]">
-          {/* Left Navigation - ~1/3 width */}
-          <div
-            className={`${isMenuVisible ? "flex" : "hidden"} md:flex md:w-1/3 min-w-[220px] flex-col bg-[#2E1E3A] border-r border-purple-900/30`}
-          >
-            <div className="p-6 flex-1 flex flex-col min-h-0">
-              <h2 className="text-xl font-bold text-white mb-4">Settings</h2>
-              <div className="h-px bg-white/20 mb-4" />
-              <div className="flex-1 overflow-y-auto">{renderNav()}</div>
-              <div className="pt-4 mt-4 border-t border-white/10">
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-[#E07A5F] hover:bg-[#d96b4f] text-white font-medium transition-colors"
-                >
-                  <LogOut className="w-5 h-5" />
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
+    <main className="min-h-screen fb-page px-4 py-6 sm:px-6 sm:py-8 md:px-8">
+      <div className="mx-auto w-full max-w-6xl">
+        <header className="mb-6 sm:mb-8">
+          <h1 className="mb-2 text-2xl font-bold sm:text-3xl md:text-4xl fb-heading dark:text-white">
+            SETTINGS
+          </h1>
+          <p className="text-sm sm:text-base fb-text-muted">
+            Manage your account, security, billing, and preferences
+          </p>
+        </header>
 
-          {/* Right Content - ~2/3 width */}
-          <div className="flex-1 flex flex-col min-w-0 bg-[#281C30]">
-            <div className="flex items-center justify-between px-6 py-6 border-b border-white/10 shrink-0">
-              <h2 className="text-xl font-bold text-white">
-                {activeTab === "profile" && "Profile Settings"}
-                {activeTab === "account" && "Account & Security"}
-                {activeTab === "notifications" && "Notifications"}
-                {activeTab === "billing" && "Billing"}
-                {activeTab === "help" && "Help"}
-              </h2>
+        {/* Mobile tab strip */}
+        <div className="mb-4 flex gap-2 overflow-x-auto pb-1 lg:hidden">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActiveTab(item.id)}
+              className={cn(
+                "shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                activeTab === item.id
+                  ? "fb-profile-nav-item--active"
+                  : "fb-profile-nav-item border border-transparent"
+              )}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex flex-col gap-4 lg:flex-row lg:gap-6">
+          {/* Sidebar — desktop */}
+          <aside className="fb-profile-shell hidden w-full shrink-0 flex-col rounded-2xl p-4 lg:flex lg:w-72">
+            {renderNavButtons("flex-1")}
+            <div className="fb-profile-divider mt-4 border-t pt-4">
               <button
-                onClick={handleClose}
-                className="text-white/70 hover:text-white transition-colors p-1 -m-1"
-                aria-label="Close"
+                type="button"
+                onClick={handleLogout}
+                className="fb-profile-btn-secondary flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
               >
-                <X size={24} />
+                <LogOut className="h-4 w-4" />
+                Log out
               </button>
             </div>
+          </aside>
 
-            <div className="flex-1 overflow-y-auto p-6 min-h-0">
+          {/* Main panel */}
+          <section className="fb-profile-shell min-w-0 flex-1 rounded-2xl p-6 sm:p-8">
+            <h2 className="fb-profile-title mb-6 text-xl font-semibold">
+              {tabTitles[activeTab]}
+            </h2>
+
+            <div className="min-h-[320px]">
               {activeTab === "profile" && <ProfileSettings />}
               {activeTab === "account" && <AccountSecuritySettings />}
               {activeTab === "notifications" && <NotificationsSettings />}
               {activeTab === "billing" && <BillingSettings />}
               {activeTab === "help" && <HelpSettings />}
             </div>
-          </div>
-        </div>
 
-        {/* Mobile menu toggle */}
-        <button
-          type="button"
-          onClick={() => setIsMenuVisible(!isMenuVisible)}
-          className="absolute top-5 left-5 z-30 text-white/80 hover:text-white md:hidden inline-flex items-center justify-center rounded-full p-2 bg-white/10"
-          aria-label={isMenuVisible ? "Hide menu" : "Show menu"}
-        >
-          {isMenuVisible ? <PanelLeftClose size={20} /> : <Menu size={20} />}
-        </button>
-
-        {/* Mobile nav overlay */}
-        {isMenuVisible && isMobile && (
-          <div className="absolute inset-0 z-20 bg-[#2E1E3A] md:hidden flex flex-col">
-            <div className="p-6 flex flex-col h-full">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-white">Settings</h2>
-                <button
-                  type="button"
-                  onClick={() => setIsMenuVisible(false)}
-                  className="text-white/70 hover:text-white transition-colors"
-                  aria-label="Close settings menu"
-                >
-                  <X size={22} />
-                </button>
-              </div>
-              <div className="h-px bg-white/20 mb-4" />
-              <div className="flex-1 overflow-y-auto">{renderNav()}</div>
-              <div className="pt-4 mt-4 border-t border-white/10">
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMenuVisible(false);
-                  }}
-                  className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg bg-[#E07A5F] hover:bg-[#d96b4f] text-white font-medium transition-colors"
-                >
-                  <LogOut className="w-5 h-5" />
-                  Logout
-                </button>
-              </div>
+            {/* Mobile logout */}
+            <div className="fb-profile-divider mt-8 border-t pt-6 lg:hidden">
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="fb-profile-btn-secondary flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                Log out
+              </button>
             </div>
-          </div>
-        )}
+          </section>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

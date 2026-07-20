@@ -2,8 +2,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from usage.models import TokenUsageRecord
+from usage.services.quota import QuotaEnforcer
+from usage.services.recorder import TokenUsageData, UsageRecorder
+
 from users.views import get_user_from_request
 
+from .llm import get_llm_adapter
 from .models import Chat, Message
 from .serializers import (
     ChatCreateSerializer,
@@ -22,6 +27,18 @@ def _get_user_or_401(request):
             status=status.HTTP_401_UNAUTHORIZED,
         )
     return user, None
+
+
+def _build_llm_messages(chat: Chat) -> list[dict[str, str]]:
+    messages: list[dict[str, str]] = [
+        {"role": "system", "content": "You are FloBrain, a helpful AI assistant."},
+    ]
+    for msg in chat.messages.order_by("created_at"):
+        if msg.role == Message.ROLE_USER and msg.text:
+            messages.append({"role": "user", "content": msg.text})
+        elif msg.role == Message.ROLE_ASSISTANT and msg.text:
+            messages.append({"role": "assistant", "content": msg.text})
+    return messages
 
 
 class ChatListView(APIView):
@@ -121,6 +138,7 @@ class SendMessageView(APIView):
             )
         text = (ser.validated_data.get("text") or "").strip()
         image = ser.validated_data.get("image") or ""
+        model = (ser.validated_data.get("model") or "").strip() or None
 
         if not text and not image:
             return Response(
@@ -128,7 +146,25 @@ class SendMessageView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Create user message
+        quota_result = QuotaEnforcer().check(user)
+        if not quota_result.allowed:
+            return Response(
+                {
+                    "error": "Quota exceeded",
+                    "details": quota_result.reason,
+                    "quota": {
+                        "plan": quota_result.plan,
+                        "used_tokens": quota_result.used_tokens,
+                        "limit_tokens": quota_result.limit_tokens,
+                        "used_requests": quota_result.used_requests,
+                        "limit_requests": quota_result.limit_requests,
+                        "reset_at": quota_result.reset_at.isoformat(),
+                        "upgrade_url": "/pricing",
+                    },
+                },
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
         user_msg = Message.objects.create(
             chat=chat,
             role=Message.ROLE_USER,
@@ -136,25 +172,55 @@ class SendMessageView(APIView):
             image=image or None,
         )
 
-        # Update chat title if still default
         if chat.title == "New Chat" and text:
             chat.title = (text[:30] + "..." if len(text) > 30 else text)
             chat.save(update_fields=["title", "updated_at"])
 
-        # Placeholder assistant reply (replace with real LLM call later)
-        assistant_text = (
-            f'I received your message: "{text[:100]}". '
-            "This is a placeholder response. Connect an LLM for real replies."
-        )
+        llm_messages = _build_llm_messages(chat)
+        llm_result = get_llm_adapter().generate(llm_messages, model=model)
+
         assistant_msg = Message.objects.create(
             chat=chat,
             role=Message.ROLE_ASSISTANT,
-            text=assistant_text,
+            text=llm_result.text,
+            prompt_tokens=llm_result.prompt_tokens,
+            completion_tokens=llm_result.completion_tokens,
         )
 
-        # Bump chat.updated_at so "last used" order is correct
+        usage_metadata = dict(llm_result.raw_usage)
+        if llm_result.estimated:
+            usage_metadata["source"] = "estimated"
+
+        UsageRecorder().record(
+            user,
+            TokenUsageData(
+                provider=llm_result.provider,
+                model=llm_result.model,
+                request_type=TokenUsageRecord.REQUEST_CHAT,
+                prompt_tokens=llm_result.prompt_tokens,
+                completion_tokens=llm_result.completion_tokens,
+                total_tokens=llm_result.total_tokens,
+                chat_id=chat.pk,
+                message_id=assistant_msg.pk,
+                metadata=usage_metadata,
+            ),
+        )
+
         chat.save(update_fields=["updated_at"])
 
-        # Return full chat with messages so frontend can sync
-        serializer = ChatDetailSerializer(chat)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        usage_payload = {
+            "prompt_tokens": llm_result.prompt_tokens,
+            "completion_tokens": llm_result.completion_tokens,
+            "total_tokens": llm_result.total_tokens,
+            "model": llm_result.model,
+            "provider": llm_result.provider,
+            "estimated": llm_result.estimated,
+        }
+
+        serializer = ChatDetailSerializer(chat, context={"usage": usage_payload})
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+
+        if quota_result.warning_percent is not None:
+            response["X-Usage-Warning"] = str(quota_result.warning_percent)
+
+        return response

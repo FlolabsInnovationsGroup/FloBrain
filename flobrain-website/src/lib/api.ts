@@ -278,6 +278,17 @@ export type BrainMessageApi = {
   text?: string | null;
   image?: string | null;
   timestamp?: string | null;
+  prompt_tokens?: number | null;
+  completion_tokens?: number | null;
+};
+
+export type ChatUsageApi = {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+  model: string;
+  provider?: string;
+  estimated?: boolean;
 };
 
 export type BrainChatApi = {
@@ -287,7 +298,9 @@ export type BrainChatApi = {
   messages: BrainMessageApi[];
 };
 
-export type BrainChatDetailApi = BrainChatApi;
+export type BrainChatDetailApi = BrainChatApi & {
+  usage?: ChatUsageApi | null;
+};
 
 export type DashboardErrorLogEntry = {
   level: "warning" | "error";

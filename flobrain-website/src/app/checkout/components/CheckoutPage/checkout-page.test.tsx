@@ -19,6 +19,7 @@ vi.mock("lucide-react", () => ({
   CreditCard: () => <div data-testid="credit-card-icon" />,
   Shield: () => <div data-testid="shield-icon" />,
   ArrowLeft: () => <div data-testid="arrow-left-icon" />,
+  Loader2: () => <div data-testid="loader-icon" />,
 }));
 
 describe("CheckoutPage Component", () => {

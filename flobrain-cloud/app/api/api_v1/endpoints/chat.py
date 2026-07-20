@@ -8,41 +8,56 @@ router = APIRouter()
 
 @router.post("/", response_model=ChatResponse)
 async def chat(request: ChatRequest):
-    # 1. Retrieve context
-    try:
-        dist, idx = vector_db.vector_db.search_similar(request.message)
-        # In a real app, we would fetch the actual text from a DB using idx
-        # For now, we just log it or use a placeholder if we don't have the text mapping
-        # The prototype read from 'transcripts.txt'. Let's assume we don't have that yet or it's empty.
+    model = request.model or "gpt-3.5-turbo"
+    last_user_message = ""
+
+    if request.messages:
+        messages = [m.model_dump() for m in request.messages]
+        last_user_message = next(
+            (m["content"] for m in reversed(messages) if m.get("role") == "user"),
+            "",
+        )
+    elif request.message:
+        last_user_message = request.message
         context = ""
-        # TODO: Implement text retrieval from ID
-    except Exception as e:
-        print(f"Vector search failed: {e}")
-        context = ""
+        try:
+            vector_db.vector_db.search_similar(request.message)
+        except Exception as e:
+            print(f"Vector search failed: {e}")
 
-    # 2. Generate Response
-    messages = [{"role": "system", "content": "You are a helpful assistant."}]
-    if context:
-        messages.append({"role": "user", "content": f"Context: {context}"})
-    messages.append({"role": "user", "content": request.message})
+        messages = [{"role": "system", "content": "You are a helpful assistant."}]
+        if context:
+            messages.append({"role": "user", "content": f"Context: {context}"})
+        messages.append({"role": "user", "content": request.message})
+    else:
+        return ChatResponse(
+            response_text="Error: message or messages required.",
+            estimated=True,
+        )
 
-    response_text = llm.generate_response(messages)
+    response = llm.generate_response(messages, model=model)
 
-    # 3. Synthesize Speech (Optional)
     audio_content = None
     if request.voice_id:
-        audio_generator = synthesis.synthesize_speech(response_text, request.voice_id)
+        audio_generator = synthesis.synthesize_speech(response.text, request.voice_id)
         if audio_generator:
-            # ElevenLabs returns a generator of bytes. We need to consume it.
             audio_bytes = b"".join(audio_generator)
             audio_content = base64.b64encode(audio_bytes).decode("utf-8")
 
-    # 4. Save to Vector DB (Memory)
-    # We should probably save the user message and the response
-    try:
-        vector_db.vector_db.add_text(request.message)
-        vector_db.vector_db.add_text(response_text)
-    except Exception as e:
-        print(f"Failed to save to memory: {e}")
+    if last_user_message:
+        try:
+            vector_db.vector_db.add_text(last_user_message)
+            vector_db.vector_db.add_text(response.text)
+        except Exception as e:
+            print(f"Failed to save to memory: {e}")
 
-    return {"response_text": response_text, "audio_content": audio_content}
+    return ChatResponse(
+        response_text=response.text,
+        audio_content=audio_content,
+        prompt_tokens=response.prompt_tokens,
+        completion_tokens=response.completion_tokens,
+        total_tokens=response.total_tokens,
+        model=response.model,
+        provider=response.provider,
+        estimated=response.estimated,
+    )

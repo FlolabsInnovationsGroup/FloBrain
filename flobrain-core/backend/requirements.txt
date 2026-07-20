@@ -12,3 +12,6 @@ sqlparse
 typing_extensions
 tzdata
 pymongo
+tiktoken
+openai
+anthropic

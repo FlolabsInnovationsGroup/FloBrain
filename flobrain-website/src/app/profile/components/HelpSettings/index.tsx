@@ -14,16 +14,17 @@ export default function HelpSettings() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {faqItems.map((item, index) => (
         <button
           key={index}
+          type="button"
           onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-          className="w-full flex items-center justify-between p-4 bg-[#281C30] border border-zinc-500/50 rounded-lg hover:border-zinc-400/50 transition-colors text-left group"
+          className="fb-profile-card group flex w-full items-center justify-between rounded-xl px-4 py-4 text-left transition-colors hover:opacity-95"
         >
-          <span className="text-white font-medium">{item}</span>
+          <span className="fb-profile-title text-sm font-medium">{item}</span>
           <ChevronDown
-            className={`w-5 h-5 text-white/70 transition-transform ${
+            className={`h-5 w-5 shrink-0 transition-transform fb-profile-label ${
               expandedIndex === index ? "rotate-180" : ""
             }`}
           />
