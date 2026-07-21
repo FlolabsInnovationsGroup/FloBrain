@@ -52,7 +52,8 @@ class MemoryNode(models.Model):
         db_table = "memory_nodes"
         indexes = [
             models.Index(fields=['tier_level', 'created_at']),
-            models.Index(fields=['owner_id', 'tier_level']),  
+            models.Index(fields=['owner_id', 'tier_level']),
+        ]
 
     def __str__(self):
         return self.name
