@@ -8,7 +8,6 @@ from users.views import get_user_from_request
 
 from .models import MemoryLink, MemoryNode
 
-from rest_framework import status
 from .sorter import distribute_to_tiers
 from .tier_1 import save_to_active_buffer
 from .tier_2 import save_to_associative_layer
@@ -111,8 +110,8 @@ class MemoryGraphView(APIView):
             {
                 "id": n.id,
                 "name": n.name,
-                "val": n.val,
-                "group": n.group,
+                "val": n.relevance,
+                "group": n.memory_type,
                 "memory_type": n.memory_type,
                 "relevance": n.relevance,
                 "created_at": n.created_at.isoformat() if n.created_at else None,
@@ -139,8 +138,6 @@ class MemoryNodeDetailView(APIView):
     Returns single node + all connections for detail panel.
     """
     def get(self, request, pk):
-        from users.views import get_user_from_request
-        
         user = get_user_from_request(request)
         if not user:
             return Response({"error": "Authentication required"}, status=401)
@@ -150,19 +147,19 @@ class MemoryNodeDetailView(APIView):
             
             # All connections (not filtered)
             outgoing = [
-                {"id": link.target.id, "name": link.target.name, "group": link.target.group}
+                {"id": link.target.id, "name": link.target.name, "group": link.target.memory_type}
                 for link in node.outgoing_links.all()
             ]
             incoming = [
-                {"id": link.source.id, "name": link.source.name, "group": link.source.group}
+                {"id": link.source.id, "name": link.source.name, "group": link.source.memory_type}
                 for link in node.incoming_links.all()
             ]
             
             return Response({
                 "id": node.id,
                 "name": node.name,
-                "val": node.val,
-                "group": node.group,
+                "val": node.relevance,
+                "group": node.memory_type,
                 "memory_type": node.memory_type,
                 "relevance": node.relevance,
                 "created_at": node.created_at.isoformat(),
@@ -175,7 +172,6 @@ class MemoryNodeDetailView(APIView):
         except MemoryNode.DoesNotExist:
             return Response({"error": "Node not found"}, status=404)
 
-<<<<<<< HEAD
     def patch(self, request, pk):
         user = get_user_from_request(request)
         if not user:
@@ -186,7 +182,7 @@ class MemoryNodeDetailView(APIView):
         except MemoryNode.DoesNotExist:
             return Response({"error": "Node not found"}, status=404)
 
-        allowed_fields = {"name", "val", "group", "memory_type", "relevance"}
+        allowed_fields = {"name", "memory_type", "relevance"}
         updates = {}
         for field in allowed_fields:
             if field in request.data:
@@ -197,8 +193,6 @@ class MemoryNodeDetailView(APIView):
 
         before = {
             "name": node.name,
-            "val": node.val,
-            "group": node.group,
             "memory_type": node.memory_type,
             "relevance": node.relevance,
         }
@@ -221,14 +215,15 @@ class MemoryNodeDetailView(APIView):
             {
                 "id": node.id,
                 "name": node.name,
-                "val": node.val,
-                "group": node.group,
+                "val": node.relevance,
+                "group": node.memory_type,
                 "memory_type": node.memory_type,
                 "relevance": node.relevance,
                 "created_at": node.created_at.isoformat(),
             }
         )
-=======
+
+
 class MemorySaveView(APIView):
    
     def post(self, request):
@@ -237,20 +232,14 @@ class MemorySaveView(APIView):
             return Response({"error": "Auth required"}, status=401)
         
         try:
-            # Распределяем по уровням
             node = distribute_to_tiers(request.data)
-            
-            # Получаем эмбеддинг из запроса (если его нет, передаем пустой список)
             embedding = request.data.get('embedding', [])
 
-            # Cold Storage
             migrate_to_cold_storage(node)
 
-            # Associative Layer (Tier 2) - теперь передаем embedding
             if node.tier_level in [1, 2]:
                 save_to_associative_layer(node, embedding)
 
-            # Active Buffer (Tier 1)
             if node.tier_level == 1:
                 save_to_active_buffer(node)
                 
@@ -262,4 +251,3 @@ class MemorySaveView(APIView):
             })
         except Exception as e:
             return Response({"error": str(e)}, status=500)
->>>>>>> 4e405ea (feat(memory): integrate tri-tier core and apply DB index fixes)
