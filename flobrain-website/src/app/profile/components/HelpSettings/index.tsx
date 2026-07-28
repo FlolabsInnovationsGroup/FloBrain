@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { settingsCardClass } from "../settings-styles";
+import { settingsCardClass, settingsTextMuted } from "../settings-styles";
 import { cn } from "@/lib/utils";
 
 const faqItems = [
@@ -66,25 +66,46 @@ export default function HelpSettings() {
 
   return (
     <div className="space-y-4">
-      {faqItems.map((item, index) => (
-        <button
-          key={index}
-          type="button"
-          onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
-          className={cn(
-            settingsCardClass,
-            "group flex w-full items-center justify-between text-left transition-colors hover:border-white/20"
-          )}
-        >
-          <span className="font-medium text-white">{item}</span>
-          <ChevronDown
+      {faqItems.map((item, index) => {
+        const isExpanded = expandedIndex === index;
+
+        return (
+          <div
+            key={item.question}
             className={cn(
-              "h-5 w-5 text-white/70 transition-transform",
-              expandedIndex === index && "rotate-180"
+              settingsCardClass,
+              "overflow-hidden p-0 transition-colors hover:border-white/20"
             )}
-          />
-        </button>
-      ))}
+          >
+            <button
+              type="button"
+              onClick={() => setExpandedIndex(isExpanded ? null : index)}
+              aria-expanded={isExpanded}
+              aria-controls={`faq-answer-${index}`}
+              className="group flex w-full items-center justify-between gap-4 p-4 text-left"
+            >
+              <span className="font-medium text-white">{item.question}</span>
+              <ChevronDown
+                className={cn(
+                  "h-5 w-5 shrink-0 text-white/70 transition-transform",
+                  isExpanded && "rotate-180"
+                )}
+              />
+            </button>
+
+            {isExpanded && (
+              <div
+                id={`faq-answer-${index}`}
+                className="border-t border-white/10 px-4 pb-4 pt-3"
+              >
+                <p className={cn(settingsTextMuted, "leading-7")}>
+                  {item.answer}
+                </p>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
