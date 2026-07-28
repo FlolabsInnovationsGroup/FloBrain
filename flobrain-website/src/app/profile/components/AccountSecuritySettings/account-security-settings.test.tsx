@@ -87,19 +87,18 @@ describe("AccountSecuritySettings Component", () => {
   });
 
   it("should render 2FA toggle in disabled state by default", () => {
-    const { container } = render(<AccountSecuritySettings />);
-    const toggle = container.querySelector('button[class*="bg-gray-600"]');
-    expect(toggle).toBeTruthy();
+    render(<AccountSecuritySettings />);
+    const toggle = screen.getByRole("switch", { name: /two-factor authentication/i });
+    expect(toggle.getAttribute("aria-checked")).toBe("false");
+    expect(toggle.className).toContain("bg-white/20");
   });
 
   it("should toggle 2FA to enabled when clicked", () => {
-    const { container } = render(<AccountSecuritySettings />);
-    const toggle = container.querySelector('button[class*="rounded-full"]');
-    expect(toggle).toBeTruthy();
-    if (toggle) {
-      fireEvent.click(toggle);
-      expect(toggle.className).toContain("bg-green-500");
-    }
+    render(<AccountSecuritySettings />);
+    const toggle = screen.getByRole("switch", { name: /two-factor authentication/i });
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute("aria-checked")).toBe("true");
+    expect(toggle.className).toContain("bg-violet-500");
   });
 
   it("should have modal title Change password", () => {

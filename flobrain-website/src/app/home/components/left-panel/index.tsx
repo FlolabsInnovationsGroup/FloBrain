@@ -1,12 +1,13 @@
 "use client";
 
 import React, { memo, useCallback, useId, useMemo, useState, type SubmitEventHandler } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Search,
   Plus,
   Brain,
   Database,
-  Router,
   Activity,
   SlidersHorizontal,
   Settings,
@@ -17,12 +18,11 @@ import type { ChatHistory } from "@/types/chat";
 
 const EMPTY_CHAT_HISTORY: ChatHistory[] = [];
 
-export type SystemModuleId = "brain-activity" | "load-memory" | "router-config" | "system-health";
+export type SystemModuleId = "brain-activity" | "load-memory" | "system-health";
 
 export const SYSTEM_MODULE_IDS: SystemModuleId[] = [
   "brain-activity",
   "load-memory",
-  "router-config",
   "system-health",
 ];
 
@@ -30,14 +30,19 @@ const MODULES: ReadonlyArray<{
   id: SystemModuleId;
   label: string;
   icon: LucideIcon;
+  href: string;
   /** Show status dot (e.g. for "Brain Activity" active indicator) */
   showDot?: boolean;
 }> = [
-  { id: "brain-activity", label: "Brain Activity", icon: Brain, showDot: true },
-  { id: "load-memory", label: "Load Memory", icon: Database },
-  { id: "router-config", label: "Router Configuration", icon: Router },
-  { id: "system-health", label: "System Health", icon: Activity },
+  { id: "brain-activity", label: "Brain Activity", icon: Brain, href: "/home", showDot: true },
+  { id: "load-memory", label: "Load Memory", icon: Database, href: "/memory" },
+  { id: "system-health", label: "System Health", icon: Activity, href: "/dashboard" },
 ];
+
+function isModuleActive(href: string, pathname: string): boolean {
+  if (href === "/home") return pathname === "/home";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export type LeftPanelVariant = "modules" | "chats";
 
@@ -53,8 +58,6 @@ export interface LeftPanelPropsBase {
 
 export interface LeftPanelPropsModules extends LeftPanelPropsBase {
   variant: "modules";
-  activeModuleId: SystemModuleId;
-  onModuleSelect: (id: SystemModuleId) => void;
 }
 
 export interface LeftPanelPropsChats extends LeftPanelPropsBase {
@@ -67,18 +70,9 @@ export interface LeftPanelPropsChats extends LeftPanelPropsBase {
 
 export type LeftPanelProps = LeftPanelPropsModules | LeftPanelPropsChats;
 
-/** @deprecated Use LeftPanelPropsModules for modules variant */
-export interface LeftPanelPropsLegacy {
-  activeModuleId: SystemModuleId;
-  onModuleSelect: (id: SystemModuleId) => void;
-  onNewChat?: () => void;
-  onSearch?: (query: string) => void;
-  onPreferences?: () => void;
-  onSettings?: () => void;
-}
-
 const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const { variant, onNewChat, onSearch, onPreferences, onSettings, className } = props;
+  const pathname = usePathname();
   const searchId = useId();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -102,8 +96,6 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
 
   const isModules = variant === "modules";
   const isChats = variant === "chats";
-  const activeModuleId = isModules ? props.activeModuleId : undefined;
-  const onModuleSelect = isModules ? props.onModuleSelect : undefined;
   const _chatHistory = isChats ? (props.chatHistory ?? EMPTY_CHAT_HISTORY) : EMPTY_CHAT_HISTORY;
   const currentChatId = isChats ? (props.currentChatId ?? null) : null;
   const onLoadChat = isChats ? props.onLoadChat : undefined;
@@ -166,19 +158,18 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         </button>
 
         {/* Middle: System Modules (with icons) or All Chats (text only) */}
-        {isModules && activeModuleId !== undefined && onModuleSelect && (
+        {isModules && (
           <div className="flex flex-col gap-1 shrink-0">
             <h2 className="text-[12px] uppercase tracking-[0.2em] text-[#90A1B9] font-bold px-1 mb-3">
               SYSTEM MODULES
             </h2>
             <nav className="flex flex-col gap-0.5" aria-label="System modules">
-              {MODULES.map(({ id, label, icon: Icon, showDot }) => {
-                const isActive = activeModuleId === id;
+              {MODULES.map(({ id, label, icon: Icon, href, showDot }) => {
+                const isActive = isModuleActive(href, pathname);
                 return (
-                  <button
+                  <Link
                     key={id}
-                    type="button"
-                    onClick={() => onModuleSelect(id)}
+                    href={href}
                     className={cn(
                       "w-full flex items-center gap-3 rounded-lg py-2.5 px-3 text-left text-sm text-[#CAD5E2] transition-colors",
                       isActive
@@ -198,7 +189,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
                         aria-hidden
                       />
                     )}
-                  </button>
+                  </Link>
                 );
               })}
             </nav>

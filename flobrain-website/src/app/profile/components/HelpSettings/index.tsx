@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { settingsCardClass } from "../settings-styles";
+import { cn } from "@/lib/utils";
 
 const faqItems = [
   {
@@ -64,45 +66,25 @@ export default function HelpSettings() {
 
   return (
     <div className="space-y-4">
-      {faqItems.map((item, index) => {
-        const isExpanded = expandedIndex === index;
-
-        return (
-          <div
-            key={item.question}
-            className="overflow-hidden rounded-lg border border-zinc-500/50 bg-[#281C30] transition-colors hover:border-zinc-400/50"
-          >
-            <button
-              type="button"
-              onClick={() =>
-                setExpandedIndex(isExpanded ? null : index)
-              }
-              className="flex w-full items-center justify-between gap-4 p-4 text-left group"
-              aria-expanded={isExpanded}
-              aria-controls={`faq-answer-${index}`}
-            >
-              <span className="font-medium text-white">{item.question}</span>
-
-              <ChevronDown
-                className={`h-5 w-5 shrink-0 text-white/70 transition-transform ${
-                  isExpanded ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            {isExpanded && (
-              <div
-                id={`faq-answer-${index}`}
-                className="border-t border-zinc-500/30 px-4 pb-4 pt-3"
-              >
-                <p className="text-sm leading-7 text-white/70">
-                  {item.answer}
-                </p>
-              </div>
+      {faqItems.map((item, index) => (
+        <button
+          key={index}
+          type="button"
+          onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+          className={cn(
+            settingsCardClass,
+            "group flex w-full items-center justify-between text-left transition-colors hover:border-white/20"
+          )}
+        >
+          <span className="font-medium text-white">{item}</span>
+          <ChevronDown
+            className={cn(
+              "h-5 w-5 text-white/70 transition-transform",
+              expandedIndex === index && "rotate-180"
             )}
-          </div>
-        );
-      })}
+          />
+        </button>
+      ))}
     </div>
   );
 }
