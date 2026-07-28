@@ -13,7 +13,6 @@ class ChatAdmin(admin.ModelAdmin):
 class MessageAdmin(admin.ModelAdmin):
     list_display = ("id", "chat", "role", "text_preview", "created_at")
 
+    @admin.display(description="Text")
     def text_preview(self, obj):
         return (obj.text or "")[:50] + "..." if (obj.text and len(obj.text) > 50) else (obj.text or "")
-
-    text_preview.short_description = "Text"
