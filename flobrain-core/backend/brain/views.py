@@ -92,8 +92,9 @@ class ChatDetailView(APIView):
 
     def delete(self, request, chat_id):
         chat, err = self._get_chat(request, chat_id)
-        if err:
+        if err is not None:
             return err
+        assert chat is not None
         chat.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
