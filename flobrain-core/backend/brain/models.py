@@ -9,8 +9,6 @@ class Chat(models.Model):
         "users.User",
         on_delete=models.CASCADE,
         related_name="chats",
-        db_column="user_id",
-        to_field="id",
     )
     title = models.CharField(max_length=255, default="New Chat")
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
