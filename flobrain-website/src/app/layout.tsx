@@ -28,13 +28,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProviderWrapper>
-          <RootBackground>
-            <Navbar />
-            <div className="flex-1">{children}</div>
-            <Footer />
-          </RootBackground>
-        </AuthProviderWrapper>
+        <ThemeProvider>
+          <AuthProviderWrapper>
+            <RootBackground>
+              <Navbar />
+              <div className="flex-1">{children}</div>
+              <Footer />
+            </RootBackground>
+          </AuthProviderWrapper>
+        </ThemeProvider>
         {GA_MEASUREMENT_ID ? (
           <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
         ) : null}

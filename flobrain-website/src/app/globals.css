@@ -286,9 +286,6 @@
 
 :root {
   --radius: 0.5rem;
-  --color-brain: #a855f7;
-  --color-memory: #000000;
-  --background: linear-gradient(to right, #290036, #070014);
 
   /* Settings / modal surfaces (Brain-aligned) */
   --surface-panel: #0b0719;
@@ -297,6 +294,14 @@
   --border-subtle: rgba(255, 255, 255, 0.1);
   --border-accent: rgba(167, 139, 250, 0.3);
   --accent-violet: #a855f7;
+}
+
+/* Fallback for the no-JS case, before next-themes sets .light or .dark on <html>.
+   Scoped so the theme classes above always win once one is applied. */
+html:not(.light):not(.dark) {
+  --background: linear-gradient(to right, #290036, #070014);
+  --color-brain: #a855f7;
+  --color-memory: #000000;
 }
 
 body {
