@@ -8,9 +8,10 @@ function parseTimestamp(ts: string | null | undefined): Date {
 }
 
 function apiMessageToMessage(m: BrainMessageApi): Message {
+  const rawType = m.type ?? m.role;
   return {
     id: m.id,
-    type: m.type === "user" ? "user" : "assistant",
+    type: rawType === "user" ? "user" : "assistant",
     text: m.text ?? undefined,
     image: m.image ?? undefined,
     timestamp: parseTimestamp(m.timestamp),

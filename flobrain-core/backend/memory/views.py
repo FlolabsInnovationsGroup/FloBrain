@@ -3,10 +3,16 @@ from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from memory.mongo_client import db as mongo_db
 from users.views import get_user_from_request
 
 from .models import MemoryLink, MemoryNode
 
+from rest_framework import status
+from .sorter import distribute_to_tiers
+from .tier_1 import save_to_active_buffer
+from .tier_2 import save_to_associative_layer
+from .tier_3 import migrate_to_cold_storage
 
 def _parse_date_range(date_range: str):
     """Return (start, end) datetime or (None, None) for 'All Time'."""
@@ -24,6 +30,19 @@ def _parse_date_range(date_range: str):
         start = now - timedelta(days=365)
         return start, now
     return None, None
+
+
+def _log_memory_event(user_id, event_type, status="success", payload=None):
+    mongo_db.workflow_events.insert_one(
+        {
+            "workflow_id": None,
+            "user_id": user_id,
+            "event_type": event_type,
+            "status": status,
+            "payload": payload or {},
+            "created_at": timezone.now(),
+        }
+    )
 
 
 class MemoryGraphView(APIView):
@@ -155,3 +174,92 @@ class MemoryNodeDetailView(APIView):
             })
         except MemoryNode.DoesNotExist:
             return Response({"error": "Node not found"}, status=404)
+
+<<<<<<< HEAD
+    def patch(self, request, pk):
+        user = get_user_from_request(request)
+        if not user:
+            return Response({"error": "Authentication required"}, status=401)
+
+        try:
+            node = MemoryNode.objects.get(id=pk)
+        except MemoryNode.DoesNotExist:
+            return Response({"error": "Node not found"}, status=404)
+
+        allowed_fields = {"name", "val", "group", "memory_type", "relevance"}
+        updates = {}
+        for field in allowed_fields:
+            if field in request.data:
+                updates[field] = request.data[field]
+
+        if not updates:
+            return Response({"error": "No editable fields provided"}, status=400)
+
+        before = {
+            "name": node.name,
+            "val": node.val,
+            "group": node.group,
+            "memory_type": node.memory_type,
+            "relevance": node.relevance,
+        }
+
+        for field, value in updates.items():
+            setattr(node, field, value)
+        node.save(update_fields=list(updates.keys()))
+
+        _log_memory_event(
+            user_id=getattr(user, "id", None),
+            event_type="memory_updated",
+            payload={
+                "memory_node_id": node.id,
+                "before": before,
+                "after": updates,
+            },
+        )
+
+        return Response(
+            {
+                "id": node.id,
+                "name": node.name,
+                "val": node.val,
+                "group": node.group,
+                "memory_type": node.memory_type,
+                "relevance": node.relevance,
+                "created_at": node.created_at.isoformat(),
+            }
+        )
+=======
+class MemorySaveView(APIView):
+   
+    def post(self, request):
+        user = get_user_from_request(request)
+        if not user:
+            return Response({"error": "Auth required"}, status=401)
+        
+        try:
+            # Распределяем по уровням
+            node = distribute_to_tiers(request.data)
+            
+            # Получаем эмбеддинг из запроса (если его нет, передаем пустой список)
+            embedding = request.data.get('embedding', [])
+
+            # Cold Storage
+            migrate_to_cold_storage(node)
+
+            # Associative Layer (Tier 2) - теперь передаем embedding
+            if node.tier_level in [1, 2]:
+                save_to_associative_layer(node, embedding)
+
+            # Active Buffer (Tier 1)
+            if node.tier_level == 1:
+                save_to_active_buffer(node)
+                
+            return Response({
+                "status": "saved",
+                "binary_index": node.binary_index,
+                "tier": node.tier_level,
+                "node_id": node.id
+            })
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+>>>>>>> 4e405ea (feat(memory): integrate tri-tier core and apply DB index fixes)

@@ -5,7 +5,7 @@ export const FOOTER_SECTIONS = [
     title: "Company",
     links: [
       { label: "Careers", href: "https://www.flolabs.international/internships" },
-      { label: "Contact", href: "/contact" },
+      // { label: "Contact", href: "/contact" },
     ],
   },
   {

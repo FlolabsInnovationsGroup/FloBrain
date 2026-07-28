@@ -173,6 +173,10 @@ export const api = {
     );
   },
 
+  async getMemoryNode(id: string) {
+    return this.request<MemoryNodeDetailApi>(`/api/memory/nodes/${id}/`);
+  },
+
   // --- Dashboard (health unauthenticated; memory-activity requires auth) ---
 
   async getDashboardHealth() {
@@ -181,6 +185,10 @@ export const api = {
 
   async getDashboardMemoryActivity() {
     return this.request<DashboardMemoryActivityApi>("/api/dashboard/memory-activity/");
+  },
+
+  async getDashboardErrorLogs() {
+    return this.request<DashboardErrorLogsApi>("/api/dashboard/error-logs/");
   },
 
   // --- Brain / Chat (requires auth) ---
@@ -226,6 +234,8 @@ export type DashboardHealthApi = {
   backend: string;
   database: string;
   allSystemsOperational: boolean;
+  system_status: "online" | "idle" | "loading" | "offline" | "critical_error";
+  connected_devices: number;
 };
 
 export type DashboardMemoryActivityApi = {
@@ -247,6 +257,20 @@ export type MemoryNodeApi = {
   created_at?: string | null;
 };
 
+export type MemoryNodeConnectionEntry = {
+  id: string;
+  name: string;
+  group: string;
+};
+
+export type MemoryNodeDetailApi = MemoryNodeApi & {
+  connections: {
+    outgoing: MemoryNodeConnectionEntry[];
+    incoming: MemoryNodeConnectionEntry[];
+    total: number;
+  };
+};
+
 export type BrainMessageApi = {
   id: string;
   role: string;
@@ -264,6 +288,16 @@ export type BrainChatApi = {
 };
 
 export type BrainChatDetailApi = BrainChatApi;
+
+export type DashboardErrorLogEntry = {
+  level: "warning" | "error";
+  message: string;
+  timestamp: string;
+};
+
+export type DashboardErrorLogsApi = {
+  "error-logs": DashboardErrorLogEntry[];
+};
 
 // Re-export for team: use apiClient for custom requests + React Query
 export { apiClient } from "./axios";
