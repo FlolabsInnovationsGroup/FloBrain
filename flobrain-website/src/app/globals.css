@@ -288,6 +288,15 @@
   --radius: 0.5rem;
   --color-brain: #a855f7;
   --color-memory: #000000;
+  --background: linear-gradient(to right, #290036, #070014);
+
+  /* Settings / modal surfaces (Brain-aligned) */
+  --surface-panel: #0b0719;
+  --surface-elevated: #120724;
+  --surface-card: #130a2d;
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(167, 139, 250, 0.3);
+  --accent-violet: #a855f7;
 }
 
 body {
