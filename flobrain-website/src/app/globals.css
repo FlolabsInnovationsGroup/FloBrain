@@ -636,3 +636,53 @@ body {
 .light .memory-node-panel-scroll {
   scrollbar-color: #9b8ab8 transparent;
 }
+
+.flobrain-diagram {
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.flobrain-diagram h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.flobrain-diagram p {
+  max-width: 800px;
+  margin: 0 auto 2.5rem;
+  color: #d4d4d8;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.diagram-grid {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.diagram-grid div {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.diagram-grid div:hover {
+  transform: translateY(-5px);
+  border-color: #a855f7;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+}
+
+@media (max-width: 768px) {
+  .diagram-grid {
+    grid-template-columns: 1fr;
+  }
+}
