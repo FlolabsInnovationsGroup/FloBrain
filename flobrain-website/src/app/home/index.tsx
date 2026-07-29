@@ -71,4 +71,5 @@ export default function HomePage() {
       </main>
     </MotionProvider>
   );
+
 }
