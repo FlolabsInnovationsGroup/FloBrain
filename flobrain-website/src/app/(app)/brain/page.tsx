@@ -23,6 +23,7 @@ const WELCOME_MESSAGE: Message = {
   timestamp: new Date(),
 };
 
+
 function sortChatsByLastUsed(chats: ChatHistory[]): ChatHistory[] {
   return [...chats].sort((a, b) => {
     const tA = a.timestamp instanceof Date ? a.timestamp.getTime() : new Date(a.timestamp).getTime();
