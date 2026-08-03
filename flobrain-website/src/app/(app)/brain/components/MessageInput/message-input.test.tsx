@@ -13,6 +13,7 @@ jest.mock('lucide-react', () => ({
   ArrowUp: () => <div data-testid="arrow-up-icon">ArrowUp</div>,
 }));
 
+
 Object.defineProperty(window, 'MediaRecorder', {
   writable: true,
   configurable: true,
