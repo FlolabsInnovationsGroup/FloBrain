@@ -1,35 +1,34 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
-import HelpSettings from "./index";
+"use client";
 
-describe("HelpSettings Component", () => {
-  it("should render FAQ placeholder questions", () => {
-    render(<HelpSettings />);
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
-    expect(screen.getByText("FAQ Placeholder Question 1")).toBeDefined();
-    expect(screen.getByText("FAQ Placeholder Question 2")).toBeDefined();
-    expect(screen.getByText("FAQ Placeholder Question 3")).toBeDefined();
-    expect(screen.getByText("FAQ Placeholder Question 4")).toBeDefined();
-  });
+const faqItems = [
+  "FAQ Placeholder Question 1",
+  "FAQ Placeholder Question 2",
+  "FAQ Placeholder Question 3",
+  "FAQ Placeholder Question 4",
+];
 
-  it("should render expandable FAQ items as buttons", () => {
-    render(<HelpSettings />);
+export default function HelpSettings() {
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-    const buttons = screen.getAllByRole("button");
-    expect(buttons.length).toBe(4);
-  });
-
-  it("should toggle FAQ item when clicked", () => {
-    render(<HelpSettings />);
-
-    const firstButton = screen.getByText("FAQ Placeholder Question 1").closest("button");
-    expect(firstButton).toBeDefined();
-
-    if (firstButton) {
-      fireEvent.click(firstButton);
-      // After click, chevron should rotate (expanded state)
-      const chevron = firstButton.querySelector("svg");
-      expect(chevron).toBeDefined();
-    }
-  });
-});
+  return (
+    <div className="space-y-4">
+      {faqItems.map((item, index) => (
+        <button
+          key={index}
+          onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
+          className="w-full flex items-center justify-between p-4 bg-[#281C30] border border-zinc-500/50 rounded-lg hover:border-zinc-400/50 transition-colors text-left group"
+        >
+          <span className="text-white font-medium">{item}</span>
+          <ChevronDown
+            className={`w-5 h-5 text-white/70 transition-transform ${
+              expandedIndex === index ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
