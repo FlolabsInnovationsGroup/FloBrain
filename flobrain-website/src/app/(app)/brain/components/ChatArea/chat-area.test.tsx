@@ -6,6 +6,7 @@ import { vi } from 'vitest';
 import ChatArea from '.'; // Adjust path if necessary
 import type { Message } from '@/types/chat';
 
+
 // Mock the SVG imports
 vi.mock('@/assets/images/synthesiznig-circle.svg', () => ({ default: '/synthesiznig-circle.svg' }));
 vi.mock('next/image', () => ({

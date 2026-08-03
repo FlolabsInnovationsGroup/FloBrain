@@ -16,6 +16,7 @@ const TAB_COLORS: Record<AnswerTab, string> = {
   Gemini: '#A27A02',
 };
 
+
 interface ChatAreaProps {
   messages: Message[];
   isLoading?: boolean;
