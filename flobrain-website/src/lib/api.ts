@@ -84,6 +84,7 @@ export const api = {
 
   // --- Auth (used by AuthContext; other data can use useQuery/useMutation + apiClient) ---
 
+  
   async signIn(email: string, password: string) {
     return this.request<{
       access_token: string;

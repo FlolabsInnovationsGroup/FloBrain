@@ -13,6 +13,7 @@ interface ChatInputProps {
   compactMode?: boolean;
 }
 
+
 export default function ChatInput({
   onSendMessage,
   disabled = false,

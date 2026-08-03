@@ -2,6 +2,7 @@ import type { BrainChatApi, BrainChatDetailApi, BrainMessageApi } from "@/lib/ap
 import type { ApiResult } from "@/lib/api";
 import type { ChatHistory, Message } from "@/types/chat";
 
+
 function parseTimestamp(ts: string | null | undefined): Date {
   if (!ts) return new Date();
   const d = new Date(ts);
@@ -20,6 +21,7 @@ function apiMessageToMessage(m: BrainMessageApi): Message {
     completion_tokens: m.completion_tokens ?? undefined,
   };
 }
+
 
 export function apiChatToChatHistory(chat: BrainChatApi | BrainChatDetailApi): ChatHistory {
   return {
