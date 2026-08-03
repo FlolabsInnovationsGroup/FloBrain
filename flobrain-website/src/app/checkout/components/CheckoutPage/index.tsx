@@ -172,7 +172,7 @@ export default function CheckoutPage({ selectedPlan }: CheckoutPageProps) {
                   <a href="#" className="text-[#8b5cf6] hover:underline">
                     Terms of Service
                   </a>{" "}
-                  and{" "}
+                  and also{" "}
                   <a href="#" className="text-[#8b5cf6] hover:underline">
                     Privacy Policy
                   </a>
