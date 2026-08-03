@@ -11,7 +11,7 @@ services:
       - POSTGRES_USER=flo_user
       - POSTGRES_PASSWORD=flo_password
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql/data
 
   web:
     build: .
@@ -39,8 +39,17 @@ services:
       - DB_PASS=flo_password
       - DB_HOST=db # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker
       - DB_PORT=5432
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - REDIS_URL=redis://redis:6379/0
     depends_on:
       - db
+      - mongodb
+      - redis
+
+  mongodb:
+    image: mongo:latest
+
   redis:
     image: redis:7-alpine
     container_name: flobrain_backend_redis
