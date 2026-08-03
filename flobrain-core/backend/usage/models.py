@@ -5,15 +5,9 @@ from django.utils import timezone
 
 
 class TokenUsageRecord(models.Model):
-    PROVIDER_OPENAI = "openai"
-    PROVIDER_ANTHROPIC = "anthropic"
-    PROVIDER_GOOGLE = "google"
-    PROVIDER_MOCK = "mock"
+    PROVIDER_MULTIMODAL = "multimodal"
     PROVIDER_CHOICES = [
-        (PROVIDER_OPENAI, "OpenAI"),
-        (PROVIDER_ANTHROPIC, "Anthropic"),
-        (PROVIDER_GOOGLE, "Google"),
-        (PROVIDER_MOCK, "Mock"),
+        (PROVIDER_MULTIMODAL, "Multimodal"),
     ]
 
     REQUEST_CHAT = "chat_completion"

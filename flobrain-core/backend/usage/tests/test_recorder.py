@@ -17,7 +17,7 @@ class UsageRecorderTestCase(TestCase):
 
     def test_record_creates_usage_record_and_summaries(self):
         usage = TokenUsageData(
-            provider=TokenUsageRecord.PROVIDER_MOCK,
+            provider=TokenUsageRecord.PROVIDER_MULTIMODAL,
             model="gpt-3.5-turbo",
             request_type=TokenUsageRecord.REQUEST_CHAT,
             prompt_tokens=10,

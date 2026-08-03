@@ -4,7 +4,7 @@ services:
     container_name: flobrain_backend_db
     restart: always
     ports:
-      - "5433:5432"   # Expose so Django on host can use DB_HOST=localhost
+      - "5432:5432"   # Expose so Django on host can use DB_HOST=localhost
 
     environment:
       - POSTGRES_DB=flobrain_db

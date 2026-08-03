@@ -1,17 +1,12 @@
-from dataclasses import dataclass, field
-from typing import Any, Protocol
+from dataclasses import dataclass
+from typing import Protocol
 
 
 @dataclass
 class LLMResult:
-    text: str
-    prompt_tokens: int
-    completion_tokens: int
-    total_tokens: int
+    generated_response: str
     model: str
-    provider: str
-    raw_usage: dict[str, Any] = field(default_factory=dict)
-    estimated: bool = False
+    file_type: str = "text"
 
 
 class LLMAdapter(Protocol):

@@ -182,39 +182,28 @@ class SendMessageView(APIView):
         assistant_msg = Message.objects.create(
             chat=chat,
             role=Message.ROLE_ASSISTANT,
-            text=llm_result.text,
-            prompt_tokens=llm_result.prompt_tokens,
-            completion_tokens=llm_result.completion_tokens,
+            text=llm_result.generated_response,
         )
-
-        usage_metadata = dict(llm_result.raw_usage)
-        if llm_result.estimated:
-            usage_metadata["source"] = "estimated"
 
         UsageRecorder().record(
             user,
             TokenUsageData(
-                provider=llm_result.provider,
+                provider=TokenUsageRecord.PROVIDER_MULTIMODAL,
                 model=llm_result.model,
                 request_type=TokenUsageRecord.REQUEST_CHAT,
-                prompt_tokens=llm_result.prompt_tokens,
-                completion_tokens=llm_result.completion_tokens,
-                total_tokens=llm_result.total_tokens,
+                prompt_tokens=0,
+                completion_tokens=0,
+                total_tokens=0,
                 chat_id=chat.pk,
                 message_id=assistant_msg.pk,
-                metadata=usage_metadata,
             ),
         )
 
         chat.save(update_fields=["updated_at"])
 
         usage_payload = {
-            "prompt_tokens": llm_result.prompt_tokens,
-            "completion_tokens": llm_result.completion_tokens,
-            "total_tokens": llm_result.total_tokens,
             "model": llm_result.model,
-            "provider": llm_result.provider,
-            "estimated": llm_result.estimated,
+            "file_type": llm_result.file_type,
         }
 
         serializer = ChatDetailSerializer(chat, context={"usage": usage_payload})

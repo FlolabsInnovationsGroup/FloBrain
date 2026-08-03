@@ -7,10 +7,7 @@ import uuid
 
 from django.conf import settings
 
-from usage.models import TokenUsageRecord
-
 from .base import LLMResult
-from .mock_adapter import MockLLMAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -44,17 +41,6 @@ def _format_messages_as_prompt(messages: list[dict[str, str]]) -> str:
     return "\n\n".join(parts)
 
 
-def _extract_int(data: dict, *keys: str) -> int:
-    for key in keys:
-        val = data.get(key)
-        if val is not None:
-            try:
-                return int(val)
-            except (TypeError, ValueError):
-                pass
-    return 0
-
-
 class MultimodalLLMAdapter:
     """
     Calls the deployed multimodal AI service.
@@ -62,9 +48,9 @@ class MultimodalLLMAdapter:
     Endpoint: POST {MULTIMODAL_SERVICE_URL}/process
     Body:     multipart/form-data  { text_input: "<prompt>" }
     Auth:     Bearer {MULTIMODAL_API_KEY}  (if key is set)
-    """
 
-    provider = TokenUsageRecord.PROVIDER_OPENAI
+    Response fields used: result, model, file_type
+    """
 
     def __init__(self) -> None:
         base_url = getattr(settings, "MULTIMODAL_SERVICE_URL", None) or os.environ.get(
@@ -77,11 +63,13 @@ class MultimodalLLMAdapter:
         )
 
     def generate(self, messages: list[dict[str, str]], model: str | None = None) -> LLMResult:
-        model_name = model or getattr(settings, "LLM_DEFAULT_MODEL", "gpt-3.5-turbo")
-
         if not self._base_url:
-            logger.warning("MULTIMODAL_SERVICE_URL not configured; falling back to mock adapter")
-            return MockLLMAdapter().generate(messages, model_name)
+            logger.error("MULTIMODAL_SERVICE_URL is not configured")
+            return LLMResult(
+                generated_response="Error: multimodal service URL is not configured.",
+                model=model or "unknown",
+                file_type="text",
+            )
 
         text_input = _format_messages_as_prompt(messages)
         url = f"{self._base_url}/process"
@@ -104,62 +92,25 @@ class MultimodalLLMAdapter:
             error_body = exc.read().decode("utf-8", errors="replace")
             logger.error("Multimodal service HTTP %s at %s: %s", exc.code, url, error_body)
             return LLMResult(
-                text=f"Error from multimodal service: HTTP {exc.code}",
-                prompt_tokens=0,
-                completion_tokens=0,
-                total_tokens=0,
-                model=model_name,
-                provider=self.provider,
-                raw_usage={"error": error_body, "http_status": exc.code},
-                estimated=True,
+                generated_response=f"Error from multimodal service: HTTP {exc.code}",
+                model=model or "unknown",
+                file_type="text",
             )
         except urllib.error.URLError as exc:
             reason = str(getattr(exc, "reason", exc))
             logger.error("Multimodal service unreachable at %s: %s", url, reason)
             return LLMResult(
-                text="Error: multimodal AI service is unavailable.",
-                prompt_tokens=0,
-                completion_tokens=0,
-                total_tokens=0,
-                model=model_name,
-                provider=self.provider,
-                raw_usage={"error": reason},
-                estimated=True,
+                generated_response="Error: multimodal AI service is unavailable.",
+                model=model or "unknown",
+                file_type="text",
             )
 
-        # Extract generated text — "result" is the field this service uses
-        text = (
-            data.get("result")
-            or data.get("response_text")
-            or data.get("text")
-            or data.get("output")
-            or data.get("response")
-            or data.get("generated_text")
-            or ""
-        ).strip()
-
-        # Extract token counts from the /process response
-        prompt_tokens = _extract_int(data, "prompt_tokens", "input_tokens")
-        completion_tokens = _extract_int(data, "completion_tokens", "output_tokens")
-        total_tokens = _extract_int(data, "total_tokens") or (prompt_tokens + completion_tokens)
-        estimated = bool(data.get("estimated", total_tokens == 0))
-
-        _usage_val = data.get("usage")
-        raw_usage: dict = _usage_val if isinstance(_usage_val, dict) else {}
-        if not raw_usage and (prompt_tokens or completion_tokens):
-            raw_usage = {
-                "prompt_tokens": prompt_tokens,
-                "completion_tokens": completion_tokens,
-                "total_tokens": total_tokens,
-            }
+        generated_response = (data.get("result") or "").strip()
+        resolved_model = data.get("model") or model or "unknown"
+        file_type = data.get("file_type") or "text"
 
         return LLMResult(
-            text=text or "Error: empty response from multimodal service.",
-            prompt_tokens=prompt_tokens,
-            completion_tokens=completion_tokens,
-            total_tokens=total_tokens,
-            model=data.get("model") or model_name,
-            provider=self.provider,
-            raw_usage=raw_usage,
-            estimated=estimated,
+            generated_response=generated_response or "Error: empty response from multimodal service.",
+            model=resolved_model,
+            file_type=file_type,
         )

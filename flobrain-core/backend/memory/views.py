@@ -111,8 +111,6 @@ class MemoryGraphView(APIView):
             {
                 "id": n.id,
                 "name": n.name,
-                "val": n.relevance,
-                "group": n.memory_type,
                 "memory_type": n.memory_type,
                 "relevance": n.relevance,
                 "created_at": n.created_at.isoformat() if n.created_at else None,
@@ -161,8 +159,6 @@ class MemoryNodeDetailView(APIView):
             return Response({
                 "id": node.id,
                 "name": node.name,
-                "val": node.relevance,
-                "group": node.memory_type,
                 "memory_type": node.memory_type,
                 "relevance": node.relevance,
                 "created_at": node.created_at.isoformat(),
@@ -218,8 +214,6 @@ class MemoryNodeDetailView(APIView):
             {
                 "id": node.id,
                 "name": node.name,
-                "val": node.relevance,
-                "group": node.memory_type,
                 "memory_type": node.memory_type,
                 "relevance": node.relevance,
                 "created_at": node.created_at.isoformat(),

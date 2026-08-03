@@ -30,12 +30,8 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class ChatUsageSerializer(serializers.Serializer):
-    prompt_tokens = serializers.IntegerField()
-    completion_tokens = serializers.IntegerField()
-    total_tokens = serializers.IntegerField()
     model = serializers.CharField()
-    provider = serializers.CharField(required=False)
-    estimated = serializers.BooleanField(required=False)
+    file_type = serializers.CharField(required=False)
 
 
 class ChatListSerializer(serializers.ModelSerializer):
