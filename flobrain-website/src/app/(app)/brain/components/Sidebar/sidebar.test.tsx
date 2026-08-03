@@ -5,6 +5,7 @@ import { describe, expect, vi, beforeEach } from 'vitest';
 import Sidebar from '../Sidebar';
 import type { ChatHistory, Folder } from '@/types/chat';
 
+
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({
   Trash2: () => <div data-testid="trash-icon">Trash2</div>,
