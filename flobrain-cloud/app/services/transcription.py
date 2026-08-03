@@ -1,13 +1,17 @@
 import logging
+
 from openai import OpenAI, OpenAIError
 from tenacity import (
-    retry,
-    wait_exponential,
-    stop_after_attempt,
-    retry_if_exception_type,
     RetryError,
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
 )
+
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 # Initialize client
 client = None
@@ -15,9 +19,9 @@ if settings.OPENAI_API_KEY:
     try:
         client = OpenAI(api_key=settings.OPENAI_API_KEY)
     except OpenAIError as e:
-        logging.error(f"Error initializing OpenAI client: {e}")
+        logger.error("Error initializing OpenAI client: %s", e)
 else:
-    logging.warning("OPENAI_API_KEY not set. Transcription service will not work.")
+    logger.warning("OPENAI_API_KEY not set. Transcription service will not work.")
 
 RETRYABLE_EXCEPTIONS = (OpenAIError,)
 
@@ -49,11 +53,11 @@ def transcribe_audio(file_path: str) -> dict:
     try:
         return _transcribe_file_internal(file_path)
     except FileNotFoundError:
-        logging.error(f"File not found: {file_path}")
+        logger.error("File not found: %s", file_path)
         return {"error": "File not found"}
     except RetryError as e:
-        logging.error(f"Transcription failed after retries: {e}")
+        logger.error("Transcription failed after retries: %s", e)
         return {"error": "Transcription failed"}
-    except Exception as e:
-        logging.error(f"Unexpected error during transcription: {e}")
+    except Exception as e:  # noqa: BLE001
+        logger.error("Unexpected error during transcription: %s", e)
         return {"error": str(e)}

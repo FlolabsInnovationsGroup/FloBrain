@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import List, Optional
 
 
 class TranscriptionSegment(BaseModel):
@@ -10,7 +9,7 @@ class TranscriptionSegment(BaseModel):
 
 class TranscriptionResponse(BaseModel):
     text: str
-    segments: List[TranscriptionSegment] = []
+    segments: list[TranscriptionSegment] = []
 
 
 class ChatMessage(BaseModel):
@@ -19,15 +18,15 @@ class ChatMessage(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    message: Optional[str] = None
-    messages: Optional[List[ChatMessage]] = None
-    model: Optional[str] = None
-    voice_id: Optional[str] = None
+    message: str | None = None
+    messages: list[ChatMessage] | None = None
+    model: str | None = None
+    voice_id: str | None = None
 
 
 class ChatResponse(BaseModel):
     response_text: str
-    audio_content: Optional[str] = None  # Base64 encoded audio
+    audio_content: str | None = None  # Base64 encoded audio
     prompt_tokens: int = 0
     completion_tokens: int = 0
     total_tokens: int = 0

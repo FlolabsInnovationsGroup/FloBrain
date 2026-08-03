@@ -1,6 +1,10 @@
-from elevenlabs.client import ElevenLabs
-from app.core.config import settings
 import logging
+
+from elevenlabs.client import ElevenLabs
+
+from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 client = (
     ElevenLabs(api_key=settings.ELEVENLABS_API_KEY)
@@ -11,7 +15,7 @@ client = (
 
 def synthesize_speech(text: str, voice_id="JBFqnCBsd6RMkjVDRZzb"):
     if not client:
-        logging.error("ElevenLabs API key not configured.")
+        logger.error("ElevenLabs API key not configured.")
         return None
 
     try:
@@ -22,6 +26,6 @@ def synthesize_speech(text: str, voice_id="JBFqnCBsd6RMkjVDRZzb"):
             output_format="mp3_44100_128",
         )
         return audio
-    except Exception as e:
-        logging.error(f"Speech synthesis failed: {e}")
+    except Exception as e:  # noqa: BLE001
+        logger.error("Speech synthesis failed: %s", e)
         return None

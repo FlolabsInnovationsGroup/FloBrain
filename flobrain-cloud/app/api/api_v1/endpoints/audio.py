@@ -1,15 +1,18 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
-from app.services import transcription
-from app.models.schemas import TranscriptionResponse
-import shutil
 import os
+import shutil
 import tempfile
+from typing import Annotated
+
+from fastapi import APIRouter, File, HTTPException, UploadFile
+
+from app.models.schemas import TranscriptionResponse
+from app.services import transcription
 
 router = APIRouter()
 
 
 @router.post("/transcribe", response_model=TranscriptionResponse)
-async def transcribe_audio(file: UploadFile = File(...)):
+async def transcribe_audio(file: Annotated[UploadFile, File()]):
     # Save upload to temp file
     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
         shutil.copyfileobj(file.file, tmp)

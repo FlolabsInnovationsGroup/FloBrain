@@ -1,9 +1,12 @@
+import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
+
 from app.core.config import settings
-import logging
+
+logger = logging.getLogger(__name__)
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY) if settings.OPENAI_API_KEY else None
 
@@ -41,7 +44,7 @@ def generate_response(messages: list, model="gpt-3.5-turbo") -> LLMResult:
             total_tokens = 0
             raw_usage = {"source": "estimated", "reason": "no_usage_in_response"}
             estimated = True
-            logging.warning("OpenAI response missing usage object")
+            logger.warning("OpenAI response missing usage object")
 
         return LLMResult(
             text=text,
@@ -53,6 +56,6 @@ def generate_response(messages: list, model="gpt-3.5-turbo") -> LLMResult:
             raw_usage=raw_usage,
             estimated=estimated,
         )
-    except Exception as e:
-        logging.error(f"LLM generation failed: {e}")
-        return LLMResult(text=f"Error generating response: {str(e)}")
+    except OpenAIError as e:
+        logger.error("LLM generation failed: %s", e)
+        return LLMResult(text=f"Error generating response: {e!s}")

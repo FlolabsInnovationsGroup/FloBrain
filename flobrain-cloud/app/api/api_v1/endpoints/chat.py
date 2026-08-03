@@ -1,7 +1,9 @@
-from fastapi import APIRouter
-from app.models.schemas import ChatRequest, ChatResponse
-from app.services import vector_db, llm, synthesis
 import base64
+
+from fastapi import APIRouter
+
+from app.models.schemas import ChatRequest, ChatResponse
+from app.services import llm, synthesis, vector_db
 
 router = APIRouter()
 
@@ -22,7 +24,7 @@ async def chat(request: ChatRequest):
         context = ""
         try:
             vector_db.vector_db.search_similar(request.message)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"Vector search failed: {e}")
 
         messages = [{"role": "system", "content": "You are a helpful assistant."}]
@@ -48,7 +50,7 @@ async def chat(request: ChatRequest):
         try:
             vector_db.vector_db.add_text(last_user_message)
             vector_db.vector_db.add_text(response.text)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"Failed to save to memory: {e}")
 
     return ChatResponse(

@@ -1,9 +1,13 @@
+import logging
 import os
+
 import faiss  # type: ignore
 import numpy as np
 from openai import OpenAI
+
 from app.core.config import settings
-import logging
+
+logger = logging.getLogger(__name__)
 
 
 class VectorDBService:
@@ -19,8 +23,8 @@ class VectorDBService:
         if os.path.exists(self.index_path):
             try:
                 return faiss.read_index(self.index_path)
-            except Exception as e:
-                logging.error(f"Failed to load index: {e}. Creating new one.")
+            except Exception as e:  # noqa: BLE001
+                logger.error("Failed to load index: %s. Creating new one.", e)
 
         return faiss.IndexFlatIP(self.dimension)
 
