@@ -8,7 +8,6 @@ from users.views import get_user_from_request
 
 from .models import MemoryLink, MemoryNode
 
-from rest_framework import status
 from .sorter import distribute_to_tiers
 from .tier_1 import save_to_active_buffer
 from .tier_2 import save_to_associative_layer
@@ -111,6 +110,8 @@ class MemoryGraphView(APIView):
             {
                 "id": n.id,
                 "name": n.name,
+                "val": n.relevance,
+                "group": n.memory_type,
                 "memory_type": n.memory_type,
                 "relevance": n.relevance,
                 "created_at": n.created_at.isoformat() if n.created_at else None,
@@ -137,8 +138,6 @@ class MemoryNodeDetailView(APIView):
     Returns single node + all connections for detail panel.
     """
     def get(self, request, pk):
-        from users.views import get_user_from_request
-        
         user = get_user_from_request(request)
         if not user:
             return Response({"error": "Authentication required"}, status=401)
@@ -159,6 +158,8 @@ class MemoryNodeDetailView(APIView):
             return Response({
                 "id": node.id,
                 "name": node.name,
+                "val": node.relevance,
+                "group": node.memory_type,
                 "memory_type": node.memory_type,
                 "relevance": node.relevance,
                 "created_at": node.created_at.isoformat(),
@@ -214,6 +215,8 @@ class MemoryNodeDetailView(APIView):
             {
                 "id": node.id,
                 "name": node.name,
+                "val": node.relevance,
+                "group": node.memory_type,
                 "memory_type": node.memory_type,
                 "relevance": node.relevance,
                 "created_at": node.created_at.isoformat(),
