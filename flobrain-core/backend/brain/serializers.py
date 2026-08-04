@@ -8,7 +8,15 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ["id", "role", "text", "image", "timestamp"]
+        fields = [
+            "id",
+            "role",
+            "text",
+            "image",
+            "prompt_tokens",
+            "completion_tokens",
+            "timestamp",
+        ]
         extra_kwargs = {"timestamp": {"source": "created_at", "read_only": True}}
 
     def to_representation(self, instance):
@@ -19,6 +27,11 @@ class MessageSerializer(serializers.ModelSerializer):
             instance.created_at.isoformat() if instance.created_at else None
         )
         return data
+
+
+class ChatUsageSerializer(serializers.Serializer):
+    model = serializers.CharField()
+    file_type = serializers.CharField(required=False)
 
 
 class ChatListSerializer(serializers.ModelSerializer):
@@ -41,10 +54,17 @@ class ChatDetailSerializer(serializers.ModelSerializer):
 
     messages = MessageSerializer(many=True, read_only=True)
     timestamp = serializers.DateTimeField(source="updated_at", read_only=True)
+    usage = serializers.SerializerMethodField()
 
     class Meta:
         model = Chat
-        fields = ["id", "title", "timestamp", "messages"]
+        fields = ["id", "title", "timestamp", "messages", "usage"]
+
+    def get_usage(self, obj):
+        usage = self.context.get("usage")
+        if not usage:
+            return None
+        return usage
 
 
 class ChatCreateSerializer(serializers.ModelSerializer):
@@ -68,3 +88,4 @@ class ChatUpdateSerializer(serializers.ModelSerializer):
 class SendMessageSerializer(serializers.Serializer):
     text = serializers.CharField(allow_blank=True)
     image = serializers.CharField(allow_blank=True, required=False)
+    model = serializers.CharField(required=False, allow_blank=True)
