@@ -9,8 +9,6 @@ class Chat(models.Model):
         "users.User",
         on_delete=models.CASCADE,
         related_name="chats",
-        db_column="user_id",
-        to_field="id",
     )
     title = models.CharField(max_length=255, default="New Chat")
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
@@ -40,6 +38,8 @@ class Message(models.Model):
     role = models.CharField(max_length=16, choices=ROLE_CHOICES, db_index=True)
     text = models.TextField(blank=True, null=True)
     image = models.TextField(blank=True, null=True)  # optional base64 or URL
+    prompt_tokens = models.PositiveIntegerField(null=True, blank=True)
+    completion_tokens = models.PositiveIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now, db_index=True)
 
     class Meta:
