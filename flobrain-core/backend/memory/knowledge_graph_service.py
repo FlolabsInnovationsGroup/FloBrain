@@ -1,4 +1,6 @@
 from datetime import datetime
+from bson import ObjectId
+from pymongo import ReturnDocument
 from memory.mongo_client import db
 
 
@@ -58,3 +60,44 @@ def get_connected_nodes(source_type, source_id, relationship=None):
 
     return connected_nodes
 
+def get_edge(edge_id):
+    edge = db.knowledge_edges.find_one(
+        {"_id": ObjectId(edge_id)}
+    )
+
+    if edge:
+        edge["_id"] = str(edge["_id"])
+
+    return edge
+
+
+def update_edge(edge_id, updates):
+    edge = db.knowledge_edges.find_one_and_update(
+        {"_id": ObjectId(edge_id)},
+        {"$set": updates},
+        return_document=ReturnDocument.AFTER
+    )
+
+    if edge:
+        edge["_id"] = str(edge["_id"])
+
+    return edge
+
+
+def delete_edge(edge_id):
+    result = db.knowledge_edges.delete_one(
+        {"_id": ObjectId(edge_id)}
+    )
+
+    return result.deleted_count
+
+
+def delete_edges_for_node(node_type, node_id):
+    result = db.knowledge_edges.delete_many({
+        "$or": [
+            {"source_type": node_type, "source_id": node_id},
+            {"target_type": node_type, "target_id": node_id}
+        ]
+    })
+
+    return result.deleted_count

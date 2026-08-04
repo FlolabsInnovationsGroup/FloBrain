@@ -16,7 +16,13 @@ def build_message_index():
     messages = list(db.messages.find({}))
 
     if not messages:
-        print("No messages found in MongoDB.")
+        if os.path.exists(INDEX_PATH):
+            os.remove(INDEX_PATH)
+
+        if os.path.exists(METADATA_PATH):
+            os.remove(METADATA_PATH)
+
+        print("No messages found. Existing FAISS index cleared.")
         return
 
     texts = [msg["content"] for msg in messages]
