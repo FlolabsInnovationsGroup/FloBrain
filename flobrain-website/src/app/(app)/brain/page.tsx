@@ -12,6 +12,9 @@ import ChatArea from './components/ChatArea/index';
 import ChatInput from './components/MessageInput/index';
 import jsPDF from 'jspdf';
 import { BarChart3, PanelLeft, X } from 'lucide-react';
+import { MotionProvider, Reveal, Stagger, StaggerItem } from '@/components/motion';
+import { setBrainConversationId } from '@/lib/sentry';
+import SettingsDialog from '@/app/profile/components/SettingsDialog';
 
 const WELCOME_MESSAGE: Message = {
   id: 'msg-welcome',
@@ -180,10 +183,13 @@ const CONFIDENCE_CARDS = [
 function ConfidencePanelContent({ headingClassName }: { headingClassName?: string }) {
   return (
     <>
-      <h3 className={cn('mb-3 text-sm font-semibold text-white', headingClassName)}>Confidence</h3>
-      <div className="space-y-3">
+      <Reveal variant="fadeIn" inView={false}>
+        <h3 className={cn('mb-3 text-sm font-semibold text-white', headingClassName)}>Confidence</h3>
+      </Reveal>
+      <Stagger className="space-y-3" stagger={0.08} inView={false}>
         {CONFIDENCE_CARDS.map((card) => (
-          <div key={card.model} className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
+          <StaggerItem key={card.model} variant="slideUp">
+            <div className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-white">{card.model}</p>
               <span className="text-xs text-white/80">{card.confidence}%</span>
@@ -198,9 +204,10 @@ function ConfidencePanelContent({ headingClassName }: { headingClassName?: strin
               <span>Latency {card.latency}</span>
               <span>Tokens {card.tokens}</span>
             </div>
-          </div>
+            </div>
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
     </>
   );
 }
@@ -208,9 +215,15 @@ function ConfidencePanelContent({ headingClassName }: { headingClassName?: strin
 /** Desktop (md+): fixed column; hidden below md (mobile uses drawer). */
 function ConfidencePanel() {
   return (
-    <aside className="max-md:hidden flex w-[300px] shrink-0 flex-col rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 min-h-0">
-      <ConfidencePanelContent />
-    </aside>
+    <Reveal
+      variant="slideRight"
+      inView={false}
+      className="max-md:hidden flex w-[min(300px,26vw)] shrink-0 min-h-0"
+    >
+      <aside className="flex h-full w-full flex-col rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 min-h-0">
+        <ConfidencePanelContent />
+      </aside>
+    </Reveal>
   );
 }
 
@@ -225,11 +238,16 @@ function BrainPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [initialInputValue, setInitialInputValue] = useState<string | null>(null);
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [preferences, setPreferences] = useState<BrainPreferences>(DEFAULT_PREFERENCES);
   const [mobileSessionsOpen, setMobileSessionsOpen] = useState(false);
   const [mobileConfidenceOpen, setMobileConfidenceOpen] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setBrainConversationId(currentChatId);
+  }, [currentChatId]);
 
   const closeMobileSidebars = useCallback(() => {
     setMobileSessionsOpen(false);
@@ -304,11 +322,6 @@ function BrainPageContent() {
     const existingUnused = chatHistory.find(isUnusedNewChat);
     if (existingUnused) {
       setCurrentChatId(existingUnused.id);
-      const msgs =
-        existingUnused.messages.length > 0
-          ? existingUnused.messages
-          : [WELCOME_MESSAGE];
-      setMessages(msgs);
       setChatHistory((prev) =>
         sortChatsByLastUsed(
           prev.map((c) =>
@@ -318,6 +331,26 @@ function BrainPageContent() {
           )
         )
       );
+      if (isAuthenticated) {
+        const res = await api.getChat(existingUnused.id);
+        if (res.error) {
+          setError(res.error);
+          return;
+        }
+        if (res.data) {
+          const chat = apiChatToChatHistory(res.data);
+          const msgs =
+            chat.messages.length > 0 ? chat.messages : [WELCOME_MESSAGE];
+          setMessages(msgs);
+          applyChatFromApi(chat);
+        }
+      } else {
+        const msgs =
+          existingUnused.messages.length > 0
+            ? existingUnused.messages
+            : [WELCOME_MESSAGE];
+        setMessages(msgs);
+      }
       return;
     }
 
@@ -347,7 +380,7 @@ function BrainPageContent() {
     setChatHistory((prev) => sortChatsByLastUsed([newChat, ...prev]));
     setCurrentChatId(newChatId);
     setMessages(newChat.messages);
-  }, [isAuthenticated, chatHistory, isUnusedNewChat]);
+  }, [isAuthenticated, chatHistory, isUnusedNewChat, applyChatFromApi]);
 
   // Initialize from URL param (e.g., /brain?initialMessage=...)
   useEffect(() => {
@@ -514,6 +547,7 @@ function BrainPageContent() {
   const handleLoadChat = useCallback(
     async (id: number) => {
       setCurrentChatId(id);
+      setError(null);
 
       const bumpAndSort = (prev: ChatHistory[]) =>
         sortChatsByLastUsed(
@@ -522,18 +556,17 @@ function BrainPageContent() {
           )
         );
 
-      const local = chatHistory.find((c) => c.id === id);
-      if (local && local.messages.length > 0) {
-        setMessages(local.messages);
-        setChatHistory(bumpAndSort);
-        return;
-      }
       if (isAuthenticated) {
         const res = await api.getChat(id);
-        if (res.error) return;
+        if (res.error) {
+          setError(res.error);
+          return;
+        }
         if (res.data) {
           const chat = apiChatToChatHistory(res.data);
-          setMessages(chat.messages);
+          const msgs =
+            chat.messages.length > 0 ? chat.messages : [WELCOME_MESSAGE];
+          setMessages(msgs);
           setChatHistory((prev) => {
             const idx = prev.findIndex((c) => c.id === id);
             const next = [...prev];
@@ -543,8 +576,14 @@ function BrainPageContent() {
             return sortChatsByLastUsed(next);
           });
         }
-      } else if (local) {
-        setMessages(local.messages);
+        return;
+      }
+
+      const local = chatHistory.find((c) => c.id === id);
+      if (local) {
+        const msgs =
+          local.messages.length > 0 ? local.messages : [WELCOME_MESSAGE];
+        setMessages(msgs);
         setChatHistory(bumpAndSort);
       }
     },
@@ -563,6 +602,11 @@ function BrainPageContent() {
     await handleNewChat();
     setMobileSessionsOpen(false);
   }, [handleNewChat]);
+
+  const handleSettings = useCallback(() => {
+    setMobileSessionsOpen(false);
+    setIsSettingsOpen(true);
+  }, []);
 
   const openMobileSessions = useCallback(() => {
     setMobileConfidenceOpen(false);
@@ -707,6 +751,7 @@ function BrainPageContent() {
   };
 
   return (
+    <MotionProvider>
     <main className="box-border mb-2 flex h-screen max-w-full min-h-0 flex-col overflow-y-hidden bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-3 pb-24 pt-24 font-[Inter] text-slate-300 sm:px-4 sm:pb-28 sm:pt-28 md:mx-auto md:w-[92%] md:px-0 md:pb-3 md:pt-[7rem]">
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
@@ -721,7 +766,7 @@ function BrainPageContent() {
         </div>
       )}
 
-      <div className="mb-2 flex shrink-0 items-center gap-2 md:hidden">
+      <Reveal variant="fadeIn" className="mb-2 flex shrink-0 items-center gap-2 md:hidden">
         <button
           type="button"
           onClick={openMobileSessions}
@@ -744,7 +789,7 @@ function BrainPageContent() {
             Confidence
           </button>
         )}
-      </div>
+      </Reveal>
 
       <div className="relative flex min-h-0 min-w-0 flex-1 gap-2 sm:gap-3">
         {mobileSessionsOpen && (
@@ -756,6 +801,7 @@ function BrainPageContent() {
           />
         )}
 
+        <Reveal variant="slideLeft" inView={false} className="md:contents">
         <div
           id="brain-sessions-drawer"
           className={cn(
@@ -772,13 +818,20 @@ function BrainPageContent() {
             onNewChat={handleNewChatMobile}
             onSearch={() => {}}
             onPreferences={() => setIsPreferencesOpen(true)}
-            onSettings={() => {}}
+            onSettings={handleSettings}
             chatsLoading={chatsLoading}
           />
         </div>
+        </Reveal>
 
         <div className="flex min-h-0 min-w-0 flex-1 gap-2 sm:gap-3">
-          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30">
+          <Reveal
+            variant="fadeIn"
+            delay={0.1}
+            inView={false}
+            className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30"
+          >
+          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             {currentChatId ? (
               <>
                 <ChatArea
@@ -800,6 +853,7 @@ function BrainPageContent() {
             ) : (
               <div className="flex flex-1 items-center justify-center overflow-y-auto">
                 <div className="max-w-md px-4 text-center sm:px-6">
+                  <Reveal variant="popUp">
                   <div className="mx-auto mb-5 h-16 w-16 opacity-50 sm:mb-6 sm:h-20 sm:w-20">
                     <svg viewBox="0 0 100 100" fill="none">
                       <path
@@ -829,15 +883,21 @@ function BrainPageContent() {
                       </defs>
                     </svg>
                   </div>
+                  </Reveal>
+                  <Reveal variant="slideUp" delay={0.08}>
                   <h2 className="mb-2 text-2xl font-bold tracking-tight text-white sm:mb-3 sm:text-3xl">
                     Welcome to FLOBRAIN
                   </h2>
+                  </Reveal>
+                  <Reveal variant="fadeIn" delay={0.14}>
                   <p className="mb-6 text-sm text-white/60 sm:mb-8 sm:text-base">
                     Start a new conversation to chat with our AI assistant.
                     {isAuthenticated
                       ? ' Your chats are saved on the server.'
                       : ' Sign in to save chats.'}
                   </p>
+                  </Reveal>
+                  <Reveal variant="popUp" delay={0.2}>
                   <button
                     type="button"
                     onClick={handleNewChat}
@@ -845,10 +905,12 @@ function BrainPageContent() {
                   >
                     Start New Chat
                   </button>
+                  </Reveal>
                 </div>
               </div>
             )}
           </section>
+          </Reveal>
           {preferences.showConfidencePanel && (
             <>
               <ConfidencePanel />
@@ -890,7 +952,12 @@ function BrainPageContent() {
         onClose={() => setIsPreferencesOpen(false)}
         onChange={setPreferences}
       />
+      <SettingsDialog
+        open={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </main>
+    </MotionProvider>
   );
 }
 
