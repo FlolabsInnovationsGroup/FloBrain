@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 
 from users.views import get_user_from_request
 
+from .llm import get_llm_adapter
 from .models import Chat, Message
 from .serializers import (
     ChatCreateSerializer,
@@ -22,6 +23,18 @@ def _get_user_or_401(request):
             status=status.HTTP_401_UNAUTHORIZED,
         )
     return user, None
+
+
+def _build_llm_messages(chat: Chat) -> list[dict[str, str]]:
+    messages: list[dict[str, str]] = [
+        {"role": "system", "content": "You are FloBrain, a helpful AI assistant."},
+    ]
+    for msg in chat.messages.order_by("created_at"):
+        if msg.role == Message.ROLE_USER and msg.text:
+            messages.append({"role": "user", "content": msg.text})
+        elif msg.role == Message.ROLE_ASSISTANT and msg.text:
+            messages.append({"role": "assistant", "content": msg.text})
+    return messages
 
 
 class ChatListView(APIView):
@@ -122,6 +135,7 @@ class SendMessageView(APIView):
             )
         text = (ser.validated_data.get("text") or "").strip()
         image = ser.validated_data.get("image") or ""
+        model = (ser.validated_data.get("model") or "").strip() or None
 
         if not text and not image:
             return Response(
@@ -129,33 +143,27 @@ class SendMessageView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Create user message
-        user_msg = Message.objects.create(
+        Message.objects.create(
             chat=chat,
             role=Message.ROLE_USER,
             text=text or None,
             image=image or None,
         )
 
-        # Update chat title if still default
         if chat.title == "New Chat" and text:
             chat.title = (text[:30] + "..." if len(text) > 30 else text)
             chat.save(update_fields=["title", "updated_at"])
 
-        # Placeholder assistant reply (replace with real LLM call later)
-        assistant_text = (
-            f'I received your message: "{text[:100]}". '
-            "This is a placeholder response. Connect an LLM for real replies."
-        )
-        assistant_msg = Message.objects.create(
+        llm_messages = _build_llm_messages(chat)
+        llm_result = get_llm_adapter().generate(llm_messages, model=model)
+
+        Message.objects.create(
             chat=chat,
             role=Message.ROLE_ASSISTANT,
-            text=assistant_text,
+            text=llm_result.generated_response,
         )
 
-        # Bump chat.updated_at so "last used" order is correct
         chat.save(update_fields=["updated_at"])
 
-        # Return full chat with messages so frontend can sync
         serializer = ChatDetailSerializer(chat)
         return Response(serializer.data, status=status.HTTP_200_OK)
