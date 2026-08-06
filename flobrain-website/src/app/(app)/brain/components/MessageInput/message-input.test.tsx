@@ -10,6 +10,7 @@ jest.mock('lucide-react', () => ({
   X: () => <div data-testid="x-icon">X</div>,
   Zap: () => <div data-testid="zap-icon">Zap</div>,
   Plus: () => <div data-testid="plus-icon">Plus</div>,
+  ArrowUp: () => <div data-testid="arrow-up-icon">ArrowUp</div>,
 }));
 
 Object.defineProperty(window, 'MediaRecorder', {

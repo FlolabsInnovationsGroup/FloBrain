@@ -22,12 +22,20 @@ export default function Register() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (!name.trim()) {
+      setError("Full name is required");
+      return;
+    }
+    if (!email.trim()) {
+      setError("Email is required");
       return;
     }
     if (password.length < 8) {
       setError("Password must be at least 8 characters");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
       return;
     }
     setLoading(true);
@@ -50,7 +58,6 @@ export default function Register() {
       className="min-h-screen flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden"
       style={{ background: "linear-gradient(160deg, #1a0a2e 0%, #0d0618 60%, #070014 100%)" }}
     >
-      {/* Radial glow background */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div
           className="w-[480px] h-[480px] rounded-full opacity-20"
@@ -62,8 +69,6 @@ export default function Register() {
       </div>
 
       <div className="w-full max-w-sm relative z-10 flex flex-col gap-6">
-
-        {/* Title */}
         <h1
           className="text-[28px] sm:text-[32px] font-bold text-center"
           style={{ color: "#EC4899" }}
@@ -71,7 +76,6 @@ export default function Register() {
           Create Account
         </h1>
 
-        {/* Card */}
         <div
           className="w-full rounded-2xl p-5 sm:p-6 flex flex-col gap-5"
           style={{
@@ -82,15 +86,12 @@ export default function Register() {
           }}
         >
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-
-            {/* Error */}
             {error && (
               <p className="text-sm text-red-400 bg-red-900/30 border border-red-500/30 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}
 
-            {/* Full Name */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-white/80">Full Name</label>
               <div className="relative">
@@ -98,10 +99,14 @@ export default function Register() {
                 <input
                   id="name"
                   type="text"
+                  name="name"
+                  autoComplete="name"
+                  required
                   placeholder="John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",
@@ -110,7 +115,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Email */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-white/80">Email</label>
               <div className="relative">
@@ -118,10 +122,14 @@ export default function Register() {
                 <input
                   id="email"
                   type="email"
+                  name="email"
+                  autoComplete="email"
+                  required
                   placeholder="johndoe@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",
@@ -130,7 +138,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Password */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-white/80">Password</label>
               <div className="relative">
@@ -138,10 +145,15 @@ export default function Register() {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  name="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",
@@ -157,7 +169,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Confirm Password */}
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-white/80">Confirm Password</label>
               <div className="relative">
@@ -165,10 +176,15 @@ export default function Register() {
                 <input
                   id="confirm-password"
                   type={showConfirmPassword ? "text" : "password"}
+                  name="confirm-password"
+                  autoComplete="new-password"
+                  required
+                  minLength={8}
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all"
+                  disabled={loading}
+                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
                   style={{
                     background: "#e8e3f0",
                     border: "1px solid rgba(139,92,246,0.15)",
@@ -184,7 +200,6 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -199,13 +214,11 @@ export default function Register() {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
             <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
           </div>
 
-          {/* Social Buttons */}
           <div className="flex flex-col gap-3">
             <button
               type="button"
@@ -231,7 +244,6 @@ export default function Register() {
             </button>
           </div>
 
-          {/* Login Link */}
           <p className="text-center text-sm text-zinc-500">
             Already have an account?{" "}
             <Link

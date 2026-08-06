@@ -9,7 +9,7 @@ import {
   Zap,
   CircleCheckBig,
   Loader2,
-  Send,
+  ArrowUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -136,12 +136,12 @@ const MetricCard = memo(function MetricCard({
   value: string;
   label: string;
   dotColor: string;
-  iconColor: string;  
+  iconColor: string;
 }) {
   return (
     <div
       role="listitem"
-      className="relative rounded-xl border border-white/5 bg-[#1E293B]/55 p-4 backdrop-blur-sm py-8"
+      className="relative rounded-xl border border-white/5 bg-[#1E293B]/80 p-4 py-8"
       aria-label={`${label}: ${value}`}
     >
       <div
@@ -214,88 +214,93 @@ function BrainActivityInner() {
   }, [router]);
 
   return (
-    <div className="flex flex-col min-h-0 w-full max-w-3xl mx-auto px-6 py-5 overflow-y-auto border border-[#767676]/38 rounded-xl font-[inter]">
-      {/* Header */}
-      <header className="my-6">
-        <h1 className="text-3xl font-bold text-white tracking-tight">
-          Brain Activity
-        </h1>
-        <p className="text-base text-[#90A1B9] my-4">
-          Real-time orchestration of AI processes
-        </p>
-      </header>
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[#767676]/38 font-[inter]">
+      <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-3 py-5 sm:px-4 lg:px-6">
+        {/* Header */}
+        <header className="my-6">
+          <h1 className="text-3xl font-bold text-white tracking-tight">
+            Brain Activity
+          </h1>
+          <p className="text-base text-[#90A1B9] my-4">
+            Real-time orchestration of AI processes
+          </p>
+        </header>
 
-      {/* Metric cards */}
-      <div
-        className="grid sm:grid-cols-4 gap-8 mb-8"
-        role="list"
-        aria-label="Key metrics"
-      >
-        {METRIC_CARDS.map((card) => (
-          <MetricCard key={card.label} {...card} />
-        ))}
-      </div>
-
-      {/* Active Processes */}
-      <div className="rounded-xl border border-white/10 bg-[#181024] p-6 backdrop-blur-sm  min-h-0 flex flex-col">
-        <h2 className="text-xl font-semibold text-white mb-6">
-          Active Processes
-        </h2>
-        <div className="space-y-6 ">
-          {PROCESSES.map((item) => (
-            <ProcessRow
-              key={item.name}
-              name={item.name}
-              status={item.status}
-              progress={item.progress}
-            />
-          ))}
-          <div className="h-px bg-white/5" />
-        </div>
-        {/* Summary */}
+        {/* Metric cards */}
         <div
-          className="flex mx-20 pt-4 border-t border-white/5 justify-between"
-          role="status"
-          aria-label={`Process summary: ${PROCESS_SUMMARY.complete} completed, ${PROCESS_SUMMARY.processing} in progress, ${PROCESS_SUMMARY.queued} queued`}
+          className="grid sm:grid-cols-4 gap-8 mb-8"
+          role="list"
+          aria-label="Key metrics"
         >
-          <div>
-            <p className="text-2xl font-semibold text-emerald-400 text-center">
-              {PROCESS_SUMMARY.complete}
-            </p>
-            <p className="tracking-wider text-[9CA3AF] font-light text-xs">
-              Completed
-            </p>
+          {METRIC_CARDS.map((card) => (
+            <MetricCard key={card.label} {...card} />
+          ))}
+        </div>
+
+        {/* Active Processes */}
+        <div className="flex min-h-0 flex-col rounded-xl border border-white/10 bg-[#181024]/95 p-6">
+          <h2 className="text-xl font-semibold text-white mb-6">
+            Active Processes
+          </h2>
+          <div className="space-y-6 ">
+            {PROCESSES.map((item) => (
+              <ProcessRow
+                key={item.name}
+                name={item.name}
+                status={item.status}
+                progress={item.progress}
+              />
+            ))}
+            <div className="h-px bg-white/5" />
           </div>
-          <div>
-            <p className="text-2xl font-semibold text-blue-400  text-center">
-              {PROCESS_SUMMARY.processing}
-            </p>
-            <p className="tracking-wider text-[9CA3AF] font-light text-xs">
-              In Progress
-            </p>
-          </div>
-          <div>
-            <p className="text-2xl font-semibold text-slate-40  text-center">
-              {PROCESS_SUMMARY.queued}
-            </p>
-            <p className="tracking-wider  text-[9CA3AF] font-light text-xs">
-              Queued
-            </p>
+          {/* Summary */}
+          <div
+            className="flex mx-20 pt-4 border-t border-white/5 justify-between"
+            role="status"
+            aria-label={`Process summary: ${PROCESS_SUMMARY.complete} completed, ${PROCESS_SUMMARY.processing} in progress, ${PROCESS_SUMMARY.queued} queued`}
+          >
+            <div>
+              <p className="text-2xl font-semibold text-emerald-400 text-center">
+                {PROCESS_SUMMARY.complete}
+              </p>
+              <p className="tracking-wider text-[#9CA3AF] font-light text-xs">
+                Completed
+              </p>
+            </div>
+            <div>
+              <p className="text-2xl font-semibold text-blue-400 text-center">
+                {PROCESS_SUMMARY.processing}
+              </p>
+              <p className="tracking-wider text-[#9CA3AF] font-light text-xs">
+                In Progress
+              </p>
+            </div>
+            <div>
+              <p className="text-2xl font-semibold text-slate-400 text-center">
+                {PROCESS_SUMMARY.queued}
+              </p>
+              <p className="tracking-wider text-[#9CA3AF] font-light text-xs">
+                Queued
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Ask Anything — uncontrolled to avoid re-renders on every keystroke */}
-      <div className="mt-6 mb-4 rounded-full border border-[#1F2937] bg-[#111827] p-3 backdrop-blur-sm">
+      {/* Ask Anything - pinned to bottom of center column */}
+      <div className="shrink-0 border-t border-white/10 bg-[#0B0719]/50 px-3 py-3 backdrop-blur-sm sm:px-4 lg:px-6">
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleAskSubmit();
           }}
-          className="flex items-center gap-3"
+          className="flex w-full min-w-0 items-end gap-1.5 rounded-2xl border border-[#1F2937] bg-[#111827] px-1.5 py-2 sm:gap-2 sm:px-2"
         >
-          <div className="p-2 shrink-0" aria-hidden="true">
-            <Zap className="h-5 w-5 text-[#FBBF24]" />
+          <div
+            className="mb-1 flex shrink-0 items-center justify-center rounded-lg p-1.5 text-amber-400/90 xl:p-2"
+            aria-hidden="true"
+          >
+            <Zap size={18} fill="none" />
           </div>
           <input
             ref={askInputRef}
@@ -309,14 +314,14 @@ function BrainActivityInner() {
               }
             }}
             aria-label="Ask a question or give a command"
-            className="flex-1 min-w-0 bg-transparent text-sm border-none outline-none"
+            className="mb-1 min-h-10 min-w-0 flex-1 border-none bg-transparent py-2.5 pl-1 pr-2 text-sm text-white outline-none placeholder:text-white/45 sm:pl-2 xl:text-base"
           />
           <button
             type="submit"
-            className="p-3 rounded-full bg-[#8B5CF6] text-white cursor-pointer hover:bg-[#7C5DF6] transition-all"
+            className="mb-1 flex shrink-0 items-center justify-center rounded-lg bg-[#9333ea] p-1.5 text-white shadow-lg shadow-[#9333ea]/30 transition-all duration-200 hover:bg-[#a855f7] hover:opacity-90 xl:p-2"
             aria-label="Send message"
           >
-            <Send className="h-5 w-5" />
+            <ArrowUp size={18} strokeWidth={2} />
           </button>
         </form>
       </div>

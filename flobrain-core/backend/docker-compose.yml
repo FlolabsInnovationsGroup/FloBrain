@@ -1,16 +1,60 @@
-version: '3.8'
-services: 
-  mongodb:
-    image: mongo:7
-    container_name: flobrain-workflow-mongo
-    restart: unless-stopped
+services:
+  db:
+    image: postgres:15
+    container_name: flobrain_backend_db
+    restart: always
     ports:
-      - '27017:27017'
-    environment:
-      MONGO_INITDB_DATABASE: flobrain
-    volumes:
-      - mongo_data:/data/db
-      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+      - "5432:5432"   # Expose so Django on host can use DB_HOST=localhost
 
+    environment:
+      - POSTGRES_DB=flobrain_db
+      - POSTGRES_USER=flo_user
+      - POSTGRES_PASSWORD=flo_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: flobrain_backend_django
+    restart: always
+    command: >
+      sh -c "
+      until pg_isready -h db -p 5432;
+      do
+        echo 'Waiting for PostgreSQL...';
+        sleep 1;
+      done;
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - .:/app   # This syncs the local folder to the container
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=flobrain_db
+      - DB_USER=flo_user
+      - DB_PASS=flo_password
+      - DB_HOST=db # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker 
+      - DB_PORT=5432
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - mongodb
+      - redis
+
+  mongodb:
+    image: mongo:latest
+
+  redis:
+    image: redis:7-alpine
+    container_name: flobrain_backend_redis
+    ports:
+      - "6379:6379"
+    restart: always
 volumes:
-  mongo_data:
+  postgres_data:

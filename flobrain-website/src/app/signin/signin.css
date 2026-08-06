@@ -1,0 +1,36 @@
+/* Sign-in: CSS-only entrance (no Framer) — compositor-friendly, runs once */
+
+@media (prefers-reduced-motion: no-preference) {
+  .signin-page .signin-hero-title {
+    animation: signin-in-up 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .signin-page .signin-card-wrap {
+    animation: signin-in-up 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
+  }
+}
+
+@keyframes signin-in-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Soft glow without filter:blur (expensive on paint) */
+.signin-page .signin-glow {
+  width: min(92vw, 520px);
+  height: min(92vw, 520px);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 237, 0.22) 0%,
+    rgba(124, 58, 237, 0.08) 42%,
+    transparent 72%
+  );
+  opacity: 0.9;
+}

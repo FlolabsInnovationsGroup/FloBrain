@@ -3,24 +3,22 @@
 import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import PaymentMethodPage from "./components/PaymentMethodPage";
+import { useAuth } from "@/contexts/AuthContext";
 
 function PaymentContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { isAuthenticated, isLoading } = useAuth();
 
-  // Auth check: Redirect to signin if not authenticated
   useEffect(() => {
-    const isAuthenticated =
-      typeof window !== "undefined" &&
-      (sessionStorage.getItem("isAuthenticated") === "true" ||
-        localStorage.getItem("isAuthenticated") === "true");
+    if (isLoading) return;
+    if (isAuthenticated) return;
 
-    if (!isAuthenticated) {
-      const currentParams = searchParams.toString();
-      const redirectUrl = `/signin?redirect=/payment${currentParams ? "?" + currentParams : ""}`;
-      router.push(redirectUrl);
-    }
-  }, [searchParams, router]);
+    const currentParams = searchParams.toString();
+    const redirectPath = `/payment${currentParams ? `?${currentParams}` : ""}`;
+    const redirectUrl = `/signin?redirect=${encodeURIComponent(redirectPath)}`;
+    router.replace(redirectUrl);
+  }, [isAuthenticated, isLoading, searchParams, router]);
 
   return <PaymentMethodPage />;
 }

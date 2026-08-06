@@ -302,5 +302,15 @@ export type BrainChatDetailApi = BrainChatApi & {
   usage?: ChatUsageApi | null;
 };
 
+export type DashboardErrorLogEntry = {
+  level: "warning" | "error";
+  message: string;
+  timestamp: string;
+};
+
+export type DashboardErrorLogsApi = {
+  "error-logs": DashboardErrorLogEntry[];
+};
+
 // Re-export for team: use apiClient for custom requests + React Query
 export { apiClient } from "./axios";

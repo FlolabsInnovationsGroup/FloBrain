@@ -8,18 +8,593 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant light (&:is(.light *));
+
+/* ─── Light theme (mockup palette — May 17 designs) ─── */
+.light {
+  --fb-page-bg: #d8b4fe;
+  --fb-page-bg-solid: #d8b4fe;
+  --fb-home-bg: #d8b4fe;
+  --fb-text: #1a1b25;
+  --fb-text-muted: #5e5e6e;
+  --fb-text-subtle: #6b7280;
+  --fb-heading: #1a1b25;
+  --fb-hero-accent: #db2777;
+  --fb-hero-accent-secondary: #db2777;
+  --fb-hero-body: #1a1b25;
+
+  --fb-navbar-bg: rgba(15, 12, 27, 0.97);
+  --fb-navbar-border: rgba(255, 255, 255, 0.06);
+  --fb-nav-active-bg: rgba(255, 255, 255, 0.1);
+  --fb-nav-text: #a1a1aa;
+  --fb-nav-text-active: #ffffff;
+
+  --fb-sidebar-bg: #2d2d3a;
+  --fb-sidebar-border: rgba(255, 255, 255, 0.08);
+  --fb-panel-bg: #ebe6f5;
+  --fb-panel-border: rgba(167, 139, 250, 0.25);
+  --fb-chat-page-bg: #e6e0f8;
+  --fb-chat-shell-bg: #f3f3ff;
+  --fb-chat-shell-border: rgba(167, 139, 250, 0.35);
+  --fb-chat-area-bg: #ebe6f5;
+  --fb-confidence-panel-bg: #f3f3ff;
+
+  --fb-card-bg: #a08db1;
+  --fb-card-border: rgba(91, 33, 182, 0.12);
+  --fb-card-inner-bg: #b6a5c4;
+  --fb-feature-card-bg: #3d3649;
+  --fb-feature-card-border: rgba(255, 255, 255, 0.06);
+  --fb-app-card-bg: #4a4558;
+  --fb-app-card-border: rgba(255, 255, 255, 0.08);
+
+  --fb-dashboard-card-bg: #ffffff;
+  --fb-dashboard-card-border: rgba(196, 181, 225, 0.65);
+  --fb-dashboard-card-shadow: 0 8px 32px rgba(107, 33, 168, 0.08);
+  --fb-dashboard-inner-bg: #f5f3ff;
+  --fb-dashboard-inner-border: rgba(196, 181, 225, 0.55);
+  --fb-dashboard-heading: #5b21b6;
+  --fb-dashboard-stat: #1a1b25;
+  --fb-dashboard-metric: #5b21b6;
+  --fb-dashboard-chart-label: #6b7280;
+  --fb-dashboard-chart-dot-stroke: #ffffff;
+  --fb-dashboard-icon-muted: #9ca3af;
+  --fb-dashboard-disconnected: #9ca3af;
+  --fb-dashboard-code-bg: #ede9fe;
+  --fb-dashboard-link: #7c3aed;
+  --fb-dashboard-critical-text: #b91c1c;
+  --fb-dashboard-critical-bg: rgba(220, 38, 38, 0.08);
+  --fb-dashboard-critical-border: rgba(220, 38, 38, 0.25);
+  --fb-dashboard-warning-text: #b45309;
+  --fb-dashboard-warning-bg: rgba(245, 158, 11, 0.1);
+  --fb-dashboard-warning-border: rgba(245, 158, 11, 0.3);
+  --fb-dashboard-heatmap-1: #e5e7eb;
+  --fb-dashboard-heatmap-2: #fde68a;
+  --fb-dashboard-heatmap-3: #fbbf24;
+  --fb-dashboard-heatmap-4: #f59e0b;
+
+  --fb-pricing-card-bg: #ffffff;
+  --fb-pricing-card-border: rgba(196, 181, 225, 0.65);
+  --fb-pricing-title: #1a1b25;
+  --fb-pricing-body: #5e5e6e;
+  --fb-pricing-muted: #9ca3af;
+  --fb-pricing-grid-bg: #f3f4f6;
+  --fb-pricing-grid-border: #e5e7eb;
+  --fb-pricing-grid-label: #6b7280;
+  --fb-pricing-grid-value: #1a1b25;
+  --fb-pricing-check: #22c55e;
+
+  --fb-auth-bg: #d8b4fe;
+  --fb-auth-card-bg: #e9d5ff;
+  --fb-auth-card-border: #581c87;
+  --fb-auth-heading: #581c87;
+  --fb-auth-text: #4b5563;
+  --fb-auth-input-bg: #f9fafb;
+  --fb-auth-btn: #581c87;
+
+  --fb-contact-hero-title: #ffffff;
+  --fb-contact-hero-body: rgba(255, 255, 255, 0.88);
+  --fb-contact-section-label: #2d1b4e;
+  --fb-contact-form-bg: rgba(255, 255, 255, 0.42);
+  --fb-contact-card-bg: rgba(255, 255, 255, 0.38);
+  --fb-contact-border: rgba(255, 255, 255, 0.35);
+  --fb-contact-input-bg: #c4b5fd;
+  --fb-contact-link: #a855f7;
+
+  --fb-chat-bubble-user: #1f1b2e;
+  --fb-chat-bubble-assistant: rgba(75, 65, 95, 0.55);
+  --fb-input-bg: #0f0c1b;
+  --fb-stat-card-bg: rgba(75, 65, 95, 0.35);
+  --fb-process-card-bg: #0f0c1b;
+
+  --fb-footer-banner-bg: linear-gradient(135deg, #f0c4f7 0%, #f5d0fe 45%, #e9d5ff 100%);
+  --fb-footer-text: #1a1b25;
+  --fb-footer-subtext: #5e5e6e;
+  --fb-memory-shell-bg: rgba(255, 255, 255, 0.42);
+  --fb-memory-filter-bg: rgba(196, 181, 253, 0.65);
+
+  --fb-notfound-bg: radial-gradient(ellipse at center, #ede9fe 0%, #e9d5ff 45%, #f5f3ff 100%);
+  --fb-notfound-card-bg: #ffffff;
+  --fb-notfound-card-border: rgba(196, 181, 225, 0.55);
+  --fb-notfound-card-shadow: 0 12px 40px rgba(107, 33, 168, 0.1);
+  --fb-notfound-title: #1a1b25;
+  --fb-notfound-body: #5e5e6e;
+  --fb-notfound-icon-bg: rgba(147, 51, 234, 0.12);
+  --fb-notfound-icon: #7c3aed;
+  --fb-notfound-btn-secondary-bg: #f3f4f6;
+  --fb-notfound-btn-secondary-text: #1a1b25;
+  --fb-notfound-btn-secondary-hover: #e5e7eb;
+
+  --fb-profile-shell-bg: #ffffff;
+  --fb-profile-shell-border: rgba(196, 181, 225, 0.55);
+  --fb-profile-shell-shadow: 0 8px 32px rgba(107, 33, 168, 0.08);
+  --fb-profile-nav-text: #5e5e6e;
+  --fb-profile-nav-hover: #f5f3ff;
+  --fb-profile-nav-active-bg: #f3e8ff;
+  --fb-profile-nav-active-text: #6b21a8;
+  --fb-profile-title: #1a1b25;
+  --fb-profile-label: #6b7280;
+  --fb-profile-body: #5e5e6e;
+  --fb-profile-field-bg: #f9fafb;
+  --fb-profile-field-border: #e5e7eb;
+  --fb-profile-divider: #e5e7eb;
+  --fb-profile-accent: #9333ea;
+  --fb-profile-accent-hover: #7c3aed;
+  --fb-profile-link: #7c3aed;
+  --fb-profile-danger: #dc2626;
+  --fb-profile-danger-bg: #fef2f2;
+  --fb-profile-danger-border: #fecaca;
+  --fb-profile-warning: #b45309;
+  --fb-profile-modal-bg: #ffffff;
+  --fb-profile-modal-overlay: rgba(26, 27, 37, 0.45);
+
+  --color-brain: #9333ea;
+  --color-memory: #1a0a2e;
+  --background: var(--fb-page-bg);
+  --foreground: var(--fb-text);
+}
+
+/* ─── Dark theme (current design — unchanged) ─── */
+.dark {
+  --fb-page-bg: linear-gradient(90deg, #290036 0%, #070014 100%);
+  --fb-page-bg-solid: #12041c;
+  --fb-home-bg: #020617;
+  --fb-text: #e2e8f0;
+  --fb-text-muted: #94a3b8;
+  --fb-text-subtle: #64748b;
+  --fb-heading: #ffffff;
+  --fb-hero-accent: #cc34ff;
+  --fb-hero-accent-secondary: #610081;
+  --fb-hero-body: #e2e8f0;
+
+  --fb-navbar-bg: rgba(15, 10, 26, 0.95);
+  --fb-navbar-border: rgba(255, 255, 255, 0.05);
+  --fb-nav-active-bg: rgba(255, 255, 255, 0.1);
+  --fb-nav-text: #a1a1aa;
+  --fb-nav-text-active: #ffffff;
+
+  --fb-sidebar-bg: rgba(11, 7, 25, 0.5);
+  --fb-sidebar-border: transparent;
+  --fb-panel-bg: rgba(11, 7, 25, 0.3);
+  --fb-panel-border: rgba(255, 255, 255, 0.1);
+  --fb-chat-area-bg: rgba(11, 7, 25, 0.3);
+  --fb-confidence-panel-bg: rgba(11, 7, 25, 0.55);
+
+  --fb-card-bg: rgba(227, 227, 227, 0.1);
+  --fb-card-border: rgba(255, 255, 255, 0.06);
+  --fb-card-inner-bg: rgba(255, 255, 255, 0.05);
+  --fb-feature-card-bg: rgba(227, 227, 227, 0.1);
+  --fb-feature-card-border: rgba(255, 255, 255, 0.06);
+  --fb-app-card-bg: #181024;
+  --fb-app-card-border: rgba(255, 255, 255, 0.08);
+
+  --fb-dashboard-card-bg: rgba(30, 20, 50, 0.6);
+  --fb-dashboard-card-border: rgba(168, 85, 247, 0.15);
+  --fb-dashboard-card-shadow: none;
+  --fb-dashboard-inner-bg: rgba(255, 255, 255, 0.06);
+  --fb-dashboard-inner-border: rgba(255, 255, 255, 0.08);
+  --fb-dashboard-heading: #ffffff;
+  --fb-dashboard-stat: #ffffff;
+  --fb-dashboard-metric: #ffffff;
+  --fb-dashboard-chart-label: rgba(255, 255, 255, 0.35);
+  --fb-dashboard-chart-dot-stroke: rgba(30, 18, 43, 0.9);
+  --fb-dashboard-icon-muted: rgba(255, 255, 255, 0.3);
+  --fb-dashboard-disconnected: rgba(255, 255, 255, 0.5);
+  --fb-dashboard-code-bg: rgba(255, 255, 255, 0.05);
+  --fb-dashboard-link: #a78bfa;
+  --fb-dashboard-critical-text: #fca5a5;
+  --fb-dashboard-critical-bg: rgba(220, 38, 38, 0.08);
+  --fb-dashboard-critical-border: rgba(220, 38, 38, 0.2);
+  --fb-dashboard-warning-text: #fcd34d;
+  --fb-dashboard-warning-bg: rgba(245, 158, 11, 0.08);
+  --fb-dashboard-warning-border: rgba(245, 158, 11, 0.2);
+  --fb-dashboard-heatmap-1: #3a3547;
+  --fb-dashboard-heatmap-2: #8b7000;
+  --fb-dashboard-heatmap-3: #e8d000;
+  --fb-dashboard-heatmap-4: #ffea00;
+
+  --fb-pricing-card-bg: rgba(26, 21, 37, 0.9);
+  --fb-pricing-card-border: rgba(255, 255, 255, 0.1);
+  --fb-pricing-title: #ffffff;
+  --fb-pricing-body: #a1a1aa;
+  --fb-pricing-muted: #71717a;
+  --fb-pricing-grid-bg: rgba(255, 255, 255, 0.05);
+  --fb-pricing-grid-border: rgba(255, 255, 255, 0.1);
+  --fb-pricing-grid-label: #71717a;
+  --fb-pricing-grid-value: #ffffff;
+  --fb-pricing-check: #34d399;
+
+  --fb-auth-bg: linear-gradient(180deg, #2e0a4e 0%, #1a0530 100%);
+  --fb-auth-card-bg: rgba(139, 92, 246, 0.12);
+  --fb-auth-card-border: rgba(168, 85, 247, 0.3);
+  --fb-auth-heading: #c084fc;
+  --fb-auth-text: #e9d5ff;
+
+  --fb-contact-form-bg: rgba(255, 255, 255, 0.06);
+  --fb-contact-card-bg: rgba(255, 255, 255, 0.04);
+  --fb-contact-border: rgba(255, 255, 255, 0.12);
+
+  --fb-chat-bubble-user: #312e81;
+  --fb-chat-bubble-assistant: rgba(255, 255, 255, 0.05);
+  --fb-input-bg: #111019;
+  --fb-stat-card-bg: rgba(30, 20, 50, 0.5);
+  --fb-process-card-bg: #0b0719;
+
+  --fb-footer-banner-bg: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(139, 92, 246, 0.25));
+  --fb-footer-text: #ffffff;
+  --fb-footer-subtext: #9ca3af;
+
+  --fb-notfound-bg: linear-gradient(to bottom right, #1a0033, #2a1a4a, #0f0f23);
+  --fb-notfound-card-bg: rgba(255, 255, 255, 0.05);
+  --fb-notfound-card-border: rgba(255, 255, 255, 0.1);
+  --fb-notfound-card-shadow: none;
+  --fb-notfound-title: #ffffff;
+  --fb-notfound-body: rgba(255, 255, 255, 0.6);
+  --fb-notfound-icon-bg: rgba(168, 85, 247, 0.1);
+  --fb-notfound-icon: #c084fc;
+  --fb-notfound-btn-secondary-bg: rgba(255, 255, 255, 0.1);
+  --fb-notfound-btn-secondary-text: #ffffff;
+  --fb-notfound-btn-secondary-hover: rgba(255, 255, 255, 0.2);
+
+  --fb-profile-shell-bg: rgba(15, 10, 26, 0.92);
+  --fb-profile-shell-border: rgba(168, 85, 247, 0.2);
+  --fb-profile-shell-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --fb-profile-nav-text: rgba(255, 255, 255, 0.75);
+  --fb-profile-nav-hover: rgba(168, 85, 247, 0.12);
+  --fb-profile-nav-active-bg: rgba(168, 85, 247, 0.22);
+  --fb-profile-nav-active-text: #ffffff;
+  --fb-profile-title: #ffffff;
+  --fb-profile-label: #94a3b8;
+  --fb-profile-body: #cbd5e1;
+  --fb-profile-field-bg: rgba(255, 255, 255, 0.04);
+  --fb-profile-field-border: rgba(255, 255, 255, 0.12);
+  --fb-profile-divider: rgba(255, 255, 255, 0.1);
+  --fb-profile-accent: #9333ea;
+  --fb-profile-accent-hover: #a855f7;
+  --fb-profile-link: #c084fc;
+  --fb-profile-danger: #f87171;
+  --fb-profile-danger-bg: rgba(239, 68, 68, 0.1);
+  --fb-profile-danger-border: rgba(239, 68, 68, 0.35);
+  --fb-profile-warning: #fbbf24;
+  --fb-profile-modal-bg: #12081f;
+  --fb-profile-modal-overlay: rgba(0, 0, 0, 0.65);
+
+  --color-brain: #a855f7;
+  --color-memory: #000000;
+  --background: var(--fb-page-bg);
+  --foreground: var(--fb-text);
+}
 
 :root {
-  --color-brain: #a855f7; /* Purple */
-  --color-memory: #000000; /* Black */
   --radius: 0.5rem;
---background: linear-gradient(to right, #290036, #070014);
+
+  /* Settings / modal surfaces (Brain-aligned) */
+  --surface-panel: #0b0719;
+  --surface-elevated: #120724;
+  --surface-card: #130a2d;
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-accent: rgba(167, 139, 250, 0.3);
+  --accent-violet: #a855f7;
+}
+
+/* Fallback for the no-JS case, before next-themes sets .light or .dark on <html>.
+   Scoped so the theme classes above always win once one is applied. */
+html:not(.light):not(.dark) {
+  --background: linear-gradient(to right, #290036, #070014);
+  --color-brain: #a855f7;
+  --color-memory: #000000;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: "Inter", sans-serif;
+}
+
+/* ─── Theme utility classes ─── */
+.fb-page {
+  background: var(--fb-page-bg);
+  color: var(--fb-text);
+}
+
+.light .fb-page {
+  background: var(--fb-page-bg);
+}
+
+.light .fb-dashboard-card {
+  backdrop-filter: none;
+  box-shadow: var(--fb-dashboard-card-shadow);
+}
+
+.light .fb-page--dashboard {
+  background: linear-gradient(180deg, #ede9fe 0%, #e9d5ff 45%, #ddd6fe 100%);
+}
+
+.fb-dashboard-stat-card {
+  background: var(--fb-dashboard-inner-bg);
+  border: 1px solid var(--fb-dashboard-inner-border);
+}
+
+.light .fb-chat-page {
+  background: var(--fb-chat-page-bg);
+}
+
+.light .fb-chat-shell {
+  background: var(--fb-chat-shell-bg);
+  border: 1px solid var(--fb-chat-shell-border);
+  box-shadow: 0 8px 40px rgba(107, 33, 168, 0.12);
+}
+
+.fb-home-page {
+  background: var(--fb-home-bg);
+  color: var(--fb-text);
+}
+
+.fb-text {
+  color: var(--fb-text);
+}
+
+.fb-text-muted {
+  color: var(--fb-text-muted);
+}
+
+.fb-heading {
+  color: var(--fb-heading);
+}
+
+.fb-dashboard-card {
+  background: var(--fb-dashboard-card-bg);
+  border: 1px solid var(--fb-dashboard-card-border);
+  box-shadow: var(--fb-dashboard-card-shadow, none);
+  backdrop-filter: blur(12px);
+}
+
+.fb-dashboard-inner {
+  background: var(--fb-dashboard-inner-bg);
+  border-radius: 12px;
+}
+
+.fb-feature-card {
+  background: var(--fb-feature-card-bg);
+  border: 1px solid var(--fb-feature-card-border);
+}
+
+.fb-app-card {
+  background: var(--fb-app-card-bg);
+  border: 1px solid var(--fb-app-card-border);
+}
+
+.fb-auth-bg {
+  background: var(--fb-auth-bg);
+}
+
+.fb-auth-card {
+  background: var(--fb-auth-card-bg);
+  border: 1px solid var(--fb-auth-card-border);
+}
+
+.fb-sidebar {
+  background: var(--fb-sidebar-bg);
+  border-color: var(--fb-sidebar-border);
+}
+
+.fb-panel {
+  background: var(--fb-panel-bg);
+  border-color: var(--fb-panel-border);
+}
+
+.fb-pricing-card {
+  background: var(--fb-pricing-card-bg);
+  border-color: var(--fb-pricing-card-border);
+}
+
+.fb-notfound-page {
+  background: var(--fb-notfound-bg);
+}
+
+.fb-notfound-card {
+  background: var(--fb-notfound-card-bg);
+  border: 1px solid var(--fb-notfound-card-border);
+  box-shadow: var(--fb-notfound-card-shadow);
+}
+
+.fb-notfound-btn-secondary {
+  background: var(--fb-notfound-btn-secondary-bg);
+  color: var(--fb-notfound-btn-secondary-text);
+}
+
+.fb-notfound-btn-secondary:hover {
+  background: var(--fb-notfound-btn-secondary-hover);
+}
+
+.fb-profile-shell {
+  background: var(--fb-profile-shell-bg);
+  border: 1px solid var(--fb-profile-shell-border);
+  box-shadow: var(--fb-profile-shell-shadow);
+}
+
+.fb-profile-nav-item {
+  color: var(--fb-profile-nav-text);
+}
+
+.fb-profile-nav-item:hover {
+  background: var(--fb-profile-nav-hover);
+  color: var(--fb-profile-title);
+}
+
+.fb-profile-nav-item--active {
+  background: var(--fb-profile-nav-active-bg);
+  color: var(--fb-profile-nav-active-text);
+}
+
+.fb-profile-title {
+  color: var(--fb-profile-title);
+}
+
+.fb-profile-label {
+  color: var(--fb-profile-label);
+}
+
+.fb-profile-body {
+  color: var(--fb-profile-body);
+}
+
+.fb-profile-field {
+  background: var(--fb-profile-field-bg);
+  border: 1px solid var(--fb-profile-field-border);
+  color: var(--fb-profile-title);
+}
+
+.fb-profile-field::placeholder {
+  color: var(--fb-profile-label);
+}
+
+.fb-profile-divider {
+  border-color: var(--fb-profile-divider);
+}
+
+.fb-profile-card {
+  background: var(--fb-profile-field-bg);
+  border: 1px solid var(--fb-profile-field-border);
+}
+
+.fb-profile-btn-primary {
+  background: var(--fb-profile-accent);
+  color: #ffffff;
+}
+
+.fb-profile-btn-primary:hover {
+  background: var(--fb-profile-accent-hover);
+}
+
+.fb-profile-btn-secondary {
+  background: var(--fb-profile-field-bg);
+  border: 1px solid var(--fb-profile-field-border);
+  color: var(--fb-profile-title);
+}
+
+.fb-profile-btn-secondary:hover {
+  background: var(--fb-profile-nav-hover);
+}
+
+.fb-profile-btn-danger {
+  background: var(--fb-profile-danger-bg);
+  border: 1px solid var(--fb-profile-danger-border);
+  color: var(--fb-profile-danger);
+}
+
+.fb-profile-btn-danger:hover {
+  filter: brightness(1.05);
+}
+
+.fb-profile-modal {
+  background: var(--fb-profile-modal-bg);
+  border: 1px solid var(--fb-profile-shell-border);
+}
+
+.light .fb-feature-card .fb-feature-card__header h3 {
+  color: #ffffff;
+}
+
+.light .fb-feature-card .fb-feature-card__body p {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.light .fb-app-card h3 {
+  color: #ffffff;
+}
+
+.light .fb-app-card p {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.light .fb-app-card__tag {
+  background: #e5e7eb;
+  color: #374151;
+  border: none;
+  font-family: inherit;
+}
+
+.light .fb-hero-cta {
+  background: #1a1b25;
+  color: #ffffff;
+}
+
+.light .fb-hero-cta:hover {
+  background: #2d2d3a;
+}
+
+.light .fb-contact-hero-title {
+  color: var(--fb-contact-hero-title);
+}
+
+.light .fb-contact-hero-body {
+  color: var(--fb-contact-hero-body);
+}
+
+.light .fb-contact-section-label {
+  color: var(--fb-contact-section-label);
+}
+
+.light .fb-contact-form-card {
+  background: var(--fb-contact-form-bg);
+  border-color: var(--fb-contact-border);
+}
+
+.light .fb-contact-side-card {
+  background: var(--fb-contact-card-bg);
+  border-color: var(--fb-contact-border);
+}
+
+.light .fb-contact-side-card h3,
+.light .fb-contact-side-card h4 {
+  color: #2d1b4e;
+}
+
+.light .fb-contact-side-card p {
+  color: #5c4a72;
+}
+
+.light .fb-contact-side-card a {
+  color: var(--fb-contact-link);
+}
+
+.light .fb-contact-input {
+  background: var(--fb-contact-input-bg) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  color: #1a1b25 !important;
+}
+
+.light .fb-contact-input::placeholder {
+  color: #6b7280 !important;
+}
+
+.light .fb-contact-section-label {
+  color: var(--fb-contact-section-label);
+}
+
+.light .fb-memory-shell {
+  background: var(--fb-memory-shell-bg);
+  border-color: rgba(167, 139, 250, 0.35);
 }
 
 /* Custom gradient radial background */
@@ -32,13 +607,11 @@ body {
   display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* Memory node side panel — thin thumb, invisible track, deep purple */
 .memory-node-panel-scroll::-webkit-scrollbar {
   width: 5px;
 }
@@ -55,4 +628,61 @@ body {
 .memory-node-panel-scroll {
   scrollbar-width: thin;
   scrollbar-color: #16101f transparent;
+}
+
+.light .memory-node-panel-scroll::-webkit-scrollbar-thumb {
+  background: #9b8ab8;
+}
+.light .memory-node-panel-scroll {
+  scrollbar-color: #9b8ab8 transparent;
+}
+
+.flobrain-diagram {
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.flobrain-diagram h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.flobrain-diagram p {
+  max-width: 800px;
+  margin: 0 auto 2.5rem;
+  color: #d4d4d8;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.diagram-grid {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.diagram-grid div {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.diagram-grid div:hover {
+  transform: translateY(-5px);
+  border-color: #a855f7;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+}
+
+@media (max-width: 768px) {
+  .diagram-grid {
+    grid-template-columns: 1fr;
+  }
 }

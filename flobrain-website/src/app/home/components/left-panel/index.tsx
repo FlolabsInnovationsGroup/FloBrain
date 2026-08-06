@@ -1,12 +1,13 @@
 "use client";
 
 import React, { memo, useCallback, useId, useMemo, useState, type SubmitEventHandler } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Search,
   Plus,
   Brain,
   Database,
-  Router,
   Activity,
   SlidersHorizontal,
   Settings,
@@ -17,12 +18,11 @@ import type { ChatHistory } from "@/types/chat";
 
 const EMPTY_CHAT_HISTORY: ChatHistory[] = [];
 
-export type SystemModuleId = "brain-activity" | "load-memory" | "router-config" | "system-health";
+export type SystemModuleId = "brain-activity" | "load-memory" | "system-health";
 
 export const SYSTEM_MODULE_IDS: SystemModuleId[] = [
   "brain-activity",
   "load-memory",
-  "router-config",
   "system-health",
 ];
 
@@ -30,14 +30,19 @@ const MODULES: ReadonlyArray<{
   id: SystemModuleId;
   label: string;
   icon: LucideIcon;
+  href: string;
   /** Show status dot (e.g. for "Brain Activity" active indicator) */
   showDot?: boolean;
 }> = [
-  { id: "brain-activity", label: "Brain Activity", icon: Brain, showDot: true },
-  { id: "load-memory", label: "Load Memory", icon: Database },
-  { id: "router-config", label: "Router Configuration", icon: Router },
-  { id: "system-health", label: "System Health", icon: Activity },
+  { id: "brain-activity", label: "Brain Activity", icon: Brain, href: "/home", showDot: true },
+  { id: "load-memory", label: "Load Memory", icon: Database, href: "/memory" },
+  { id: "system-health", label: "System Health", icon: Activity, href: "/dashboard" },
 ];
+
+function isModuleActive(href: string, pathname: string): boolean {
+  if (href === "/home") return pathname === "/home";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export type LeftPanelVariant = "modules" | "chats";
 
@@ -53,8 +58,6 @@ export interface LeftPanelPropsBase {
 
 export interface LeftPanelPropsModules extends LeftPanelPropsBase {
   variant: "modules";
-  activeModuleId: SystemModuleId;
-  onModuleSelect: (id: SystemModuleId) => void;
 }
 
 export interface LeftPanelPropsChats extends LeftPanelPropsBase {
@@ -67,18 +70,9 @@ export interface LeftPanelPropsChats extends LeftPanelPropsBase {
 
 export type LeftPanelProps = LeftPanelPropsModules | LeftPanelPropsChats;
 
-/** @deprecated Use LeftPanelPropsModules for modules variant */
-export interface LeftPanelPropsLegacy {
-  activeModuleId: SystemModuleId;
-  onModuleSelect: (id: SystemModuleId) => void;
-  onNewChat?: () => void;
-  onSearch?: (query: string) => void;
-  onPreferences?: () => void;
-  onSettings?: () => void;
-}
-
 const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const { variant, onNewChat, onSearch, onPreferences, onSettings, className } = props;
+  const pathname = usePathname();
   const searchId = useId();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -102,8 +96,6 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
 
   const isModules = variant === "modules";
   const isChats = variant === "chats";
-  const activeModuleId = isModules ? props.activeModuleId : undefined;
-  const onModuleSelect = isModules ? props.onModuleSelect : undefined;
   const _chatHistory = isChats ? (props.chatHistory ?? EMPTY_CHAT_HISTORY) : EMPTY_CHAT_HISTORY;
   const currentChatId = isChats ? (props.currentChatId ?? null) : null;
   const onLoadChat = isChats ? props.onLoadChat : undefined;
@@ -150,7 +142,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
               placeholder={searchPlaceholder}
               value={isChats ? searchQuery : undefined}
               onChange={handleSearchChange}
-              className="w-full pl-9 pr-3 py-3.5 rounded-lg bg-[#0F172B]/80 text-[#62748E] border border-[#1D293D]/50 placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all"
+              className="w-full pl-9 pr-3 py-3.5 rounded-lg bg-[#0F172B]/80 text-[#62748E] border border-[#1D293D]/50 placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50"
             />
           </div>
         </form>
@@ -159,28 +151,27 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         <button
           type="button"
           onClick={onNewChat}
-          className="w-full flex items-center justify-between gap-2 rounded-lg bg-black border border-white/36 py-3 px-4 mb-6 text-white text-xs font-semibold tracking-wider hover:bg-slate-900 hover:border-slate-700 transition-all shrink-0"
+          className="w-full flex items-center justify-between gap-2 rounded-lg bg-black border border-white/36 py-3 px-4 mb-6 text-white text-xs font-semibold tracking-wider hover:bg-slate-900 hover:border-slate-700 transition-colors shrink-0"
         >
           <span>NEW CHAT</span>
           <Plus className="w-6 h-6 shrink-0" aria-hidden />
         </button>
 
         {/* Middle: System Modules (with icons) or All Chats (text only) */}
-        {isModules && activeModuleId !== undefined && onModuleSelect && (
+        {isModules && (
           <div className="flex flex-col gap-1 shrink-0">
             <h2 className="text-[12px] uppercase tracking-[0.2em] text-[#90A1B9] font-bold px-1 mb-3">
               SYSTEM MODULES
             </h2>
             <nav className="flex flex-col gap-0.5" aria-label="System modules">
-              {MODULES.map(({ id, label, icon: Icon, showDot }) => {
-                const isActive = activeModuleId === id;
+              {MODULES.map(({ id, label, icon: Icon, href, showDot }) => {
+                const isActive = isModuleActive(href, pathname);
                 return (
-                  <button
+                  <Link
                     key={id}
-                    type="button"
-                    onClick={() => onModuleSelect(id)}
+                    href={href}
                     className={cn(
-                      "w-full flex items-center gap-3 rounded-lg py-2.5 px-3 text-left text-sm text-[#CAD5E2] transition-all",
+                      "w-full flex items-center gap-3 rounded-lg py-2.5 px-3 text-left text-sm text-[#CAD5E2] transition-colors",
                       isActive
                         ? "bg-[#000000]/80 border border-[#AD46FF]/30 shadow-[0_0_32px_rgba(126,34,206,0.4)] text-white"
                         : "cursor-pointer border border-transparent hover:bg-white/5 hover:border-white/5"
@@ -198,7 +189,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
                         aria-hidden
                       />
                     )}
-                  </button>
+                  </Link>
                 );
               })}
             </nav>
@@ -226,7 +217,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
                       type="button"
                       onClick={() => onLoadChat?.(chat.id)}
                       className={cn(
-                        "w-full rounded-lg py-2.5 px-3 text-left text-sm transition-all border border-transparent",
+                        "w-full rounded-lg py-2.5 px-3 text-left text-sm transition-colors border border-transparent",
                         isActive
                           ? "bg-[#000000]/80 border-[#AD46FF]/30 shadow-[0_0_32px_rgba(126,34,206,0.4)] text-white"
                           : "text-[#CAD5E2] hover:bg-white/5 hover:border-white/5"
