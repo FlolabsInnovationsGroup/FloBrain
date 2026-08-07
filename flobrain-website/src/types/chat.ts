@@ -5,6 +5,8 @@ export interface Message {
   text?: string;
   image?: string;
   timestamp?: Date;
+  prompt_tokens?: number;
+  completion_tokens?: number;
 }
 
 export interface Chat {
