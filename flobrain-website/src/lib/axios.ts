@@ -11,7 +11,7 @@ const ACCESS_TOKEN_KEY = "flobrain_access_token";
 
 function getBaseUrl(): string {
   const url = process.env.NEXT_PUBLIC_API_URL;
-  return url ? url.replace(/\/$/, "") : "http://api.flobrain.ai";
+  return url ? url.replace(/\/$/, "") : "http://api.flobrain.ai:8000";
 }
 
 export const apiClient = axios.create({
