@@ -42,7 +42,7 @@ def build_message_index():
     print(f"Indexed {len(texts)} messages successfully.")
 
 
-def search_messages(query, top_k=3):
+def search_messages(query, top_k=3, max_distance=None):
     if not os.path.exists(INDEX_PATH) or not os.path.exists(METADATA_PATH):
         print("FAISS index not found. Run build_message_index() first.")
         return []
@@ -59,15 +59,22 @@ def search_messages(query, top_k=3):
 
     results = []
 
-    for idx in indices[0]:
+    for distance, idx in zip(distances[0], indices[0]):
         if idx == -1:
             continue
 
+        if max_distance is not None and distance > max_distance:
+            continue
+
         mongo_id = ids[idx]
-        message = db.messages.find_one({"_id": __import__("bson").ObjectId(mongo_id)})
+
+        message = db.messages.find_one(
+            {"_id": __import__("bson").ObjectId(mongo_id)}
+        )
 
         if message:
             message["_id"] = str(message["_id"])
+            message["semantic_distance"] = float(distance)
             results.append(message)
 
     return results
