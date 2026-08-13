@@ -109,6 +109,20 @@
   --fb-footer-banner-bg: linear-gradient(135deg, #f0c4f7 0%, #f5d0fe 45%, #e9d5ff 100%);
   --fb-footer-text: #1a1b25;
   --fb-footer-subtext: #5e5e6e;
+
+  --fb-site-footer-bg: #ffffff;
+  --fb-site-footer-text: #1a1b25;
+  --fb-site-footer-muted: #5e5e6e;
+  --fb-site-footer-hairline: rgba(26, 27, 37, 0.12);
+  --fb-site-footer-divider: rgba(26, 27, 37, 0.2);
+  --fb-site-footer-focus: #1a1b25;
+  --fb-site-footer-input-bg: #ffffff;
+  --fb-site-footer-input-border: rgba(26, 27, 37, 0.2);
+  --fb-site-footer-input-border-focus: rgba(26, 27, 37, 0.4);
+  --fb-site-footer-ring: rgba(26, 27, 37, 0.2);
+  --fb-site-footer-submit-bg: #1a1b25;
+  --fb-site-footer-submit-bg-hover: #34364a;
+  --fb-site-footer-yt-play: #ffffff;
   --fb-memory-shell-bg: rgba(255, 255, 255, 0.42);
   --fb-memory-filter-bg: rgba(196, 181, 253, 0.65);
 
@@ -242,6 +256,20 @@
   --fb-footer-banner-bg: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(139, 92, 246, 0.25));
   --fb-footer-text: #ffffff;
   --fb-footer-subtext: #9ca3af;
+
+  --fb-site-footer-bg: #0b0b0b;
+  --fb-site-footer-text: #ffffff;
+  --fb-site-footer-muted: #8a8a8a;
+  --fb-site-footer-hairline: rgba(255, 255, 255, 0.12);
+  --fb-site-footer-divider: rgba(255, 255, 255, 0.25);
+  --fb-site-footer-focus: #ffffff;
+  --fb-site-footer-input-bg: transparent;
+  --fb-site-footer-input-border: rgba(255, 255, 255, 0.2);
+  --fb-site-footer-input-border-focus: rgba(255, 255, 255, 0.4);
+  --fb-site-footer-ring: rgba(255, 255, 255, 0.3);
+  --fb-site-footer-submit-bg: #1a1a1a;
+  --fb-site-footer-submit-bg-hover: #252525;
+  --fb-site-footer-yt-play: #0b0b0b;
 
   --fb-notfound-bg: linear-gradient(to bottom right, #1a0033, #2a1a4a, #0f0f23);
   --fb-notfound-card-bg: rgba(255, 255, 255, 0.05);
