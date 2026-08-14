@@ -15,7 +15,7 @@
   --fb-page-bg: #d8b4fe;
   --fb-page-bg-solid: #d8b4fe;
   --fb-home-bg: #d8b4fe;
-  --fb-text: #1a1b25;
+  --fb-text: #fff;
   --fb-text-muted: #5e5e6e;
   --fb-text-subtle: #6b7280;
   --fb-heading: #1a1b25;
@@ -23,7 +23,7 @@
   --fb-hero-accent-secondary: #db2777;
   --fb-hero-body: #1a1b25;
 
-  --fb-navbar-bg: rgba(15, 12, 27, 0.97);
+  --fb-navbar-bg: #0B0719;
   --fb-navbar-border: rgba(255, 255, 255, 0.06);
   --fb-nav-active-bg: rgba(255, 255, 255, 0.1);
   --fb-nav-text: #a1a1aa;
