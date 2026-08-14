@@ -1,8 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import brainImage from "@/assets/images/brain.svg";
 import { Reveal } from "@/components/motion";
+import { Button } from "@/components/layout/button";
 
 export const HeroSection = () => {
   return (
@@ -19,11 +22,24 @@ export const HeroSection = () => {
           </h1>
         </Reveal>
         <Reveal variant="fadeIn" delay={0.16}>
-          <p className="mt-4 sm:mt-6 md:mt-[30px] w-full max-w-[490px] mx-auto sm:mx-0 text-[15px] sm:text-[17px] md:text-[19px] lg:text-[22px] text-[#FFFFFF] leading-relaxed">
+          <p className="mt-4 sm:mt-6 md:mt-[30px] w-full max-w-[490px] mx-auto sm:mx-0 text-[15px] sm:text-[17px] md:text-[19px] lg:text-[22px] text-[#FFFFFF] light:text-[#000000] leading-relaxed">
             FloBrain is the central intelligence layer that powers AI-enabled devices and
             applications. Build smarter products with workflow orchestration, persistent memory, and
             real-time AI—all privacy-first.
           </p>
+        </Reveal>
+        <Reveal variant="fadeIn" delay={0.24}>
+          <Button
+            asChild
+            className="mt-[40px] self-start w-[410px] max-w-full h-11 bg-[#000000] dark:bg-[#9333EA] text-[#ffffff] hover:bg-[#111111]"
+          >
+            <Link href="/register">
+              <span className="inline-flex w-full items-center justify-center gap-2">
+                Get Started
+                <ArrowRight className="h-4 w-4 text-white" />
+              </span>
+            </Link>
+          </Button>
         </Reveal>
       </div>
       
