@@ -21,12 +21,12 @@ export const FooterBanner = () => {
           }}
         >
           <Reveal variant="fadeIn" inView delay={0.1}>
-            <h2 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[36px] font-bold text-white text-center">
+            <h2 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[36px] font-bold text-white light:text-[#000000] text-center">
               One Brain, Infinite Possibilities
             </h2>
           </Reveal>
           <Reveal variant="fadeIn" inView delay={0.16}>
-            <p className="mt-3 sm:mt-4 text-center text-[#9CA3AF] text-sm sm:text-base md:text-xl max-w-[600px]">
+            <p className="mt-3 sm:mt-4 text-center text-[#9CA3AF] light:text-[#000000] text-sm sm:text-base md:text-xl max-w-[600px]">
               Join thousands of developers building the next generation of intelligent applications
             </p>
           </Reveal>
