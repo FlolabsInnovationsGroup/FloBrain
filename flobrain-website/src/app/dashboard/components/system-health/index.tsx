@@ -11,7 +11,7 @@ export const SystemHealth = (): React.JSX.Element => {
     queryFn: async () => {
       const result = await api.getDashboardHealth();
       if (result.error || result.status >= 400) {
-        throw new Error(result.error ?? "Failed to load health");
+        throw new Error(result.error ?? "Couldn't connect to FloBrain");
       }
       return result.data!;
     },
@@ -39,6 +39,10 @@ export const SystemHealth = (): React.JSX.Element => {
   const lastUpdated = dataUpdatedAt
     ? new Date(dataUpdatedAt).toLocaleTimeString()
     : "—";
+  const errorMessage =
+    error instanceof Error && error.message.trim()
+      ? error.message
+      : "Couldn't connect to FloBrain";
 
   if (error) {
     return (
@@ -54,7 +58,7 @@ export const SystemHealth = (): React.JSX.Element => {
         <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "rgba(255, 255, 255, 0.5)" }}>
           SYSTEM HEALTH
         </h2>
-        <p style={{ fontSize: "13px", color: "#FCA5A5" }}>Unable to reach backend. Check that the API is running.</p>
+        <p style={{ fontSize: "13px", color: "#FCA5A5" }}>{errorMessage}</p>
       </div>
     );
   }

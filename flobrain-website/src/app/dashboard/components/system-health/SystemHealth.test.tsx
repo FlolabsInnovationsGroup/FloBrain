@@ -1,35 +1,84 @@
-import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SystemHealth } from ".";
+import { api } from "@/lib/api";
+
+vi.mock("@/lib/api", () => ({
+  api: {
+    getDashboardHealth: vi.fn(),
+  },
+}));
+
+const mockGetDashboardHealth = vi.mocked(api.getDashboardHealth);
+
+function renderSystemHealth() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <SystemHealth />
+    </QueryClientProvider>
+  );
+}
 
 describe("SystemHealth Component", () => {
-  it("should render the System Health title", () => {
-    render(<SystemHealth />);
-    expect(screen.getByText("System Health")).toBeDefined();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("should render Brain Status section", () => {
-    render(<SystemHealth />);
-    expect(screen.getByText("Brain Status")).toBeDefined();
-    expect(screen.getByText("Online")).toBeDefined();
+  it("should render SYSTEM HEALTH title and online status on success", async () => {
+    mockGetDashboardHealth.mockResolvedValue({
+      data: {
+        status: "ok",
+        backend: "online",
+        database: "connected",
+        allSystemsOperational: true,
+        system_status: "online",
+        connected_devices: 3,
+      },
+      status: 200,
+    });
+
+    renderSystemHealth();
+
+    expect(screen.getByText("SYSTEM HEALTH")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Online")).toBeInTheDocument();
+    });
+    expect(screen.getByText("All systems operational")).toBeInTheDocument();
   });
 
-  it("should render Connected Devices section", () => {
-    render(<SystemHealth />);
-    expect(screen.getByText("Connected Devices")).toBeDefined();
-    expect(screen.getByText("12")).toBeDefined();
+  it("should show FloBrain connect message when the request fails without a backend error", async () => {
+    mockGetDashboardHealth.mockResolvedValue({
+      error: "Couldn't connect to FloBrain",
+      details: "Network Error",
+      status: 0,
+    });
+
+    renderSystemHealth();
+
+    await waitFor(() => {
+      expect(screen.getByText("Couldn't connect to FloBrain")).toBeInTheDocument();
+    });
+    expect(
+      screen.queryByText("Unable to reach backend. Check that the API is running.")
+    ).not.toBeInTheDocument();
   });
 
-  it("should render Total tokens section with count and percentage", () => {
-    render(<SystemHealth />);
-    expect(screen.getByText("Total tokens today")).toBeDefined();
-    expect(screen.getByText("2,847,392")).toBeDefined();
-    expect(screen.getByText("+18%")).toBeDefined();
-  });
+  it("should display a backend-provided error message when present", async () => {
+    mockGetDashboardHealth.mockResolvedValue({
+      error: "Dashboard service is unavailable",
+      status: 503,
+    });
 
-  it("should render Brain Status as a link to /brain", () => {
-    render(<SystemHealth />);
-    const link = screen.getByRole("link");
-    expect(link.getAttribute("href")).toBe("/brain");
+    renderSystemHealth();
+
+    await waitFor(() => {
+      expect(screen.getByText("Dashboard service is unavailable")).toBeInTheDocument();
+    });
+    expect(screen.queryByText("Couldn't connect to FloBrain")).not.toBeInTheDocument();
   });
 });
