@@ -17,12 +17,12 @@ export default function HomePage() {
 
         <div className="w-full max-w-7xl px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
           <Reveal variant="fadeIn" inView>
-            <h1 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[36px] font-bold text-center mb-3 sm:mb-4 text-[#FFFFFF]">
+            <h1 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[36px] font-bold text-center mb-3 sm:mb-4 text-[#FFFFFF] light:text-[#000000]">
               Powerful Features, Simple Integration
             </h1>
           </Reveal>
           <Reveal variant="fadeIn" inView delay={0.06}>
-            <p className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] font-regular text-center text-zinc-400 mb-10 sm:mb-16 md:mb-20 lg:mb-28 max-w-[90%] sm:max-w-[80%] mx-auto">
+            <p className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] font-regular text-center text-zinc-400 light:text-[#000000] mb-10 sm:mb-16 md:mb-20 lg:mb-28 max-w-[90%] sm:max-w-[80%] mx-auto">
               Everything you need to build intelligent, context-aware applications
             </p>
           </Reveal>
@@ -41,12 +41,12 @@ export default function HomePage() {
 
         <div className="w-full max-w-7xl px-4 sm:px-6 md:px-8 py-12 sm:py-16 md:py-20">
           <Reveal variant="slideUp" inView>
-            <h1 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[35px] font-bold text-center mb-3 sm:mb-4 text-[#FFFFFF]">
+            <h1 className="text-[22px] sm:text-[28px] md:text-[32px] lg:text-[35px] font-bold text-center mb-3 sm:mb-4 text-[#FFFFFF] light:text-[#000000]">
               Every Where, All At Once
             </h1>
           </Reveal>
           <Reveal variant="fadeIn" inView delay={0.06}>
-            <p className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] text-center text-zinc-400 mx-auto w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] mb-10 sm:mb-16 md:mb-20 lg:mb-28">
+            <p className="text-[14px] sm:text-[16px] md:text-[18px] lg:text-[20px] text-center text-zinc-400 light:text-[#000000] mx-auto w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] mb-10 sm:mb-16 md:mb-20 lg:mb-28">
               FloBrain seamlessly integrates with wearables, mobile apps, web platforms, robotics,
               IoT devices, and enterprise systems—all through a unified API
             </p>
