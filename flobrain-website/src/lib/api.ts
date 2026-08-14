@@ -48,7 +48,7 @@ function normalizeError(err: unknown): ApiResult<never> {
   const message = err instanceof Error ? err.message : "Network error";
   return {
     error:
-      "Could not reach server. Check that the backend is running and the URL is correct.",
+      "Couldn't connect to FloBrain.",
     details: message,
     status: 0,
   };
