@@ -26,12 +26,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-local-development-only")
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 # Avoid W042 on models that don't define an explicit primary key (e.g. UserGroup, UserRole)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"]
+allowed = os.environ.get("ALLOWED_HOSTS", "")
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"] + [h for h in allowed.split(",") if h]
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
 
 
 # Application definition
