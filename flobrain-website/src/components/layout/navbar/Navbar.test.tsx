@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import Navbar from ".";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -17,6 +17,10 @@ function renderWithAuth(ui: React.ReactElement) {
 }
 
 describe("Navbar Component", () => {
+  afterEach(() => {
+    localStorage.clear();
+  });
+
   it("should render the logo and brand name", () => {
     renderWithAuth(<Navbar />);
     expect(screen.getByAltText("FloBrain")).toBeDefined();
@@ -70,5 +74,47 @@ describe("Navbar Component", () => {
 
     const finalLinks = screen.getAllByText(/Sign In/i);
     expect(finalLinks.length).toBeLessThan(mobileLinks.length);
+  });
+
+  it("should render the app navigation links when signed in", async () => {
+    localStorage.setItem("flobrain_access_token", "test-token");
+    localStorage.setItem("flobrain_user_id", "test-user");
+
+    renderWithAuth(<Navbar />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: "Dashboard" })).toBeInTheDocument();
+    });
+
+    const expected = [
+      ["Home", "/"],
+      ["Chat", "/brain"],
+      ["Dashboard", "/dashboard"],
+      ["Activity", "/home"],
+      ["Memory", "/memory"],
+    ];
+
+    for (const [label, href] of expected) {
+      expect(screen.getByRole("link", { name: label }).getAttribute("href")).toBe(href);
+    }
+
+    expect(screen.queryByRole("link", { name: /Sign In/i })).toBeNull();
+  });
+
+  it("should mark only the current route as active", async () => {
+    localStorage.setItem("flobrain_access_token", "test-token");
+    localStorage.setItem("flobrain_user_id", "test-user");
+
+    renderWithAuth(<Navbar />);
+
+    // Wait on an authed-only link: "Home" also renders in the signed-out branch,
+    // so waiting on it would resolve before AuthProvider settles.
+    await waitFor(() => {
+      expect(screen.getByRole("link", { name: "Activity" })).toBeInTheDocument();
+    });
+
+    // usePathname is mocked to "/" — Home is active, Activity ("/home") is not.
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Activity" })).not.toHaveAttribute("aria-current");
   });
 });
