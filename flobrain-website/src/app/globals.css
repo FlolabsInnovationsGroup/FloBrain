@@ -47,23 +47,23 @@
   --fb-app-card-bg: #4a4558;
   --fb-app-card-border: rgba(255, 255, 255, 0.08);
 
-  --fb-dashboard-card-bg: #ffffff;
-  --fb-dashboard-card-border: rgba(196, 181, 225, 0.65);
-  --fb-dashboard-card-shadow: 0 8px 32px rgba(107, 33, 168, 0.08);
-  --fb-dashboard-inner-bg: #f5f3ff;
-  --fb-dashboard-inner-border: rgba(196, 181, 225, 0.55);
-  --fb-dashboard-heading: #5b21b6;
-  --fb-dashboard-stat: #1a1b25;
-  --fb-dashboard-metric: #5b21b6;
-  --fb-dashboard-chart-label: #6b7280;
+  --fb-dashboard-card-bg: #a98bb7;
+  --fb-dashboard-card-border: transparent;
+  --fb-dashboard-card-shadow: none;
+  --fb-dashboard-inner-bg: #c9a7d8;
+  --fb-dashboard-inner-border: transparent;
+  --fb-dashboard-heading: #5b0b7d;
+  --fb-dashboard-stat: #1d1323;
+  --fb-dashboard-metric: #5b0b7d;
+  --fb-dashboard-chart-label: #392b40;
   --fb-dashboard-chart-dot-stroke: #ffffff;
   --fb-dashboard-icon-muted: #9ca3af;
   --fb-dashboard-disconnected: #9ca3af;
   --fb-dashboard-code-bg: #ede9fe;
   --fb-dashboard-link: #7c3aed;
-  --fb-dashboard-critical-text: #b91c1c;
-  --fb-dashboard-critical-bg: rgba(220, 38, 38, 0.08);
-  --fb-dashboard-critical-border: rgba(220, 38, 38, 0.25);
+  --fb-dashboard-critical-text: #ffffff;
+  --fb-dashboard-critical-bg: #c67692;
+  --fb-dashboard-critical-border: #ef4444;
   --fb-dashboard-warning-text: #b45309;
   --fb-dashboard-warning-bg: rgba(245, 158, 11, 0.1);
   --fb-dashboard-warning-border: rgba(245, 158, 11, 0.3);
@@ -71,6 +71,7 @@
   --fb-dashboard-heatmap-2: #fde68a;
   --fb-dashboard-heatmap-3: #fbbf24;
   --fb-dashboard-heatmap-4: #f59e0b;
+  --fb-dashboard-success: #045900;
 
   --fb-pricing-card-bg: #ffffff;
   --fb-pricing-card-border: rgba(196, 181, 225, 0.65);
@@ -201,9 +202,9 @@
   --fb-app-card-bg: #181024;
   --fb-app-card-border: rgba(255, 255, 255, 0.08);
 
-  --fb-dashboard-card-bg: rgba(30, 20, 50, 0.6);
-  --fb-dashboard-card-border: rgba(168, 85, 247, 0.15);
-  --fb-dashboard-card-shadow: none;
+  --fb-dashboard-card-bg: rgba(30, 18, 43, 0.72);
+  --fb-dashboard-card-border: rgba(139, 92, 246, 0.28);
+  --fb-dashboard-card-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   --fb-dashboard-inner-bg: rgba(255, 255, 255, 0.06);
   --fb-dashboard-inner-border: rgba(255, 255, 255, 0.08);
   --fb-dashboard-heading: #ffffff;
@@ -225,6 +226,7 @@
   --fb-dashboard-heatmap-2: #8b7000;
   --fb-dashboard-heatmap-3: #e8d000;
   --fb-dashboard-heatmap-4: #ffea00;
+  --fb-dashboard-success: #00D492;
 
   --fb-pricing-card-bg: rgba(26, 21, 37, 0.9);
   --fb-pricing-card-border: rgba(255, 255, 255, 0.1);
@@ -354,7 +356,11 @@ body {
 }
 
 .light .fb-page--dashboard {
-  background: linear-gradient(180deg, #ede9fe 0%, #e9d5ff 45%, #ddd6fe 100%);
+  background: #d8b4fe;
+}
+
+.dark .fb-page--dashboard {
+  background: linear-gradient(116.21deg, #290036 -1.81%, #070014 100%);
 }
 
 .fb-dashboard-stat-card {
