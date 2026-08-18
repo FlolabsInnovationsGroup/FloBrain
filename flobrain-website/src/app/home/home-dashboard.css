@@ -46,3 +46,97 @@
     transform: translate3d(0, 0, 0);
   }
 }
+
+/* ─── Light mode (Activity page only) ─── */
+
+/* `background` shorthand, not `background-color`: the root uses
+   bg-[linear-gradient(...)] which compiles to background-image, so a colour
+   utility alone would leave the dark gradient painting on top. */
+.light .home-dashboard {
+  /* Balanced Activity light palette */
+  --fb-chat-page-bg: #c9a7e3;
+
+  /* Main surfaces */
+  --fb-chat-shell-bg: #c5acd1;
+  --fb-chat-area-bg: #c5acd1;
+  --fb-confidence-panel-bg: #c5acd1;
+  --fb-panel-bg: #c5acd1;
+
+  /* Cards / inner surfaces */
+  --fb-card-bg: #d7c3df;
+  --fb-card-inner-bg: #d7c3df;
+  --fb-stat-card-bg: #d7c3df;
+
+  /* Borders */
+  --fb-panel-border: rgba(91, 33, 182, 0.14);
+  --fb-card-border: rgba(91, 33, 182, 0.12);
+
+  /* Text */
+  --fb-text: #29232f;
+  --fb-text-muted: #6e6575;
+  --fb-text-subtle: #776d7e;
+  --fb-heading: #512066;
+
+  background: var(--fb-chat-page-bg);
+  color: var(--fb-text);
+}
+
+/* Main headings */
+.light .home-dashboard h1,
+.light .home-dashboard h2,
+.light .home-dashboard h3 {
+  color: #3f214d;
+}
+
+/* Icons inherit a slightly darker foreground */
+.light .home-dashboard svg {
+  opacity: 0.9;
+}
+
+/* Green status colours */
+.light .home-dashboard .text-emerald-400,
+.light .home-dashboard .text-green-400,
+.light .home-dashboard .text-teal-400 {
+  color: #059669 !important;
+}
+
+/* Purple status / icons */
+.light .home-dashboard .text-purple-400,
+.light .home-dashboard .text-violet-400 {
+  color: #7c3aed !important;
+}
+/* Blue status / icons */
+.light .home-dashboard .text-blue-400,
+.light .home-dashboard .text-sky-400 {
+  color: #2563eb !important;
+}
+
+/* Orange status / icons */
+.light .home-dashboard .text-orange-400,
+.light .home-dashboard .text-amber-400 {
+  color: #d97706 !important;
+}
+
+/* Muted / queued states */
+.light .home-dashboard .home-dash-main .text-slate-400,
+.light .home-dashboard .home-dash-main .text-gray-400,
+.light .home-dashboard .home-dash-main .text-zinc-400,
+.light .home-dashboard .home-dash-right .text-slate-400,
+.light .home-dashboard .home-dash-right .text-gray-400,
+.light .home-dashboard .home-dash-right .text-zinc-400 {
+  color: #64748b !important;
+}
+
+/* The sidebar stays dark in the light palette (same intent as --fb-navbar-bg),
+   so the LeftPanel component — shared with /brain — needs no edits at all.
+   Scoping to .home-dashboard keeps this off every other page. */
+/* Keep sidebar text readable because sidebar remains dark in light mode */
+.light .home-dashboard .home-dash-left {
+  color: #e2e8f0;
+}
+
+.light .home-dashboard .home-dash-left .text-slate-400,
+.light .home-dashboard .home-dash-left .text-gray-400,
+.light .home-dashboard .home-dash-left .text-zinc-400 {
+  color: #94a3b8 !important;
+}

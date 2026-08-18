@@ -189,10 +189,10 @@ function ConfidencePanelContent({ headingClassName }: { headingClassName?: strin
       <Stagger className="space-y-3" stagger={0.08} inView={false}>
         {CONFIDENCE_CARDS.map((card) => (
           <StaggerItem key={card.model} variant="slideUp">
-            <div className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
+            <div className="rounded-lg border border-white/10 bg-[#130A2D] p-3 light:border-[var(--fb-card-border)] light:bg-[var(--fb-card-bg)]">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-white">{card.model}</p>
-              <span className="text-xs text-white/80">{card.confidence}%</span>
+              <p className="text-sm font-medium text-white light:text-[var(--fb-text)]">{card.model}</p>
+              <span className="text-xs text-white/80 light:text-[var(--fb-text-muted)]">{card.confidence}%</span>
             </div>
             <div className="mt-2 h-1.5 rounded-full bg-white/10">
               <div
@@ -752,7 +752,7 @@ function BrainPageContent() {
 
   return (
     <MotionProvider>
-    <main className="box-border mb-2 flex h-screen max-w-full min-h-0 flex-col overflow-y-hidden bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-3 pb-24 pt-24 font-[Inter] text-slate-300 sm:px-4 sm:pb-28 sm:pt-28 md:mx-auto md:w-[92%] md:px-0 md:pb-3 md:pt-[7rem]">
+    <main className="box-border mb-2 flex h-screen max-w-full min-h-0 flex-col overflow-y-hidden bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-3 pb-24 pt-24 font-[Inter] light:bg-[var(--fb-chat-page-bg)] text-slate-300 sm:px-4 sm:pb-28 sm:pt-28 md:mx-auto md:w-[92%] md:px-0 md:pb-3 md:pt-[7rem]">
       {error && (
         <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
           {error}
@@ -831,7 +831,7 @@ function BrainPageContent() {
             inView={false}
             className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30"
           >
-          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden light:bg-[var(--fb-chat-area-bg)] light:border-[var(--fb-chat-shell-border)]">
             {currentChatId ? (
               <>
                 <ChatArea
@@ -885,12 +885,12 @@ function BrainPageContent() {
                   </div>
                   </Reveal>
                   <Reveal variant="slideUp" delay={0.08}>
-                  <h2 className="mb-2 text-2xl font-bold tracking-tight text-white sm:mb-3 sm:text-3xl">
+                  <h2 className="mb-2 text-2xl font-bold tracking-tight text-white light:text-[#3f214d] sm:mb-3 sm:text-3xl">
                     Welcome to FLOBRAIN
                   </h2>
                   </Reveal>
                   <Reveal variant="fadeIn" delay={0.14}>
-                  <p className="mb-6 text-sm text-white/60 sm:mb-8 sm:text-base">
+                  <p className="mb-6 text-sm text-white/60 light:text-[#625a69] sm:mb-8 sm:text-base">
                     Start a new conversation to chat with our AI assistant.
                     {isAuthenticated
                       ? ' Your chats are saved on the server.'
@@ -929,8 +929,10 @@ function BrainPageContent() {
                   mobileConfidenceOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
                 )}
               >
-                <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
-                  <span className="text-base font-semibold text-white">Confidence</span>
+                <div className="mb-4 flex items-center justify-between border-b border-white/10 light:border-[#5b21b61f] pb-3">
+                  <span className="text-base font-semibold text-white light:text-[#3f214d]">
+                    Confidence
+                  </span>
                   <button
                     type="button"
                     onClick={() => setMobileConfidenceOpen(false)}
