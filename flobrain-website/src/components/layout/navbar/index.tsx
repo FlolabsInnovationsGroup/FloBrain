@@ -3,7 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Home } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  MessageCircle,
+  LayoutDashboard,
+  Activity,
+  Database,
+} from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,13 +23,26 @@ const activeLinkClass =
   "bg-white/10 text-white ring-1 ring-[#a855f7]/50";
 const inactiveLinkClass = "text-zinc-400 hover:text-white";
 
+const AUTHED_NAV_ITEMS = [
+  { label: "Home", href: "/", icon: Home },
+  { label: "Chat", href: "/brain", icon: MessageCircle },
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Activity", href: "/home", icon: Activity },
+  { label: "Memory", href: "/memory", icon: Database },
+] as const;
+
+function isNavItemActive(href: string, pathname: string): boolean {
+  if (href === "/") return pathname === "/";
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
   const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
   const isDashboardRoute = pathname === "/dashboard";
-  const isHomeActive = pathname === "/" || pathname === "/home";
+  const isHomeActive = pathname === "/";
 
   return (
     <header
@@ -62,53 +83,30 @@ export default function Navbar() {
         </div>
 
         {/* CENTER: Nav links (desktop) — truly centered */}
-        <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex md:items-center md:gap-1">
+        <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 lg:flex lg:items-center lg:gap-1">
           {!isLoading && isAuthenticated ? (
             <div className="flex items-center gap-1">
-              <Link
-                href="/"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isHomeActive ? activeLinkClass : inactiveLinkClass
-                  }`}
-              >
-                <Home className={navIconClass} />
-                Home
-              </Link>
-              {/* <Link
-                href="/dashboard"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isDashboardActive ? activeLinkClass : inactiveLinkClass
-                  }`}
-              >
-                <LayoutDashboard className={navIconClass} />
-                Dashboard
-              </Link>
-              <Link
-                href="/brain"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isChatsActive ? activeLinkClass : inactiveLinkClass
-                  }`}
-              >
-                <MessageCircle className={navIconClass} />
-                Chats
-              </Link>
-              <Link
-                href="/memory"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isMemoryActive ? activeLinkClass : inactiveLinkClass
-                  }`}
-              >
-                <Brain className={navIconClass} />
-                Memory
-              </Link>
-              <Link
-                href="/profile"
-                className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white"
-              >
-                Profile
-              </Link>*/}
-            </div> 
+              {AUTHED_NAV_ITEMS.map(({ label, href, icon: Icon }) => {
+                const isActive = isNavItemActive(href, pathname);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${isActive ? activeLinkClass : inactiveLinkClass
+                      }`}
+                  >
+                    <Icon className={navIconClass} />
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
           ) : (
             <div className="flex items-center gap-1">
               <Link
                 href="/"
-                className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isHomeActive ? activeLinkClass : inactiveLinkClass
+                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${isHomeActive ? activeLinkClass : inactiveLinkClass
                   }`}
               >
                 <Home className={navIconClass} />
@@ -137,7 +135,7 @@ export default function Navbar() {
         {/* RIGHT: Theme toggle + auth */}
         <div className="flex shrink-0 items-center gap-3 sm:gap-4">
           <ThemeToggle />
-          <div className="hidden md:flex md:items-center md:gap-4">
+          <div className="hidden lg:flex lg:items-center lg:gap-4">
             {isLoading ? (
               <span className="text-sm text-zinc-500">…</span>
             ) : !isAuthenticated ? (
@@ -162,7 +160,7 @@ export default function Navbar() {
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="rounded-md p-1.5 text-zinc-400 transition-colors hover:text-white md:hidden"
+            className="rounded-md p-1.5 text-zinc-400 transition-colors hover:text-white lg:hidden"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -173,63 +171,63 @@ export default function Navbar() {
       {/* Mobile menu */}
       {isOpen && (
         <div
-          className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border p-3 shadow-lg sm:p-4 md:hidden"
+          className="pointer-events-auto mx-auto mt-2 max-w-6xl rounded-2xl border p-3 shadow-lg sm:p-4 lg:hidden"
           style={{
             background: "var(--fb-navbar-bg)",
             borderColor: "var(--fb-navbar-border)",
           }}
         >
-          <div className="mb-4 flex items-center justify-between md:hidden">
+          <div className="mb-4 flex items-center justify-between lg:hidden">
             <span className="text-sm font-medium text-zinc-400">Theme</span>
             <ThemeToggle />
           </div>
           {!isLoading && isAuthenticated ? (
             <div className="flex flex-col gap-2">
-              <Link
-                href="/"
-                className={`rounded-lg px-2 py-2.5 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
-                onClick={() => setIsOpen(false)}
-              >
-                Home
-              </Link>
-              <Link href="/dashboard" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Dashboard</Link>
-              <Link href="/brain" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Chats</Link>
-              <Link href="/memory" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Memory</Link>
+              {AUTHED_NAV_ITEMS.map(({ label, href }) => {
+                const isActive = isNavItemActive(href, pathname);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`rounded-lg px-2 py-2.5 ${isActive ? "font-medium text-white" : "text-zinc-300"}`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
               <Link href="/profile" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Profile</Link>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
               <Link
                 href="/"
-                className={`rounded-lg px-2 py-2.5 ${isHomeActive ? "font-medium text-white" : "text-zinc-300"}`}
+                  className={`rounded-lg px-2 py-2.5 ${
+                    isHomeActive ? "font-medium text-white" : "text-zinc-300"
+                }`}
                 onClick={() => setIsOpen(false)}
-              >
-                Home
+            >
+              Home
               </Link>
-              {/* <Link
-                href="/pricing"
-                className={`rounded-lg px-2 py-2.5 ${isPricingActive ? "font-medium text-white" : "text-zinc-300"}`}
-                onClick={() => setIsOpen(false)}
-              >
-                Pricing
-              </Link>
+
               <Link
-                href="/contact"
-                className={`rounded-lg px-2 py-2.5 ${isContactActive ? "font-medium text-white" : "text-zinc-300"}`}
+                href="/signin"
+                className="rounded-lg px-2 py-2.5 text-zinc-300"
                 onClick={() => setIsOpen(false)}
               >
-                Contact
+                Sign In
               </Link>
-              <Link href="/signin" className="rounded-lg px-2 py-2.5 text-zinc-300" onClick={() => setIsOpen(false)}>Sign In</Link>
+
               <Link
                 href="/register"
                 className="rounded-xl bg-[#9333ea] py-3 text-center text-white"
                 onClick={() => setIsOpen(false)}
-              >
+            >
                 Register
-              </Link> */}
+              </Link>
             </div>
-          )}
+      )}
         </div>
       )}
     </header>
