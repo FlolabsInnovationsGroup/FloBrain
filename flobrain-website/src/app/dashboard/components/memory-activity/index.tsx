@@ -33,10 +33,10 @@ export const MemoryActivity = (): React.JSX.Element => {
   const heatmapDays = HEATMAP_DAYS;
 
   const getHeatmapColor = (intensity: number): string => {
-    if (intensity > 0.75) return "#FFEA00"; // Bright yellow - high
-    if (intensity > 0.5) return "#E8D000"; // Medium-high yellow
-    if (intensity > 0.25) return "#8B7000"; // Medium yellow/brown
-    return "#3A3547"; // Dark purple - low activity
+    if (intensity > 0.75) return "var(--fb-dashboard-heatmap-4)";
+    if (intensity > 0.5) return "var(--fb-dashboard-heatmap-3)";
+    if (intensity > 0.25) return "var(--fb-dashboard-heatmap-2)";
+    return "var(--fb-dashboard-heatmap-1)";
   };
 
   const todayCount = activity ? formatCount(activity.today_count) : "—";
@@ -48,12 +48,9 @@ export const MemoryActivity = (): React.JSX.Element => {
   if (error) {
     return (
       <div
-        className="w-full rounded-[16px] sm:rounded-[20px]"
+        className="fb-dashboard-card w-full rounded-[16px] sm:rounded-[20px]"
         style={{
-          background: "rgba(30, 18, 43, 0.6)",
           padding: "clamp(16px, 4vw, 32px)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
         }}
       >
         <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "rgba(255, 255, 255, 0.5)" }}>
@@ -66,12 +63,9 @@ export const MemoryActivity = (): React.JSX.Element => {
 
   return (
     <div
-      className="w-full rounded-[18px] sm:rounded-[20px]"
+      className="fb-dashboard-card w-full rounded-[18px] sm:rounded-[20px]"
       style={{
-        background: "rgba(30, 18, 43, 0.72)",
         padding: "clamp(16px, 3.2vw, 28px)",
-        border: "1px solid rgba(139, 92, 246, 0.28)",
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
       }}
     >
       {/* Top Header Section */}
@@ -82,7 +76,7 @@ export const MemoryActivity = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "rgba(255, 255, 255, 0.5)",
+              color: "var(--fb-dashboard-heading)",
             }}
           >
             MEMORY ACTIVITY
@@ -90,7 +84,7 @@ export const MemoryActivity = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "rgba(255, 255, 255, 0.35)",
+              color: "var(--fb-dashboard-chart-label)",
             }}
           >
             {isLoading ? "Loading…" : "Last 7 days"}
@@ -128,7 +122,7 @@ export const MemoryActivity = (): React.JSX.Element => {
             className="font-bold mb-1"
             style={{
               fontSize: "clamp(18px, 5vw, 32px)",
-              color: "#FFFFFF",
+              color: "var(--fb-dashboard-stat)",
               lineHeight: "1",
             }}
           >
@@ -168,7 +162,7 @@ export const MemoryActivity = (): React.JSX.Element => {
             className="font-bold mb-1.5 sm:mb-2"
             style={{
               fontSize: "clamp(18px, 5vw, 32px)",
-              color: "#FFFFFF",
+              color: "var(--fb-dashboard-stat)",
               lineHeight: "1",
             }}
           >
@@ -208,7 +202,7 @@ export const MemoryActivity = (): React.JSX.Element => {
             className="font-bold mb-1"
             style={{
               fontSize: "clamp(18px, 5vw, 32px)",
-              color: "#FFFFFF",
+              color: "var(--fb-dashboard-stat)",
               lineHeight: "1",
             }}
           >
@@ -233,7 +227,7 @@ export const MemoryActivity = (): React.JSX.Element => {
           <h3
             style={{
               fontSize: "13px",
-              color: "rgba(255, 255, 255, 0.6)",
+              color: "var(--fb-text-muted)",
               fontWeight: 500,
             }}
           >
@@ -255,7 +249,7 @@ export const MemoryActivity = (): React.JSX.Element => {
                 style={{
                   width: "8px",
                   height: "8px",
-                  background: "#3A3547",
+                  background: "var(--fb-dashboard-heatmap-1)",
                 }}
               />
               <div
@@ -263,7 +257,7 @@ export const MemoryActivity = (): React.JSX.Element => {
                 style={{
                   width: "8px",
                   height: "8px",
-                  background: "#8B7000",
+                  background: "var(--fb-dashboard-heatmap-2)",
                 }}
               />
               <div
@@ -271,7 +265,7 @@ export const MemoryActivity = (): React.JSX.Element => {
                 style={{
                   width: "8px",
                   height: "8px",
-                  background: "#E8D000",
+                  background: "var(--fb-dashboard-heatmap-3)",
                 }}
               />
               <div
@@ -279,7 +273,7 @@ export const MemoryActivity = (): React.JSX.Element => {
                 style={{
                   width: "8px",
                   height: "8px",
-                  background: "#FFEA00",
+                  background: "var(--fb-dashboard-heatmap-4)",
                 }}
               />
             </div>
