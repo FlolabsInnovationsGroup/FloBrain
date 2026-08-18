@@ -91,7 +91,7 @@ const ProcessStatusBadge = memo(function ProcessStatusBadge({
     );
   }
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-600/30 font-extralight border border-slate-600/50 px-3 py-1 text-[10px] font-light tracking-wider text-slate-400">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-600/30 font-extralight border border-slate-600/50 px-3 py-1 text-[10px] font-light tracking-wider text-slate-400 light:bg-slate-500/15 light:border-slate-500/35 light:text-slate-600">
       <Clock className="h-3.5 w-3.5" />
       Queued
     </span>
@@ -113,7 +113,7 @@ const ProcessProgressBar = memo(function ProcessProgressBar({
         : "from-slate-600 to-slate-500";
 
   return (
-    <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
+    <div className="h-2 w-full rounded-full bg-white/5 light:bg-[#1a1b25]/12 overflow-hidden">
       <div
         className={cn(
           "h-full rounded-full bg-gradient-to-r transition-all duration-500",
@@ -141,7 +141,7 @@ const MetricCard = memo(function MetricCard({
   return (
     <div
       role="listitem"
-      className="relative rounded-xl border border-white/5 bg-[#1E293B]/80 p-4 py-8"
+      className="relative rounded-xl border border-white/5 bg-[#1E293B]/80 light:border-[var(--fb-panel-border)] light:bg-[var(--fb-panel-bg)] p-4 py-8"
       aria-label={`${label}: ${value}`}
     >
       <div
@@ -156,8 +156,8 @@ const MetricCard = memo(function MetricCard({
           <Icon className={cn("h-5 w-5", iconColor)} />
         </div>
         <div>
-          <p className="text-2xl font-semibold text-white">{value}</p>
-          <p className="text-xs font-light mt-2 tracking-wider text-[#90A1B9]">
+          <p className="text-2xl font-semibold text-white light:text-[var(--fb-heading)]">{value}</p>
+          <p className="text-xs font-light mt-2 tracking-wider text-[#90A1B9] light:text-[var(--fb-text-muted)]">
             {label}
           </p>
         </div>
@@ -179,11 +179,11 @@ const ProcessRow = memo(function ProcessRow({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex flex-row items-center gap-2 mb-3">
-          <span className="text-base font-extralight text-white">{name}</span>
+          <span className="text-base font-extralight text-white light:text-[var(--fb-text)]">{name}</span>
           <ProcessStatusBadge status={status} />
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-slate-400 w-8 text-right">
+          <span className="text-xs font-mono text-slate-400 light:text-[var(--fb-text-muted)] w-8 text-right">
             {progress}%
           </span>
         </div>
@@ -214,14 +214,14 @@ function BrainActivityInner() {
   }, [router]);
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[#767676]/38 font-[inter]">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-[#767676]/38 light:border-[var(--fb-chat-shell-border)] light:bg-[var(--fb-chat-shell-bg)] font-[inter]">
       <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-3 py-5 sm:px-4 lg:px-6">
         {/* Header */}
         <header className="my-6">
-          <h1 className="text-3xl font-bold text-white tracking-tight">
+          <h1 className="text-3xl font-bold text-white light:text-[var(--fb-heading)] tracking-tight">
             Brain Activity
           </h1>
-          <p className="text-base text-[#90A1B9] my-4">
+          <p className="text-base text-[#90A1B9] light:text-[var(--fb-text-muted)] my-4">
             Real-time orchestration of AI processes
           </p>
         </header>
@@ -238,8 +238,8 @@ function BrainActivityInner() {
         </div>
 
         {/* Active Processes */}
-        <div className="flex min-h-0 flex-col rounded-xl border border-white/10 bg-[#181024]/95 p-6">
-          <h2 className="text-xl font-semibold text-white mb-6">
+        <div className="flex min-h-0 flex-col rounded-xl border border-white/10 bg-[#181024]/95 light:border-[var(--fb-panel-border)] light:bg-[var(--fb-panel-bg)] p-6">
+          <h2 className="text-xl font-semibold text-white light:text-[var(--fb-heading)] mb-6">
             Active Processes
           </h2>
           <div className="space-y-6 ">
@@ -251,11 +251,11 @@ function BrainActivityInner() {
                 progress={item.progress}
               />
             ))}
-            <div className="h-px bg-white/5" />
+            <div className="h-px bg-white/5 light:bg-[#1a1b25]/10" />
           </div>
           {/* Summary */}
           <div
-            className="flex mx-20 pt-4 border-t border-white/5 justify-between"
+            className="flex mx-20 pt-4 border-t border-white/5 light:border-[#1a1b25]/12 justify-between"
             role="status"
             aria-label={`Process summary: ${PROCESS_SUMMARY.complete} completed, ${PROCESS_SUMMARY.processing} in progress, ${PROCESS_SUMMARY.queued} queued`}
           >
@@ -263,7 +263,7 @@ function BrainActivityInner() {
               <p className="text-2xl font-semibold text-emerald-400 text-center">
                 {PROCESS_SUMMARY.complete}
               </p>
-              <p className="tracking-wider text-[#9CA3AF] font-light text-xs">
+              <p className="tracking-wider text-[#9CA3AF] light:text-[var(--fb-text-subtle)] font-light text-xs">
                 Completed
               </p>
             </div>
@@ -271,15 +271,15 @@ function BrainActivityInner() {
               <p className="text-2xl font-semibold text-blue-400 text-center">
                 {PROCESS_SUMMARY.processing}
               </p>
-              <p className="tracking-wider text-[#9CA3AF] font-light text-xs">
+              <p className="tracking-wider text-[#9CA3AF] light:text-[var(--fb-text-subtle)] font-light text-xs">
                 In Progress
               </p>
             </div>
             <div>
-              <p className="text-2xl font-semibold text-slate-400 text-center">
+              <p className="text-2xl font-semibold text-slate-400 light:text-slate-600 text-center">
                 {PROCESS_SUMMARY.queued}
               </p>
-              <p className="tracking-wider text-[#9CA3AF] font-light text-xs">
+              <p className="tracking-wider text-[#9CA3AF] light:text-[var(--fb-text-subtle)] font-light text-xs">
                 Queued
               </p>
             </div>
@@ -288,7 +288,7 @@ function BrainActivityInner() {
       </div>
 
       {/* Ask Anything - pinned to bottom of center column */}
-      <div className="shrink-0 border-t border-white/10 bg-[#0B0719]/50 px-3 py-3 backdrop-blur-sm sm:px-4 lg:px-6">
+      <div className="shrink-0 border-t border-white/10 bg-[#0B0719]/50 light:border-[var(--fb-panel-border)] light:bg-[var(--fb-panel-bg)] px-3 py-3 backdrop-blur-sm sm:px-4 lg:px-6">
         <form
           onSubmit={(e) => {
             e.preventDefault();

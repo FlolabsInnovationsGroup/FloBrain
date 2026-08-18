@@ -61,12 +61,3 @@ Thumbs.db
 .coverage
 htmlcov/
 .pytest_cache/
-
-# ================================
-# FAISS
-# ================================
-memory/faiss_memory.index
-memory/faiss_metadata.json
-# FAISS generated files
-memory/faiss_memory.index
-memory/faiss_metadata.json
