@@ -42,7 +42,7 @@ def build_message_index():
     print(f"Indexed {len(texts)} messages successfully.")
 
 
-def search_messages(query, top_k=3, max_distance=None):
+def search_messages(query, top_k=3, max_distance=None, user_id=None):
     if not os.path.exists(INDEX_PATH) or not os.path.exists(METADATA_PATH):
         print("FAISS index not found. Run build_message_index() first.")
         return []
@@ -52,10 +52,18 @@ def search_messages(query, top_k=3, max_distance=None):
     with open(METADATA_PATH, "r") as f:
         ids = json.load(f)
 
+    if index.ntotal != len(ids):
+        raise RuntimeError(
+            "FAISS index and metadata are inconsistent"
+        )
+
     query_embedding = model.encode([query])
     query_embedding = np.array(query_embedding).astype("float32")
 
-    distances, indices = index.search(query_embedding, top_k)
+    # Search a larger candidate pool when user filtering is required
+    search_k = index.ntotal if user_id else min(top_k, index.ntotal)
+
+    distances, indices = index.search(query_embedding, search_k)
 
     results = []
 
@@ -72,9 +80,17 @@ def search_messages(query, top_k=3, max_distance=None):
             {"_id": __import__("bson").ObjectId(mongo_id)}
         )
 
-        if message:
-            message["_id"] = str(message["_id"])
-            message["semantic_distance"] = float(distance)
-            results.append(message)
+        if not message:
+            continue
+
+        if user_id is not None and message.get("user_id") != user_id:
+            continue
+
+        message["_id"] = str(message["_id"])
+        message["semantic_distance"] = float(distance)
+        results.append(message)
+
+        if len(results) >= top_k:
+            break
 
     return results
