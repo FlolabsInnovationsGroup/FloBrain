@@ -177,10 +177,6 @@ export default function Navbar() {
             borderColor: "var(--fb-navbar-border)",
           }}
         >
-          <div className="mb-4 flex items-center justify-between lg:hidden">
-            <span className="text-sm font-medium text-zinc-400">Theme</span>
-            <ThemeToggle />
-          </div>
           {!isLoading && isAuthenticated ? (
             <div className="flex flex-col gap-2">
               {AUTHED_NAV_ITEMS.map(({ label, href }) => {
