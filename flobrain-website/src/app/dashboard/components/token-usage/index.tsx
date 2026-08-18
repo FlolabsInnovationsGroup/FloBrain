@@ -50,12 +50,9 @@ export const TokenUsage = (): React.JSX.Element => {
 
   return (
     <div
-      className="w-full rounded-[18px] sm:rounded-[20px]"
+      className="fb-dashboard-card w-full rounded-[18px] sm:rounded-[20px]"
       style={{
-        background: "rgba(30, 18, 43, 0.72)",
         padding: "clamp(16px, 3.2vw, 28px)",
-        border: "1px solid rgba(139, 92, 246, 0.28)",
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
       }}
     >
       {/* Top Section */}
@@ -66,7 +63,7 @@ export const TokenUsage = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "rgba(255, 255, 255, 0.5)",
+              color: "var(--fb-dashboard-heading)",
             }}
           >
             TOKEN USAGE
@@ -74,7 +71,7 @@ export const TokenUsage = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "rgba(255, 255, 255, 0.35)",
+              color: "var(--fb-dashboard-chart-label)",
             }}
           >
             Last 7 days
@@ -96,7 +93,7 @@ export const TokenUsage = (): React.JSX.Element => {
           className="font-bold mb-2 sm:mb-3"
           style={{
             fontSize: "clamp(16px, 5vw, 53px)",
-            color: "#FFFFFF",
+            color: "var(--fb-dashboard-stat)",
             lineHeight: "1",
             letterSpacing: "-0.02em",
           }}
@@ -110,7 +107,7 @@ export const TokenUsage = (): React.JSX.Element => {
             className="flex items-center gap-1.5 rounded-full font-semibold bg-transparent px-0 py-0 md:bg-[rgba(0,212,146,0.15)] md:px-[10px] md:py-[5px]"
             style={{
               fontSize: "clamp(11px, 2vw, 13px)",
-              color: "#00D492",
+              color: "var(--fb-dashboard-success)",
             }}
           >
             <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
@@ -120,7 +117,7 @@ export const TokenUsage = (): React.JSX.Element => {
             className="ml-[5%] md:ml-0"
             style={{
               fontSize: "clamp(11px, 2vw, 13px)",
-              color: "rgba(255, 255, 255, 0.4)",
+              color: "var(--fb-dashboard-chart-label)",
             }}
           >
             vs. last week
@@ -192,7 +189,7 @@ export const TokenUsage = (): React.JSX.Element => {
               y={CHART_H - 4}
               textAnchor="middle"
               fontSize="9"
-              fill="rgba(255,255,255,0.35)"
+              fill="var(--fb-dashboard-chart-label)"
             >
               {label}
             </text>

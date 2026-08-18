@@ -43,12 +43,9 @@ export const WorkflowEngine = (): React.JSX.Element => {
   if (error) {
     return (
       <div
-        className="w-full rounded-[18px] sm:rounded-[20px]"
+        className="fb-dashboard-card w-full rounded-[18px] sm:rounded-[20px]"
         style={{
-          background: "rgba(30, 18, 43, 0.72)",
           padding: "clamp(16px, 3.2vw, 28px)",
-          border: "1px solid rgba(139, 92, 246, 0.28)",
-          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
         }}
       >
         <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "rgba(255, 255, 255, 0.5)" }}>
@@ -61,12 +58,9 @@ export const WorkflowEngine = (): React.JSX.Element => {
 
   return (
     <div
-      className="w-full rounded-[18px] sm:rounded-[20px]"
+      className="fb-dashboard-card w-full rounded-[18px] sm:rounded-[20px]"
       style={{
-        background: "rgba(30, 18, 43, 0.72)",
         padding: "clamp(16px, 3.2vw, 28px)",
-        border: "1px solid rgba(139, 92, 246, 0.28)",
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
       }}
     >
       {/* Header Section */}
@@ -77,7 +71,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "rgba(255, 255, 255, 0.5)",
+              color: "var(--fb-dashboard-heading)",
             }}
           >
             WORKFLOW ENGINE
@@ -85,7 +79,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "rgba(255, 255, 255, 0.35)",
+              color: "var(--fb-dashboard-chart-label)",
             }}
           >
             {isLoading ? "Loading…" : "Recent errors & warnings"}
@@ -98,10 +92,10 @@ export const WorkflowEngine = (): React.JSX.Element => {
             className="inline-flex w-fit justify-self-start rounded-full font-semibold"
             style={{
               padding: "5px 10px",
-              background: "rgba(220, 38, 38, 0.15)",
-              border: "1px solid rgba(220, 38, 38, 0.3)",
+              background: "var(--fb-dashboard-critical-bg)",
+              border: "1px solid var(--fb-dashboard-critical-border)",
               fontSize: "11px",
-              color: "#FCA5A5",
+              color: "var(--fb-dashboard-critical-text)",
             }}
           >
             {isLoading ? "—" : `${criticalCount} Critical`}
@@ -110,10 +104,10 @@ export const WorkflowEngine = (): React.JSX.Element => {
             className="inline-flex w-fit justify-self-start rounded-full font-semibold"
             style={{
               padding: "5px 10px",
-              background: "rgba(245, 158, 11, 0.15)",
-              border: "1px solid rgba(245, 158, 11, 0.3)",
+              background: "var(--fb-dashboard-warning-bg)",
+              border: "1px solid var(--fb-dashboard-warning-border)",
               fontSize: "11px",
-              color: "#FCD34D",
+              color: "var(--fb-dashboard-warning-text)",
             }}
           >
             {isLoading ? "—" : `${warningCount} Warnings`}
@@ -134,12 +128,12 @@ export const WorkflowEngine = (): React.JSX.Element => {
                 padding: "clamp(12px, 3vw, 20px)",
                 background:
                   alert.severity === "critical"
-                    ? "rgba(239, 68, 68, 0.08)"
-                    : "rgba(245, 158, 11, 0.1)",
+                    ? "var(--fb-dashboard-critical-bg)"
+                    : "var(--fb-dashboard-warning-bg)",
                 border:
                   alert.severity === "critical"
-                    ? "1px solid rgba(239, 68, 68, 0.25)"
-                    : "1px solid rgba(245, 158, 11, 0.3)",
+                    ? "1px solid var(--fb-dashboard-critical-border)"
+                    : "1px solid var(--fb-dashboard-warning-border)",
               }}
             >
               <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
@@ -195,7 +189,7 @@ export const WorkflowEngine = (): React.JSX.Element => {
                     className="font-semibold mb-1.5 sm:mb-2"
                     style={{
                       fontSize: "clamp(12px, 2.5vw, 14px)",
-                      color: "#FFFFFF",
+                      color: "var(--fb-dashboard-stat)",
                       lineHeight: "1.3",
                       wordBreak: "break-word",
                     }}
