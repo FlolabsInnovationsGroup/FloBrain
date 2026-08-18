@@ -9,6 +9,17 @@ def _now():
 
 
 def create_edge(source_type, source_id, relationship, target_type, target_id, metadata=None):
+    existing_edge = db.knowledge_edges.find_one({
+        "source_type": source_type,
+        "source_id": source_id,
+        "relationship": relationship,
+        "target_type": target_type,
+        "target_id": target_id
+    })
+
+    if existing_edge:
+        return str(existing_edge["_id"])
+
     edge = {
         "source_type": source_type,
         "source_id": source_id,
