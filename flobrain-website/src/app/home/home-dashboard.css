@@ -46,3 +46,20 @@
     transform: translate3d(0, 0, 0);
   }
 }
+
+/* ─── Light mode (Activity page only) ─── */
+
+/* `background` shorthand, not `background-color`: the root uses
+   bg-[linear-gradient(...)] which compiles to background-image, so a colour
+   utility alone would leave the dark gradient painting on top. */
+.light .home-dashboard {
+  background: var(--fb-chat-page-bg);
+  color: var(--fb-text);
+}
+
+/* The sidebar stays dark in the light palette (same intent as --fb-navbar-bg),
+   so the LeftPanel component — shared with /brain — needs no edits at all.
+   Scoping to .home-dashboard keeps this off every other page. */
+.light .home-dashboard .home-dash-left > * {
+  background: var(--fb-sidebar-bg);
+}
