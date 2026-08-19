@@ -117,7 +117,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   return (
     <div
       className={cn(
-        "flex flex-col bg-[#0B0719]/50 relative w-[20%] min-h-0 border-transparent rounded-xl",
+        "fb-brain-sidebar flex flex-col relative w-[20%] min-h-0 border-transparent rounded-xl",
         className
       )}
     >
@@ -133,7 +133,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
           </label>
           <div className="relative">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--fb-brain-text-subtle)] pointer-events-none"
               aria-hidden
             />
             <input
@@ -142,7 +142,12 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
               placeholder={searchPlaceholder}
               value={isChats ? searchQuery : undefined}
               onChange={handleSearchChange}
-              className="w-full pl-9 pr-3 py-3.5 rounded-lg bg-[#0F172B]/80 text-[#62748E] border border-[#1D293D]/50 placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50"
+              className="fb-brain-input w-full pl-9 pr-3 py-3.5 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-[var(--fb-brain-btn)]/30 focus:border-[var(--fb-brain-btn)]/50"
+              style={{
+                background: 'var(--fb-brain-sidebar-search-bg)',
+                borderColor: 'var(--fb-brain-sidebar-search-border)',
+                color: 'var(--fb-brain-text)',
+              }}
             />
           </div>
         </form>
@@ -151,7 +156,12 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         <button
           type="button"
           onClick={onNewChat}
-          className="w-full flex items-center justify-between gap-2 rounded-lg bg-black border border-white/36 py-3 px-4 mb-6 text-white text-xs font-semibold tracking-wider hover:bg-slate-900 hover:border-slate-700 transition-colors shrink-0"
+          className="w-full flex items-center justify-between gap-2 rounded-lg border py-3 px-4 mb-6 text-xs font-semibold tracking-wider transition-colors shrink-0 hover:opacity-90"
+          style={{
+            background: 'var(--fb-brain-new-chat-bg)',
+            borderColor: 'var(--fb-brain-new-chat-border)',
+            color: 'var(--fb-brain-new-chat-text)',
+          }}
         >
           <span>NEW CHAT</span>
           <Plus className="w-6 h-6 shrink-0" aria-hidden />
@@ -160,7 +170,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         {/* Middle: System Modules (with icons) or All Chats (text only) */}
         {isModules && (
           <div className="flex flex-col gap-1 shrink-0">
-            <h2 className="text-[12px] uppercase tracking-[0.2em] text-[#90A1B9] font-bold px-1 mb-3">
+            <h2 className="text-[12px] uppercase tracking-[0.2em] font-bold px-1 mb-3 text-[var(--fb-brain-sidebar-section-label)]">
               SYSTEM MODULES
             </h2>
             <nav className="flex flex-col gap-0.5" aria-label="System modules">
@@ -171,21 +181,29 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
                     key={id}
                     href={href}
                     className={cn(
-                      "w-full flex items-center gap-3 rounded-lg py-2.5 px-3 text-left text-sm text-[#CAD5E2] transition-colors",
+                      "w-full flex items-center gap-3 rounded-lg py-2.5 px-3 text-left text-sm transition-colors",
                       isActive
-                        ? "bg-[#000000]/80 border border-[#AD46FF]/30 shadow-[0_0_32px_rgba(126,34,206,0.4)] text-white"
-                        : "cursor-pointer border border-transparent hover:bg-white/5 hover:border-white/5"
+                        ? "text-[var(--fb-brain-nav-active-text)] ring-1"
+                        : "cursor-pointer border border-transparent text-[var(--fb-brain-sidebar-item-text)] hover:bg-[var(--fb-brain-surface-bg)] hover:border-[var(--fb-brain-surface-border)]"
                     )}
+                    style={
+                      isActive
+                        ? {
+                            background: 'var(--fb-brain-nav-active-bg)',
+                            boxShadow: 'inset 0 0 0 1px var(--fb-brain-nav-active-ring)',
+                          }
+                        : undefined
+                    }
                     aria-current={isActive ? "page" : undefined}
                   >
                     <Icon className={cn(
                       "w-4 h-4 shrink-0",
-                      isActive ? "text-white" : "text-[#CAD5E2]"
+                      isActive ? "text-[var(--fb-brain-nav-active-text)]" : "text-[var(--fb-brain-sidebar-item-text)]"
                     )} />
                     <span>{label}</span>
                     {showDot && isActive && (
                       <span
-                        className="w-2 h-2 rounded-full bg-[#AD46FF] shrink-0"
+                        className="w-2 h-2 rounded-full shrink-0 bg-[var(--fb-brain-accent)]"
                         aria-hidden
                       />
                     )}
@@ -198,15 +216,15 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
 
         {isChats && (
           <div className="flex flex-col gap-1 shrink-0 min-h-0 flex-1 flex">
-            <h2 className="text-[12px] uppercase tracking-[0.2em] text-[#90A1B9] font-bold px-1 mb-3">
+            <h2 className="text-[12px] uppercase tracking-[0.2em] font-bold px-1 mb-3 text-[var(--fb-brain-sidebar-section-label)]">
               All Chats
             </h2>
             <nav className="flex flex-col gap-0.5 overflow-y-auto min-h-0" aria-label="Chat list">
               {chatsLoading && (
-                <p className="text-[#62748E] text-sm py-2 px-3">Loading chats...</p>
+                <p className="text-[var(--fb-brain-sidebar-search-text)] text-sm py-2 px-3">Loading chats...</p>
               )}
               {!chatsLoading && filteredChats.length === 0 && (
-                <p className="text-[#62748E] text-sm py-2 px-3">No chats yet</p>
+                <p className="text-[var(--fb-brain-sidebar-search-text)] text-sm py-2 px-3">No chats yet</p>
               )}
               {!chatsLoading &&
                 filteredChats.map((chat) => {
@@ -219,9 +237,17 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
                       className={cn(
                         "w-full rounded-lg py-2.5 px-3 text-left text-sm transition-colors border border-transparent",
                         isActive
-                          ? "bg-[#000000]/80 border-[#AD46FF]/30 shadow-[0_0_32px_rgba(126,34,206,0.4)] text-white"
-                          : "text-[#CAD5E2] hover:bg-white/5 hover:border-white/5"
+                          ? "text-[var(--fb-brain-nav-active-text)] ring-1"
+                          : "text-[var(--fb-brain-sidebar-item-text)] hover:bg-[var(--fb-brain-surface-bg)] hover:border-[var(--fb-brain-surface-border)]"
                       )}
+                      style={
+                        isActive
+                          ? {
+                              background: 'var(--fb-brain-nav-active-bg)',
+                              boxShadow: 'inset 0 0 0 1px var(--fb-brain-nav-active-ring)',
+                            }
+                          : undefined
+                      }
                       aria-current={isActive ? "page" : undefined}
                     >
                       <span className="block truncate">{chat.title}</span>
@@ -236,13 +262,14 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
         {isModules && <div className="flex-1" />}
 
         {/* Footer: status + preferences + settings */}
-        <div className="pt-4 border-t border-slate-700/80 space-y-3 shrink-0">
-          <div className="flex items-center gap-2 px-2 border border-[#32D583]/45 bg-[#10B981]/10 rounded-full w-fit">
+        <div className="pt-4 border-t space-y-3 shrink-0" style={{ borderColor: 'var(--fb-brain-sidebar-footer-border)' }}>
+          <div className="flex items-center gap-2 px-2 border rounded-full w-fit" style={{ borderColor: 'rgba(52, 211, 153, 0.45)', background: 'rgba(16, 185, 129, 0.1)' }}>
             <span
-              className="w-2 h-2 rounded-full bg-[#32D583]/45 shadow-[0_0_6px_rgba(52,211,153,0.6)]"
+              className="w-2 h-2 rounded-full shrink-0"
+              style={{ background: 'var(--fb-brain-success)', boxShadow: '0 0 6px rgba(52, 211, 153, 0.6)' }}
               aria-hidden
             />
-            <span className="text-[11px] uppercase tracking-wider font-medium text-[#32D583]/45 px-2 py-1">
+            <span className="text-[11px] uppercase tracking-wider font-medium px-2 py-1" style={{ color: 'var(--fb-brain-success)' }}>
               System Online
             </span>
           </div>
@@ -250,15 +277,23 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
             <button
               type="button"
               onClick={onPreferences}
-              className="group flex-1 flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-sm text-[#CAD5E2] bg-[#0F172B]/80 border border-[#1D293D]/50 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#7F56D9]/60 hover:bg-[#1B1235] hover:text-white hover:shadow-[0_10px_24px_rgba(127,86,217,0.25)]"
+              className="group flex-1 flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-sm border transition-all duration-200 hover:-translate-y-0.5 text-[var(--fb-brain-sidebar-item-text)] hover:text-[var(--fb-brain-heading)]"
+              style={{
+                background: 'var(--fb-brain-sidebar-search-bg)',
+                borderColor: 'var(--fb-brain-sidebar-search-border)',
+              }}
             >
-              <SlidersHorizontal className="w-4 h-4 shrink-0 transition-colors group-hover:text-[#C4B5FD]" aria-hidden />
-              <span className="text-[#CAD5E2]">Preferences</span>
+              <SlidersHorizontal className="w-4 h-4 shrink-0 transition-colors group-hover:text-[var(--fb-brain-accent)]" aria-hidden />
+              <span>Preferences</span>
             </button>
             <button
               type="button"
               onClick={onSettings}
-              className="shrink-0 p-2 rounded-lg text-[#CAD5E2] bg-[#0F172B]/80 border border-[#1D293D]/50 hover:bg-[#0F172B]/90 transition-all"
+              className="shrink-0 p-2 rounded-lg border transition-all text-[var(--fb-brain-sidebar-item-text)] hover:text-[var(--fb-brain-heading)]"
+              style={{
+                background: 'var(--fb-brain-sidebar-search-bg)',
+                borderColor: 'var(--fb-brain-sidebar-search-border)',
+              }}
               aria-label="Settings"
             >
               <Settings className="w-4 h-4" aria-hidden />

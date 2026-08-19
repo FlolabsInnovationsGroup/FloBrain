@@ -3,6 +3,9 @@
 import React, { useState } from "react";
 import { Send, Loader2 } from "lucide-react";
 
+const inputClassName =
+  "fb-contact-input w-full rounded-xl border px-4 py-3 transition-colors focus:border-[var(--fb-brain-btn)]/50 focus:ring-2 focus:ring-[var(--fb-brain-btn)]/30 disabled:cursor-not-allowed disabled:opacity-50";
+
 export const ContactForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,9 +35,9 @@ export const ContactForm = () => {
   };
 
   return (
-    <div className="fb-contact-form-card backdrop-blur-md rounded-xl p-8 shadow-lg border">
-      <h2 className="text-xl font-bold text-[#2D1B4E] mb-6 dark:text-white">Get in Touch</h2>
-      <p className="text-[#5C4A72] text-sm mb-6 dark:text-white/80">
+    <div className="fb-contact-form-card rounded-xl border p-8">
+      <h2 className="fb-contact-heading text-xl font-bold mb-6">Get in Touch</h2>
+      <p className="fb-contact-text-muted text-sm mb-6">
         Fill out the form below and we&apos;ll respond within 24 hours.
       </p>
 
@@ -48,7 +51,7 @@ export const ContactForm = () => {
             onChange={handleInputChange}
             required
             disabled={isSubmitting}
-            className="fb-contact-input w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClassName}
           />
         </div>
         <div>
@@ -60,7 +63,7 @@ export const ContactForm = () => {
             onChange={handleInputChange}
             required
             disabled={isSubmitting}
-            className="fb-contact-input w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClassName}
           />
         </div>
         <div>
@@ -72,7 +75,7 @@ export const ContactForm = () => {
             onChange={handleInputChange}
             required
             disabled={isSubmitting}
-            className="fb-contact-input w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] disabled:opacity-50 disabled:cursor-not-allowed"
+            className={inputClassName}
           />
         </div>
         <div>
@@ -84,13 +87,13 @@ export const ContactForm = () => {
             onChange={handleInputChange}
             required
             disabled={isSubmitting}
-            className="fb-contact-input w-full bg-white/80 border border-[#9B8AB8]/40 rounded-xl px-4 py-3 text-[#2D1B4E] placeholder-[#7A6890] focus:outline-none focus:border-white/20 focus:bg-white/[0.07] resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`${inputClassName} resize-none`}
           />
         </div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-purple-600/50 disabled:to-purple-700/50 disabled:cursor-not-allowed text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg border border-purple-400/20"
+          className="fb-contact-btn w-full font-semibold py-3.5 px-6 rounded-xl transition-opacity duration-200 flex items-center justify-center gap-2 shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? (
             <>
@@ -106,7 +109,7 @@ export const ContactForm = () => {
         </button>
       </form>
 
-      <p className="text-[#7A6890] text-xs mt-6 text-center dark:text-white/40">
+      <p className="fb-contact-text-subtle text-xs mt-6 text-center">
         By submitting this form, you agree to our Privacy Policy and Terms of Service.
       </p>
     </div>

@@ -103,7 +103,7 @@ describe("MemoryFilter Component", () => {
   it("should highlight the active date range option", () => {
     render(<MemoryFilter {...defaultProps} filtersOpen={true} dateRange="Last Month" />);
     const lastMonthButton = screen.getByText("Last Month");
-    expect(lastMonthButton.className).toContain("bg-[#7B5CFF]/20");
+    expect(lastMonthButton.className).toContain("fb-memory-option-active");
   });
 
   it("should highlight the active memory type option", () => {
@@ -112,6 +112,6 @@ describe("MemoryFilter Component", () => {
       .getAllByText("Summaries")
       .find((el) => el.tagName === "BUTTON");
     expect(summariesInModal).toBeTruthy();
-    expect(summariesInModal!.className).toContain("bg-[#7B5CFF]/20");
+    expect(summariesInModal!.className).toContain("fb-memory-option-active");
   });
 });
