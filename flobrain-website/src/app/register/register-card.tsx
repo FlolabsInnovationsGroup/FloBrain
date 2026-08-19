@@ -46,20 +46,20 @@ export const RegisterCard = memo(function RegisterCard() {
   }
 
   return (
-    <div className="flex w-full flex-col gap-5 rounded-2xl border border-violet-500/20 bg-[#160a28]/95 p-5 shadow-[0_0_40px_rgba(124,58,237,0.12),0_4px_24px_rgba(0,0,0,0.4)] sm:p-6">
+    <div className="fb-auth-card flex w-full flex-col gap-5 rounded-2xl p-5 sm:p-6">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error && (
-          <p className="rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-400">
+          <p className="fb-auth-error rounded-lg border px-3 py-2 text-sm">
             {error}
           </p>
         )}
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="name" className="text-sm font-medium text-white/80">
+          <label htmlFor="name" className="fb-auth-label text-sm font-medium">
             Full Name
           </label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+            <User className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
             <input
               id="name"
               type="text"
@@ -67,17 +67,17 @@ export const RegisterCard = memo(function RegisterCard() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               autoComplete="name"
-              className="h-12 w-full rounded-xl border border-violet-500/15 bg-[#e8e3f0] pl-10 pr-4 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-violet-500/35"
+              className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-4 text-sm outline-none"
             />
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="email" className="text-sm font-medium text-white/80">
+          <label htmlFor="email" className="fb-auth-label text-sm font-medium">
             Email
           </label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+            <Mail className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
             <input
               id="email"
               type="email"
@@ -85,17 +85,17 @@ export const RegisterCard = memo(function RegisterCard() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
-              className="h-12 w-full rounded-xl border border-violet-500/15 bg-[#e8e3f0] pl-10 pr-4 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-violet-500/35"
+              className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-4 text-sm outline-none"
             />
           </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="password" className="text-sm font-medium text-white/80">
+          <label htmlFor="password" className="fb-auth-label text-sm font-medium">
             Password
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+            <Lock className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
             <input
               id="password"
               type={showPassword ? "text" : "password"}
@@ -103,11 +103,11 @@ export const RegisterCard = memo(function RegisterCard() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="new-password"
-              className="h-12 w-full rounded-xl border border-violet-500/15 bg-[#e8e3f0] pl-10 pr-12 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-violet-500/35"
+              className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-12 text-sm outline-none"
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors hover:text-zinc-600"
+              className="fb-auth-icon absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-80"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
@@ -117,11 +117,11 @@ export const RegisterCard = memo(function RegisterCard() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="confirm-password" className="text-sm font-medium text-white/80">
+          <label htmlFor="confirm-password" className="fb-auth-label text-sm font-medium">
             Confirm Password
           </label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+            <Lock className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
             <input
               id="confirm-password"
               type={showConfirmPassword ? "text" : "password"}
@@ -129,11 +129,11 @@ export const RegisterCard = memo(function RegisterCard() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               autoComplete="new-password"
-              className="h-12 w-full rounded-xl border border-violet-500/15 bg-[#e8e3f0] pl-10 pr-12 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-violet-500/35"
+              className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-12 text-sm outline-none"
             />
             <button
               type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors hover:text-zinc-600"
+              className="fb-auth-icon absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-80"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               aria-label={
                 showConfirmPassword ? "Hide confirm password" : "Show confirm password"
@@ -147,7 +147,7 @@ export const RegisterCard = memo(function RegisterCard() {
         <button
           type="submit"
           disabled={loading}
-          className="mt-1 flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 text-[15px] font-semibold text-white shadow-[0_0_24px_rgba(168,85,247,0.5),0_4px_16px_rgba(124,58,237,0.4)] transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
+          className="fb-auth-btn mt-1 flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl text-[15px] font-semibold transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading ? "Creating account…" : "Create Account"}
           {!loading && <span className="text-base">→</span>}
@@ -155,33 +155,30 @@ export const RegisterCard = memo(function RegisterCard() {
       </form>
 
       <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-white/10" />
-        <div className="h-px flex-1 bg-white/10" />
+        <div className="fb-auth-divider h-px flex-1" />
+        <div className="fb-auth-divider h-px flex-1" />
       </div>
 
       <div className="flex flex-col gap-3">
         <button
           type="button"
-          className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-white/12 bg-white/[0.06] text-sm font-medium text-white transition-colors hover:bg-white/10"
+          className="fb-auth-social flex h-12 w-full items-center justify-center gap-3 rounded-xl border text-sm font-medium transition-opacity hover:opacity-90"
         >
           <FcGoogle size={20} />
           Continue with Google
         </button>
         <button
           type="button"
-          className="flex h-12 w-full items-center justify-center gap-3 rounded-xl border border-white/12 bg-white/[0.06] text-sm font-medium text-white transition-colors hover:bg-white/10"
+          className="fb-auth-social flex h-12 w-full items-center justify-center gap-3 rounded-xl border text-sm font-medium transition-opacity hover:opacity-90"
         >
-          <Apple size={20} className="text-white" />
+          <Apple size={20} />
           Continue with Apple
         </button>
       </div>
 
-      <p className="text-center text-sm text-zinc-500">
+      <p className="fb-auth-muted text-center text-sm">
         Already have an account?{" "}
-        <Link
-          href="/signin"
-          className="font-semibold text-purple-400 transition-colors hover:text-purple-300"
-        >
+        <Link href="/signin" className="fb-auth-link font-semibold transition-colors">
           Login
         </Link>
       </p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 import { settingsCardClass, settingsInputClass } from "../settings-styles";
 
 type NotificationOption = "push" | "email" | "off";
@@ -26,11 +27,11 @@ export default function NotificationsSettings() {
     <div className="space-y-4">
       {settings.map((setting) => (
         <div key={setting.id} className={`flex items-center justify-between ${settingsCardClass}`}>
-          <span className="font-medium text-white">{setting.label}</span>
+          <span className="font-medium text-[var(--fb-brain-heading)]">{setting.label}</span>
           <select
             value={setting.value}
             onChange={(e) => handleSettingChange(setting.id, e.target.value as NotificationOption)}
-            className={`cursor-pointer px-4 py-2 ${settingsInputClass}`}
+            className={cn(settingsInputClass, "w-auto min-w-[8.5rem] cursor-pointer px-4 py-2")}
           >
             <option value="push">Push</option>
             <option value="email">Email</option>

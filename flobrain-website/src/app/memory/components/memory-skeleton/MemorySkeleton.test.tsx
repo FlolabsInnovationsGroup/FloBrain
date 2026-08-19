@@ -35,6 +35,6 @@ describe("MemorySkeleton Component", () => {
   it("should use memory page background", () => {
     const { getByTestId } = render(<MemorySkeleton />);
     const root = getByTestId("memory-skeleton-root");
-    expect(root.className).toContain("bg-[#08040A]");
+    expect(root.className).toContain("fb-memory-page");
   });
 });
