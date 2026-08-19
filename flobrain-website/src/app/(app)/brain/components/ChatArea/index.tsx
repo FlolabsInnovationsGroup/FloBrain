@@ -30,26 +30,26 @@ interface ChatAreaProps {
 function MarkdownText({ text, compactMode = false }: { text: string; compactMode?: boolean }) {
   return (
     <div
-      className={`text-white/90 ${compactMode ? 'text-[13px] leading-6' : 'text-sm leading-relaxed'}
+      className={`${compactMode ? 'text-[13px] leading-6' : 'text-sm leading-relaxed'} text-[var(--fb-chat-bubble-assistant-text)]
         [&_p]:mb-2 [&_p:last-child]:mb-0
-        [&_strong]:font-semibold [&_strong]:text-white
+        [&_strong]:font-semibold [&_strong]:text-[var(--fb-brain-heading)]
         [&_em]:italic
         [&_ul]:mb-2 [&_ul]:list-disc [&_ul]:pl-5
         [&_ol]:mb-2 [&_ol]:list-decimal [&_ol]:pl-5
         [&_li]:mb-1
-        [&_h1]:mt-3 [&_h1]:mb-1 [&_h1]:text-base [&_h1]:font-semibold [&_h1]:text-white
-        [&_h2]:mt-3 [&_h2]:mb-1 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-white
-        [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:font-semibold [&_h3]:text-white
-        [&_code]:rounded [&_code]:bg-white/10 [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[0.9em]
-        [&_pre]:mb-2 [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-black/40 [&_pre]:p-3
+        [&_h1]:mt-3 [&_h1]:mb-1 [&_h1]:text-base [&_h1]:font-semibold [&_h1]:text-[var(--fb-brain-heading)]
+        [&_h2]:mt-3 [&_h2]:mb-1 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-[var(--fb-brain-heading)]
+        [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:font-semibold [&_h3]:text-[var(--fb-brain-heading)]
+        [&_code]:rounded [&_code]:bg-[var(--fb-brain-markdown-code-bg)] [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-[0.9em]
+        [&_pre]:mb-2 [&_pre]:overflow-x-auto [&_pre]:rounded-lg [&_pre]:bg-[var(--fb-brain-markdown-pre-bg)] [&_pre]:p-3
         [&_pre_code]:bg-transparent [&_pre_code]:p-0
-        [&_blockquote]:mb-2 [&_blockquote]:border-l-2 [&_blockquote]:border-white/30 [&_blockquote]:pl-3 [&_blockquote]:text-white/70
+        [&_blockquote]:mb-2 [&_blockquote]:border-l-2 [&_blockquote]:border-[var(--fb-brain-surface-border)] [&_blockquote]:pl-3 [&_blockquote]:text-[var(--fb-brain-text-muted)]
         [&_table]:mb-2 [&_table]:w-full [&_table]:border-collapse
-        [&_th]:border [&_th]:border-white/20 [&_th]:px-2 [&_th]:py-1 [&_th]:text-left [&_th]:font-semibold
-        [&_td]:border [&_td]:border-white/20 [&_td]:px-2 [&_td]:py-1
-        [&_a]:text-indigo-300 [&_a]:underline
-        [&_hr]:my-3 [&_hr]:border-white/20`}
-    >
+        [&_th]:border [&_th]:border-[var(--fb-brain-surface-border)] [&_th]:px-2 [&_th]:py-1 [&_th]:text-left [&_th]:font-semibold
+        [&_td]:border [&_td]:border-[var(--fb-brain-surface-border)] [&_td]:px-2 [&_td]:py-1
+        [&_a]:text-[var(--fb-brain-accent)] [&_a]:underline
+        [&_hr]:my-3 [&_hr]:border-[var(--fb-brain-surface-border)]`}
+      >
       <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
     </div>
   );
@@ -88,9 +88,15 @@ function MessageBubble({ message, compactMode = false }: { message: Message; com
       <div
         className={`max-w-[92%] sm:max-w-2xl rounded-2xl ${compactMode ? 'px-3 py-2.5 sm:px-4 sm:py-3' : 'px-4 py-3 sm:px-5 sm:py-4'} ${
           message.type === 'user'
-            ? 'bg-[var(--fb-chat-bubble-user)] text-white'
-            : 'bg-[var(--fb-chat-bubble-assistant)] fb-text dark:text-white/80'
+            ? 'text-[var(--fb-chat-bubble-user-text)]'
+            : 'text-[var(--fb-chat-bubble-assistant-text)]'
         }`}
+        style={{
+          background:
+            message.type === 'user'
+              ? 'var(--fb-chat-bubble-user)'
+              : 'var(--fb-chat-bubble-assistant)',
+        }}
       >
         {message.image && (
           <div className="mb-3">
@@ -108,9 +114,10 @@ function MessageBubble({ message, compactMode = false }: { message: Message; com
             <MarkdownText text={message.text} compactMode={compactMode} />
           ) : (
             <p
-              className={`whitespace-pre-wrap text-white ${
+              className={`whitespace-pre-wrap ${
                 compactMode ? 'text-[13px] leading-6' : 'text-sm leading-relaxed'
               }`}
+              style={{ color: 'var(--fb-chat-bubble-user-text)' }}
             >
               {message.text}
             </p>
@@ -149,14 +156,21 @@ function ResponsePanel({
       <MessageBubble message={userMessage} compactMode={compactMode} />
       <div className="flex flex-col gap-0">
         <div className={`flex items-center gap-2 ${compactMode ? 'mb-2' : 'mb-3'}`}>
-          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" aria-hidden />
-          <span className="text-sm font-medium text-white/90">FloBrain</span>
+          <span className="w-2 h-2 rounded-full shrink-0" style={{ background: 'var(--fb-brain-success)' }} aria-hidden />
+          <span className="text-sm font-medium text-[var(--fb-brain-heading)]">FloBrain</span>
         </div>
-        <div className="rounded-xl bg-[#0B0719]/80 border border-white/10 overflow-hidden">
+        <div
+          className="rounded-xl border overflow-hidden"
+          style={{
+            background: 'var(--fb-brain-response-panel-bg)',
+            borderColor: 'var(--fb-brain-shell-border)',
+          }}
+        >
           <div
-            className={`flex flex-wrap items-center gap-1.5 sm:gap-2 border-b border-white/10 ${
+            className={`flex flex-wrap items-center gap-1.5 sm:gap-2 border-b ${
               compactMode ? 'p-2' : 'p-2.5 sm:p-3'
             }`}
+            style={{ borderColor: 'var(--fb-brain-surface-border)' }}
           >
             {ANSWER_TABS.map((model) => {
               const isSelected = selectedModel === model;
@@ -167,7 +181,7 @@ function ResponsePanel({
                   type="button"
                   onClick={() => onSelectModel(model)}
                   className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm ${
-                    isSelected ? 'text-white' : 'bg-[#0B0719]/60 text-white/90 hover:bg-white/5'
+                    isSelected ? 'text-white' : 'text-[var(--fb-brain-text-muted)] hover:bg-[var(--fb-brain-surface-bg)]'
                   }`}
                   style={{
                     backgroundColor: isSelected ? color : undefined,
@@ -180,7 +194,11 @@ function ResponsePanel({
             })}
             <button
               type="button"
-              className="ml-1 rounded-lg border border-white/20 p-1.5 text-white/70 transition-colors hover:border-white/40 hover:text-white sm:p-2"
+              className="ml-1 rounded-lg border p-1.5 transition-colors hover:text-[var(--fb-brain-heading)] sm:p-2"
+              style={{
+                borderColor: 'var(--fb-brain-surface-border)',
+                color: 'var(--fb-brain-text-muted)',
+              }}
               aria-label="Add model"
             >
               <Plus className="w-4 h-4" />
@@ -198,10 +216,10 @@ function ResponsePanel({
                     className="w-full h-full object-contain animate-pulse"
                   />
                 </div>
-                <p className="mt-6 text-xl font-semibold text-white tracking-widest">
+                <p className="mt-6 text-xl font-semibold tracking-widest text-[var(--fb-brain-heading)]">
                   SYNTHESIZING...
                 </p>
-                <p className="mt-2 text-sm text-white/60">
+                <p className="mt-2 text-sm text-[var(--fb-brain-text-subtle)]">
                   Neural pathways converging • 3 models active
                 </p>
               </div>
@@ -269,8 +287,8 @@ export default function ChatArea({
                 </defs>
               </svg>
             </div>
-            <h2 className="mb-2 text-xl font-semibold text-white/90 sm:text-2xl">Start a conversation</h2>
-            <p className="text-sm text-white/60 sm:text-base">Type a message below to begin chatting with FLOBRAIN AI</p>
+            <h2 className="mb-2 text-xl font-semibold text-[var(--fb-brain-heading)] sm:text-2xl">Start a conversation</h2>
+            <p className="text-sm text-[var(--fb-brain-text-subtle)] sm:text-base">Type a message below to begin chatting with FLOBRAIN AI</p>
           </div>
         ) : (
           <>

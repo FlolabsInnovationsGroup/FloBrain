@@ -211,7 +211,7 @@ export default function ChatInput({
         )}
 
         <div
-          className={`flex w-full min-w-0 items-end gap-1.5 rounded-2xl border border-[#1F2937] bg-[#111827] px-1.5 sm:gap-2 sm:px-2 xl:gap-3 ${
+          className={`fb-brain-composer flex w-full min-w-0 items-end gap-1.5 rounded-2xl border px-1.5 sm:gap-2 sm:px-2 xl:gap-3 ${
             compactMode ? 'py-1.5' : 'py-2'
           }`}
         >
@@ -233,11 +233,12 @@ export default function ChatInput({
               placeholder="How does this LLM work?"
               disabled={disabled}
               rows={1}
-              className={`max-h-[220px] w-full min-w-0 resize-none overflow-y-auto pl-1 pr-2 text-sm text-white
-                       transition-[height] duration-150 ease-out placeholder:text-white/45 focus:outline-none
+              className={`fb-brain-input max-h-[220px] w-full min-w-0 resize-none overflow-y-auto pl-1 pr-2 text-sm
+                       transition-[height] duration-150 ease-out focus:outline-none
                        disabled:cursor-not-allowed disabled:opacity-50 sm:pl-2 xl:pr-4 xl:text-base ${
                          compactMode ? 'min-h-10 py-2.5' : 'min-h-10 py-2.5 xl:min-h-12 xl:py-3'
                        }`}
+              style={{ color: 'var(--fb-brain-text)' }}
             />
           </div>
 
@@ -267,26 +268,30 @@ export default function ChatInput({
                       aria-haspopup="menu"
                       aria-label="Attach"
                       title="Attach"
-                      className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50 xl:p-2"
+                      className="rounded-lg p-1.5 text-[var(--fb-brain-text-subtle)] transition-colors hover:bg-[var(--fb-brain-surface-bg)] hover:text-[var(--fb-brain-heading)] disabled:opacity-50 xl:p-2"
                     >
                       <Plus size={20} strokeWidth={2.25} />
                     </button>
                     {attachMenuOpen && (
                       <div
                         role="menu"
-                        className="absolute bottom-[calc(100%+8px)] right-0 z-20 min-w-[11rem] rounded-xl border border-white/10 bg-[#1a1530] py-1 shadow-xl"
+                        className="absolute bottom-[calc(100%+8px)] right-0 z-20 min-w-[11rem] rounded-xl border py-1 shadow-xl"
+                        style={{
+                          background: 'var(--fb-brain-dropdown-bg)',
+                          borderColor: 'var(--fb-brain-shell-border)',
+                        }}
                       >
                         {allowImageUpload && (
                           <button
                             type="button"
                             role="menuitem"
-                            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-white/90 hover:bg-white/10"
+                            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-[var(--fb-brain-text-muted)] hover:bg-[var(--fb-brain-surface-bg)]"
                             onClick={() => {
                               setAttachMenuOpen(false);
                               fileInputRef.current?.click();
                             }}
                           >
-                            <ImageIcon size={18} className="shrink-0 text-slate-400" aria-hidden />
+                            <ImageIcon size={18} className="shrink-0 text-[var(--fb-brain-text-subtle)]" aria-hidden />
                             Add image
                           </button>
                         )}
@@ -294,13 +299,13 @@ export default function ChatInput({
                           <button
                             type="button"
                             role="menuitem"
-                            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-white/90 hover:bg-white/10"
+                            className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm text-[var(--fb-brain-text-muted)] hover:bg-[var(--fb-brain-surface-bg)]"
                             onClick={() => {
                               setAttachMenuOpen(false);
                               void toggleRecording();
                             }}
                           >
-                            <Mic size={18} className="shrink-0 text-slate-400" aria-hidden />
+                            <Mic size={18} className="shrink-0 text-[var(--fb-brain-text-subtle)]" aria-hidden />
                             Voice input
                           </button>
                         )}
@@ -314,7 +319,7 @@ export default function ChatInput({
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
                         disabled={disabled}
-                        className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50 xl:p-2"
+                        className="rounded-lg p-1.5 text-[var(--fb-brain-text-subtle)] transition-colors hover:bg-[var(--fb-brain-surface-bg)] hover:text-[var(--fb-brain-heading)] disabled:opacity-50 xl:p-2"
                         title="Upload image"
                         aria-label="Upload image"
                       >
@@ -326,7 +331,7 @@ export default function ChatInput({
                         type="button"
                         onClick={() => void toggleRecording()}
                         disabled={disabled}
-                        className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white disabled:opacity-50 xl:p-2"
+                        className="rounded-lg p-1.5 text-[var(--fb-brain-text-subtle)] transition-colors hover:bg-[var(--fb-brain-surface-bg)] hover:text-[var(--fb-brain-heading)] disabled:opacity-50 xl:p-2"
                         title="Voice input"
                         aria-label="Voice input"
                       >
@@ -353,7 +358,8 @@ export default function ChatInput({
           <button
             onClick={handleSend}
             disabled={(!inputValue.trim() && !imagePreview) || disabled}
-            className="mb-1 flex shrink-0 items-center justify-center rounded-lg bg-[#9333ea] p-1.5 text-white shadow-lg shadow-[#9333ea]/30 transition-all duration-200 hover:bg-[#a855f7] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 xl:p-2"
+            className="mb-1 flex shrink-0 items-center justify-center rounded-lg p-1.5 text-white transition-all duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 xl:p-2"
+            style={{ background: 'var(--fb-brain-btn)' }}
             aria-label="Send message"
           >
             <ArrowUp size={18} strokeWidth={2} />
