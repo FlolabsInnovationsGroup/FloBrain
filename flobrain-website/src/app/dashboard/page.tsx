@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import { SystemHealth } from "./components/system-health";
 import { TokenUsage } from "./components/token-usage";
-import { MemoryActivity } from "./components/memory-activity";
+
 import { WorkflowEngine } from "./components/workflow-engine";
 import { MotionProvider, Reveal, Stagger, StaggerItem } from "@/components/motion";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -74,13 +74,6 @@ export default function Dashboard() {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Chats
-                    </Link>
-                    <Link
-                      href="/memory"
-                      className="rounded-lg py-2 text-zinc-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Memory
                     </Link>
                     <Link
                       href="/profile"
@@ -175,9 +168,6 @@ export default function Dashboard() {
           </Stagger>
 
           <Stagger className="flex flex-col gap-4 sm:gap-6" stagger={0.12} inView>
-            <StaggerItem variant="slideUp">
-              <MemoryActivity />
-            </StaggerItem>
             <StaggerItem variant="slideUp">
               <WorkflowEngine />
             </StaggerItem>
