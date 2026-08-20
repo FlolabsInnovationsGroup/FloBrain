@@ -840,7 +840,7 @@ function BrainPageContent() {
             inView={false}
             className="fb-brain-shell relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border"
           >
-          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden light:bg-[var(--fb-chat-area-bg)] light:border-[var(--fb-chat-shell-border)]">
             {currentChatId ? (
               <>
                 <ChatArea
