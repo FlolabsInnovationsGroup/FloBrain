@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ChatHistory } from "@/types/chat";
+import { useAuth } from "@/contexts/AuthContext";
 
 const EMPTY_CHAT_HISTORY: ChatHistory[] = [];
 
@@ -73,6 +74,7 @@ export type LeftPanelProps = LeftPanelPropsModules | LeftPanelPropsChats;
 const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   const { variant, onNewChat, onSearch, onPreferences, onSettings, className } = props;
   const pathname = usePathname();
+  const { isAuthenticated, isLoading } = useAuth();
   const searchId = useId();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -113,6 +115,9 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
   }, [isChats, chats, searchQuery]);
 
   const searchPlaceholder = isChats ? "Search chats..." : "Search ...";
+  const visibleModules = !isLoading && isAuthenticated
+    ? MODULES
+    : MODULES.filter(({ href }) => href === "/home");
 
   return (
     <div
@@ -174,7 +179,7 @@ const LeftPanel = memo(function LeftPanel(props: LeftPanelProps) {
               SYSTEM MODULES
             </h2>
             <nav className="flex flex-col gap-0.5" aria-label="System modules">
-              {MODULES.map(({ id, label, icon: Icon, href, showDot }) => {
+              {visibleModules.map(({ id, label, icon: Icon, href, showDot }) => {
                 const isActive = isModuleActive(href, pathname);
                 return (
                   <Link
