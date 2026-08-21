@@ -1,7 +1,7 @@
 "use client";
 
 import type { MemoryNodeApi } from "@/lib/api";
-import { MEMORY_PALETTE, type MemoryCategoryId } from "@/lib/memory-visual";
+import { categoryCssVar, type MemoryCategoryId } from "@/lib/memory-visual";
 import type { memoryNode } from "@/types/MemoryNodes";
 
 const API_MEMORY_TYPE: Record<MemoryCategoryId, string> = {
@@ -44,14 +44,14 @@ export function MemoryPlaceholderNodes({ onNodeClick }: MemoryPlaceholderNodesPr
   return (
     <div className="absolute inset-0 z-[1]">
       {MEMORY_PLACEHOLDER_LAYOUT.map((n) => {
-        const color = MEMORY_PALETTE[n.category];
+        const color = categoryCssVar(n.category);
         const half = n.sizePx / 2;
         return (
           <button
             key={n.id}
             type="button"
             aria-label={`Open details for ${n.label}`}
-            className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-0 bg-transparent p-0 outline-none transition-transform duration-200 hover:scale-110 focus-visible:ring-2 focus-visible:ring-[#a78bfa]/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#08040A]"
+            className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-0 bg-transparent p-0 outline-none transition-transform duration-200 hover:scale-110 focus-visible:ring-2 focus-visible:ring-[var(--fb-memory-btn-soft)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--fb-memory-canvas-bg)]"
             style={{ left: n.left, top: n.top, width: n.sizePx, height: n.sizePx }}
             onClick={(e) => {
               e.stopPropagation();
@@ -69,7 +69,7 @@ export function MemoryPlaceholderNodes({ onNodeClick }: MemoryPlaceholderNodesPr
               className="block size-full rounded-full"
               style={{
                 background: `radial-gradient(circle at 30% 28%, rgba(255,255,255,0.95), ${color} 42%, ${color} 100%)`,
-                boxShadow: `0 0 ${half}px ${color}aa, 0 0 ${half * 1.6}px ${color}66, inset 0 -2px 6px rgba(0,0,0,0.35)`,
+                boxShadow: `0 0 ${half}px color-mix(in srgb, ${color} 67%, transparent), 0 0 ${half * 1.6}px color-mix(in srgb, ${color} 40%, transparent), inset 0 -2px 6px rgba(0,0,0,0.2)`,
               }}
             />
           </button>

@@ -31,7 +31,7 @@ export function ContactSidebar() {
   return (
     <div className="space-y-6 sm:space-y-8">
       <div>
-        <h3 className="mb-5 text-lg font-bold uppercase tracking-wider text-white sm:mb-6 sm:text-xl">
+        <h3 className="fb-contact-section-label mb-5 text-lg font-bold uppercase tracking-wider sm:mb-6 sm:text-xl">
           Direct Contact
         </h3>
         <div className="space-y-3 sm:space-y-4">
@@ -41,19 +41,19 @@ export function ContactSidebar() {
               <a
                 key={item.key}
                 href={item.href}
-                className="group relative block rounded-xl border border-white/10 bg-[#12081c]/90 p-5 shadow-xl transition-colors duration-200 hover:bg-white/10 sm:p-6"
+                className="fb-contact-side-card group relative block rounded-xl border p-5 transition-colors duration-200 sm:p-6"
               >
-                <div className="absolute right-4 top-4 text-white/30 transition-colors group-hover:text-white/50">
+                <div className="fb-contact-text-subtle absolute right-4 top-4 transition-colors group-hover:text-[var(--fb-contact-text-muted)]">
                   <ExternalLink size={16} />
                 </div>
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className="rounded-lg bg-purple-500/20 p-2">
-                    <Icon className="text-purple-400" size={20} />
+                  <div className="fb-contact-icon-wrap rounded-lg p-2">
+                    <Icon className="fb-contact-icon" size={20} />
                   </div>
                   <div className="flex-1">
-                    <h4 className="mb-2 font-semibold text-white">{item.title}</h4>
-                    <p className="mb-3 text-sm text-white/70">{item.description}</p>
-                    <span className="text-sm font-medium text-cyan-400 transition-colors group-hover:text-cyan-300">
+                    <h4 className="fb-contact-heading mb-2 font-semibold">{item.title}</h4>
+                    <p className="fb-contact-text-muted mb-3 text-sm">{item.description}</p>
+                    <span className="fb-contact-link text-sm font-medium transition-colors">
                       {item.email}
                     </span>
                   </div>
@@ -63,8 +63,6 @@ export function ContactSidebar() {
           })}
         </div>
       </div>
-
-      {/* Developer Resources section removed per request */}
     </div>
   );
 }

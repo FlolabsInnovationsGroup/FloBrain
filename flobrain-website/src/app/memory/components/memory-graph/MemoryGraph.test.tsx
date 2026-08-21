@@ -176,9 +176,9 @@ describe("MemoryGraph Component", () => {
       />
     );
 
-    const graphBorder = container.querySelector('div[class*="border-4"]');
+    const graphBorder = container.querySelector('div[class*="border-4"]') as HTMLElement | null;
     expect(graphBorder).toBeTruthy();
-    expect(graphBorder?.className).toContain("border-[#a78bfa]");
+    expect(graphBorder?.style.borderColor).toBe("var(--fb-memory-graph-border-active)");
   });
 
   it("should apply inactive border styling when graph is inactive", () => {
@@ -194,9 +194,9 @@ describe("MemoryGraph Component", () => {
       />
     );
 
-    const graphBorder = container.querySelector('div[class*="border-4"]');
+    const graphBorder = container.querySelector('div[class*="border-4"]') as HTMLElement | null;
     expect(graphBorder).toBeTruthy();
-    expect(graphBorder?.className).toContain("border-[#4c1d95]/50");
+    expect(graphBorder?.style.borderColor).toBe("var(--fb-memory-graph-border)");
   });
 
   it("should call setGraphActive when clicking graph area while inactive", () => {

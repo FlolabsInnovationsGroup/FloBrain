@@ -54,48 +54,30 @@ export default function Register() {
   }
 
   return (
-    <main
-      className="min-h-screen flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden"
-      style={{ background: "linear-gradient(160deg, #1a0a2e 0%, #0d0618 60%, #070014 100%)" }}
-    >
+    <main className="fb-auth-bg relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-10">
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div
-          className="w-[480px] h-[480px] rounded-full opacity-20"
-          style={{
-            background: "radial-gradient(circle, #7c3aed 0%, transparent 70%)",
-            filter: "blur(60px)",
-          }}
-        />
+        <div className="fb-auth-glow h-[480px] w-[480px] rounded-full opacity-20" />
       </div>
 
-      <div className="w-full max-w-sm relative z-10 flex flex-col gap-6">
-        <h1
-          className="text-[28px] sm:text-[32px] font-bold text-center"
-          style={{ color: "#EC4899" }}
-        >
+      <div className="relative z-10 flex w-full max-w-sm flex-col gap-6">
+        <h1 className="fb-auth-heading text-center text-[28px] font-bold sm:text-[32px]">
           Create Account
         </h1>
 
-        <div
-          className="w-full rounded-2xl p-5 sm:p-6 flex flex-col gap-5"
-          style={{
-            background: "rgba(22, 10, 40, 0.85)",
-            border: "1px solid rgba(139, 92, 246, 0.2)",
-            boxShadow: "0 0 40px rgba(124, 58, 237, 0.12), 0 4px 24px rgba(0,0,0,0.4)",
-            backdropFilter: "blur(12px)",
-          }}
-        >
+        <div className="fb-auth-card flex w-full flex-col gap-5 rounded-2xl p-5 sm:p-6">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             {error && (
-              <p className="text-sm text-red-400 bg-red-900/30 border border-red-500/30 rounded-lg px-3 py-2">
+              <p className="fb-auth-error rounded-lg border px-3 py-2 text-sm">
                 {error}
               </p>
             )}
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-white/80">Full Name</label>
+              <label htmlFor="name" className="fb-auth-label text-sm font-medium">
+                Full Name
+              </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <User className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
                 <input
                   id="name"
                   type="text"
@@ -106,19 +88,17 @@ export default function Register() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   disabled={loading}
-                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
-                  style={{
-                    background: "#e8e3f0",
-                    border: "1px solid rgba(139,92,246,0.15)",
-                  }}
+                  className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-4 text-sm outline-none transition-all disabled:opacity-60"
                 />
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-white/80">Email</label>
+              <label htmlFor="email" className="fb-auth-label text-sm font-medium">
+                Email
+              </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <Mail className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
                 <input
                   id="email"
                   type="email"
@@ -129,19 +109,17 @@ export default function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
-                  className="w-full h-12 pl-10 pr-4 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
-                  style={{
-                    background: "#e8e3f0",
-                    border: "1px solid rgba(139,92,246,0.15)",
-                  }}
+                  className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-4 text-sm outline-none transition-all disabled:opacity-60"
                 />
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-white/80">Password</label>
+              <label htmlFor="password" className="fb-auth-label text-sm font-medium">
+                Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <Lock className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
@@ -153,15 +131,11 @@ export default function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={loading}
-                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
-                  style={{
-                    background: "#e8e3f0",
-                    border: "1px solid rgba(139,92,246,0.15)",
-                  }}
+                  className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-12 text-sm outline-none transition-all disabled:opacity-60"
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
+                  className="fb-auth-icon absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-80"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -170,9 +144,11 @@ export default function Register() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-white/80">Confirm Password</label>
+              <label htmlFor="confirm-password" className="fb-auth-label text-sm font-medium">
+                Confirm Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                <Lock className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
                 <input
                   id="confirm-password"
                   type={showConfirmPassword ? "text" : "password"}
@@ -184,15 +160,11 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   disabled={loading}
-                  className="w-full h-12 pl-10 pr-12 rounded-xl text-sm text-zinc-800 placeholder:text-zinc-400 outline-none transition-all disabled:opacity-60"
-                  style={{
-                    background: "#e8e3f0",
-                    border: "1px solid rgba(139,92,246,0.15)",
-                  }}
+                  className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-12 text-sm outline-none transition-all disabled:opacity-60"
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors"
+                  className="fb-auth-icon absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-80"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -203,11 +175,7 @@ export default function Register() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-xl font-semibold text-white text-[15px] flex items-center justify-center gap-2 mt-1 transition-opacity disabled:opacity-60 cursor-pointer"
-              style={{
-                background: "linear-gradient(90deg, #7c3aed 0%, #a855f7 100%)",
-                boxShadow: "0 0 24px rgba(168, 85, 247, 0.5), 0 4px 16px rgba(124, 58, 237, 0.4)",
-              }}
+              className="fb-auth-btn mt-1 flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl text-[15px] font-semibold transition-opacity disabled:opacity-60"
             >
               {loading ? "Creating account…" : "Create Account"}
               {!loading && <span className="text-base">→</span>}
@@ -215,42 +183,30 @@ export default function Register() {
           </form>
 
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
-            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.1)" }} />
+            <div className="fb-auth-divider h-px flex-1" />
+            <div className="fb-auth-divider h-px flex-1" />
           </div>
 
           <div className="flex flex-col gap-3">
             <button
               type="button"
-              className="w-full h-12 rounded-xl font-medium text-white text-sm flex items-center justify-center gap-3 transition-colors hover:opacity-90"
-              style={{
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.12)",
-              }}
+              className="fb-auth-social flex h-12 w-full items-center justify-center gap-3 rounded-xl border text-sm font-medium transition-opacity hover:opacity-90"
             >
               <FcGoogle size={20} />
               Continue with Google
             </button>
             <button
               type="button"
-              className="w-full h-12 rounded-xl font-medium text-white text-sm flex items-center justify-center gap-3 transition-colors hover:opacity-90"
-              style={{
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.12)",
-              }}
+              className="fb-auth-social flex h-12 w-full items-center justify-center gap-3 rounded-xl border text-sm font-medium transition-opacity hover:opacity-90"
             >
-              <Apple size={20} className="text-white" />
+              <Apple size={20} />
               Continue with Apple
             </button>
           </div>
 
-          <p className="text-center text-sm text-zinc-500">
+          <p className="fb-auth-muted text-center text-sm">
             Already have an account?{" "}
-            <Link
-              href="/signin"
-              className="font-semibold transition-colors"
-              style={{ color: "#a855f7" }}
-            >
+            <Link href="/signin" className="fb-auth-link font-semibold transition-colors">
               Login
             </Link>
           </p>

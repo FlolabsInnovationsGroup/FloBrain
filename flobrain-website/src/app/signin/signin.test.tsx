@@ -114,7 +114,7 @@ describe("Login Component", () => {
 
     const card = container.querySelector(".rounded-2xl");
     expect(card).toBeInTheDocument();
-    expect(card?.className).toContain("bg-[#160a28]/95");
+    expect(card?.className).toContain("fb-auth-card");
   });
 
   it("should display icons for form inputs", () => {

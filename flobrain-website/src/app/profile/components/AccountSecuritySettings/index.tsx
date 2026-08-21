@@ -77,7 +77,7 @@ export default function AccountSecuritySettings() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="mb-2 text-lg font-semibold text-white">Password</h3>
+        <h3 className="mb-2 text-lg font-semibold text-[var(--fb-brain-heading)]">Password</h3>
         <p className={cn(settingsTextMuted, "mb-3")}>
           Change your password to keep your account secure.
         </p>
@@ -176,7 +176,7 @@ export default function AccountSecuritySettings() {
       <div className="border-t border-white/10 pt-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-white">Two-Factor Authentication (2FA)</h3>
+            <h3 className="text-lg font-semibold text-[var(--fb-brain-heading)]">Two-Factor Authentication (2FA)</h3>
             <p className={cn(settingsTextMuted, "mt-1")}>
               Add an extra layer of security to your account
             </p>
