@@ -36,10 +36,10 @@ describe("Register Component", () => {
     expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
   });
 
-  it("should render social login buttons", () => {
+  it("should hide social login buttons", () => {
     renderWithAuth(<Register />);
-    expect(screen.getByText("Continue with Google")).toBeInTheDocument();
-    expect(screen.getByText("Continue with Apple")).toBeInTheDocument();
+    expect(screen.queryByText("Continue with Google")).not.toBeInTheDocument();
+    expect(screen.queryByText("Continue with Apple")).not.toBeInTheDocument();
   });
 
   it("should update name input value when user types", () => {
