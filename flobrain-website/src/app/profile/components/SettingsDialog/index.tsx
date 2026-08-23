@@ -90,15 +90,6 @@ export default function SettingsDialog({ open, onClose }: SettingsDialogProps) {
   );
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const saved = window.sessionStorage.getItem("settings-tab");
-    if (saved === "billing") {
-      setActiveTab("profile");
-      window.sessionStorage.setItem("settings-tab", "profile");
-    }
-  }, []);
-
-  useEffect(() => {
     let wasMobile = window.innerWidth < MOBILE_BREAKPOINT;
 
     const handleResize = () => {
