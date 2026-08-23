@@ -3,8 +3,7 @@
 import { memo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FcGoogle } from "react-icons/fc";
-import { Apple, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { ForgotPasswordModal } from "@/components/auth/ForgotPasswordModal";
 
@@ -108,28 +107,6 @@ export const SignInCard = memo(function SignInCard() {
             {!loading && <span className="text-base">→</span>}
           </button>
         </form>
-
-        <div className="flex items-center gap-3">
-          <div className="fb-auth-divider h-px flex-1" />
-          <div className="fb-auth-divider h-px flex-1" />
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <button
-            type="button"
-            className="fb-auth-social flex h-12 w-full items-center justify-center gap-3 rounded-xl border text-sm font-medium transition-opacity hover:opacity-90"
-          >
-            <FcGoogle size={20} />
-            Continue with Google
-          </button>
-          <button
-            type="button"
-            className="fb-auth-social flex h-12 w-full items-center justify-center gap-3 rounded-xl border text-sm font-medium transition-opacity hover:opacity-90"
-          >
-            <Apple size={20} />
-            Continue with Apple
-          </button>
-        </div>
 
         <p className="fb-auth-muted text-center text-sm">
           Don&apos;t have an account?{" "}
