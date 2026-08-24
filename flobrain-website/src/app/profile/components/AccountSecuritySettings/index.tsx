@@ -13,7 +13,6 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function AccountSecuritySettings() {
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [passwords, setPasswords] = useState({
     current: "",
