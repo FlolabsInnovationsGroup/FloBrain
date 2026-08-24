@@ -9,7 +9,6 @@ import {
   Home,
   MessageCircle,
   LayoutDashboard,
-  Activity,
   Database,
 } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
