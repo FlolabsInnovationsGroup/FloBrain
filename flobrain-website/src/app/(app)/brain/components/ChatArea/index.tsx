@@ -1,22 +1,11 @@
 "use client";
 
 import type { Message } from '@/types/chat';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
-import { Plus } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import synthesizingCircle from '@/assets/images/synthesiznig-circle.svg';
-
-const ANSWER_TABS = ['ChatGPT', 'Claude', 'Gemini'] as const;
-type AnswerTab = (typeof ANSWER_TABS)[number];
-
-/** Selected tab: full background. Unselected: border in same color (no fill). */
-const TAB_COLORS: Record<AnswerTab, string> = {
-  ChatGPT: '#029AA2',
-  Claude: '#9A02A2',
-  Gemini: '#A27A02',
-};
 
 interface ChatAreaProps {
   messages: Message[];
@@ -140,15 +129,11 @@ function ResponsePanel({
   userMessage,
   assistantMessage,
   isLoading,
-  selectedModel,
-  onSelectModel,
   compactMode = false,
 }: {
   userMessage: Message;
   assistantMessage: Message | null;
   isLoading: boolean;
-  selectedModel: AnswerTab;
-  onSelectModel: (model: AnswerTab) => void;
   compactMode?: boolean;
 }) {
   return (
@@ -166,44 +151,6 @@ function ResponsePanel({
             borderColor: 'var(--fb-brain-shell-border)',
           }}
         >
-          <div
-            className={`flex flex-wrap items-center gap-1.5 sm:gap-2 border-b ${
-              compactMode ? 'p-2' : 'p-2.5 sm:p-3'
-            }`}
-            style={{ borderColor: 'var(--fb-brain-surface-border)' }}
-          >
-            {ANSWER_TABS.map((model) => {
-              const isSelected = selectedModel === model;
-              const color = TAB_COLORS[model];
-              return (
-                <button
-                  key={model}
-                  type="button"
-                  onClick={() => onSelectModel(model)}
-                  className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm ${
-                    isSelected ? 'text-white' : 'text-[var(--fb-brain-text-muted)] hover:bg-[var(--fb-brain-surface-bg)]'
-                  }`}
-                  style={{
-                    backgroundColor: isSelected ? color : undefined,
-                    borderColor: color,
-                  }}
-                >
-                  {model}
-                </button>
-              );
-            })}
-            <button
-              type="button"
-              className="ml-1 rounded-lg border p-1.5 transition-colors hover:text-[var(--fb-brain-heading)] sm:p-2"
-              style={{
-                borderColor: 'var(--fb-brain-surface-border)',
-                color: 'var(--fb-brain-text-muted)',
-              }}
-              aria-label="Add model"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
           <div className={`${compactMode ? 'min-h-[96px] p-3' : 'min-h-[120px] p-3 sm:p-4'}`}>
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-12">
@@ -218,9 +165,6 @@ function ResponsePanel({
                 </div>
                 <p className="mt-6 text-xl font-semibold tracking-widest text-[var(--fb-brain-heading)]">
                   SYNTHESIZING...
-                </p>
-                <p className="mt-2 text-sm text-[var(--fb-brain-text-subtle)]">
-                  Neural pathways converging • 3 models active
                 </p>
               </div>
             ) : assistantMessage?.text ? (
@@ -240,7 +184,6 @@ export default function ChatArea({
   autoScroll = true,
 }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [selectedModel, setSelectedModel] = useState<AnswerTab>('ChatGPT');
 
   const { showResponseBlock, historyMessages, lastUserMessage, lastAssistantMessage } =
     useMemo(() => {
@@ -301,8 +244,6 @@ export default function ChatArea({
                 userMessage={lastUserMessage}
                 assistantMessage={lastAssistantMessage ?? null}
                 isLoading={isLoading}
-                selectedModel={selectedModel}
-                onSelectModel={setSelectedModel}
                 compactMode={compactMode}
               />
             )}
