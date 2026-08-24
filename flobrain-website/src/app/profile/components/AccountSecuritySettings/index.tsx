@@ -172,35 +172,6 @@ export default function AccountSecuritySettings() {
           </div>
         </form>
       </SettingsNestedModal>
-
-      <div className="border-t border-white/10 pt-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-[var(--fb-brain-heading)]">Two-Factor Authentication (2FA)</h3>
-            <p className={cn(settingsTextMuted, "mt-1")}>
-              Add an extra layer of security to your account
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setTwoFactorEnabled(!twoFactorEnabled)}
-            role="switch"
-            aria-checked={twoFactorEnabled}
-            className={cn(
-              "relative inline-flex h-8 w-14 items-center rounded-full p-0.5 transition-colors",
-              twoFactorEnabled ? "bg-violet-500" : "bg-white/20"
-            )}
-            aria-label="Toggle two-factor authentication"
-          >
-            <span
-              className={cn(
-                "h-6 w-6 rounded-full bg-white transition-transform duration-200",
-                twoFactorEnabled ? "translate-x-6" : "translate-x-0"
-              )}
-            />
-          </button>
-        </div>
-      </div>
     </div>
   );
 }
