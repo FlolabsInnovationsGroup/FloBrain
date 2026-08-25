@@ -8,10 +8,40 @@
 import axios from "axios";
 
 const ACCESS_TOKEN_KEY = "flobrain_access_token";
+const REFRESH_TOKEN_KEY = "flobrain_refresh_token";
+
 
 function getBaseUrl(): string {
   const url = process.env.NEXT_PUBLIC_API_URL;
-  return url ? url.replace(/\/$/, "") : "http://api.flobrain.ai";
+  return url ? url.replace(/\/$/, "") : "https://api.flobrain.ai";
+}
+
+async function refreshAccessToken() {
+  if (typeof window === "undefined") {
+    throw new Error("Cannot refresh token on server");
+  }
+
+  const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+
+  if (!refreshToken) {
+    throw new Error("No refresh token");
+  }
+
+  const response = await axios.post(
+    `${getBaseUrl()}/api/auth/refresh/`,
+    {
+      refresh: refreshToken,
+    }
+  );
+
+  const newAccessToken = response.data.access;
+
+  localStorage.setItem(
+    ACCESS_TOKEN_KEY,
+    newAccessToken
+  );
+
+  return newAccessToken;
 }
 
 export const apiClient = axios.create({
@@ -30,14 +60,43 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+
+declare module "axios" {
+  export interface InternalAxiosRequestConfig {
+    _retry?: boolean;
+  }
+}
+
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // Optional: handle 401 and trigger refresh or redirect to login
-    if (error.response?.status === 401) {
-      // Could dispatch event or call refresh here; for now just reject
+
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (
+      !originalRequest ||
+      error.response?.status !== 401 ||
+      originalRequest._retry
+    ) {
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
+
+    originalRequest._retry = true;
+
+    try {
+      const newToken = await refreshAccessToken();
+
+      originalRequest.headers.Authorization =
+        `Bearer ${newToken}`;
+
+      return apiClient(originalRequest);
+
+    } catch (refreshError) {
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+
+      return Promise.reject(refreshError);
+    }
   }
 );
 

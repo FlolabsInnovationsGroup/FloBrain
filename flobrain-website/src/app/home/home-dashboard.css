@@ -46,3 +46,115 @@
     transform: translate3d(0, 0, 0);
   }
 }
+
+/* ─── Light mode (Activity page only) ─── */
+
+/* `background` shorthand, not `background-color`: the root uses
+   bg-[linear-gradient(...)] which compiles to background-image, so a colour
+   utility alone would leave the dark gradient painting on top. */
+.light .home-dashboard {
+  /* Brand light-mode palette */
+  --fb-chat-page-bg: #e2d2ff;
+
+  --fb-chat-shell-bg: #e2d2ff;
+  --fb-chat-area-bg: #e2d2ff;
+  --fb-confidence-panel-bg: #e2d2ff;
+  --fb-panel-bg: #e2d2ff;
+
+  --fb-card-bg: rgba(213, 150, 233, 0.28);
+  --fb-card-inner-bg: rgba(213, 150, 233, 0.35);
+  --fb-stat-card-bg: rgba(213, 150, 233, 0.28);
+
+  --fb-panel-border: rgba(97, 0, 129, 0.18);
+  --fb-card-border: rgba(97, 0, 129, 0.18);
+
+  --fb-text: #2b2230;
+  --fb-text-muted: #5e5e6e;
+  --fb-text-subtle: #6b6270;
+  --fb-heading: #610081;
+
+  background: linear-gradient(
+    135deg,
+    #d596e9 0%,
+    #e2d2ff 100%
+  );
+
+  color: var(--fb-text);
+}
+
+/* ─── Activity Light Mode - Brand Palette ─── */
+
+/* Main headings */
+.light .home-dashboard .home-dash-main h1,
+.light .home-dashboard .home-dash-main h2,
+.light .home-dashboard .home-dash-main h3,
+.light .home-dashboard .home-dash-right h1,
+.light .home-dashboard .home-dash-right h2,
+.light .home-dashboard .home-dash-right h3 {
+  color: #610081;
+}
+
+/* Green status colours */
+.light .home-dashboard .home-dash-main .text-emerald-400,
+.light .home-dashboard .home-dash-main .text-green-400,
+.light .home-dashboard .home-dash-main .text-teal-400,
+.light .home-dashboard .home-dash-right .text-emerald-400,
+.light .home-dashboard .home-dash-right .text-green-400,
+.light .home-dashboard .home-dash-right .text-teal-400 {
+  color: #1d5b25 !important;
+}
+
+/* Purple status / icons */
+.light .home-dashboard .home-dash-main .text-purple-400,
+.light .home-dashboard .home-dash-main .text-violet-400,
+.light .home-dashboard .home-dash-right .text-purple-400,
+.light .home-dashboard .home-dash-right .text-violet-400 {
+  color: #610081 !important;
+}
+
+/* Blue status / icons */
+.light .home-dashboard .home-dash-main .text-blue-400,
+.light .home-dashboard .home-dash-main .text-sky-400,
+.light .home-dashboard .home-dash-right .text-blue-400,
+.light .home-dashboard .home-dash-right .text-sky-400 {
+  color: #1f4f8b !important;
+}
+
+/* Orange status / icons */
+.light .home-dashboard .home-dash-main .text-orange-400,
+.light .home-dashboard .home-dash-main .text-amber-400,
+.light .home-dashboard .home-dash-right .text-orange-400,
+.light .home-dashboard .home-dash-right .text-amber-400 {
+  color: #b34800 !important;
+}
+
+/* Muted / queued states */
+.light .home-dashboard .home-dash-main .text-slate-400,
+.light .home-dashboard .home-dash-main .text-gray-400,
+.light .home-dashboard .home-dash-main .text-zinc-400,
+.light .home-dashboard .home-dash-right .text-slate-400,
+.light .home-dashboard .home-dash-right .text-gray-400,
+.light .home-dashboard .home-dash-right .text-zinc-400 {
+  color: #5e5e6e !important;
+}
+
+/* Sidebar uses the dark brand purple */
+.light .home-dashboard .home-dash-left > * {
+  background: linear-gradient(
+    180deg,
+    #610081 0%,
+    #4b0064 100%
+  );
+}
+
+/* Sidebar primary text */
+.light .home-dashboard .home-dash-left {
+  color: #ffffff;
+}
+
+/* Sidebar muted text */
+.light .home-dashboard .home-dash-left .text-slate-400,
+.light .home-dashboard .home-dash-left .text-gray-400,
+.light .home-dashboard .home-dash-left .text-zinc-400 {
+  color: #e2d2ff !important;
+}

@@ -33,8 +33,8 @@ function sortChatsByLastUsed(chats: ChatHistory[]): ChatHistory[] {
 
 function BrainPageFallback() {
   return (
-    <div className="flex h-screen bg-[#1a0b2e] text-white items-center justify-center">
-      <div className="animate-pulse text-white/60">Loading...</div>
+    <div className="fb-brain-page flex h-screen items-center justify-center">
+      <div className="animate-pulse text-[var(--fb-brain-text-subtle)]">Loading...</div>
     </div>
   );
 }
@@ -67,10 +67,10 @@ function PreferenceToggle({
   onChange: (checked: boolean) => void;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+    <div className="fb-brain-surface flex items-start justify-between gap-4 rounded-xl border px-4 py-3">
       <div>
-        <p className="text-sm font-medium text-white">{label}</p>
-        <p className="mt-1 text-xs text-white/60">{description}</p>
+        <p className="text-sm font-medium text-[var(--fb-brain-heading)]">{label}</p>
+        <p className="mt-1 text-xs text-[var(--fb-brain-text-subtle)]">{description}</p>
       </div>
       <button
         type="button"
@@ -78,7 +78,7 @@ function PreferenceToggle({
         aria-checked={checked}
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full p-0.5 transition-colors ${
-          checked ? 'bg-violet-500' : 'bg-white/20'
+          checked ? 'bg-[var(--fb-brain-btn)]' : 'bg-[var(--fb-brain-track)]'
         }`}
       >
         <span
@@ -105,17 +105,17 @@ function PreferencesModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-xl rounded-2xl border border-violet-400/30 bg-[#120724] shadow-2xl">
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center p-4" style={{ background: 'var(--fb-brain-overlay)' }}>
+      <div className="fb-brain-modal w-full max-w-xl rounded-2xl border shadow-2xl">
+        <div className="flex items-center justify-between border-b border-[var(--fb-brain-surface-border)] px-5 py-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">Preferences</h2>
-            <p className="text-xs text-white/60">Control Brain page features and layout.</p>
+            <h2 className="text-lg font-semibold text-[var(--fb-brain-heading)]">Preferences</h2>
+            <p className="text-xs text-[var(--fb-brain-text-subtle)]">Control Brain page features and layout.</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-md p-1 text-white/70 hover:bg-white/10 hover:text-white"
+            className="rounded-md p-1 text-[var(--fb-brain-text-muted)] hover:bg-[var(--fb-brain-surface-bg)] hover:text-[var(--fb-brain-heading)]"
             aria-label="Close preferences"
           >
             <X className="h-5 w-5" />
@@ -153,18 +153,19 @@ function PreferencesModal({
             onChange={(enableImageUpload) => onChange({ ...preferences, enableImageUpload })}
           />
         </div>
-        <div className="flex items-center justify-end gap-3 border-t border-white/10 px-5 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-[var(--fb-brain-surface-border)] px-5 py-4">
           <button
             type="button"
             onClick={() => onChange(DEFAULT_PREFERENCES)}
-            className="rounded-lg border border-white/20 px-4 py-2 text-sm text-white/80 hover:bg-white/10"
+            className="rounded-lg border border-[var(--fb-brain-surface-border)] px-4 py-2 text-sm text-[var(--fb-brain-text-muted)] hover:bg-[var(--fb-brain-surface-bg)]"
           >
             Reset
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-500"
+            className="rounded-lg px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+            style={{ background: 'var(--fb-brain-btn)' }}
           >
             Done
           </button>
@@ -184,23 +185,23 @@ function ConfidencePanelContent({ headingClassName }: { headingClassName?: strin
   return (
     <>
       <Reveal variant="fadeIn" inView={false}>
-        <h3 className={cn('mb-3 text-sm font-semibold text-white', headingClassName)}>Confidence</h3>
+        <h3 className={cn('mb-3 text-sm font-semibold text-[var(--fb-brain-heading)]', headingClassName)}>Confidence</h3>
       </Reveal>
       <Stagger className="space-y-3" stagger={0.08} inView={false}>
         {CONFIDENCE_CARDS.map((card) => (
           <StaggerItem key={card.model} variant="slideUp">
-            <div className="rounded-lg border border-white/10 bg-[#130A2D] p-3">
+            <div className="fb-brain-surface rounded-lg border p-3">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-white">{card.model}</p>
-              <span className="text-xs text-white/80">{card.confidence}%</span>
+              <p className="text-sm font-medium text-[var(--fb-brain-heading)]">{card.model}</p>
+              <span className="text-xs text-[var(--fb-brain-text-muted)]">{card.confidence}%</span>
             </div>
-            <div className="mt-2 h-1.5 rounded-full bg-white/10">
+            <div className="mt-2 h-1.5 rounded-full bg-[var(--fb-brain-track)]">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-[#6C63FF] to-[#A855F7]"
-                style={{ width: `${card.confidence}%` }}
+                className="h-full rounded-full"
+                style={{ width: `${card.confidence}%`, background: 'var(--fb-brain-gradient)' }}
               />
             </div>
-            <div className="mt-2 flex justify-between text-[11px] text-white/60">
+            <div className="mt-2 flex justify-between text-[11px] text-[var(--fb-brain-text-subtle)]">
               <span>Latency {card.latency}</span>
               <span>Tokens {card.tokens}</span>
             </div>
@@ -220,7 +221,7 @@ function ConfidencePanel() {
       inView={false}
       className="max-md:hidden flex w-[min(300px,26vw)] shrink-0 min-h-0"
     >
-      <aside className="flex h-full w-full flex-col rounded-xl border border-white/10 bg-[#0B0719]/55 p-4 min-h-0">
+      <aside className="fb-brain-sidebar flex h-full w-full flex-col rounded-xl border p-4 min-h-0">
         <ConfidencePanelContent />
       </aside>
     </Reveal>
@@ -752,9 +753,16 @@ function BrainPageContent() {
 
   return (
     <MotionProvider>
-    <main className="box-border mb-2 flex h-screen max-w-full min-h-0 flex-col overflow-y-hidden bg-[linear-gradient(90deg,#290036_0%,#070014_100%)] px-3 pb-24 pt-24 font-[Inter] text-slate-300 sm:px-4 sm:pb-28 sm:pt-28 md:mx-auto md:w-[92%] md:px-0 md:pb-3 md:pt-[7rem]">
+    <main className="fb-brain-page box-border mb-2 flex h-screen max-w-full min-h-0 flex-col overflow-y-hidden px-3 pb-24 pt-24 font-[Inter] sm:px-4 sm:pb-28 sm:pt-28 md:mx-auto md:w-[92%] md:px-0 md:pb-3 md:pt-[7rem]">
       {error && (
-        <div className="fixed top-4 right-4 z-[100] bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm shadow-lg">
+        <div
+          className="fixed top-4 right-4 z-[100] rounded-lg px-4 py-2 text-sm shadow-lg"
+          style={{
+            background: 'var(--fb-brain-error-bg)',
+            color: 'var(--fb-brain-error)',
+            border: '1px solid var(--fb-brain-error)',
+          }}
+        >
           {error}
           <button
             type="button"
@@ -772,7 +780,7 @@ function BrainPageContent() {
           onClick={openMobileSessions}
           aria-expanded={mobileSessionsOpen}
           aria-controls="brain-sessions-drawer"
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0B0719]/60 py-2.5 text-xs font-semibold uppercase tracking-wide text-white/90 shadow-sm"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--fb-brain-shell-border)] bg-[var(--fb-brain-sidebar-bg)] py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--fb-brain-heading)] shadow-sm"
         >
           <PanelLeft className="h-4 w-4 shrink-0" aria-hidden />
           Chats
@@ -783,7 +791,7 @@ function BrainPageContent() {
             onClick={openMobileConfidence}
             aria-expanded={mobileConfidenceOpen}
             aria-controls="brain-confidence-drawer"
-            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0B0719]/60 py-2.5 text-xs font-semibold uppercase tracking-wide text-white/90 shadow-sm"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--fb-brain-shell-border)] bg-[var(--fb-brain-sidebar-bg)] py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--fb-brain-heading)] shadow-sm"
           >
             <BarChart3 className="h-4 w-4 shrink-0" aria-hidden />
             Confidence
@@ -796,7 +804,8 @@ function BrainPageContent() {
           <button
             type="button"
             aria-label="Close chat list"
-            className="fixed inset-0 z-[85] bg-black/55 md:hidden"
+            className="fixed inset-0 z-[85] md:hidden"
+            style={{ background: 'var(--fb-brain-overlay)' }}
             onClick={() => setMobileSessionsOpen(false)}
           />
         )}
@@ -811,7 +820,7 @@ function BrainPageContent() {
         >
           <LeftPanel
             variant="chats"
-            className="h-full w-full min-w-0 rounded-r-xl border border-white/10 bg-[#0B0719]/50 shadow-2xl md:rounded-xl md:border-transparent md:shadow-none"
+            className="fb-brain-sidebar h-full w-full min-w-0 rounded-r-xl border shadow-2xl md:rounded-xl md:border-transparent md:shadow-none"
             chatHistory={chatHistory}
             currentChatId={currentChatId}
             onLoadChat={handleLoadChatMobile}
@@ -829,9 +838,9 @@ function BrainPageContent() {
             variant="fadeIn"
             delay={0.1}
             inView={false}
-            className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#0B0719]/30"
+            className="fb-brain-shell relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border"
           >
-          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <section className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden light:bg-[var(--fb-chat-area-bg)] light:border-[var(--fb-chat-shell-border)]">
             {currentChatId ? (
               <>
                 <ChatArea
@@ -885,12 +894,12 @@ function BrainPageContent() {
                   </div>
                   </Reveal>
                   <Reveal variant="slideUp" delay={0.08}>
-                  <h2 className="mb-2 text-2xl font-bold tracking-tight text-white sm:mb-3 sm:text-3xl">
+                  <h2 className="fb-brain-gradient-text mb-2 text-2xl font-bold tracking-tight sm:mb-3 sm:text-3xl">
                     Welcome to FLOBRAIN
                   </h2>
                   </Reveal>
                   <Reveal variant="fadeIn" delay={0.14}>
-                  <p className="mb-6 text-sm text-white/60 sm:mb-8 sm:text-base">
+                  <p className="mb-6 text-sm text-[var(--fb-brain-text-subtle)] sm:mb-8 sm:text-base">
                     Start a new conversation to chat with our AI assistant.
                     {isAuthenticated
                       ? ' Your chats are saved on the server.'
@@ -901,7 +910,11 @@ function BrainPageContent() {
                   <button
                     type="button"
                     onClick={handleNewChat}
-                    className="rounded-xl bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] px-6 py-3 text-base font-semibold text-white shadow-lg shadow-[#8B5CF6]/30 transition-all duration-200 hover:opacity-90 hover:shadow-[#8B5CF6]/50 sm:px-8 sm:py-4 sm:text-lg"
+                    className="rounded-xl px-6 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:opacity-90 sm:px-8 sm:py-4 sm:text-lg"
+                    style={{
+                      background: 'var(--fb-brain-gradient-cta)',
+                      boxShadow: '0 10px 32px rgba(194, 98, 226, 0.35)',
+                    }}
                   >
                     Start New Chat
                   </button>
@@ -918,23 +931,24 @@ function BrainPageContent() {
                 <button
                   type="button"
                   aria-label="Close confidence panel"
-                  className="fixed inset-0 z-[85] bg-black/55 md:hidden"
+                  className="fixed inset-0 z-[85] md:hidden"
+            style={{ background: 'var(--fb-brain-overlay)' }}
                   onClick={() => setMobileConfidenceOpen(false)}
                 />
               )}
               <aside
                 id="brain-confidence-drawer"
                 className={cn(
-                  'fixed bottom-24 right-0 top-24 z-[90] w-[min(100vw-1.5rem,300px)] max-w-[90vw] overflow-y-auto rounded-l-xl border border-white/10 bg-[#0B0719]/55 p-4 shadow-2xl transition-transform duration-300 ease-out md:hidden',
+                  'fb-brain-sidebar fixed bottom-24 right-0 top-24 z-[90] w-[min(100vw-1.5rem,300px)] max-w-[90vw] overflow-y-auto rounded-l-xl border p-4 shadow-2xl transition-transform duration-300 ease-out md:hidden',
                   mobileConfidenceOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
                 )}
               >
-                <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
-                  <span className="text-base font-semibold text-white">Confidence</span>
+                <div className="mb-4 flex items-center justify-between border-b border-[var(--fb-brain-surface-border)] pb-3">
+                  <span className="text-base font-semibold text-[var(--fb-brain-heading)]">Confidence</span>
                   <button
                     type="button"
                     onClick={() => setMobileConfidenceOpen(false)}
-                    className="rounded-lg p-1.5 text-white/70 hover:bg-white/10 hover:text-white"
+                    className="rounded-lg p-1.5 text-[var(--fb-brain-text-muted)] hover:bg-[var(--fb-brain-surface-bg)] hover:text-[var(--fb-brain-heading)]"
                     aria-label="Close confidence panel"
                   >
                     <X className="h-5 w-5" />

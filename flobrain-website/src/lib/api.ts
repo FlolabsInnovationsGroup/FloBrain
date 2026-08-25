@@ -26,29 +26,38 @@ function formatDetails(details: unknown): string | undefined {
   return String(details);
 }
 
+const CONNECT_FALLBACK = "Couldn't connect to FloBrain";
+
 function normalizeError(err: unknown): ApiResult<never> {
   if (err && typeof err === "object" && "response" in err) {
     const ax = err as { response?: { data?: unknown; status?: number }; message?: string };
     const status = ax.response?.status ?? 0;
     const data = ax.response?.data;
-    let error = "Request failed";
-    let details: unknown;
-    if (data && typeof data === "object") {
+
+    // Backend responded with a body — prefer its error message when usable.
+    if (ax.response && data && typeof data === "object") {
       const obj = data as Record<string, unknown>;
-      error = (obj.error as string) ?? error;
-      details = obj.details;
-      const formatted = formatDetails(details);
-      if (formatted) error = `${error}. ${formatted}`;
-    } else if (ax.message) {
-      error = ax.message;
-      details = ax.message;
+      const backendError =
+        typeof obj.error === "string" ? obj.error.trim() : "";
+      const details = obj.details;
+      if (backendError) {
+        let error = backendError;
+        const formatted = formatDetails(details);
+        if (formatted) error = `${error}. ${formatted}`;
+        return { error, details, status };
+      }
+      return { error: CONNECT_FALLBACK, details, status };
     }
-    return { error, details, status };
+
+    // Axios-shaped error with no response body (network / timeout / unreachable).
+    const message =
+      ax.message ?? (err instanceof Error ? err.message : "Network error");
+    return { error: CONNECT_FALLBACK, details: message, status: 0 };
   }
+
   const message = err instanceof Error ? err.message : "Network error";
   return {
-    error:
-      "Could not reach server. Check that the backend is running and the URL is correct.",
+    error: CONNECT_FALLBACK,
     details: message,
     status: 0,
   };
@@ -278,6 +287,17 @@ export type BrainMessageApi = {
   text?: string | null;
   image?: string | null;
   timestamp?: string | null;
+  prompt_tokens?: number | null;
+  completion_tokens?: number | null;
+};
+
+export type ChatUsageApi = {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+  model: string;
+  provider?: string;
+  estimated?: boolean;
 };
 
 export type BrainChatApi = {
@@ -287,7 +307,9 @@ export type BrainChatApi = {
   messages: BrainMessageApi[];
 };
 
-export type BrainChatDetailApi = BrainChatApi;
+export type BrainChatDetailApi = BrainChatApi & {
+  usage?: ChatUsageApi | null;
+};
 
 export type DashboardErrorLogEntry = {
   level: "warning" | "error";

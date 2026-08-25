@@ -8,9 +8,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import { SystemHealth } from "./components/system-health";
 import { TokenUsage } from "./components/token-usage";
-import { MemoryActivity } from "./components/memory-activity";
+
 import { WorkflowEngine } from "./components/workflow-engine";
 import { MotionProvider, Reveal, Stagger, StaggerItem } from "@/components/motion";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 export default function Dashboard() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,8 +20,7 @@ export default function Dashboard() {
   return (
     <MotionProvider>
       <main
-        className="min-h-screen text-white px-4 pt-6 pb-24 sm:px-6 sm:pt-8 sm:pb-28 md:p-8"
-        style={{ background: "linear-gradient(116.21deg, #290036 -1.81%, #070014 100%)" }}
+        className="fb-page fb-page--dashboard min-h-screen px-4 pt-6 pb-24 sm:px-6 sm:pt-8 sm:pb-28 md:p-8"
       >
         <div className="max-w-7xl mx-auto w-full overflow-x-clip">
           {/* Mobile Header */}
@@ -33,18 +33,21 @@ export default function Dashboard() {
                   <p className="text-xs text-zinc-400">v1 • AI Operating System</p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setIsMenuOpen((prev) => !prev)}
-                aria-label="Open dashboard menu"
-                className="h-10 w-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center"
-              >
-                {isMenuOpen ? (
-                  <X className="h-5 w-5 text-zinc-200" />
-                ) : (
-                  <Menu className="h-5 w-5 text-zinc-200" />
-                )}
-              </button>
+              <div className="flex items-center gap-3">
+                <ThemeToggle />
+                <button
+                  type="button"
+                  onClick={() => setIsMenuOpen((prev) => !prev)}
+                  aria-label="Open dashboard menu"
+                  className="h-10 w-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center"
+                >
+                  {isMenuOpen ? (
+                    <X className="h-5 w-5 text-zinc-200" />
+                  ) : (
+                    <Menu className="h-5 w-5 text-zinc-200" />
+                  )}
+                </button>
+              </div>
             </div>
 
             {isMenuOpen && (
@@ -71,13 +74,6 @@ export default function Dashboard() {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Chats
-                    </Link>
-                    <Link
-                      href="/memory"
-                      className="rounded-lg py-2 text-zinc-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Memory
                     </Link>
                     <Link
                       href="/profile"
@@ -149,10 +145,10 @@ export default function Dashboard() {
           {/* Desktop Header */}
           <div className="hidden md:block mb-8">
             <Reveal variant="slideUp">
-              <h1 className="text-4xl font-bold mb-2">SYSTEM DASHBOARD</h1>
+              <h1 className="text-4xl font-bold mb-2" style={{ color: "var(--fb-dashboard-heading)" }}>SYSTEM DASHBOARD</h1>
             </Reveal>
             <Reveal variant="fadeIn" delay={0.08}>
-              <p className="text-zinc-400 text-base">
+              <p className="text-base" style={{ color: "var(--fb-text-muted)" }}>
                 Monitor your system health, workflows, and AI model performance
               </p>
             </Reveal>
@@ -172,9 +168,6 @@ export default function Dashboard() {
           </Stagger>
 
           <Stagger className="flex flex-col gap-4 sm:gap-6" stagger={0.12} inView>
-            <StaggerItem variant="slideUp">
-              <MemoryActivity />
-            </StaggerItem>
             <StaggerItem variant="slideUp">
               <WorkflowEngine />
             </StaggerItem>
