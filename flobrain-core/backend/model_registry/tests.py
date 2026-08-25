@@ -107,6 +107,18 @@ class ModelRegistryAPITestCase(TestCase):
         self.assertIn("provider_type", response.data["details"])
         self.assertIn("supported_input_types", response.data["details"])
 
+    def test_rejects_multimodal_as_an_input_type(self):
+        payload = {
+            **self.payload,
+            "supported_input_types": ["multimodal"],
+        }
+
+        response = self.client.post(self.list_url, payload, format="json")
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["error"], "Validation failed")
+        self.assertIn("supported_input_types", response.data["details"])
+
     def test_rejects_empty_input_types_and_capabilities(self):
         payload = {
             **self.payload,

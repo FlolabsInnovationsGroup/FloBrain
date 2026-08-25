@@ -16,14 +16,12 @@ class AIModel(models.Model):
     INPUT_AUDIO = "audio"
     INPUT_VIDEO = "video"
     INPUT_DOCUMENT = "document"
-    INPUT_MULTIMODAL = "multimodal"
     INPUT_TYPE_CHOICES = [
         (INPUT_TEXT, "Text"),
         (INPUT_IMAGE, "Image"),
         (INPUT_AUDIO, "Audio"),
         (INPUT_VIDEO, "Video"),
         (INPUT_DOCUMENT, "Document"),
-        (INPUT_MULTIMODAL, "Multimodal"),
     ]
 
     name = models.CharField(max_length=200)

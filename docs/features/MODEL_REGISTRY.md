@@ -8,29 +8,31 @@ The repository handbook still describes `flobrain-cloud` as the active FastAPI b
 
 ## Stored fields
 
-| Field | Type | Rules |
-| --- | --- | --- |
-| `name` | string | Required; maximum 200 characters |
-| `provider_name` | string | Required; maximum 200 characters |
-| `provider_type` | enum | `private` or `open-source` |
-| `supported_input_types` | string array | Non-empty subset of `text`, `image`, `audio`, `video`, `document`, `multimodal` |
-| `capabilities` | string array | Non-empty; each label is at most 100 characters |
-| `created_at` | timestamp | Server managed |
-| `updated_at` | timestamp | Server managed |
+| Field                   | Type         | Rules                                                             |
+| ----------------------- | ------------ | ----------------------------------------------------------------- |
+| `name`                  | string       | Required; maximum 200 characters                                  |
+| `provider_name`         | string       | Required; maximum 200 characters                                  |
+| `provider_type`         | enum         | `private` or `open-source`                                        |
+| `supported_input_types` | string array | Non-empty subset of `text`, `image`, `audio`, `video`, `document` |
+| `capabilities`          | string array | Non-empty; each label is at most 100 characters                   |
+| `created_at`            | timestamp    | Server managed                                                    |
+| `updated_at`            | timestamp    | Server managed                                                    |
 
 The combination of provider name and model name is unique. API validation also prevents case-only duplicates. Repeated input types or capability labels in a request are stored once.
+
+`multimodal` is derived rather than stored as an input type. Select every concrete input a model accepts; for example, a model registered with both `text` and `video` inputs is multimodal.
 
 ## API
 
 Every endpoint requires the existing `Authorization: Bearer <access-token>` header.
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| `GET` | `/api/model-registry/` | List models |
-| `POST` | `/api/model-registry/` | Register a model |
-| `GET` | `/api/model-registry/{id}/` | Read one model |
-| `PATCH` | `/api/model-registry/{id}/` | Update one or more fields |
-| `DELETE` | `/api/model-registry/{id}/` | Remove a model |
+| Method   | Endpoint                    | Purpose                   |
+| -------- | --------------------------- | ------------------------- |
+| `GET`    | `/api/model-registry/`      | List models               |
+| `POST`   | `/api/model-registry/`      | Register a model          |
+| `GET`    | `/api/model-registry/{id}/` | Read one model            |
+| `PATCH`  | `/api/model-registry/{id}/` | Update one or more fields |
+| `DELETE` | `/api/model-registry/{id}/` | Remove a model            |
 
 Example create request:
 

@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/axios";
 
 export const PROVIDER_TYPES = ["private", "open-source"] as const;
-export const INPUT_TYPES = ["text", "image", "audio", "video", "document", "multimodal"] as const;
+export const INPUT_TYPES = ["text", "image", "audio", "video", "document"] as const;
 
 export type ProviderType = (typeof PROVIDER_TYPES)[number];
 export type InputType = (typeof INPUT_TYPES)[number];

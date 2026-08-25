@@ -73,6 +73,7 @@ describe("ModelRegistryPage", () => {
     renderWithProviders(<ModelRegistryPage />);
 
     fireEvent.click(await screen.findByRole("button", { name: /Register model/i }));
+    expect(screen.queryByLabelText(/multimodal/i)).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Register model/i }));
     expect(screen.getByRole("alert")).toHaveTextContent(
       "Model name and provider name are required"
