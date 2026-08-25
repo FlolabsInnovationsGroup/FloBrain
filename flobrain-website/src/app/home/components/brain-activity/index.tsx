@@ -228,7 +228,7 @@ function BrainActivityInner() {
 
         {/* Metric cards */}
         <div
-          className="grid sm:grid-cols-4 gap-8 mb-8"
+          className="grid sm:grid-cols-3 gap-8 mb-8"
           role="list"
           aria-label="Key metrics"
         >
