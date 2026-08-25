@@ -37,7 +37,6 @@ describe("SystemHealth Component", () => {
         database: "connected",
         allSystemsOperational: true,
         system_status: "online",
-        connected_devices: 3,
       },
       status: 200,
     });
