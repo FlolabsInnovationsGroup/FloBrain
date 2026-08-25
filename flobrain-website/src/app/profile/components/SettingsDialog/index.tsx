@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  CreditCard,
   Menu,
   PanelLeftClose,
   X,
@@ -17,7 +16,6 @@ import ProfileSettings from "../ProfileSettings";
 import AccountSecuritySettings from "../AccountSecuritySettings";
 import NotificationsSettings from "../NotificationsSettings";
 import HelpSettings from "../HelpSettings";
-import BillingSettings from "../BillingSettings";
 import { useAuth } from "@/contexts/AuthContext";
 import { Dialog, DialogContent } from "@/components/layout/dialog";
 import { cn } from "@/lib/utils";
@@ -25,13 +23,12 @@ import { settingsBtnDestructiveOutline } from "../settings-styles";
 
 const MOBILE_BREAKPOINT = 768;
 
-type SettingsTab = "profile" | "account" | "notifications" | "billing" | "help";
+type SettingsTab = "profile" | "account" | "notifications" | "help";
 
 const navItems: { id: SettingsTab; label: string; icon: React.ReactNode }[] = [
   { id: "profile", label: "Profile", icon: <User className="h-5 w-5" /> },
   { id: "account", label: "Account & Security", icon: <Shield className="h-5 w-5" /> },
   { id: "notifications", label: "Notifications", icon: <Bell className="h-5 w-5" /> },
-  { id: "billing", label: "Billing", icon: <CreditCard className="h-5 w-5" /> },
   { id: "help", label: "Help", icon: <HelpCircle className="h-5 w-5" /> },
 ];
 
@@ -39,7 +36,6 @@ const tabTitles: Record<SettingsTab, string> = {
   profile: "Profile Settings",
   account: "Account & Security",
   notifications: "Notifications",
-  billing: "Billing",
   help: "Help",
 };
 
@@ -198,7 +194,6 @@ export default function SettingsDialog({ open, onClose }: SettingsDialogProps) {
               {activeTab === "profile" && <ProfileSettings />}
               {activeTab === "account" && <AccountSecuritySettings />}
               {activeTab === "notifications" && <NotificationsSettings />}
-              {activeTab === "billing" && <BillingSettings />}
               {activeTab === "help" && <HelpSettings />}
             </div>
           </div>
