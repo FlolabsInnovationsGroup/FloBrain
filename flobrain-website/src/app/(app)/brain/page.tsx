@@ -175,8 +175,52 @@ const CONFIDENCE_CARDS = [
   { model: 'Gemini 1.5', confidence: 73, latency: '120ms', tokens: '3.4K' },
 ] as const;
 
+function ConfidencePanelContent({ headingClassName }: { headingClassName?: string }) {
+  return (
+    <>
+      <Reveal variant="fadeIn" inView={false}>
+        <h3 className={cn('mb-3 text-sm font-semibold text-[var(--fb-brain-heading)]', headingClassName)}>Confidence</h3>
+      </Reveal>
+      <Stagger className="space-y-3" stagger={0.08} inView={false}>
+        {CONFIDENCE_CARDS.map((card) => (
+          <StaggerItem key={card.model} variant="slideUp">
+            <div className="fb-brain-surface rounded-lg border p-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-[var(--fb-brain-heading)]">{card.model}</p>
+              <span className="text-xs text-[var(--fb-brain-text-muted)]">{card.confidence}%</span>
+            </div>
+            <div className="mt-2 h-1.5 rounded-full bg-[var(--fb-brain-track)]">
+              <div
+                className="h-full rounded-full"
+                style={{ width: `${card.confidence}%`, background: 'var(--fb-brain-gradient)' }}
+              />
+            </div>
+            <div className="mt-2 flex justify-between text-[11px] text-[var(--fb-brain-text-subtle)]">
+              <span>Latency {card.latency}</span>
+              <span>Tokens {card.tokens}</span>
+            </div>
+            </div>
+          </StaggerItem>
+        ))}
+      </Stagger>
+    </>
+  );
+}
 
-
+/** Desktop (md+): fixed column; hidden below md (mobile uses drawer). */
+function ConfidencePanel() {
+  return (
+    <Reveal
+      variant="slideRight"
+      inView={false}
+      className="max-md:hidden flex w-[min(300px,26vw)] shrink-0 min-h-0"
+    >
+      <aside className="fb-brain-sidebar flex h-full w-full flex-col rounded-xl border p-4 min-h-0">
+        <ConfidencePanelContent />
+      </aside>
+    </Reveal>
+  );
+}
 
 function BrainPageContent() {
   const { isAuthenticated } = useAuth();
@@ -735,6 +779,18 @@ function BrainPageContent() {
           <PanelLeft className="h-4 w-4 shrink-0" aria-hidden />
           Chats
         </button>
+        {preferences.showConfidencePanel && (
+          <button
+            type="button"
+            onClick={openMobileConfidence}
+            aria-expanded={mobileConfidenceOpen}
+            aria-controls="brain-confidence-drawer"
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-[var(--fb-brain-shell-border)] bg-[var(--fb-brain-sidebar-bg)] py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--fb-brain-heading)] shadow-sm"
+          >
+            <BarChart3 className="h-4 w-4 shrink-0" aria-hidden />
+            Confidence
+          </button>
+        )}
       </Reveal>
 
       <div className="relative flex min-h-0 min-w-0 flex-1 gap-2 sm:gap-3">
@@ -862,6 +918,40 @@ function BrainPageContent() {
             )}
           </section>
           </Reveal>
+          {preferences.showConfidencePanel && (
+            <>
+              <ConfidencePanel />
+              {mobileConfidenceOpen && (
+                <button
+                  type="button"
+                  aria-label="Close confidence panel"
+                  className="fixed inset-0 z-[85] md:hidden"
+            style={{ background: 'var(--fb-brain-overlay)' }}
+                  onClick={() => setMobileConfidenceOpen(false)}
+                />
+              )}
+              <aside
+                id="brain-confidence-drawer"
+                className={cn(
+                  'fb-brain-sidebar fixed bottom-24 right-0 top-24 z-[90] w-[min(100vw-1.5rem,300px)] max-w-[90vw] overflow-y-auto rounded-l-xl border p-4 shadow-2xl transition-transform duration-300 ease-out md:hidden',
+                  mobileConfidenceOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
+                )}
+              >
+                <div className="mb-4 flex items-center justify-between border-b border-[var(--fb-brain-surface-border)] pb-3">
+                  <span className="text-base font-semibold text-[var(--fb-brain-heading)]">Confidence</span>
+                  <button
+                    type="button"
+                    onClick={() => setMobileConfidenceOpen(false)}
+                    className="rounded-lg p-1.5 text-[var(--fb-brain-text-muted)] hover:bg-[var(--fb-brain-surface-bg)] hover:text-[var(--fb-brain-heading)]"
+                    aria-label="Close confidence panel"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+                <ConfidencePanelContent headingClassName="sr-only" />
+              </aside>
+            </>
+          )}
         </div>
       </div>
       <PreferencesModal
