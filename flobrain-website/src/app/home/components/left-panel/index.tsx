@@ -7,7 +7,6 @@ import {
   Search,
   Plus,
   Brain,
-  Database,
   Activity,
   SlidersHorizontal,
   Settings,
@@ -19,11 +18,10 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const EMPTY_CHAT_HISTORY: ChatHistory[] = [];
 
-export type SystemModuleId = "brain-activity" | "load-memory" | "system-health";
+export type SystemModuleId = "brain-activity" | "system-health";
 
 export const SYSTEM_MODULE_IDS: SystemModuleId[] = [
   "brain-activity",
-  "load-memory",
   "system-health",
 ];
 
@@ -36,7 +34,6 @@ const MODULES: ReadonlyArray<{
   showDot?: boolean;
 }> = [
   { id: "brain-activity", label: "Brain Activity", icon: Brain, href: "/home", showDot: true },
-  { id: "load-memory", label: "Load Memory", icon: Database, href: "/memory" },
   { id: "system-health", label: "System Health", icon: Activity, href: "/dashboard" },
 ];
 
