@@ -159,10 +159,10 @@ export default function Dashboard() {
             stagger={0.1}
             inView={false}
           >
-            <StaggerItem variant="slideLeft">
+            <StaggerItem variant="slideLeft" className="h-full">
               <SystemHealth />
             </StaggerItem>
-            <StaggerItem variant="slideRight">
+            <StaggerItem variant="slideRight" className="h-full">
               <TokenUsage />
             </StaggerItem>
           </Stagger>
