@@ -4,7 +4,7 @@ import React, { useId, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { House, LayoutDashboard, MessageCircle, Database } from "lucide-react";
+import { House, LayoutDashboard, MessageCircle } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import {
   FOOTER_BRAND,
