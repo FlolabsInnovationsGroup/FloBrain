@@ -69,3 +69,7 @@ const mutation = useMutation({
 
 Auth (login, register, sign out) is handled by `AuthContext` and the methods in `api`; use the pattern above for other collections and endpoints.
 
+## Model Registry
+
+Authenticated users can view and manage the AI model pool at `/models`. The page follows the React Query pattern above and calls the Django CRUD API at `/api/model-registry/`. The full data contract and deployment notes are documented in [`docs/features/MODEL_REGISTRY.md`](../docs/features/MODEL_REGISTRY.md).
+

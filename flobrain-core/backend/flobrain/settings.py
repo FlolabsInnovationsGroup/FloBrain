@@ -33,7 +33,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 allowed = os.environ.get("ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"] + [h for h in allowed.split(",") if h]
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+CSRF_TRUSTED_ORIGINS = [
+    origin for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if origin
+]
 
 
 # Application definition
@@ -53,6 +55,7 @@ INSTALLED_APPS = [
     "memory",
     "dashboard",
     "brain",
+    "model_registry",
     "contact",
 ]
 

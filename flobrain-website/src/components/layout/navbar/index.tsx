@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   Activity,
   Database,
+  Boxes,
 } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
@@ -29,6 +30,7 @@ const AUTHED_NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Activity", href: "/home", icon: Activity },
   { label: "Memory", href: "/memory", icon: Database },
+  { label: "Models", href: "/models", icon: Boxes },
 ] as const;
 
 function isNavItemActive(href: string, pathname: string): boolean {
