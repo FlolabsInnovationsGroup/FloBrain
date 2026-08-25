@@ -54,14 +54,14 @@
    utility alone would leave the dark gradient painting on top. */
 .light .home-dashboard {
   /* Brand light-mode palette */
-  --fb-chat-page-bg: #e2d2ff;
+  --fb-chat-page-bg: linear-gradient(180deg, #D596E9 0%, #E2D2FF 100%);
 
   --fb-chat-shell-bg: #e2d2ff;
   --fb-chat-area-bg: #e2d2ff;
   --fb-confidence-panel-bg: #e2d2ff;
   --fb-panel-bg: #e2d2ff;
 
-  --fb-card-bg: rgba(213, 150, 233, 0.28);
+  --fb-card-bg: rgba(213, 150, 233, 0.45);
   --fb-card-inner-bg: rgba(213, 150, 233, 0.35);
   --fb-stat-card-bg: rgba(213, 150, 233, 0.28);
 
