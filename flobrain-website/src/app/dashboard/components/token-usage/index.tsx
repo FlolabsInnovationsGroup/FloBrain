@@ -50,7 +50,7 @@ export const TokenUsage = (): React.JSX.Element => {
 
   return (
     <div
-      className="fb-dashboard-card w-full rounded-[18px] sm:rounded-[20px]"
+      className="fb-dashboard-card flex h-full w-full flex-col rounded-[18px] sm:rounded-[20px]"
       style={{
         padding: "clamp(16px, 3.2vw, 28px)",
       }}

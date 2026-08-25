@@ -244,7 +244,6 @@ export type DashboardHealthApi = {
   database: string;
   allSystemsOperational: boolean;
   system_status: "online" | "idle" | "loading" | "offline" | "critical_error";
-  connected_devices: number;
 };
 
 export type DashboardMemoryActivityApi = {
