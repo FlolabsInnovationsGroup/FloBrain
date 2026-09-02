@@ -48,7 +48,7 @@ type BrainPreferences = {
 };
 
 const DEFAULT_PREFERENCES: BrainPreferences = {
-  showConfidencePanel: true,
+  showConfidencePanel: false,
   compactMode: false,
   autoScroll: true,
   enableVoiceInput: true,
@@ -122,12 +122,6 @@ function PreferencesModal({
           </button>
         </div>
         <div className="space-y-3 p-5">
-          <PreferenceToggle
-            label="Show confidence panel"
-            description="Display model confidence cards on the right side."
-            checked={preferences.showConfidencePanel}
-            onChange={(showConfidencePanel) => onChange({ ...preferences, showConfidencePanel })}
-          />
           <PreferenceToggle
             label="Compact mode"
             description="Reduce spacing in the chat feed."
