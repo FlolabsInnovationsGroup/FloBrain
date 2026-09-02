@@ -10,6 +10,7 @@ import {
   MessageCircle,
   LayoutDashboard,
   Database,
+  Boxes,
 } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
@@ -27,6 +28,7 @@ const AUTHED_NAV_ITEMS = [
   { label: "Chat", href: "/brain", icon: MessageCircle },
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Memory", href: "/memory", icon: Database },
+  { label: "Models", href: "/models", icon: Boxes },
 ] as const;
 
 function isNavItemActive(href: string, pathname: string): boolean {

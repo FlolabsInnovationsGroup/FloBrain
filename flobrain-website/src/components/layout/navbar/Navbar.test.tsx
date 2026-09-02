@@ -47,7 +47,7 @@ describe("Navbar Component", () => {
       expect(screen.getByRole("link", { name: /Sign In/i })).toBeInTheDocument();
     });
 
-    const toggleButton = screen.getByRole("button");
+    const toggleButton = screen.getByRole("button", { name: "Open menu" });
     const signInLinksBefore = screen.getAllByText(/Sign In/i);
     expect(signInLinksBefore.length).toBeGreaterThanOrEqual(1);
 
@@ -63,7 +63,7 @@ describe("Navbar Component", () => {
       expect(screen.getByRole("link", { name: /Sign In/i })).toBeInTheDocument();
     });
 
-    const toggleButton = screen.getByRole("button");
+    const toggleButton = screen.getByRole("button", { name: "Open menu" });
     fireEvent.click(toggleButton);
 
     const mobileLinks = screen.getAllByText(/Sign In/i);
@@ -92,6 +92,7 @@ describe("Navbar Component", () => {
       ["Dashboard", "/dashboard"],
       ["Activity", "/home"],
       ["Memory", "/memory"],
+      ["Models", "/models"],
     ];
 
     for (const [label, href] of expected) {

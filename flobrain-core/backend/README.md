@@ -25,6 +25,10 @@ backend/
 
 This is the Django + PostgreSQL backend for the FloBrain application. It is fully containerized using Docker to ensure a consistent development environment.
 
+## Model Registry API
+
+The authenticated Model Registry CRUD API is available at `/api/model-registry/`. It stores the provider, provider type, supported inputs, and capabilities for each AI model available to FloBrain. See [`docs/features/MODEL_REGISTRY.md`](../../docs/features/MODEL_REGISTRY.md) for the schema, endpoints, validation rules, migration command, and authorization behavior.
+
 ## Quick Start Guide
 
 **Prerequisites:**
