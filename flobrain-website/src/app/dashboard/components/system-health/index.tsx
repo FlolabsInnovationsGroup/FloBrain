@@ -35,7 +35,6 @@ export const SystemHealth = (): React.JSX.Element => {
     : "0 0 12px rgba(239, 68, 68, 0.6)";
   const allSystemsOperational = health?.allSystemsOperational ?? false;
   const databaseStatus = health?.database ?? "unknown";
-  const connectedDevices = isLoading ? "—" : (health?.connected_devices ?? "—");
   const lastUpdated = dataUpdatedAt
     ? new Date(dataUpdatedAt).toLocaleTimeString()
     : "—";
@@ -62,7 +61,7 @@ export const SystemHealth = (): React.JSX.Element => {
 
   return (
     <div
-        className="fb-dashboard-card w-full rounded-[18px] sm:rounded-[20px]"
+        className="fb-dashboard-card flex h-full w-full flex-col rounded-[18px] sm:rounded-[20px]"
       style={{
         padding: "clamp(16px, 3.2vw, 28px)",
       }}
@@ -133,25 +132,7 @@ export const SystemHealth = (): React.JSX.Element => {
         )}
       </div>
 
-      <div className="mb-4">
-        <p className="text-[11px] tracking-[0.5px] mb-1" style={{ color: "var(--fb-dashboard-chart-label)" }}>CONNECTED DEVICES</p>
-        <p className="text-2xl md:text-4xl font-semibold leading-none" style={{ color: "var(--fb-dashboard-stat)" }}>{connectedDevices}</p>
-      </div>
-
-      <div className="flex items-end gap-1.5 h-8 mb-4">
-        {[14, 22, 16, 26, 13, 20, 24, 15, 21, 18, 25, 17].map((height, index) => (
-          <div
-            key={index}
-            className="w-[7px] rounded-full"
-            style={{
-              height: `${height}px`,
-              background: "linear-gradient(180deg, #A855F7 0%, #7C3AED 100%)",
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="hidden md:flex items-center justify-between">
+      <div className="mt-auto hidden md:flex items-center justify-between">
         <span className="text-xs" style={{ color: "var(--fb-dashboard-chart-label)" }}>Database</span>
         <span
           className="font-semibold capitalize"
