@@ -4,7 +4,7 @@ import React, { useId, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { House, LayoutDashboard, MessageCircle, Database } from "lucide-react";
+import { House, LayoutDashboard, MessageCircle } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import {
   FOOTER_BRAND,
@@ -22,7 +22,6 @@ const MOBILE_APP_NAV_ITEMS = [
   { label: "Home", href: "/home", icon: House },
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Chats", href: "/brain", icon: MessageCircle },
-  { label: "Memory", href: "/memory", icon: Database },
 ] as const;
 
 /**
@@ -257,7 +256,7 @@ export default function Footer() {
     <>
       {showMobileAppNav && (
         <nav className="fixed inset-x-0 bottom-0 z-[110] border-t border-[#ffffff1a] bg-[#4A1872] md:hidden">
-          <ul className="grid grid-cols-4 items-center px-3 py-2">
+          <ul className="grid grid-cols-3 items-center px-3 py-2">
             {MOBILE_APP_NAV_ITEMS.map(({ label, href, icon: Icon }) => {
               const isActive =
                 pathname === href || pathname.startsWith(`${href}/`);

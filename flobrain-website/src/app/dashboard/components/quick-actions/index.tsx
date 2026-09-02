@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, Brain, Database, Activity } from "lucide-react";
+import { Plus, Brain, Activity } from "lucide-react";
 
 const actions = [
   { label: "New Workflow", href: "/dashboard", icon: Plus },
-  { label: "View Memory", href: "/memory", icon: Database },
   { label: "Open Brain", href: "/brain", icon: Brain },
   { label: "System Status", href: "/dashboard#health", icon: Activity },
 ];
