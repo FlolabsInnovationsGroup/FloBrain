@@ -9,10 +9,12 @@ import { RootBackground } from "@/components/layout/RootBackground";
 import { AuthProviderWrapper } from "@/components/providers/AuthProviderWrapper";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { GA_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
+import { getSiteUrl } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "FloBrain",
     template: "%s | FloBrain",
