@@ -9,8 +9,6 @@ import {
   Home,
   MessageCircle,
   LayoutDashboard,
-  Activity,
-  Database,
   Boxes,
 } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
@@ -28,8 +26,6 @@ const AUTHED_NAV_ITEMS = [
   { label: "Home", href: "/", icon: Home },
   { label: "Chat", href: "/brain", icon: MessageCircle },
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Activity", href: "/home", icon: Activity },
-  { label: "Memory", href: "/memory", icon: Database },
   { label: "Models", href: "/models", icon: Boxes },
 ] as const;
 

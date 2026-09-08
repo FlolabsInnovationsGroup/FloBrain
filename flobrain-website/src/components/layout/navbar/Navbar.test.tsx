@@ -90,8 +90,6 @@ describe("Navbar Component", () => {
       ["Home", "/"],
       ["Chat", "/brain"],
       ["Dashboard", "/dashboard"],
-      ["Activity", "/home"],
-      ["Memory", "/memory"],
       ["Models", "/models"],
     ];
 
@@ -100,6 +98,13 @@ describe("Navbar Component", () => {
     }
 
     expect(screen.queryByRole("link", { name: /Sign In/i })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Activity" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Memory" })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+    expect(screen.getAllByRole("link", { name: "Models" })).toHaveLength(2);
+    expect(screen.queryByRole("link", { name: "Activity" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Memory" })).toBeNull();
   });
 
   it("should mark only the current route as active", async () => {
@@ -111,11 +116,11 @@ describe("Navbar Component", () => {
     // Wait on an authed-only link: "Home" also renders in the signed-out branch,
     // so waiting on it would resolve before AuthProvider settles.
     await waitFor(() => {
-      expect(screen.getByRole("link", { name: "Activity" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Models" })).toBeInTheDocument();
     });
 
-    // usePathname is mocked to "/" — Home is active, Activity ("/home") is not.
+    // usePathname is mocked to "/" — Home is active, Models ("/models") is not.
     expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Activity" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Models" })).not.toHaveAttribute("aria-current");
   });
 });
