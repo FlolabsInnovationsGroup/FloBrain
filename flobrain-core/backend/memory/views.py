@@ -8,11 +8,6 @@ from users.views import get_user_from_request
 
 from .models import MemoryLink, MemoryNode
 
-from .sorter import distribute_to_tiers
-from .tier_1 import save_to_active_buffer
-from .tier_2 import save_to_associative_layer
-from .tier_3 import migrate_to_cold_storage
-
 def _parse_date_range(date_range: str):
     """Return (start, end) datetime or (None, None) for 'All Time'."""
     now = timezone.now()
@@ -232,6 +227,11 @@ class MemorySaveView(APIView):
             return Response({"error": "Auth required"}, status=401)
         
         try:
+            from .sorter import distribute_to_tiers
+            from .tier_1 import save_to_active_buffer
+            from .tier_2 import save_to_associative_layer
+            from .tier_3 import migrate_to_cold_storage
+
             node = distribute_to_tiers(request.data)
             embedding = request.data.get('embedding', [])
 
