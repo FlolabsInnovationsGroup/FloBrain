@@ -9,6 +9,7 @@ from .models import AIModel
 
 class ModelRegistryAPITestCase(TestCase):
     list_url = "/api/model-registry/"
+    names_url = "/api/model-registry/names/"
 
     def setUp(self):
         self.client = APIClient()
@@ -57,6 +58,59 @@ class ModelRegistryAPITestCase(TestCase):
         response = self.client.get(self.list_url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, [])
+
+    def test_model_names_requires_valid_authentication(self):
+        for token in (None, "invalid-token"):
+            with self.subTest(token=token):
+                self.client.credentials()
+                if token:
+                    self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+                response = self.client.get(self.names_url)
+                self.assertEqual(response.status_code, 401)
+                self.assertEqual(response.data["error"], "Authentication required")
+
+    def test_model_names_returns_empty_list(self):
+        response = self.client.get(self.names_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), [])
+
+    def test_model_names_returns_only_names_sorted_and_reflects_changes(self):
+        whisper = AIModel.objects.create(
+            name="Whisper",
+            provider_name="OpenAI",
+            provider_type="open-source",
+            supported_input_types=["audio"],
+            capabilities=["transcription"],
+        )
+        for provider in ("Provider A", "Provider B"):
+            AIModel.objects.create(
+                name="Llama",
+                provider_name=provider,
+                provider_type="open-source",
+                supported_input_types=["text"],
+                capabilities=["chat"],
+            )
+
+        response = self.client.get(self.names_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), ["Llama", "Llama", "Whisper"])
+
+        whisper.name = "Audio model"
+        whisper.save(update_fields=["name"])
+        self.assertEqual(
+            self.client.get(self.names_url).json(), ["Audio model", "Llama", "Llama"]
+        )
+        whisper.delete()
+        self.assertEqual(self.client.get(self.names_url).json(), ["Llama", "Llama"])
+
+    def test_model_names_does_not_accept_writes(self):
+        for method in ("post", "put", "patch", "delete"):
+            with self.subTest(method=method):
+                response = getattr(self.client, method)(
+                    self.names_url, self.payload, format="json"
+                )
+                self.assertEqual(response.status_code, 405)
+        self.assertEqual(AIModel.objects.count(), 0)
 
     def test_update_registered_model(self):
         model = AIModel.objects.create(
