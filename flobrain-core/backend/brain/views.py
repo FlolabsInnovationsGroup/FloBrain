@@ -165,5 +165,11 @@ class SendMessageView(APIView):
 
         chat.save(update_fields=["updated_at"])
 
-        serializer = ChatDetailSerializer(chat)
+        usage_payload = {
+            "total_tokens": llm_result.total_tokens,
+            "model": llm_result.model,
+            "file_type": llm_result.file_type,
+        }
+
+        serializer = ChatDetailSerializer(chat, context={"usage": usage_payload})
         return Response(serializer.data, status=status.HTTP_200_OK)
