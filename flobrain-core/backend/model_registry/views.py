@@ -1,4 +1,5 @@
 from django.db import IntegrityError
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -56,6 +57,28 @@ class AIModelListCreateView(APIView):
                 status=status.HTTP_409_CONFLICT,
             )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class AIModelNamesView(APIView):
+    """Return registered model names for frontend consumers."""
+
+    @extend_schema(
+        summary="List registered model names",
+        description=(
+            "Requires Authorization: Bearer <access-token>. Returns one name per "
+            "registered model, sorted by name. An empty registry returns []."
+        ),
+        responses={
+            200: {"type": "array", "items": {"type": "string"}},
+            401: OpenApiResponse(description="Missing or invalid bearer token."),
+        },
+    )
+    def get(self, request):
+        auth_error = _authentication_error(request)
+        if auth_error:
+            return auth_error
+        names = AIModel.objects.order_by("name", "pk").values_list("name", flat=True)
+        return Response(list(names))
 
 
 class AIModelDetailView(APIView):
