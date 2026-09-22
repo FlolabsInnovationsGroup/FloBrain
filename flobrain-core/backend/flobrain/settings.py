@@ -15,10 +15,9 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -34,7 +33,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 allowed = os.environ.get("ALLOWED_HOSTS", "")
 ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"] + [h for h in allowed.split(",") if h]
 CSRF_TRUSTED_ORIGINS = [
-    origin for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if origin
+    o for o in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",") if o
 ]
 
 
@@ -93,17 +92,25 @@ WSGI_APPLICATION = "flobrain.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'flobrain_db'),
-        'USER': os.environ.get('DB_USER', 'flo_user'),
-        'PASSWORD': os.environ.get('DB_PASS', 'flo_password'),
-        # Docker Compose overrides the local default with DB_HOST=db.
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+if os.environ.get("DB_ENGINE", "postgresql").lower() == "sqlite":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("DB_NAME", "flobrain_db"),
+            "USER": os.environ.get("DB_USER", "flo_user"),
+            "PASSWORD": os.environ.get("DB_PASS", "flo_password"),
+            # Docker Compose overrides the local default with DB_HOST=db.
+            "HOST": os.environ.get("DB_HOST", "localhost"),
+            "PORT": os.environ.get("DB_PORT", "5432"),
+        }
+    }
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -172,3 +179,10 @@ EMAIL_USE_TLS = False
 EMAIL_HOST_USER = os.environ.get("SMTP_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("SMTP_PASS", "")
 SALES_EMAIL = os.environ.get("SALES_EMAIL", "")
+
+# LLM / multimodal worker. Production chat was a stub until this URL is set.
+MULTIMODAL_SERVICE_URL = os.environ.get(
+    "MULTIMODAL_SERVICE_URL", "http://35.153.90.219:8000"
+).rstrip("/")
+MULTIMODAL_API_KEY = os.environ.get("MULTIMODAL_API_KEY", "")
+MULTIMODAL_SERVICE_TIMEOUT = int(os.environ.get("MULTIMODAL_SERVICE_TIMEOUT", "60"))

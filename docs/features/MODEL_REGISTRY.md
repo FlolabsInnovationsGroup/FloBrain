@@ -1,6 +1,6 @@
 # Model Registry
 
-The Model Registry is the source of truth for AI models available to the FloBrain model pool. It is exposed by the Django API in `flobrain-core/backend` and displayed in the website at `/models`.
+The Model Registry stores metadata for AI models available to the FloBrain model pool. It is exposed by the Django API in `flobrain-core/backend`. This feature includes the backend API and Django admin integration only; the website interface is deferred to a separate change.
 
 ## Ownership
 
@@ -69,6 +69,12 @@ This creates the `ai_model_registry` table. The registry is also available throu
 
 ## Verification
 
-Backend coverage is in `model_registry/tests.py`. Frontend CRUD and state coverage is in `flobrain-website/src/app/models/page.test.tsx`.
+Backend coverage is in `model_registry/tests.py`. Run the registry and existing profile/authentication regression tests from `flobrain-core/backend`:
+
+```bash
+docker compose exec web python manage.py test model_registry users
+docker compose exec web python manage.py check
+docker compose exec web python manage.py makemigrations --check --dry-run
+```
 
 The current authorization model has no administrator role. Consequently, all authenticated users can read and mutate registry records, matching existing API conventions. Restrict mutation endpoints when a role/permission policy is introduced.

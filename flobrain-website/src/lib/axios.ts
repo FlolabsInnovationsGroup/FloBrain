@@ -16,6 +16,20 @@ function getBaseUrl(): string {
   return url ? url.replace(/\/$/, "") : "https://api.flobrain.ai";
 }
 
+function requestPath(url: string | undefined): string {
+  if (!url) return "";
+  try {
+    return new URL(url, "http://local.invalid").pathname;
+  } catch {
+    return url;
+  }
+}
+
+/** Login/register/refresh 401s are real auth failures, not expired access tokens. */
+function shouldAttemptTokenRefresh(url: string | undefined): boolean {
+  return !/\/api\/auth\/(signin|register|refresh)\/?$/.test(requestPath(url));
+}
+
 async function refreshAccessToken() {
   if (typeof window === "undefined") {
     throw new Error("Cannot refresh token on server");
@@ -76,8 +90,18 @@ apiClient.interceptors.response.use(
     if (
       !originalRequest ||
       error.response?.status !== 401 ||
-      originalRequest._retry
+      originalRequest._retry ||
+      !shouldAttemptTokenRefresh(originalRequest.url)
     ) {
+      return Promise.reject(error);
+    }
+
+    const refreshToken =
+      typeof window !== "undefined"
+        ? localStorage.getItem(REFRESH_TOKEN_KEY)
+        : null;
+
+    if (!refreshToken) {
       return Promise.reject(error);
     }
 
@@ -91,11 +115,11 @@ apiClient.interceptors.response.use(
 
       return apiClient(originalRequest);
 
-    } catch (refreshError) {
+    } catch {
       localStorage.removeItem(ACCESS_TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
 
-      return Promise.reject(refreshError);
+      return Promise.reject(error);
     }
   }
 );

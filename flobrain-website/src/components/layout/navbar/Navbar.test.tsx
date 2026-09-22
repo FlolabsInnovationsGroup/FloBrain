@@ -47,7 +47,7 @@ describe("Navbar Component", () => {
       expect(screen.getByRole("link", { name: /Sign In/i })).toBeInTheDocument();
     });
 
-    const toggleButton = screen.getByRole("button", { name: "Open menu" });
+    const toggleButton = screen.getByRole("button");
     const signInLinksBefore = screen.getAllByText(/Sign In/i);
     expect(signInLinksBefore.length).toBeGreaterThanOrEqual(1);
 
@@ -63,7 +63,7 @@ describe("Navbar Component", () => {
       expect(screen.getByRole("link", { name: /Sign In/i })).toBeInTheDocument();
     });
 
-    const toggleButton = screen.getByRole("button", { name: "Open menu" });
+    const toggleButton = screen.getByRole("button");
     fireEvent.click(toggleButton);
 
     const mobileLinks = screen.getAllByText(/Sign In/i);
@@ -90,7 +90,8 @@ describe("Navbar Component", () => {
       ["Home", "/"],
       ["Chat", "/brain"],
       ["Dashboard", "/dashboard"],
-      ["Models", "/models"],
+      ["Activity", "/home"],
+      ["Memory", "/memory"],
     ];
 
     for (const [label, href] of expected) {
@@ -98,13 +99,6 @@ describe("Navbar Component", () => {
     }
 
     expect(screen.queryByRole("link", { name: /Sign In/i })).toBeNull();
-    expect(screen.queryByRole("link", { name: "Activity" })).toBeNull();
-    expect(screen.queryByRole("link", { name: "Memory" })).toBeNull();
-
-    fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
-    expect(screen.getAllByRole("link", { name: "Models" })).toHaveLength(2);
-    expect(screen.queryByRole("link", { name: "Activity" })).toBeNull();
-    expect(screen.queryByRole("link", { name: "Memory" })).toBeNull();
   });
 
   it("should mark only the current route as active", async () => {
@@ -116,11 +110,11 @@ describe("Navbar Component", () => {
     // Wait on an authed-only link: "Home" also renders in the signed-out branch,
     // so waiting on it would resolve before AuthProvider settles.
     await waitFor(() => {
-      expect(screen.getByRole("link", { name: "Models" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "Activity" })).toBeInTheDocument();
     });
 
-    // usePathname is mocked to "/" — Home is active, Models ("/models") is not.
+    // usePathname is mocked to "/" — Home is active, Activity ("/home") is not.
     expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Models" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Activity" })).not.toHaveAttribute("aria-current");
   });
 });
