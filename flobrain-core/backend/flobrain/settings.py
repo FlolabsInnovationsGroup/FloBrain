@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "memory",
     "dashboard",
     "brain",
+    "model_registry",
     "contact",
 ]
 

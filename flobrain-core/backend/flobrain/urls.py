@@ -32,6 +32,7 @@ urlpatterns = [
     path("", include("memory.urls")),
     path("", include("dashboard.urls")),
     path("", include("brain.urls")),
+    path("", include("model_registry.urls")),
     path("", include("contact.urls")),
 
     # Swagger / API docs
