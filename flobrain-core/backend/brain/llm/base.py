@@ -7,6 +7,7 @@ class LLMResult:
     generated_response: str
     model: str
     file_type: str = "text"
+    total_tokens: int = 0
 
 
 class LLMAdapter(Protocol):

@@ -49,7 +49,7 @@ class MultimodalLLMAdapter:
     Body:     multipart/form-data  { text_input: "<prompt>" }
     Auth:     Bearer {MULTIMODAL_API_KEY}  (if key is set)
 
-    Response fields used: result, model, file_type
+    Response fields used: result, model, file_type, total_tokens
     """
 
     def __init__(self) -> None:
@@ -108,9 +108,11 @@ class MultimodalLLMAdapter:
         generated_response = (data.get("result") or "").strip()
         resolved_model = data.get("model") or model or "unknown"
         file_type = data.get("file_type") or "text"
+        total_tokens = int(data.get("total_tokens") or 0)
 
         return LLMResult(
             generated_response=generated_response or "Error: empty response from multimodal service.",
             model=resolved_model,
             file_type=file_type,
+            total_tokens=total_tokens,
         )
