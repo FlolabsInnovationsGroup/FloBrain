@@ -1,11 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ChatInput from './index';
+import { vi } from 'vitest';
 
-jest.mock('lucide-react', () => ({
+vi.mock('lucide-react', () => ({
   Mic: () => <div data-testid="mic-icon">Mic</div>,
-  MicOff: () => <div data-testid="mic-off-icon">MicOff</div>,
   Image: () => <div data-testid="image-icon">Image</div>,
   X: () => <div data-testid="x-icon">X</div>,
   Zap: () => <div data-testid="zap-icon">Zap</div>,
@@ -13,54 +13,59 @@ jest.mock('lucide-react', () => ({
   ArrowUp: () => <div data-testid="arrow-up-icon">ArrowUp</div>,
 }));
 
-Object.defineProperty(window, 'MediaRecorder', {
-  writable: true,
-  configurable: true,
-  value: jest.fn().mockImplementation(() => {
-    const recorder: {
-      start: jest.Mock;
-      stop: jest.Mock;
-      onstop: (() => void) | null;
-      ondataavailable: ((e: { data: Blob }) => void) | null;
-    } = {
-      start: jest.fn(),
-      onstop: null,
-      ondataavailable: null,
-      stop: jest.fn(() => {
-        recorder.onstop?.();
-      }),
-    };
-    return recorder;
-  }),
-});
+type MockRecognition = {
+  start: ReturnType<typeof vi.fn>;
+  stop: ReturnType<typeof vi.fn>;
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: {
+    results: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }>;
+  }) => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
+  onend: (() => void) | null;
+};
+
+let latestRecognition: MockRecognition | null = null;
+
+function createRecognition(): MockRecognition {
+  const recognition: MockRecognition = {
+    start: vi.fn(),
+    stop: vi.fn(() => {
+      recognition.onend?.();
+    }),
+    continuous: false,
+    interimResults: false,
+    lang: '',
+    onresult: null,
+    onerror: null,
+    onend: null,
+  };
+  latestRecognition = recognition;
+  return recognition;
+}
 
 function openAttachMenu() {
   fireEvent.click(screen.getByTestId('chat-mobile-attach-button'));
 }
 
 describe('ChatInput', () => {
-  const mockOnSendMessage = jest.fn();
+  const mockOnSendMessage = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
+    latestRecognition = null;
     Object.defineProperty(window, 'webkitSpeechRecognition', {
       writable: true,
       configurable: true,
-      value: jest.fn().mockImplementation(() => ({
-        start: jest.fn(),
-        stop: jest.fn(),
-        continuous: false,
-        interimResults: false,
-        onresult: jest.fn(),
-      })),
-    });
-    Object.defineProperty(window.navigator, 'mediaDevices', {
-      writable: true,
-      value: {
-        getUserMedia: jest.fn().mockResolvedValue({
-          getTracks: jest.fn().mockReturnValue([{ stop: jest.fn() }]),
-        }),
+      value: function WebkitSpeechRecognitionMock() {
+        return createRecognition();
       },
+    });
+    Object.defineProperty(window, 'SpeechRecognition', {
+      writable: true,
+      configurable: true,
+      value: undefined,
     });
   });
 
@@ -178,13 +183,82 @@ describe('ChatInput', () => {
       });
     });
 
-    test('stop button has pulse styling while recording', async () => {
+    test('shows a listening ring around the microphone while recording', async () => {
       render(<ChatInput onSendMessage={mockOnSendMessage} />);
       openAttachMenu();
       fireEvent.click(screen.getByRole('menuitem', { name: /voice input/i }));
       await waitFor(() => {
-        expect(screen.getByRole('button', { name: /stop recording/i })).toHaveClass('animate-pulse');
+        expect(screen.getByRole('button', { name: /stop recording/i })).toBeInTheDocument();
       });
+      expect(screen.getByTestId('mic-listening-ring')).toHaveClass('animate-ping');
+      expect(screen.getByTestId('mic-icon')).toBeInTheDocument();
+    });
+
+    test('stops recording when the message is sent', async () => {
+      render(<ChatInput onSendMessage={mockOnSendMessage} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Voice input' }));
+      await waitFor(() => {
+        expect(latestRecognition?.start).toHaveBeenCalled();
+      });
+      act(() => {
+        latestRecognition?.onresult?.({
+          results: [{ isFinal: true, 0: { transcript: 'send this sentence' } }],
+        });
+      });
+
+      fireEvent.click(screen.getByRole('button', { name: /send message/i }));
+
+      expect(latestRecognition?.stop).toHaveBeenCalled();
+      expect(mockOnSendMessage).toHaveBeenCalledWith('send this sentence', undefined);
+      expect(screen.getByRole('button', { name: 'Voice input' })).toBeInTheDocument();
+      expect(screen.queryByTestId('mic-listening-ring')).not.toBeInTheDocument();
+    });
+
+    test('returns the microphone to its idle icon after stopping', async () => {
+      render(<ChatInput onSendMessage={mockOnSendMessage} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Voice input' }));
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: /stop recording/i })).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByRole('button', { name: /stop recording/i }));
+      expect(screen.getByRole('button', { name: 'Voice input' })).toBeInTheDocument();
+      expect(screen.queryByTestId('mic-listening-ring')).not.toBeInTheDocument();
+    });
+
+    test('writes recognized speech into the input', async () => {
+      render(<ChatInput onSendMessage={mockOnSendMessage} />);
+      fireEvent.click(screen.getByRole('button', { name: 'Voice input' }));
+      await waitFor(() => {
+        expect(latestRecognition?.start).toHaveBeenCalled();
+      });
+
+      act(() => {
+        latestRecognition?.onresult?.({
+          results: [{ isFinal: true, 0: { transcript: 'hello from the mic' } }],
+        });
+      });
+
+      expect(screen.getByRole('textbox')).toHaveValue('hello from the mic');
+    });
+
+    test('appends recognized speech after existing text', async () => {
+      render(<ChatInput onSendMessage={mockOnSendMessage} />);
+      fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Please explain' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Voice input' }));
+      await waitFor(() => {
+        expect(latestRecognition?.start).toHaveBeenCalled();
+      });
+
+      act(() => {
+        latestRecognition?.onresult?.({
+          results: [{ isFinal: false, 0: { transcript: 'how transformers' } }],
+        });
+        latestRecognition?.onresult?.({
+          results: [{ isFinal: true, 0: { transcript: 'how transformers work' } }],
+        });
+      });
+
+      expect(screen.getByRole('textbox')).toHaveValue('Please explain how transformers work');
     });
   });
 
@@ -211,34 +285,29 @@ describe('ChatInput', () => {
 
   describe('Error handling', () => {
     test('handles microphone permission error', async () => {
-      (window.navigator.mediaDevices.getUserMedia as jest.Mock).mockRejectedValue(
-        new Error('Permission denied')
-      );
-      const mockAlert = jest.spyOn(window, 'alert').mockImplementation(() => {});
+      const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
       render(<ChatInput onSendMessage={mockOnSendMessage} />);
       openAttachMenu();
       fireEvent.click(screen.getByRole('menuitem', { name: /voice input/i }));
       await waitFor(() => {
-        expect(mockAlert).toHaveBeenCalledWith('Could not access microphone. Please check permissions.');
+        expect(latestRecognition?.start).toHaveBeenCalled();
       });
+      latestRecognition?.onerror?.({ error: 'not-allowed' });
+      expect(mockAlert).toHaveBeenCalledWith('Could not access microphone. Please check permissions.');
       mockAlert.mockRestore();
     });
 
     test('handles speech recognition not supported', async () => {
-      Object.defineProperty(window, 'webkitSpeechRecognition', { value: undefined });
-      Object.defineProperty(window, 'SpeechRecognition', { value: undefined });
-      const mockAlert = jest.spyOn(window, 'alert').mockImplementation(() => {});
+      Object.defineProperty(window, 'webkitSpeechRecognition', { value: undefined, configurable: true });
+      Object.defineProperty(window, 'SpeechRecognition', { value: undefined, configurable: true });
+      const mockAlert = vi.spyOn(window, 'alert').mockImplementation(() => {});
       render(<ChatInput onSendMessage={mockOnSendMessage} />);
       openAttachMenu();
       fireEvent.click(screen.getByRole('menuitem', { name: /voice input/i }));
-      await waitFor(() => {
-        fireEvent.click(screen.getByRole('button', { name: /stop recording/i }));
-      });
-      await waitFor(() => {
-        expect(mockAlert).toHaveBeenCalledWith(
-          'Speech recognition not supported in your browser. Please use Chrome or Edge.'
-        );
-      });
+      expect(mockAlert).toHaveBeenCalledWith(
+        'Speech recognition not supported in your browser. Please use Chrome or Edge.'
+      );
+      expect(screen.queryByRole('button', { name: /stop recording/i })).not.toBeInTheDocument();
       mockAlert.mockRestore();
     });
   });
