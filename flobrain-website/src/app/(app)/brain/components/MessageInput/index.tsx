@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, KeyboardEvent as ReactKeyboardEvent, useRef, useEffect, useLayoutEffect, useCallback } from 'react';
-import { Mic, MicOff, Image as ImageIcon, X, Zap, Plus, ArrowUp } from 'lucide-react';
+import { Mic, Image as ImageIcon, X, Zap, Plus, ArrowUp } from 'lucide-react';
 import Image from 'next/image';
 
 interface ChatInputProps {
@@ -27,10 +27,13 @@ export default function ChatInput({
   const [isRecording, setIsRecording] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const inputValueRef = useRef(inputValue);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const attachMenuContainerRef = useRef<HTMLDivElement>(null);
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
+
+  inputValueRef.current = inputValue;
 
   const minTextareaPx = compactMode ? 40 : 48;
   const maxTextareaPx = 220;
@@ -94,8 +97,21 @@ export default function ChatInput({
     return () => mq.removeEventListener('change', onChange);
   }, []);
 
+  const stopRecording = () => {
+    const recognition = recognitionRef.current;
+    recognitionRef.current = null;
+    if (recognition) {
+      recognition.onresult = null;
+      recognition.onerror = null;
+      recognition.onend = null;
+      recognition.stop();
+    }
+    setIsRecording(false);
+  };
+
   const handleSend = () => {
     if ((inputValue.trim() || imagePreview) && !disabled) {
+      stopRecording();
       onSendMessage(inputValue.trim(), imagePreview || undefined);
       setInputValue('');
       setImagePreview(null);
@@ -111,57 +127,76 @@ export default function ChatInput({
     }
   };
 
-  // Voice recording
-  const toggleRecording = async () => {
+  useEffect(() => {
+    return () => {
+      const recognition = recognitionRef.current;
+      recognitionRef.current = null;
+      if (!recognition) return;
+      recognition.onresult = null;
+      recognition.onerror = null;
+      recognition.onend = null;
+      recognition.stop();
+    };
+  }, []);
+
+  const toggleRecording = () => {
     if (isRecording) {
-      // Stop recording
-      mediaRecorderRef.current?.stop();
-      setIsRecording(false);
-    } else {
-      // Start recording
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const mediaRecorder = new MediaRecorder(stream);
-        mediaRecorderRef.current = mediaRecorder;
+      stopRecording();
+      return;
+    }
 
-        const audioChunks: Blob[] = [];
-        
-        mediaRecorder.ondataavailable = (event) => {
-          audioChunks.push(event.data);
-        };
+    const SpeechRecognitionCtor =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
 
-        mediaRecorder.onstop = async () => {
-          void new Blob(audioChunks, { type: 'audio/webm' });
+    if (!SpeechRecognitionCtor) {
+      alert('Speech recognition not supported in your browser. Please use Chrome or Edge.');
+      return;
+    }
 
-          // Use Web Speech API for speech-to-text
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-          
-          if (SpeechRecognition) {
-            const recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            recognition.onresult = (event: any) => {
-              const transcript = event.results[0][0].transcript;
-              setInputValue(prev => prev + ' ' + transcript);
-            };
-            
-            recognition.start();
-          } else {
-            alert('Speech recognition not supported in your browser. Please use Chrome or Edge.');
-          }
-          
-          stream.getTracks().forEach(track => track.stop());
-        };
+    const recognition = new SpeechRecognitionCtor();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = navigator.language || 'en-US';
 
-        mediaRecorder.start();
-        setIsRecording(true);
-      } catch (error) {
-        console.error('Error accessing microphone:', error);
-        alert('Could not access microphone. Please check permissions.');
+    const baseText = inputValueRef.current.replace(/\s+$/, '');
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let spoken = '';
+      for (let i = 0; i < event.results.length; i++) {
+        spoken += event.results[i][0]?.transcript ?? '';
       }
+      const transcript = spoken.replace(/\s+/g, ' ').trim();
+      if (!transcript) return;
+      setInputValue(baseText ? `${baseText} ${transcript}` : transcript);
+    };
+
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      if (event.error === 'aborted' || event.error === 'no-speech') return;
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed' || event.error === 'audio-capture') {
+        alert('Could not access microphone. Please check permissions.');
+        return;
+      }
+      if (event.error === 'network') {
+        alert('Speech recognition could not reach the speech service. Check your connection and try Chrome or Edge.');
+        return;
+      }
+      alert('Speech recognition failed. Please try again.');
+    };
+
+    recognition.onend = () => {
+      recognitionRef.current = null;
+      setIsRecording(false);
+    };
+
+    recognitionRef.current = recognition;
+    setIsRecording(true);
+    try {
+      recognition.start();
+    } catch (error) {
+      console.error('Error starting speech recognition:', error);
+      recognitionRef.current = null;
+      setIsRecording(false);
+      alert('Could not access microphone. Please check permissions.');
     }
   };
 
@@ -248,11 +283,20 @@ export default function ChatInput({
                   type="button"
                   onClick={() => void toggleRecording()}
                   disabled={disabled}
-                  className="mb-1 shrink-0 rounded-lg p-1.5 text-red-400 transition-colors animate-pulse hover:bg-white/5 hover:text-red-300 disabled:opacity-50 xl:p-2"
+                  className="relative mb-1 shrink-0 rounded-full p-1.5 text-violet-300 transition-colors hover:bg-violet-500/10 hover:text-violet-200 disabled:opacity-50 xl:p-2"
                   title="Stop recording"
                   aria-label="Stop recording"
                 >
-                  <MicOff size={18} />
+                  <span
+                    data-testid="mic-listening-ring"
+                    className="pointer-events-none absolute inset-0 animate-ping rounded-full border-2 border-violet-400"
+                    aria-hidden
+                  />
+                  <span
+                    className="pointer-events-none absolute inset-0 rounded-full border border-violet-400/70"
+                    aria-hidden
+                  />
+                  <Mic size={18} className="relative" />
                 </button>
               ) : (
                 <>
