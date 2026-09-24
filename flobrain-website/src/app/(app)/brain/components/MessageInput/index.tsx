@@ -33,7 +33,9 @@ export default function ChatInput({
   const attachMenuContainerRef = useRef<HTMLDivElement>(null);
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
 
+ useEffect(() => {
   inputValueRef.current = inputValue;
+}, [inputValue]);
 
   const minTextareaPx = compactMode ? 40 : 48;
   const maxTextareaPx = 220;
