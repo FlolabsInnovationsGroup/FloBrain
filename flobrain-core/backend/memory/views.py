@@ -1,7 +1,11 @@
+import logging
+
 from django.db.models import Q
 from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+logger = logging.getLogger(__name__)
 
 from memory.mongo_client import db as mongo_db
 from users.views import get_user_from_request
@@ -63,7 +67,8 @@ class MemoryGraphView(APIView):
         except (TypeError, ValueError):
             min_relevance = 0.0
 
-        qs = MemoryNode.objects.all()
+        # Scope to authenticated user's own memory nodes only
+        qs = MemoryNode.objects.filter(owner_id=str(user.id))
 
         if search:
             # Map display names (searchable in UI) to DB memory_type values
@@ -220,20 +225,24 @@ class MemoryNodeDetailView(APIView):
 
 
 class MemorySaveView(APIView):
-   
+
     def post(self, request):
         user = get_user_from_request(request)
         if not user:
             return Response({"error": "Auth required"}, status=401)
-        
+
         try:
             from .sorter import distribute_to_tiers
             from .tier_1 import save_to_active_buffer
             from .tier_2 import save_to_associative_layer
             from .tier_3 import migrate_to_cold_storage
 
-            node = distribute_to_tiers(request.data)
-            embedding = request.data.get('embedding', [])
+            # Always enforce owner_id from the authenticated user; never trust client payload.
+            payload = dict(request.data)
+            payload["owner_id"] = str(user.id)
+
+            node = distribute_to_tiers(payload)
+            embedding = request.data.get("embedding", [])
 
             migrate_to_cold_storage(node)
 
@@ -242,12 +251,13 @@ class MemorySaveView(APIView):
 
             if node.tier_level == 1:
                 save_to_active_buffer(node)
-                
+
             return Response({
                 "status": "saved",
                 "binary_index": node.binary_index,
                 "tier": node.tier_level,
-                "node_id": node.id
+                "node_id": node.id,
             })
-        except Exception as e:
-            return Response({"error": str(e)}, status=500)
+        except Exception:
+            logger.exception("MemorySaveView failed for user %s", user.id)
+            return Response({"error": "Failed to save memory node"}, status=500)
