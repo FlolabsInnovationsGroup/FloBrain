@@ -20,7 +20,7 @@ const demos: Demo[] = [
   { designer: "Diogo", version: 1, url: "https://diogo1.flobrain.ai/" },
   { designer: "Diogo", version: 2, url: "https://diogo2.flobrain.ai/" },
   { designer: "Sandeep", version: 1, url: "https://v2.flobrain.ai/" },
-  { designer: "Claudia", version: 1, url: "https://health.flobrain.ai/" },
+  { designer: "Claudia", version: 1,  url: "https://health.flobrain.ai/" },
 ];
 
 export default function DashboardTemplatesPage() {
