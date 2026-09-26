@@ -4,7 +4,8 @@ services:
     container_name: flobrain_backend_db
     restart: always
     ports:
-      - "5432:5432"
+      - "5432:5432"   # Expose so Django on host can use DB_HOST=localhost
+
     environment:
       - POSTGRES_DB=flobrain_db
       - POSTGRES_USER=flo_user
@@ -17,12 +18,47 @@ services:
       timeout: 5s
       retries: 10
 
+  web:
+    build: .
+    container_name: flobrain_backend_django
+    restart: always
+    command: >
+      sh -c "
+      until pg_isready -h db -p 5432;
+      do
+        echo 'Waiting for PostgreSQL...';
+        sleep 1;
+      done;
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+    volumes:
+      - .:/app   # This syncs the local folder to the container
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=flobrain_db
+      - DB_USER=flo_user
+      - DB_PASS=flo_password
+      - DB_HOST=db # Default 'localhost' for running outside Docker; use DB_HOST=db in Docker
+      - DB_PORT=5432
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   mongodb:
     image: mongo:latest
     container_name: flobrain_backend_mongodb
     restart: always
-    ports:
-      - "27017:27017"
     volumes:
       - mongo_data:/data/db
     healthcheck:
@@ -42,38 +78,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-
-  web:
-    build: .
-    container_name: flobrain_backend_django
-    restart: always
-    command: >
-      sh -c "
-      python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8000
-      "
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    environment:
-      - DB_NAME=flobrain_db
-      - DB_USER=flo_user
-      - DB_PASS=flo_password
-      - DB_HOST=db
-      - DB_PORT=5432
-      - MONGO_HOST=mongodb
-      - MONGO_PORT=27017
-      - REDIS_URL=redis://redis:6379/0
-    depends_on:
-      db:
-        condition: service_healthy
-      mongodb:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
 
 volumes:
   postgres_data:
