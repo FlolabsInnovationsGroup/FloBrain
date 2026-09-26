@@ -104,31 +104,48 @@ def _hash_refresh_token(token: str) -> str:
 
 
 class LogoutView(APIView):
-    """POST with userId and refresh_token (optional). Invalidates the refresh token server-side."""
+    """
+    POST with userId and refresh_token. Blacklists the refresh token server-side.
+    refresh_token is required — logout without it would succeed without revoking the token.
+    Requires a valid Bearer access token.
+    """
 
     def post(self, request):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"error": "Authentication required", "details": "Valid Bearer token required"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         try:
-            user_id = request.data.get("userId")
-            if not user_id:
+            user_id = str(user.id)
+            refresh_token = request.data.get("refresh_token") or request.data.get("refresh")
+            if not refresh_token:
                 return Response(
-                    {"error": "userId is required"},
+                    {"error": "refresh_token is required"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            refresh_token = request.data.get("refresh_token")
-            if refresh_token:
-                payload = decode_token(refresh_token)
-                if payload and payload.get("type") == "refresh" and payload.get("sub") == user_id:
-                    exp = payload.get("exp")
-                    expires_at = (
-                        datetime.fromtimestamp(exp, tz=timezone.utc)
-                        if exp is not None
-                        else datetime.now(timezone.utc)
-                    )
-                    token_hash = _hash_refresh_token(refresh_token)
-                    BlacklistedRefreshToken.objects.update_or_create(
-                        token_hash=token_hash,
-                        defaults={"expires_at": expires_at},
-                    )
+
+            payload = decode_token(refresh_token)
+            if payload and payload.get("type") == "refresh" and payload.get("sub") == user_id:
+                exp = payload.get("exp")
+                expires_at = (
+                    datetime.fromtimestamp(exp, tz=timezone.utc)
+                    if exp is not None
+                    else datetime.now(timezone.utc)
+                )
+                token_hash = _hash_refresh_token(refresh_token)
+                BlacklistedRefreshToken.objects.update_or_create(
+                    token_hash=token_hash,
+                    defaults={"expires_at": expires_at},
+                )
+            else:
+                # Token doesn't belong to this user or is not a refresh token
+                return Response(
+                    {"error": "Invalid refresh token"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             return Response({"message": "Logged out successfully"})
         except Exception:
             return Response(
