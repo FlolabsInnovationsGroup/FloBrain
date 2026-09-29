@@ -74,7 +74,7 @@ export default function HelpSettings() {
             key={item.question}
             className={cn(
               settingsCardClass,
-              "overflow-hidden p-0 transition-colors hover:border-white/20"
+              "overflow-hidden p-0 transition-colors hover:border-[var(--fb-brain-btn)]/40"
             )}
           >
             <button
@@ -84,10 +84,10 @@ export default function HelpSettings() {
               aria-controls={`faq-answer-${index}`}
               className="group flex w-full items-center justify-between gap-4 p-4 text-left"
             >
-              <span className="font-medium text-white">{item.question}</span>
+              <span className="font-medium text-[var(--fb-brain-heading)]">{item.question}</span>
               <ChevronDown
                 className={cn(
-                  "h-5 w-5 shrink-0 text-white/70 transition-transform",
+                  "h-5 w-5 shrink-0 text-[var(--fb-brain-text-muted)] transition-transform",
                   isExpanded && "rotate-180"
                 )}
               />
@@ -96,7 +96,7 @@ export default function HelpSettings() {
             {isExpanded && (
               <div
                 id={`faq-answer-${index}`}
-                className="border-t border-white/10 px-4 pb-4 pt-3"
+                className="border-t border-[var(--fb-brain-surface-border)] px-4 pb-4 pt-3"
               >
                 <p className={cn(settingsTextMuted, "leading-7")}>
                   {item.answer}

@@ -17,11 +17,11 @@ const RightPanel = memo(function RightPanel({
 }: RightPanelProps) {
   return (
     <aside
-      className="flex min-h-0 w-[21rem] flex-col bg-slate-900/55"
+      className="flex min-h-0 w-[21rem] flex-col bg-slate-900/55 light:bg-transparent"
       aria-label="Recent interactions"
     >
       <div className="flex flex-col min-h-0">
-        <div className="flex-1 min-h-0 rounded-2xl bg-[#0B0F1A]/50 border border-[#767676]/50 p-5 shadow-inner">
+        <div className="flex-1 min-h-0 rounded-2xl bg-[#0B0F1A]/50 border border-[#767676]/50 light:bg-[var(--fb-confidence-panel-bg)] light:border-[var(--fb-chat-shell-border)] p-5 shadow-inner">
           <RecentInteractions
             interactions={interactions}
             analytics={analytics}

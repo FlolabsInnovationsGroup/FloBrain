@@ -30,13 +30,13 @@ export function SettingsNestedModal({
     >
       <div className={settingsNestedPanel}>
         <div className="mb-6 flex items-center justify-between">
-          <h2 id={titleId} className="text-xl font-semibold text-white">
+          <h2 id={titleId} className="text-xl font-semibold text-[var(--fb-brain-heading)]">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded-lg p-1.5 text-[var(--fb-brain-text-muted)] transition-colors hover:bg-[var(--fb-brain-surface-bg)] hover:text-[var(--fb-brain-heading)]"
             aria-label="Close"
           >
             <X className="h-5 w-5" />

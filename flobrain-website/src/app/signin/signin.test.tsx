@@ -35,11 +35,11 @@ describe("Login Component", () => {
     expect(screen.getByPlaceholderText("johndoe@gmail.com")).toBeInTheDocument();
   });
 
-  it("should render social login buttons", () => {
+  it("should hide social login buttons", () => {
     renderWithAuth(<SignInCard />);
 
-    expect(screen.getByText("Continue with Google")).toBeInTheDocument();
-    expect(screen.getByText("Continue with Apple")).toBeInTheDocument();
+    expect(screen.queryByText("Continue with Google")).not.toBeInTheDocument();
+    expect(screen.queryByText("Continue with Apple")).not.toBeInTheDocument();
   });
 
   it("should update email input value when user types", () => {
@@ -114,7 +114,7 @@ describe("Login Component", () => {
 
     const card = container.querySelector(".rounded-2xl");
     expect(card).toBeInTheDocument();
-    expect(card?.className).toContain("bg-[#160a28]/95");
+    expect(card?.className).toContain("fb-auth-card");
   });
 
   it("should display icons for form inputs", () => {

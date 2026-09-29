@@ -26,11 +26,6 @@
   width: min(92vw, 520px);
   height: min(92vw, 520px);
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(124, 58, 237, 0.22) 0%,
-    rgba(124, 58, 237, 0.08) 42%,
-    transparent 72%
-  );
+  background: var(--fb-auth-glow);
   opacity: 0.9;
 }

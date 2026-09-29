@@ -11,7 +11,7 @@ export const SystemHealth = (): React.JSX.Element => {
     queryFn: async () => {
       const result = await api.getDashboardHealth();
       if (result.error || result.status >= 400) {
-        throw new Error(result.error ?? "Failed to load health");
+        throw new Error(result.error ?? "Couldn't connect to FloBrain");
       }
       return result.data!;
     },
@@ -26,7 +26,7 @@ export const SystemHealth = (): React.JSX.Element => {
     : systemStatus === "critical_error" ? "Critical Error"
     : "Offline";
   const dotColor =
-    systemStatus === "online" ? "#00D492"
+    systemStatus === "online" ? "var(--fb-dashboard-success)"
     : systemStatus === "idle" || systemStatus === "loading" ? "#F59E0B"
     : "#EF4444";
   const dotShadow =
@@ -35,38 +35,35 @@ export const SystemHealth = (): React.JSX.Element => {
     : "0 0 12px rgba(239, 68, 68, 0.6)";
   const allSystemsOperational = health?.allSystemsOperational ?? false;
   const databaseStatus = health?.database ?? "unknown";
-  const connectedDevices = isLoading ? "—" : (health?.connected_devices ?? "—");
   const lastUpdated = dataUpdatedAt
     ? new Date(dataUpdatedAt).toLocaleTimeString()
     : "—";
+  const errorMessage =
+    error instanceof Error && error.message.trim()
+      ? error.message
+      : "Couldn't connect to FloBrain";
 
   if (error) {
     return (
       <div
-        className="w-full lg:w-[830px] rounded-[16px] sm:rounded-[20px]"
+        className="fb-dashboard-card w-full lg:w-[830px] rounded-[16px] sm:rounded-[20px]"
         style={{
-          background: "rgba(30, 18, 43, 0.6)",
           padding: "clamp(20px, 4vw, 32px)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
         }}
       >
         <h2 className="font-semibold mb-1" style={{ fontSize: "11px", letterSpacing: "0.5px", color: "rgba(255, 255, 255, 0.5)" }}>
           SYSTEM HEALTH
         </h2>
-        <p style={{ fontSize: "13px", color: "#FCA5A5" }}>Unable to reach backend. Check that the API is running.</p>
+        <p style={{ fontSize: "13px", color: "#FCA5A5" }}>{errorMessage}</p>
       </div>
     );
   }
 
   return (
     <div
-      className="w-full rounded-[18px] sm:rounded-[20px]"
+        className="fb-dashboard-card flex h-full w-full flex-col rounded-[18px] sm:rounded-[20px]"
       style={{
-        background: "rgba(30, 18, 43, 0.72)",
         padding: "clamp(16px, 3.2vw, 28px)",
-        border: "1px solid rgba(139, 92, 246, 0.28)",
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.12)",
       }}
     >
       <div className="flex items-start justify-between mb-4 sm:mb-6">
@@ -76,7 +73,7 @@ export const SystemHealth = (): React.JSX.Element => {
             style={{
               fontSize: "11px",
               letterSpacing: "0.5px",
-              color: "rgba(255, 255, 255, 0.5)",
+              color: "var(--fb-dashboard-heading)",
             }}
           >
             SYSTEM HEALTH
@@ -84,7 +81,7 @@ export const SystemHealth = (): React.JSX.Element => {
           <p
             style={{
               fontSize: "11px",
-              color: "rgba(255, 255, 255, 0.35)",
+              color: "var(--fb-dashboard-chart-label)",
             }}
           >
             {isLoading ? "Loading…" : `Last updated: ${lastUpdated}`}
@@ -96,7 +93,7 @@ export const SystemHealth = (): React.JSX.Element => {
             background: "rgba(0, 212, 146, 0.14)",
           }}
         >
-          <Activity className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "#00D492" }} />
+          <Activity className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "var(--fb-dashboard-success)" }} />
         </div>
       </div>
 
@@ -115,7 +112,7 @@ export const SystemHealth = (): React.JSX.Element => {
             className="font-bold"
             style={{
               fontSize: "clamp(14px, 3.6vw, 24px)",
-              color: "#FFFFFF",
+              color: "var(--fb-dashboard-stat)",
               lineHeight: "1.2",
             }}
           >
@@ -127,7 +124,7 @@ export const SystemHealth = (): React.JSX.Element => {
               className="font-medium"
               style={{
                 fontSize: "12px",
-                color: "rgba(255, 255, 255, 0.66)",
+                color: "var(--fb-text-muted)",
               }}
             >
               All systems operational
@@ -135,29 +132,11 @@ export const SystemHealth = (): React.JSX.Element => {
         )}
       </div>
 
-      <div className="mb-4">
-        <p className="text-[11px] tracking-[0.5px] text-white/45 mb-1">CONNECTED DEVICES</p>
-        <p className="text-2xl md:text-4xl font-semibold leading-none">{connectedDevices}</p>
-      </div>
-
-      <div className="flex items-end gap-1.5 h-8 mb-4">
-        {[14, 22, 16, 26, 13, 20, 24, 15, 21, 18, 25, 17].map((height, index) => (
-          <div
-            key={index}
-            className="w-[7px] rounded-full"
-            style={{
-              height: `${height}px`,
-              background: "linear-gradient(180deg, #A855F7 0%, #7C3AED 100%)",
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="hidden md:flex items-center justify-between">
-        <span className="text-xs text-white/50">Database</span>
+      <div className="mt-auto hidden md:flex items-center justify-between">
+        <span className="text-xs" style={{ color: "var(--fb-dashboard-chart-label)" }}>Database</span>
         <span
           className="font-semibold capitalize"
-          style={{ color: databaseStatus === "connected" ? "#00D492" : "rgba(255,255,255,0.6)" }}
+          style={{ color: databaseStatus === "connected" ? "var(--fb-dashboard-success)" : "rgba(255,255,255,0.6)" }}
         >
           {isLoading ? "—" : databaseStatus}
         </span>

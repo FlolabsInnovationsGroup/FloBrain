@@ -1,9 +1,11 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import type { ForceGraphMethods } from "react-force-graph-2d";
 import type { MemoryNodeApi } from "@/lib/api";
 import { memoryNode } from "@/types/MemoryNodes";
+import { memoryPaletteForTheme, nodeToCategory } from "@/lib/memory-visual";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ssr: false,
@@ -40,6 +42,10 @@ export const MemoryGraph = ({
   graphActive,
   setGraphActive,
 }: MemoryGraphProps) => {
+  const { resolvedTheme } = useTheme();
+  const palette = memoryPaletteForTheme(resolvedTheme);
+  const linkColor = resolvedTheme === "light" ? "#610081" : "#ffffff";
+
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<ForceGraphMethods<memoryNode, { source: string; target: string }> | undefined>(
     undefined
@@ -49,7 +55,14 @@ export const MemoryGraph = ({
 
   // Keep graph data references stable unless API data actually changes.
   // This prevents force-graph from resetting node positions on local UI state changes.
-  const graphNodes = useMemo(() => toGraphNodes(nodes), [nodes]);
+  const graphNodes = useMemo(
+    () =>
+      toGraphNodes(nodes).map((n) => ({
+        ...n,
+        color: palette[nodeToCategory(n as MemoryNodeApi)],
+      })),
+    [nodes, palette]
+  );
   const graphLinks = useMemo(() => toGraphLinks(links), [links]);
 
   useEffect(() => {
@@ -96,7 +109,7 @@ export const MemoryGraph = ({
 
   return (
     <div className="relative flex min-h-0 min-w-0 flex-1 flex-col" onClick={handleOutsideClick}>
-      <div className="pointer-events-none absolute left-1/2 top-2 z-10 -translate-x-1/2 rounded-lg bg-black/50 px-4 py-2 text-sm text-white">
+      <div className="fb-memory-hint pointer-events-none absolute left-1/2 top-2 z-10 -translate-x-1/2 rounded-lg border px-4 py-2 text-sm">
         {graphActive
           ? "Click outside the graph to navigate the memory page"
           : "Click inside the border to interact with the graph"}
@@ -104,7 +117,7 @@ export const MemoryGraph = ({
       <button
         type="button"
         onClick={handleResetView}
-        className="absolute right-3 top-2 z-10 rounded-md bg-black/50 px-2.5 py-1 text-xs text-zinc-200 transition hover:bg-black/60"
+        className="fb-memory-hint absolute right-3 top-2 z-10 rounded-md border px-2.5 py-1 text-xs transition hover:opacity-80"
         aria-label="Reset graph view"
       >
         Reset view
@@ -112,8 +125,14 @@ export const MemoryGraph = ({
 
       <div
         className={`mt-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-xl border-4 transition-all duration-300 ${
-          graphActive ? "border-[#a78bfa] shadow-lg shadow-[#a78bfa]/50" : "border-[#4c1d95]/50"
+          graphActive ? "shadow-lg" : ""
         }`}
+        style={{
+          borderColor: graphActive
+            ? "var(--fb-memory-graph-border-active)"
+            : "var(--fb-memory-graph-border)",
+          boxShadow: graphActive ? "0 10px 24px color-mix(in srgb, var(--fb-memory-graph-border-active) 35%, transparent)" : undefined,
+        }}
         onClick={handleBorderClick}
       >
         <div
@@ -162,7 +181,7 @@ export const MemoryGraph = ({
                   );
                 }
               }}
-              linkColor={() => "#ffffff"}
+              linkColor={() => linkColor}
               backgroundColor="rgba(0,0,0,0)"
               enableNodeDrag={graphActive}
               enableZoomInteraction={graphActive}

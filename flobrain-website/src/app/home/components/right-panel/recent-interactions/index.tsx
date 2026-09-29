@@ -73,18 +73,18 @@ const ChatHistoryCard = memo(function ChatHistoryCard({
 }: InteractionEntry) {
   return (
     <div
-      className="rounded-xl border border-white/5 bg-[#1E293B]/75 p-4 transition-colors hover:border-white/10"
+      className="rounded-xl border border-white/5 bg-[#1E293B]/75 light:border-[var(--fb-panel-border)] light:bg-[var(--fb-panel-bg)] p-4 transition-colors hover:border-white/10 light:hover:border-[#a78bfa]/60"
       role="listitem"
     >
-      <p className="text-sm text-white leading-snug line-clamp-2 mb-3">
+      <p className="text-sm text-white light:text-[var(--fb-text)] leading-snug line-clamp-2 mb-3">
         {question}
       </p>
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-400">
+        <span className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 light:text-[var(--fb-text-muted)]">
           <Clock className="w-3.5 h-3.5 shrink-0" aria-hidden />
           {timestamp}
         </span>
-        <span className="text-[11px] text-slate-400">{tokens} tokens</span>
+        <span className="text-[11px] text-slate-400 light:text-[var(--fb-text-muted)]">{tokens} tokens</span>
       </div>
       <div className="mt-2 text-right">
         <span
@@ -111,7 +111,7 @@ const AnalyticsSummaryCard = memo(function AnalyticsSummaryCard({
 }) {
   return (
     <div
-      className="rounded-xl border border-white/5 bg-[#1E293B]/75 p-5"
+      className="rounded-xl border border-white/5 bg-[#1E293B]/75 light:border-[var(--fb-panel-border)] light:bg-[var(--fb-panel-bg)] p-5"
       role="status"
       aria-label={`${label}: ${value}`}
     >
@@ -123,7 +123,7 @@ const AnalyticsSummaryCard = memo(function AnalyticsSummaryCard({
       >
         {value}
       </p>
-      <p className="text-xs text-white font-medium mt-1">{label}</p>
+      <p className="text-xs text-white light:text-[var(--fb-text)] font-medium mt-1">{label}</p>
     </div>
   );
 });
@@ -142,7 +142,7 @@ const RecentInteractions = memo(function RecentInteractions({
   return (
     <div className="flex flex-col min-h-0 h-full">
       <header className="shrink-0 mb-4">
-        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+        <h3 className="text-lg font-bold text-white light:text-[var(--fb-heading)] flex items-center gap-2">
           <Sparkles
             size={20}
             className="text-purple-400/80 shrink-0"
@@ -150,7 +150,7 @@ const RecentInteractions = memo(function RecentInteractions({
           />
           Recent Interactions
         </h3>
-        <p className="text-xs text-slate-400 mt-1">Chat history and analytics</p>
+        <p className="text-xs text-slate-400 light:text-[var(--fb-text-muted)] mt-1">Chat history and analytics</p>
       </header>
 
       <div
@@ -171,7 +171,7 @@ const RecentInteractions = memo(function RecentInteractions({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 shrink-0 pt-4 mt-4 border-t border-white/5">
+      <div className="grid grid-cols-2 gap-3 shrink-0 pt-4 mt-4 border-t border-white/5 light:border-[#1a1b25]/12">
         <AnalyticsSummaryCard
           value={analytics.today}
           label="Today"

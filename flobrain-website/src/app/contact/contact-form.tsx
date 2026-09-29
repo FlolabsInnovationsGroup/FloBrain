@@ -3,6 +3,9 @@
 import { memo, useState } from "react";
 import { Loader2, Send } from "lucide-react";
 
+const inputClassName =
+  "fb-contact-input w-full rounded-xl border px-4 py-3 transition-colors focus:border-[var(--fb-brain-btn)]/50 focus:ring-2 focus:ring-[var(--fb-brain-btn)]/30 disabled:cursor-not-allowed disabled:opacity-50";
+
 export const ContactForm = memo(function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,9 +35,9 @@ export const ContactForm = memo(function ContactForm() {
   };
 
   return (
-    <div className="rounded-xl border border-white/10 bg-[#0f0818]/92 p-5 shadow-lg sm:p-6 md:p-8">
-      <h2 className="mb-4 text-lg font-bold text-white sm:mb-6 sm:text-xl">Get in Touch</h2>
-      <p className="mb-5 text-sm text-white/60 sm:mb-6">
+    <div className="fb-contact-form-card rounded-xl border p-5 sm:p-6 md:p-8">
+      <h2 className="fb-contact-heading mb-4 text-lg font-bold sm:mb-6 sm:text-xl">Get in Touch</h2>
+      <p className="fb-contact-text-muted mb-5 text-sm sm:mb-6">
         Fill out the form below and we&apos;ll respond within 24 hours.
       </p>
 
@@ -48,7 +51,7 @@ export const ContactForm = memo(function ContactForm() {
             onChange={handleInputChange}
             required
             disabled={isSubmitting}
-            className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white/90 placeholder-white/40 focus:border-white/20 focus:bg-white/[0.07] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className={inputClassName}
           />
         </div>
         <div>
@@ -60,7 +63,7 @@ export const ContactForm = memo(function ContactForm() {
             onChange={handleInputChange}
             required
             disabled={isSubmitting}
-            className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white/90 placeholder-white/40 focus:border-white/20 focus:bg-white/[0.07] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className={inputClassName}
           />
         </div>
         <div>
@@ -72,7 +75,7 @@ export const ContactForm = memo(function ContactForm() {
             onChange={handleInputChange}
             required
             disabled={isSubmitting}
-            className="w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white/90 placeholder-white/40 focus:border-white/20 focus:bg-white/[0.07] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className={inputClassName}
           />
         </div>
         <div>
@@ -84,13 +87,13 @@ export const ContactForm = memo(function ContactForm() {
             onChange={handleInputChange}
             required
             disabled={isSubmitting}
-            className="w-full resize-none rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-white/90 placeholder-white/40 focus:border-white/20 focus:bg-white/[0.07] focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            className={`${inputClassName} resize-none`}
           />
         </div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-purple-400/20 bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-3.5 font-semibold text-white shadow-lg transition-colors duration-200 hover:from-purple-700 hover:to-purple-800 disabled:cursor-not-allowed disabled:from-purple-600/50 disabled:to-purple-700/50"
+          className="fb-contact-btn flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 font-semibold shadow-lg transition-opacity duration-200 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? (
             <>
@@ -106,7 +109,7 @@ export const ContactForm = memo(function ContactForm() {
         </button>
       </form>
 
-      <p className="mt-5 text-center text-xs text-white/40 sm:mt-6">
+      <p className="fb-contact-text-subtle mt-5 text-center text-xs sm:mt-6">
         By submitting this form, you agree to our Privacy Policy and Terms of Service.
       </p>
     </div>

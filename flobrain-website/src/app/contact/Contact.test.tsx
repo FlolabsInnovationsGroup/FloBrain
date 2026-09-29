@@ -23,8 +23,8 @@ describe("Contact Page", () => {
     expect(screen.getByText("Direct Contact")).toBeDefined();
   });
 
-  it("should render the developer resources section", () => {
+  it("should render support email link", () => {
     render(<Contact />);
-    expect(screen.getByText("Developer Resources")).toBeDefined();
+    expect(screen.getByText("support@flobrain.ai")).toBeDefined();
   });
 });
