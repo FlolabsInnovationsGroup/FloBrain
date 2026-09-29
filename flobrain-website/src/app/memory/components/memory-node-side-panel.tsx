@@ -6,7 +6,7 @@ import type { MemoryNodeApi } from "@/lib/api";
 import { api } from "@/lib/api";
 import { useQuery } from "@/hooks/useApi";
 import {
-  MEMORY_PALETTE,
+  categoryCssVar,
   nodeToCategory,
   type MemoryCategoryId,
 } from "@/lib/memory-visual";
@@ -28,9 +28,25 @@ const PANEL_TYPE_LABEL: Record<MemoryCategoryId, string> = {
 };
 
 function getRelevanceTier(pct: number) {
-  if (pct >= 70) return { label: "High", textColor: "text-emerald-300/90", barColor: "#6FCF97" };
-  if (pct >= 40) return { label: "Medium", textColor: "text-amber-300/90", barColor: "#F2994A" };
-  return { label: "Low", textColor: "text-rose-300/90", barColor: "#E85D5D" };
+  if (pct >= 70) {
+    return {
+      label: "High",
+      textColor: "text-[var(--fb-memory-success)]",
+      barColor: "var(--fb-memory-success)",
+    };
+  }
+  if (pct >= 40) {
+    return {
+      label: "Medium",
+      textColor: "text-[var(--fb-memory-workflows)]",
+      barColor: "var(--fb-memory-workflows)",
+    };
+  }
+  return {
+    label: "Low",
+    textColor: "text-[var(--fb-memory-error)]",
+    barColor: "var(--fb-memory-error)",
+  };
 }
 
 function startOfLocalDay(d: Date): number {
@@ -117,7 +133,7 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
     if (!node) return null;
     const apiShaped = node as MemoryNodeApi;
     const category = nodeToCategory(apiShaped);
-    const color = MEMORY_PALETTE[category];
+    const color = categoryCssVar(category);
     const typeLabel = PANEL_TYPE_LABEL[category];
     const createdLabel = formatCreatedRelative(
       typeof node.created_at === "string" ? node.created_at : null
@@ -131,9 +147,10 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
       <div
         role="presentation"
         aria-hidden={!open}
-        className={`fixed inset-0 z-[110] bg-black/50 transition-opacity duration-300 ease-out motion-reduce:transition-none ${
+        className={`fixed inset-0 z-[110] transition-opacity duration-300 ease-out motion-reduce:transition-none ${
           open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
+        style={{ background: "var(--fb-memory-overlay)" }}
         onClick={() => onOpenChange(false)}
       />
       <aside
@@ -141,26 +158,26 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
         aria-modal="true"
         aria-label="Memory node details"
         className={cn(
-          "fixed z-[120] flex flex-col border-white/[0.08] bg-[#0B0812] transition-transform duration-300 ease-out motion-reduce:transition-none",
+          "fb-memory-panel fixed z-[120] flex flex-col border transition-transform duration-300 ease-out motion-reduce:transition-none",
           "max-lg:inset-0 max-lg:h-[100dvh] max-lg:w-full max-lg:backdrop-blur-none",
           open ? "max-lg:translate-y-0" : "max-lg:translate-y-full",
-          "lg:inset-y-0 lg:right-0 lg:left-auto lg:top-0 lg:h-[100dvh] lg:max-h-none lg:w-[min(100vw,380px)] lg:max-w-[380px] lg:rounded-none lg:border-l lg:border-t-0 lg:bg-[#0B0812]/98 lg:shadow-[-12px_0_48px_rgba(0,0,0,0.45)] lg:backdrop-blur-xl",
+          "lg:inset-y-0 lg:right-0 lg:left-auto lg:top-0 lg:h-[100dvh] lg:max-h-none lg:w-[min(100vw,380px)] lg:max-w-[380px] lg:rounded-none lg:border-l lg:border-t-0 lg:shadow-[-12px_0_48px_rgba(97,0,129,0.18)] lg:backdrop-blur-xl",
           open ? "lg:translate-x-0 lg:translate-y-0" : "lg:translate-x-full lg:translate-y-0"
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <header className="shrink-0 border-b border-white/[0.06] px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-4 sm:pb-3 md:px-5 md:py-4 md:pt-4">
+        <header className="shrink-0 border-b border-[var(--fb-memory-header-border)] px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-4 sm:pb-3 md:px-5 md:py-4 md:pt-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="text-[15px] font-semibold tracking-tight text-white sm:text-base md:text-lg">
+              <h2 className="text-[15px] font-semibold tracking-tight text-[var(--fb-memory-heading)] sm:text-base md:text-lg">
                 {derived ? `Memory Node #${derived.displayId}` : "Memory Node"}
               </h2>
-              <p className="mt-0.5 text-xs text-zinc-500 sm:text-sm">Detailed information &amp; actions</p>
+              <p className="mt-0.5 text-xs text-[var(--fb-memory-text-subtle)] sm:text-sm">Detailed information &amp; actions</p>
             </div>
             <button
               type="button"
               aria-label="Close panel"
-              className="flex size-8 shrink-0 items-center justify-center self-center rounded-lg border border-white/[0.12] text-zinc-400 transition hover:border-white/[0.2] hover:bg-white/[0.06] hover:text-white sm:size-9 sm:rounded-xl"
+              className="flex size-8 shrink-0 items-center justify-center self-center rounded-lg border border-[var(--fb-memory-surface-border)] text-[var(--fb-memory-text-muted)] transition hover:bg-[var(--fb-memory-surface-bg)] hover:text-[var(--fb-memory-heading)] sm:size-9 sm:rounded-xl"
               onClick={() => onOpenChange(false)}
             >
               <X className="size-4" strokeWidth={2} />
@@ -173,17 +190,17 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
           className="memory-node-panel-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-4 sm:py-4 md:px-5 md:py-5"
         >
           {!derived ? (
-            <p className="text-sm text-zinc-500">Select a memory node to see details.</p>
+            <p className="text-sm text-[var(--fb-memory-text-subtle)]">Select a memory node to see details.</p>
           ) : (
             <div className="flex min-h-full flex-col">
               <section className="space-y-2">
-                <p className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">Type</p>
+                <p className="text-[11px] font-medium uppercase tracking-wide text-[var(--fb-memory-text-subtle)]">Type</p>
                 <span
                   className="inline-flex rounded-lg border px-2.5 py-1 text-xs font-medium sm:px-3 sm:py-1.5 sm:text-sm"
                   style={{
                     color: derived.color,
-                    borderColor: `${derived.color}55`,
-                    backgroundColor: `${derived.color}14`,
+                    borderColor: `color-mix(in srgb, ${derived.color} 40%, transparent)`,
+                    backgroundColor: `color-mix(in srgb, ${derived.color} 14%, transparent)`,
                   }}
                 >
                   {derived.typeLabel}
@@ -191,20 +208,27 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
               </section>
 
               <section className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-3">
-                <div className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-2.5 py-2.5 sm:rounded-xl sm:px-3 sm:py-3">
-                  <div className="flex items-center gap-2 text-zinc-500">
+                <div
+                  className="rounded-lg border px-2.5 py-2.5 sm:rounded-xl sm:px-3 sm:py-3"
+                  style={{
+                    background: "var(--fb-memory-meta-created-bg)",
+                    borderColor: "var(--fb-memory-surface-border)",
+                    color: "var(--fb-memory-meta-created-text)",
+                  }}
+                >
+                  <div className="flex items-center gap-2 opacity-80">
                     <Calendar className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden />
                     <span className="text-[10px] font-semibold uppercase tracking-wide">Created</span>
                   </div>
-                  <p className="mt-1.5 text-xs font-semibold text-white sm:mt-2 sm:text-sm">{derived.createdLabel}</p>
+                  <p className="mt-1.5 text-xs font-semibold sm:mt-2 sm:text-sm">{derived.createdLabel}</p>
                 </div>
-                <div className="rounded-lg border border-white/[0.06] bg-white/[0.03] px-2.5 py-2.5 sm:rounded-xl sm:px-3 sm:py-3">
-                  <div className="flex items-center gap-2 text-zinc-500">
+                <div className="fb-memory-surface rounded-lg border px-2.5 py-2.5 sm:rounded-xl sm:px-3 sm:py-3">
+                  <div className="flex items-center gap-2 text-[var(--fb-memory-text-subtle)]">
                     <Target className="size-3.5 shrink-0" strokeWidth={1.75} aria-hidden />
                     <span className="text-[10px] font-semibold uppercase tracking-wide">Relevance</span>
                   </div>
                   <p className="mt-1.5 text-xs font-semibold sm:mt-2 sm:text-sm">
-                    <span className="text-white">
+                    <span className="text-[var(--fb-memory-heading)]">
                       {detailLoading ? "—" : `${relevancePercent}%`}
                     </span>{" "}
                     <span className={relevanceTier.textColor}>
@@ -215,7 +239,7 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
               </section>
 
               <div
-                className="mt-4 h-1.5 overflow-hidden rounded-full bg-zinc-800"
+                className="mt-4 h-1.5 overflow-hidden rounded-full bg-[var(--fb-memory-track)]"
                 role="presentation"
                 aria-hidden
               >
@@ -230,34 +254,40 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
 
               <section className="mt-5 space-y-2 sm:mt-8">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-medium uppercase tracking-wide text-zinc-500 sm:text-[11px]">
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-[var(--fb-memory-text-subtle)] sm:text-[11px]">
                     Raw Text
                   </span>
                   <span
-                    className="size-1.5 shrink-0 rounded-full bg-[#7B5CFF]"
+                    className="size-1.5 shrink-0 rounded-full bg-[var(--fb-memory-accent)]"
                     aria-hidden
                   />
                 </div>
-                <div className="rounded-xl border border-white/[0.06] bg-[#06040c] px-3.5 py-3 text-sm leading-relaxed text-zinc-500">
+                <div
+                  className="rounded-xl border px-3.5 py-3 text-sm leading-relaxed text-[var(--fb-memory-text-muted)]"
+                  style={{
+                    borderColor: "var(--fb-memory-surface-border)",
+                    background: "var(--fb-memory-raw-bg)",
+                  }}
+                >
                   {rawText || <span className="italic opacity-60">No content</span>}
                 </div>
               </section>
 
               <section className="mt-5 space-y-2.5 sm:mt-8 sm:space-y-3">
                 <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="text-xs font-medium text-white sm:text-sm">Connected Nodes</h3>
-                  <span className="text-[10px] text-zinc-500 sm:text-xs">
+                  <h3 className="text-xs font-medium text-[var(--fb-memory-heading)] sm:text-sm">Connected Nodes</h3>
+                  <span className="text-[10px] text-[var(--fb-memory-text-subtle)] sm:text-xs">
                     {detailLoading ? "—" : `${linkCount} links`}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {detailLoading && (
-                    <span className="animate-pulse text-[10px] text-zinc-500 sm:text-xs">
+                    <span className="animate-pulse text-[10px] text-[var(--fb-memory-text-subtle)] sm:text-xs">
                       Loading connections…
                     </span>
                   )}
                   {!detailLoading && allConnections.length === 0 && (
-                    <span className="text-[10px] text-zinc-600 sm:text-xs">No connections</span>
+                    <span className="text-[10px] text-[var(--fb-memory-text-faint)] sm:text-xs">No connections</span>
                   )}
                   {!detailLoading && allConnections.map((c) => {
                     const label = c.name && c.name.length <= 22
@@ -268,7 +298,7 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
                     return (
                       <span
                         key={`${c.id}-${label}`}
-                        className="rounded-md border border-white/[0.06] bg-zinc-900/80 px-2 py-0.5 text-[10px] text-zinc-400 sm:rounded-lg sm:px-2.5 sm:py-1 sm:text-xs"
+                        className="fb-memory-chip rounded-md border px-2 py-0.5 text-[10px] sm:rounded-lg sm:px-2.5 sm:py-1 sm:text-xs"
                       >
                         {label}
                       </span>
@@ -278,25 +308,31 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
               </section>
 
               <section className="mt-5 space-y-2 sm:mt-8">
-                <p className="text-[10px] font-medium uppercase tracking-wide text-zinc-500 sm:text-[11px]">Actions</p>
+                <p className="text-[10px] font-medium uppercase tracking-wide text-[var(--fb-memory-text-subtle)] sm:text-[11px]">Actions</p>
                 <div className="flex flex-col gap-1.5 sm:gap-2">
                   <button
                     type="button"
-                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-xs font-medium text-white transition hover:bg-white/[0.07] sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium text-white transition hover:opacity-90 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
+                    style={{ background: "var(--fb-memory-btn)", color: "#ffffff" }}
                   >
                     <Pencil className="size-3.5 shrink-0 sm:size-4" strokeWidth={1.75} aria-hidden />
                     Edit Context
                   </button>
                   <button
                     type="button"
-                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-xs font-medium text-white transition hover:bg-white/[0.07] sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--fb-memory-surface-border)] bg-[var(--fb-memory-surface-bg)] px-3 py-2.5 text-xs font-medium text-[var(--fb-memory-heading)] transition hover:bg-[var(--fb-memory-btn-soft)] sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
                   >
                     <EyeOff className="size-3.5 shrink-0 sm:size-4" strokeWidth={1.75} aria-hidden />
                     Exclude from Future
                   </button>
                   <button
                     type="button"
-                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/25 bg-red-950/35 px-3 py-2.5 text-xs font-medium text-red-300 transition hover:bg-red-950/50 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-xs font-medium transition sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
+                    style={{
+                      background: "var(--fb-memory-danger-btn-bg)",
+                      borderColor: "var(--fb-memory-danger-btn-border)",
+                      color: "var(--fb-memory-danger-btn-text)",
+                    }}
                   >
                     <Trash2 className="size-3.5 shrink-0 sm:size-4" strokeWidth={1.75} aria-hidden />
                     Delete Node
@@ -304,10 +340,10 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
                 </div>
               </section>
 
-              <footer className="mt-auto border-t border-white/[0.06] pt-3 sm:pt-4">
-                <div className="flex items-center justify-between text-[10px] text-zinc-500 sm:text-xs">
+              <footer className="mt-auto border-t border-[var(--fb-memory-header-border)] pt-3 sm:pt-4">
+                <div className="flex items-center justify-between text-[10px] text-[var(--fb-memory-text-subtle)] sm:text-xs">
                   <span>Node ID:</span>
-                  <span className="tabular-nums text-zinc-400">#{derived.displayId}</span>
+                  <span className="tabular-nums text-[var(--fb-memory-text-muted)]">#{derived.displayId}</span>
                 </div>
               </footer>
             </div>

@@ -18,7 +18,7 @@ export const FeaturesCard = ({ icon, title, description }: FeaturesCardProps) =>
     >
       <div className="flex items-start justify-start">{icon}</div>
       <h3 className="mt-6 text-lg font-bold text-white">{title}</h3>
-      <p className="mt-4 text-sm font-normal leading-relaxed text-slate-300/90 w-[80%]">
+      <p className="mt-4 text-sm font-normal leading-relaxed text-slate-300/90 light:text-[#ffffff] w-[80%]">
         {description}
       </p>
     </div>

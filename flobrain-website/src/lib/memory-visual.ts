@@ -2,12 +2,28 @@ import type { MemoryNodeApi } from "@/lib/api";
 
 export type MemoryCategoryId = "chunks" | "summaries" | "interactions" | "workflows";
 
+/** Dark-mode graph / legend colors (existing design). */
 export const MEMORY_PALETTE = {
   chunks: "#56CCF2",
   summaries: "#7B5CFF",
   interactions: "#6FCF97",
   workflows: "#F2994A",
 } as const;
+
+/** Cases Light — Memory section. */
+export const MEMORY_PALETTE_LIGHT = {
+  chunks: "#60A5FA",
+  summaries: "#A78BFA",
+  interactions: "#34D399",
+  workflows: "#FBBF24",
+} as const;
+
+export const MEMORY_CATEGORY_CSS_VARS: Record<MemoryCategoryId, `--fb-memory-${MemoryCategoryId}`> = {
+  chunks: "--fb-memory-chunks",
+  summaries: "--fb-memory-summaries",
+  interactions: "--fb-memory-interactions",
+  workflows: "--fb-memory-workflows",
+};
 
 const API_TO_CATEGORY: Record<string, MemoryCategoryId> = {
   Chunks: "chunks",
@@ -32,8 +48,16 @@ export function nodeToCategory(node: MemoryNodeApi): MemoryCategoryId {
   return "chunks";
 }
 
-export function categoryColor(category: MemoryCategoryId): string {
-  return MEMORY_PALETTE[category];
+export function memoryPaletteForTheme(theme?: string | null) {
+  return theme === "light" ? MEMORY_PALETTE_LIGHT : MEMORY_PALETTE;
+}
+
+export function categoryColor(category: MemoryCategoryId, theme?: string | null): string {
+  return memoryPaletteForTheme(theme)[category];
+}
+
+export function categoryCssVar(category: MemoryCategoryId): string {
+  return `var(${MEMORY_CATEGORY_CSS_VARS[category]})`;
 }
 
 export function countNodesByCategory(nodes: MemoryNodeApi[]): Record<MemoryCategoryId, number> {

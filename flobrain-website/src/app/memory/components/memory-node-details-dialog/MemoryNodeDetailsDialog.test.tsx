@@ -99,6 +99,6 @@ describe("MemoryNodeDetailsDialog Component", () => {
     render(<MemoryNodeDetailsDialog open={true} setOpen={setOpen} node={{ name: "Test" }} />);
 
     const content = screen.getByTestId("dialog-content");
-    expect(content.className).toContain("bg-black text-white");
+    expect(content.className).toContain("fb-memory-panel");
   });
 });

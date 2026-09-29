@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CreditCard, Lock, ArrowLeft, AlertCircle, Check } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -16,35 +17,83 @@ import {
 const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
 const stripePromise = STRIPE_PUBLISHABLE_KEY ? loadStripe(STRIPE_PUBLISHABLE_KEY) : Promise.resolve(null);
 
-const CARD_ELEMENT_OPTIONS = {
-  style: {
-    base: {
-      color: "#ffffff",
-      fontFamily: "system-ui, sans-serif",
-      fontSize: "16px",
-      "::placeholder": {
-        color: "#6b6b7a",
+const inputWrapClass =
+  "fb-auth-input rounded-xl border px-4 py-3";
+const nativeInputClass =
+  "fb-auth-input h-12 w-full rounded-xl border px-4 text-sm outline-none transition-all disabled:opacity-60";
+const labelClass = "fb-auth-label mb-1.5 block text-sm font-medium";
+const submitClass =
+  "fb-auth-btn mt-1 flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl text-[15px] font-semibold transition-opacity disabled:cursor-not-allowed disabled:opacity-60";
+
+function stripeCardOptions(isLight: boolean) {
+  return {
+    style: {
+      base: {
+        color: isLight ? "#000000" : "#ffffff",
+        fontFamily: "system-ui, sans-serif",
+        fontSize: "16px",
+        "::placeholder": {
+          color: isLight ? "rgba(0, 0, 0, 0.38)" : "#6b6b7a",
+        },
+        "::selection": {
+          color: isLight ? "#000000" : "#ffffff",
+          backgroundColor: isLight ? "rgba(194, 98, 226, 0.28)" : "rgba(139,92,246,0.25)",
+        },
       },
-      "::selection": {
-        color: "#ffffff",
-        backgroundColor: "rgba(139,92,246,0.25)",
+      invalid: {
+        color: isLight ? "#d70000" : "#ef4444",
+        iconColor: isLight ? "#d70000" : "#ef4444",
       },
     },
-    invalid: {
-      color: "#ef4444",
-      iconColor: "#ef4444",
-    },
-  },
-  disabled: false,
-};
+    disabled: false,
+  };
+}
+
+function SuccessState() {
+  return (
+    <div className="flex min-h-[400px] flex-col items-center justify-center">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#00A409]/15">
+        <Check className="h-8 w-8 text-[#00A409]" />
+      </div>
+      <h2 className="fb-auth-heading mb-2 text-2xl font-bold">Payment Successful!</h2>
+      <p className="fb-auth-muted">Redirecting to your dashboard...</p>
+    </div>
+  );
+}
+
+function ErrorBanner({ message }: { message: string }) {
+  return (
+    <div className="fb-auth-error flex items-start gap-2 rounded-lg border px-3 py-2">
+      <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
+      <p className="text-sm">{message}</p>
+    </div>
+  );
+}
+
+function SecurityNotes() {
+  return (
+    <div className="fb-auth-muted flex items-center justify-center gap-6 pt-4 text-xs">
+      <div className="flex items-center gap-1">
+        <Lock className="h-3 w-3" />
+        <span>SSL Encrypted</span>
+      </div>
+      <div className="flex items-center gap-1">
+        <CreditCard className="h-3 w-3" />
+        <span>PCI Compliant</span>
+      </div>
+    </div>
+  );
+}
 
 function PaymentMethodForm() {
   const router = useRouter();
   const stripe = useStripe();
   const elements = useElements();
+  const { resolvedTheme } = useTheme();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const cardOptions = stripeCardOptions(resolvedTheme === "light");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,82 +138,58 @@ function PaymentMethodForm() {
   };
 
   if (paymentSuccess) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <div className="w-16 h-16 bg-[#10b981]/20 rounded-full flex items-center justify-center mb-4">
-          <Check className="w-8 h-8 text-[#10b981]" />
-        </div>
-        <h2 className="text-2xl font-bold text-white mb-2">Payment Successful!</h2>
-        <p className="text-[#a1a1aa]">Redirecting to your dashboard...</p>
-      </div>
-    );
+    return <SuccessState />;
   }
+
+  const submitDisabled = !stripe || isProcessing;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-white mb-2">Card number *</label>
-        <div className="px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg focus-within:border-[#8b5cf6] focus-within:ring-1 focus-within:ring-[#8b5cf6] transition-colors">
-          <CardNumberElement options={CARD_ELEMENT_OPTIONS} />
+        <label className={labelClass}>Card number *</label>
+        <div className={inputWrapClass}>
+          <CardNumberElement options={cardOptions} />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-white mb-2">Expiry date *</label>
-          <div className="px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg focus-within:border-[#8b5cf6] focus-within:ring-1 focus-within:ring-[#8b5cf6] transition-colors">
-            <CardExpiryElement options={CARD_ELEMENT_OPTIONS} />
+          <label className={labelClass}>Expiry date *</label>
+          <div className={inputWrapClass}>
+            <CardExpiryElement options={cardOptions} />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-white mb-2">CVC *</label>
-          <div className="px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg focus-within:border-[#8b5cf6] focus-within:ring-1 focus-within:ring-[#8b5cf6] transition-colors">
-            <CardCvcElement options={CARD_ELEMENT_OPTIONS} />
+          <label className={labelClass}>CVC *</label>
+          <div className={inputWrapClass}>
+            <CardCvcElement options={cardOptions} />
           </div>
-          <p className="text-xs text-[#a1a1aa] mt-1">Last 3 digits on back of card</p>
+          <p className="fb-auth-muted mt-1 text-xs">Last 3 digits on back of card</p>
         </div>
       </div>
 
-      {error && (
-        <div className="flex items-start gap-2 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
-          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-red-500">{error}</p>
-        </div>
-      )}
+      {error && <ErrorBanner message={error} />}
 
       <button
         type="submit"
-        disabled={!stripe || isProcessing}
-        className={`w-full py-4 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
-          !stripe || isProcessing
-            ? "bg-[#3a3a52] text-[#6b6b7a] cursor-not-allowed"
-            : "bg-gradient-to-r from-[#8b5cf6] to-[#c084fc] text-white hover:shadow-lg hover:shadow-[#8b5cf6]/50"
-        }`}
+        disabled={submitDisabled}
+        className={submitClass}
       >
         {isProcessing ? (
           <>
-            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             Processing...
           </>
         ) : (
           <>
-            <Lock className="w-5 h-5" />
+            <Lock className="h-5 w-5" />
             Complete Payment
           </>
         )}
       </button>
 
-      <div className="flex items-center justify-center gap-6 pt-4 text-xs text-[#a1a1aa]">
-        <div className="flex items-center gap-1">
-          <Lock className="w-3 h-3" />
-          <span>SSL Encrypted</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <CreditCard className="w-3 h-3" />
-          <span>PCI Compliant</span>
-        </div>
-      </div>
+      <SecurityNotes />
     </form>
   );
 }
@@ -197,98 +222,71 @@ function PaymentMethodFormFallback() {
   };
 
   if (paymentSuccess) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <div className="w-16 h-16 bg-[#10b981]/20 rounded-full flex items-center justify-center mb-4">
-          <Check className="w-8 h-8 text-[#10b981]" />
-        </div>
-        <h2 className="text-2xl font-bold text-white mb-2">Payment Successful!</h2>
-        <p className="text-[#a1a1aa]">Redirecting to your dashboard...</p>
-      </div>
-    );
+    return <SuccessState />;
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      
       <div>
-        <label className="block text-sm font-medium text-white mb-2">Card number *</label>
+        <label className={labelClass}>Card number *</label>
         <input
           type="text"
           inputMode="numeric"
           value={cardNumber}
           onChange={(e) => setCardNumber(e.target.value)}
           placeholder="4242 4242 4242 4242"
-          className="w-full px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg text-white placeholder-[#6b6b7a] focus:outline-none focus:border-[#8b5cf6] focus:ring-1 focus:ring-[#8b5cf6] transition-colors"
+          className={nativeInputClass}
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-white mb-2">Expiry date *</label>
+          <label className={labelClass}>Expiry date *</label>
           <input
             type="text"
             inputMode="numeric"
             value={expiry}
             onChange={(e) => setExpiry(e.target.value)}
             placeholder="MM / YY"
-            className="w-full px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg text-white placeholder-[#6b6b7a] focus:outline-none focus:border-[#8b5cf6] focus:ring-1 focus:ring-[#8b5cf6] transition-colors"
+            className={nativeInputClass}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-white mb-2">CVC *</label>
+          <label className={labelClass}>CVC *</label>
           <input
             type="text"
             inputMode="numeric"
             value={cvc}
             onChange={(e) => setCvc(e.target.value)}
             placeholder="123"
-            className="w-full px-4 py-3 bg-[#2a1a4a]/50 border border-[#4c1d95]/50 rounded-lg text-white placeholder-[#6b6b7a] focus:outline-none focus:border-[#8b5cf6] focus:ring-1 focus:ring-[#8b5cf6] transition-colors"
+            className={nativeInputClass}
           />
-          <p className="text-xs text-[#a1a1aa] mt-1">Last 3 digits on back of card</p>
+          <p className="fb-auth-muted mt-1 text-xs">Last 3 digits on back of card</p>
         </div>
       </div>
 
-      {error && (
-        <div className="flex items-start gap-2 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
-          <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-red-500">{error}</p>
-        </div>
-      )}
+      {error && <ErrorBanner message={error} />}
 
       <button
         type="submit"
         disabled={isProcessing}
-        className={`w-full py-4 rounded-xl font-medium transition-all duration-300 flex items-center justify-center gap-2 ${
-          isProcessing
-            ? "bg-[#3a3a52] text-[#6b6b7a] cursor-not-allowed"
-            : "bg-gradient-to-r from-[#8b5cf6] to-[#c084fc] text-white hover:shadow-lg hover:shadow-[#8b5cf6]/50"
-        }`}
+        className={submitClass}
       >
         {isProcessing ? (
           <>
-            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
             Processing...
           </>
         ) : (
           <>
-            <Lock className="w-5 h-5" />
+            <Lock className="h-5 w-5" />
             Complete Payment
           </>
         )}
       </button>
 
-      <div className="flex items-center justify-center gap-6 pt-4 text-xs text-[#a1a1aa]">
-        <div className="flex items-center gap-1">
-          <Lock className="w-3 h-3" />
-          <span>SSL Encrypted</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <CreditCard className="w-3 h-3" />
-          <span>PCI Compliant</span>
-        </div>
-      </div>
+      <SecurityNotes />
     </form>
   );
 }
@@ -298,30 +296,27 @@ export default function PaymentMethodPage() {
   const isStripeConfigured = Boolean(STRIPE_PUBLISHABLE_KEY);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#1a0033] via-[#2a1a4a] to-[#0f0f23] p-8">
-      <div className="max-w-2xl mx-auto">
-        {/* Back Button */}
+    <main className="fb-auth-bg min-h-screen p-8">
+      <div className="mx-auto max-w-2xl">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-[#a1a1aa] hover:text-white transition-colors mb-8"
+          className="fb-auth-link mb-8 flex items-center gap-2 text-sm font-medium transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="h-4 w-4" />
           <span>Back</span>
         </button>
 
-        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Add payment method</h1>
-          <p className="text-[#a1a1aa]">Enter your card details to complete your subscription</p>
+          <h1 className="fb-auth-heading mb-2 text-4xl font-bold">Add payment method</h1>
+          <p className="fb-auth-muted">Enter your card details to complete your subscription</p>
         </div>
 
-        {/* Payment Form Card */}
-        <div className="bg-[#1a1a2e]/80 backdrop-blur-sm border border-[#4c1d95]/50 rounded-2xl p-8">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 bg-[#8b5cf6]/20 rounded-lg flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-[#8b5cf6]" />
+        <div className="fb-auth-card rounded-2xl p-8">
+          <div className="mb-6 flex items-center gap-2">
+            <div className="fb-auth-social flex h-10 w-10 items-center justify-center rounded-lg border">
+              <CreditCard className="fb-auth-icon h-5 w-5" />
             </div>
-            <h2 className="text-xl font-semibold text-white">Card Details</h2>
+            <h2 className="fb-auth-heading text-xl font-semibold">Card Details</h2>
           </div>
 
           {isStripeConfigured ? (
@@ -332,15 +327,12 @@ export default function PaymentMethodPage() {
             <PaymentMethodFormFallback />
           )}
 
-          {/* Accepted Cards */}
-          <div className="mt-8 pt-6 border-t border-[#4c1d95]/30">
-            <p className="text-xs text-[#a1a1aa] mb-3">We accept:</p>
+          <div className="mt-8 pt-6">
+            <div className="fb-auth-divider mb-6 h-px w-full" />
+            <p className="fb-auth-muted mb-3 text-xs">We accept:</p>
             <div className="flex gap-3">
               {["Visa", "Mastercard", "Amex", "Discover"].map((card) => (
-                <div
-                  key={card}
-                  className="px-3 py-2 bg-[#2a1a4a]/50 border border-[#4c1d95]/30 rounded text-xs text-[#a1a1aa]"
-                >
+                <div key={card} className="fb-auth-social rounded-xl border px-3 py-2 text-xs font-medium">
                   {card}
                 </div>
               ))}
@@ -348,9 +340,8 @@ export default function PaymentMethodPage() {
           </div>
         </div>
 
-        {/* Additional Info */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-[#a1a1aa]">
+          <p className="fb-auth-muted text-sm">
             By providing your card information, you allow FloBrain to charge your card for future
             payments in accordance with their terms.
           </p>

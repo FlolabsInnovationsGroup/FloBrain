@@ -75,6 +75,20 @@ describe('ChatArea Component', () => {
       const image = screen.getByRole('img', { name: 'User upload' });
       expect(image).toBeInTheDocument();
     });
+
+    test('hides the multi-model selector from chat responses', () => {
+      const conversation: Message[] = [
+        { id: 'u1', type: 'user', text: 'Please compare the answer models.', timestamp: new Date() },
+        { id: 'a1', type: 'assistant', text: 'Here is the answer.', timestamp: new Date() },
+      ];
+
+      render(<ChatArea messages={conversation} />);
+
+      expect(screen.queryByRole('button', { name: 'ChatGPT' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Claude' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Gemini' })).not.toBeInTheDocument();
+      expect(screen.queryByText(/3 models active/i)).not.toBeInTheDocument();
+    });
   });
 
   describe('Auto-scroll Behavior', () => {
