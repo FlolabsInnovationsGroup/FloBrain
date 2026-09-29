@@ -214,9 +214,9 @@ export default function ProfileSettings() {
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <p className={settingsTextMuted}>Full Name</p>
-          <p className="truncate font-medium text-white">{profile?.fullName || "—"}</p>
+          <p className="truncate font-medium text-[var(--fb-brain-heading)]">{profile?.fullName || "—"}</p>
           <p className={cn(settingsTextMuted, "mt-3")}>Email Address</p>
-          <p className="truncate text-white">{profile?.email || "—"}</p>
+          <p className="truncate text-[var(--fb-brain-text)]">{profile?.email || "—"}</p>
         </div>
         {isAuthenticated && (
           <button
@@ -317,8 +317,8 @@ export default function ProfileSettings() {
         <label className={cn(settingsTextLabel, "mb-2 block")}>Current Plan</label>
         <div className={settingsCardClass}>
           <div className="flex items-center justify-between">
-            <span className="font-medium text-white">{currentPlan.name}</span>
-            <span className="text-white">{currentPlan.price}</span>
+            <span className="font-medium text-[var(--fb-brain-heading)]">{currentPlan.name}</span>
+            <span className="text-[var(--fb-brain-text)]">{currentPlan.price}</span>
           </div>
           <div className="mt-1 text-right">
             <Link

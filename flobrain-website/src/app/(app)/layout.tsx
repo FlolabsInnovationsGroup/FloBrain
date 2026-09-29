@@ -5,8 +5,6 @@ import { usePathname } from "next/navigation";
 
 /** Dark background for home so there's no strip below the navbar */
 const HOME_PAGE_BG = "bg-[#020617]";
-/** Same gradient as brain page content so the left/right strips match (no dark purple strip) */
-const BRAIN_PAGE_BG = "bg-[linear-gradient(90deg,#290036_0%,#070014_100%)]";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -20,7 +18,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const backgroundClass = isBrain ? BRAIN_PAGE_BG : isHome ? HOME_PAGE_BG : "";
+  const backgroundClass = isHome ? HOME_PAGE_BG : "";
 
   return (
     <>

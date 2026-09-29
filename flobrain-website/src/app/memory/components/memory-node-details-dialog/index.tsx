@@ -24,13 +24,13 @@ export const MemoryNodeDetailsDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-black text-white">
+      <DialogContent className="fb-memory-panel border text-[var(--fb-memory-text)]">
         <DialogHeader>
-          <DialogTitle>Memory node</DialogTitle>
-          <DialogDescription>{name || "No description"}</DialogDescription>
+          <DialogTitle className="text-[var(--fb-memory-heading)]">Memory node</DialogTitle>
+          <DialogDescription className="text-[var(--fb-memory-text-muted)]">{name || "No description"}</DialogDescription>
         </DialogHeader>
         {(group || memoryType || relevance) && (
-          <div className="mt-2 text-sm text-zinc-400 space-y-1">
+          <div className="mt-2 text-sm text-[var(--fb-memory-text-muted)] space-y-1">
             {group && <p>Group: {group}</p>}
             {memoryType && <p>Type: {memoryType}</p>}
             {relevance && <p>Relevance: {relevance}</p>}
