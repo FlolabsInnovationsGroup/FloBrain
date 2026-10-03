@@ -25,13 +25,17 @@ def _get_user_or_401(request):
     return user, None
 
 
-def _build_llm_messages(chat: Chat) -> list[dict[str, str]]:
-    messages: list[dict[str, str]] = [
+def _build_llm_messages(chat: Chat) -> list[dict]:
+    messages: list[dict] = [
         {"role": "system", "content": "You are FloBrain, a helpful AI assistant."},
     ]
     for msg in chat.messages.order_by("created_at"):
-        if msg.role == Message.ROLE_USER and msg.text:
-            messages.append({"role": "user", "content": msg.text})
+        if msg.role == Message.ROLE_USER:
+            entry: dict = {"role": "user", "content": msg.text or ""}
+            if msg.image:
+                entry["image"] = msg.image
+            if entry["content"] or entry.get("image"):
+                messages.append(entry)
         elif msg.role == Message.ROLE_ASSISTANT and msg.text:
             messages.append({"role": "assistant", "content": msg.text})
     return messages
