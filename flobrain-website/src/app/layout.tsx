@@ -10,6 +10,8 @@ import { AuthProviderWrapper } from "@/components/providers/AuthProviderWrapper"
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { GA_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 import { getSiteUrl } from "@/lib/site";
+import { PreferredSourceProvider } from "@/components/preferred-source/preferred-source-provider";
+import { PreferredSourcePrompt } from "@/components/preferred-source/preferred-source-prompt";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -52,17 +54,18 @@ export default function RootLayout({
           />
         </noscript>
         <ThemeProvider>
-          <AuthProviderWrapper>
-            <RootBackground>
-              <Navbar />
-              <div className="flex-1">{children}</div>
-              <Footer />
-            </RootBackground>
-          </AuthProviderWrapper>
+          <PreferredSourceProvider>
+            <AuthProviderWrapper>
+              <RootBackground>
+                <Navbar />
+                <div className="flex-1">{children}</div>
+                <Footer />
+                <PreferredSourcePrompt />
+              </RootBackground>
+            </AuthProviderWrapper>
+          </PreferredSourceProvider>
         </ThemeProvider>
-        {GA_MEASUREMENT_ID ? (
-          <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />
-        ) : null}
+        {GA_MEASUREMENT_ID ? <GoogleAnalytics gaId={GA_MEASUREMENT_ID} /> : null}
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import { ApplicationsCard } from "./components/applications-card";
 import { FeaturesCard } from "./components/features-card";
 import { FooterBanner } from "./components/footer-banner";
 import { HeroSection } from "./components/hero-section";
+import { PurposeSection } from "./components/purpose-section";
 import { applications, features } from "./constants";
 import { MotionProvider, Reveal, Stagger, StaggerItem } from "@/components/motion";
 /**
@@ -68,8 +69,8 @@ export default function HomePage() {
         </div>
 
         <FooterBanner />
+        <PurposeSection />
       </main>
     </MotionProvider>
   );
-
 }

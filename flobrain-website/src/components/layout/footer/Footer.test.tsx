@@ -2,6 +2,7 @@ import { render, screen, within, fireEvent } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import Footer from ".";
 import { FOOTER_DESCRIPTION, FOOTER_SOCIAL } from "./constants";
+import { PREFERRED_SOURCE_DEEPLINK } from "@/components/preferred-source/preferred-source";
 
 describe("Footer Component", () => {
   it("should render within a semantic footer tag", () => {
@@ -19,9 +20,7 @@ describe("Footer Component", () => {
   it("should render the newsletter form", () => {
     render(<Footer />);
     expect(screen.getByLabelText("Email address for newsletter")).toBeDefined();
-    expect(
-      screen.getByRole("button", { name: "Subscribe to newsletter" })
-    ).toBeDefined();
+    expect(screen.getByRole("button", { name: "Subscribe to newsletter" })).toBeDefined();
   });
 
   it("should render every social link opening in a new tab", () => {
@@ -45,14 +44,8 @@ describe("Footer Component", () => {
   it("should render the navigation links", () => {
     const { container } = render(<Footer />);
     const footer = within(container.querySelector("footer")!);
-    expect(footer.getByRole("link", { name: "Pricing" })).toHaveAttribute(
-      "href",
-      "/pricing"
-    );
-    expect(footer.getByRole("link", { name: "Contact" })).toHaveAttribute(
-      "href",
-      "/contact"
-    );
+    expect(footer.getByRole("link", { name: "Pricing" })).toHaveAttribute("href", "/pricing");
+    expect(footer.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
   });
 
   it("should toggle a collapsible section on mobile", () => {
@@ -62,6 +55,14 @@ describe("Footer Component", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     fireEvent.click(toggle);
     expect(toggle).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("should offer Google preferred source under the social links", () => {
+    render(<Footer />);
+    const link = screen.getByRole("link", { name: "Add as preferred source on Google" });
+    expect(link).toHaveAttribute("href", PREFERRED_SOURCE_DEEPLINK);
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
   it("should render the closing line", () => {
