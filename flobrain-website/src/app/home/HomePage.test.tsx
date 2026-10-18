@@ -41,6 +41,8 @@ describe("HomePage Integration", () => {
     expect(screen.getByText("Powerful Features, Simple Integration")).toBeDefined();
     expect(screen.getByText("Every Where, All At Once")).toBeDefined();
     expect(screen.getByText("THE INTELLIGENCE LAYER")).toBeDefined();
+    expect(screen.getByText("Our shared purpose")).toBeDefined();
+    expect(screen.getByRole("heading", { name: /Talent is everywhere/i })).toBeDefined();
     expect(screen.getByText("One Brain, Infinite Possibilities")).toBeDefined();
   });
 
