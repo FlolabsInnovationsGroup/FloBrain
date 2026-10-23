@@ -11,5 +11,5 @@ class LLMResult:
 
 
 class LLMAdapter(Protocol):
-    def generate(self, messages: list[dict[str, str]], model: str | None = None) -> LLMResult:
+    def generate(self, messages: list[dict], model: str | None = None) -> LLMResult:
         ...
