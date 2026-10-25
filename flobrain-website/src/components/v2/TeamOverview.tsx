@@ -22,7 +22,7 @@ export default function TeamOverview({
       </h2>
 
       <div className="fb-v2-card overflow-x-auto p-0">
-        <table className="w-full min-w-[650px] text-left text-sm">
+        <table className="w-full min-w-[650px] table-fixed text-left text-sm">
           <thead>
             <tr className="border-b border-[var(--fb-v2-border)]">
               {["Teams", "Lead", "Members", "Progress", "Status"].map(
