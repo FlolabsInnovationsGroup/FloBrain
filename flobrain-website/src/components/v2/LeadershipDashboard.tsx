@@ -309,7 +309,7 @@ const highlightClass = query
 
         {noResults && (
           <p role="status" className="text-sm text-[var(--fb-v2-text-muted)]">
-            No matches found for "{search}".
+            No matches found for &quot;{search}&quot;.
           </p>
         )}
 
