@@ -1440,3 +1440,34 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* FloBrain V2 Dashboard */
+
+:root,
+.dark {
+  --fb-v2-page-bg: #0d1117;
+  --fb-v2-surface: #1a1d24;
+  --fb-v2-border: #2a2f3d;
+  --fb-v2-text: #e2e8f0;
+  --fb-v2-heading: #f8fafc;
+  --fb-v2-text-muted: #94a3b8;
+  --fb-v2-accent: #3b82f6;
+}
+
+.light {
+  --fb-v2-page-bg: #f1f5f9;
+  --fb-v2-surface: #ffffff;
+  --fb-v2-border: #cbd5e1;
+  --fb-v2-text: #334155;
+  --fb-v2-heading: #0f172a;
+  --fb-v2-text-muted: #475569;
+  --fb-v2-accent: #1d4ed8;
+}
+
+.fb-v2-card {
+  background: var(--fb-v2-surface);
+  border: 1px solid var(--fb-v2-border);
+  border-radius: 0.5rem;
+  padding: 1.25rem 1.5rem;
+}
