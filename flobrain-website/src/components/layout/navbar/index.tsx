@@ -36,6 +36,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
+  const isLeadershipPreview = pathname === "/leadership-preview";
   const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
   const isDashboardRoute = pathname === "/dashboard";
   const isHomeActive = pathname === "/";
@@ -43,7 +44,9 @@ export default function Navbar() {
   return (
     <header
       className={
-        isDashboardRoute
+        isLeadershipPreview
+          ? "relative z-10 px-4 pt-4 md:px-6 md:pt-5"
+          : isDashboardRoute
           ? "hidden md:block"
           : isMemoryRoute
           ? "pointer-events-none fixed inset-x-0 top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"

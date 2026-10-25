@@ -1471,3 +1471,75 @@ body {
   border-radius: 0.5rem;
   padding: 1.25rem 1.5rem;
 }
+
+
+/* FloBrain V2 action controls */
+
+:root,
+.dark {
+  --fb-v2-accent-hover: #2563eb;
+  --fb-v2-on-accent: #ffffff;
+  --fb-v2-input-bg: #252a36;
+  --fb-v2-input-border: #363d52;
+  --fb-v2-error: #ef4444;
+  --fb-v2-overlay: rgba(0, 0, 0, 0.7);
+}
+
+.light {
+  --fb-v2-accent-hover: #1d4ed8;
+  --fb-v2-on-accent: #ffffff;
+  --fb-v2-input-bg: #f8fafc;
+  --fb-v2-input-border: #94a3b8;
+  --fb-v2-error: #dc2626;
+  --fb-v2-overlay: rgba(15, 23, 42, 0.4);
+}
+
+.fb-v2-btn-primary {
+  background: var(--fb-v2-accent);
+  color: var(--fb-v2-on-accent);
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.fb-v2-btn-primary:hover {
+  background: var(--fb-v2-accent-hover);
+}
+
+.fb-v2-btn-primary:focus-visible,
+.fb-v2-input:focus-visible {
+  outline: 2px solid var(--fb-v2-accent);
+  outline-offset: 2px;
+}
+
+.fb-v2-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--fb-v2-input-border);
+  border-radius: 0.375rem;
+  background: var(--fb-v2-input-bg);
+  color: var(--fb-v2-text);
+  font-size: 0.875rem;
+}
+
+.fb-v2-input::placeholder {
+  color: var(--fb-v2-text-muted);
+}
+
+.fb-v2-input option {
+  background: var(--fb-v2-surface);
+  color: var(--fb-v2-text);
+}
+
+.fb-v2-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--fb-v2-text-muted);
+}
+
+.fb-v2-dialog::backdrop {
+  background: var(--fb-v2-overlay);
+}
