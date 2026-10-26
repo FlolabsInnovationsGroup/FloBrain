@@ -1473,6 +1473,29 @@ body {
 }
 
 
+/* FloBrain V2 status badges */
+
+:root,
+.dark {
+  --fb-v2-success: #22c55e;
+  --fb-v2-success-subtle: rgba(34, 197, 94, 0.12);
+  --fb-v2-warning: #f59e0b;
+  --fb-v2-warning-subtle: rgba(245, 158, 11, 0.12);
+  --fb-v2-error-subtle: rgba(239, 68, 68, 0.12);
+  --fb-v2-inactive: #64748b;
+  --fb-v2-accent-subtle: rgba(59, 130, 246, 0.12);
+}
+
+.light {
+  --fb-v2-success: #15803d;
+  --fb-v2-success-subtle: rgba(21, 128, 61, 0.12);
+  --fb-v2-warning: #92400e;
+  --fb-v2-warning-subtle: rgba(146, 64, 14, 0.12);
+  --fb-v2-error-subtle: rgba(220, 38, 38, 0.12);
+  --fb-v2-inactive: #475569;
+  --fb-v2-accent-subtle: rgba(29, 78, 216, 0.12);
+}
+
 /* FloBrain V2 action controls */
 
 :root,
