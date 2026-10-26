@@ -28,16 +28,38 @@ def _build_multipart(fields: dict[str, str]) -> tuple[bytes, str]:
     return body, f"multipart/form-data; boundary={boundary}"
 
 
-def _format_messages_as_prompt(messages: list[dict[str, str]]) -> str:
+def _extract_base64(data_url: str) -> str:
+    """Strip the data:image/...;base64, prefix and return raw base64."""
+    if data_url.startswith("data:"):
+        comma = data_url.find(",")
+        if comma != -1:
+            return data_url[comma + 1:]
+    return data_url
+
+
+def _find_latest_image(messages: list[dict]) -> str:
+    """Return raw base64 of the most recent user message that has an image, or empty string."""
+    for msg in reversed(messages):
+        if msg.get("role") == "user" and msg.get("image"):
+            return _extract_base64(msg["image"])
+    return ""
+
+
+def _format_messages_as_prompt(messages: list[dict]) -> str:
     """Flatten an OpenAI-style messages array into a single text prompt."""
     role_label = {"system": "System", "user": "User", "assistant": "Assistant"}
     parts = []
     for msg in messages:
         role = msg.get("role", "")
         content = (msg.get("content") or "").strip()
-        if content:
-            label = role_label.get(role, role.capitalize())
+        has_image = bool(msg.get("image"))
+        label = role_label.get(role, role.capitalize())
+        if content and has_image:
+            parts.append(f"{label}: {content} [image attached]")
+        elif content:
             parts.append(f"{label}: {content}")
+        elif has_image:
+            parts.append(f"{label}: [image attached]")
     return "\n\n".join(parts)
 
 
@@ -62,7 +84,7 @@ class MultimodalLLMAdapter:
             or os.environ.get("MULTIMODAL_SERVICE_TIMEOUT", "60")
         )
 
-    def generate(self, messages: list[dict[str, str]], model: str | None = None) -> LLMResult:
+    def generate(self, messages: list[dict], model: str | None = None) -> LLMResult:
         if not self._base_url:
             logger.error("MULTIMODAL_SERVICE_URL is not configured")
             return LLMResult(
@@ -73,7 +95,11 @@ class MultimodalLLMAdapter:
 
         text_input = _format_messages_as_prompt(messages)
         url = f"{self._base_url}/process"
-        body, content_type = _build_multipart({"text_input": text_input})
+        fields: dict[str, str] = {"text_input": text_input}
+        image_b64 = _find_latest_image(messages)
+        if image_b64:
+            fields["image"] = image_b64
+        body, content_type = _build_multipart(fields)
 
         headers: dict[str, str] = {"Content-Type": content_type}
         api_key = getattr(settings, "MULTIMODAL_API_KEY", "") or os.environ.get(
