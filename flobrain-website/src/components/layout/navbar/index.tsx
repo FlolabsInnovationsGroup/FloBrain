@@ -41,6 +41,8 @@ export default function Navbar() {
   const isDashboardRoute = pathname === "/dashboard";
   const isHomeActive = pathname === "/";
 
+  if (isLeadershipPreview) return null;
+
   return (
     <header
       className={
