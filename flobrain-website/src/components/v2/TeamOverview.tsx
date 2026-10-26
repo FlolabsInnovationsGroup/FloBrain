@@ -1,3 +1,4 @@
+import StatusBadge, { type StatusVariant } from "./StatusBadge";
 
 export type Team = {
   id: number;
@@ -10,6 +11,12 @@ export type Team = {
 
 type TeamOverviewProps = {
   teams: Team[];
+};
+
+const teamStatusVariants: Record<Team["status"], StatusVariant> = {
+  "On track": "active",
+  "At risk": "pending",
+  Blocked: "blocked",
 };
 
 export default function TeamOverview({
@@ -67,9 +74,10 @@ export default function TeamOverview({
                   </div>
                 </td>
                 <td className="p-4">
-                  <span className="rounded border border-[var(--fb-v2-border)] px-2 py-1">
-                    {team.status}
-                  </span>
+                  <StatusBadge
+                    variant={teamStatusVariants[team.status]}
+                    label={team.status}
+                  />
                 </td>
               </tr>
             ))}
