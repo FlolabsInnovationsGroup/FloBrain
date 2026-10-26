@@ -1,3 +1,5 @@
+import DataTable from "./DataTable";
+import ProgressBar from "./ProgressBar";
 import StatusBadge, { type StatusVariant } from "./StatusBadge";
 
 export type Team = {
@@ -13,77 +15,28 @@ type TeamOverviewProps = {
   teams: Team[];
 };
 
-const teamStatusVariants: Record<Team["status"], StatusVariant> = {
+const statusVariants: Record<Team["status"], StatusVariant> = {
   "On track": "active",
   "At risk": "pending",
   Blocked: "blocked",
 };
 
-export default function TeamOverview({
-  teams,
-}: TeamOverviewProps) {
+export default function TeamOverview({ teams }: TeamOverviewProps) {
   return (
-    <section>
-      <h2 className="mb-3 text-lg font-semibold text-[var(--fb-v2-heading)]">
-        TEAM OVERVIEW
-      </h2>
-
-      <div className="fb-v2-card overflow-x-auto p-0">
-        <table className="w-full min-w-[650px] table-fixed text-left text-sm">
-          <thead>
-            <tr className="border-b border-[var(--fb-v2-border)]">
-              {["Teams", "Lead", "Members", "Progress", "Status"].map(
-                (heading) => (
-                  <th
-                    key={heading}
-                    scope="col"
-                    className="p-4 font-medium text-[var(--fb-v2-text-muted)]"
-                  >
-                    {heading}
-                  </th>
-                )
-              )}
-            </tr>
-          </thead>
-
-          <tbody>
-            {teams.map((team) => (
-              <tr
-                key={team.id}
-                className="border-b border-[var(--fb-v2-border)] last:border-0"
-              >
-                <td className="p-4">{team.name}</td>
-                <td className="p-4">{team.lead}</td>
-                <td className="p-4">{team.members}</td>
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div
-                      role="progressbar"
-                      aria-label={`${team.name} progress`}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-valuenow={team.progress}
-                      className="h-2 w-24 overflow-hidden rounded-full bg-[var(--fb-v2-border)]"
-                    >
-                      <div
-                        className="h-full rounded-full bg-[var(--fb-v2-accent)]"
-                        style={{ width: `${team.progress}%` }}
-                      />
-                    </div>
-                    <span>{team.progress}%</span>
-                  </div>
-                </td>
-                <td className="p-4">
-                  <StatusBadge
-                    variant={teamStatusVariants[team.status]}
-                    label={team.status}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <DataTable title="TEAM OVERVIEW" headings={["Teams", "Lead", "Members", "Progress", "Status"]}>
+      {teams.map((team) => (
+        <tr key={team.id}>
+          <td>{team.name}</td>
+          <td>{team.lead}</td>
+          <td>{team.members}</td>
+          <td>
+            <ProgressBar value={team.progress} label={`${team.name} progress`} />
+          </td>
+          <td>
+            <StatusBadge variant={statusVariants[team.status]} label={team.status} />
+          </td>
+        </tr>
+      ))}
+    </DataTable>
   );
 }
