@@ -1,10 +1,11 @@
-
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
 import { Search } from "lucide-react";
 
 import MetricCard from "./MetricCard";
+import PageHeader from "./PageHeader";
+import StatusBadge from "./StatusBadge";
 import TeamOverview, { type Team } from "./TeamOverview";
 import InternOverview, { type Intern } from "./InternOverview";
 import DeadlinesMilestones, { type Milestone } from "./DeadlinesMilestones";
@@ -31,9 +32,27 @@ const initialInterns: Intern[] = [
 ];
 
 const initialMilestones: Milestone[] = [
-  { id: 1, projectName: "FloBrain V2 Dashboard", type: "Milestone", team: "Frontend", targetDate: "Oct 28, 2026" },
-  { id: 2, projectName: "User Authentication", type: "Deadline", team: "Backend", targetDate: "Nov 2, 2026" },
-  { id: 3, projectName: "UI Design Review", type: "Milestone", team: "Design", targetDate: "Nov 5, 2026" },
+  {
+    id: 1,
+    projectName: "FloBrain V2 Dashboard",
+    type: "Milestone",
+    team: "Frontend",
+    targetDate: "Oct 28, 2026",
+  },
+  {
+    id: 2,
+    projectName: "User Authentication",
+    type: "Deadline",
+    team: "Backend",
+    targetDate: "Nov 2, 2026",
+  },
+  {
+    id: 3,
+    projectName: "UI Design Review",
+    type: "Milestone",
+    team: "Design",
+    targetDate: "Nov 5, 2026",
+  },
 ];
 
 const emptyForm = {
@@ -113,9 +132,7 @@ export default function LeadershipDashboard() {
         return;
       }
 
-      const formattedDate = new Date(
-        `${form.targetDate}T12:00:00`
-      ).toLocaleDateString("en-US", {
+      const formattedDate = new Date(`${form.targetDate}T12:00:00`).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric",
@@ -149,9 +166,7 @@ export default function LeadershipDashboard() {
 
       setInterns((previous) =>
         previous.map((intern) =>
-          intern.name === form.assignee
-            ? { ...intern, tasks: intern.tasks + 1 }
-            : intern
+          intern.name === form.assignee ? { ...intern, tasks: intern.tasks + 1 } : intern
         )
       );
 
@@ -164,65 +179,51 @@ export default function LeadershipDashboard() {
   const query = search.trim().toLowerCase();
   const matches = (value: string) => value.toLowerCase().includes(query);
 
-  
-    const visibleTeams = teams.filter(
-    (team) =>
-        matches(team.name) ||
-        matches(team.lead) ||
-        matches(team.status)
-    );
-
-    const visibleInterns = interns.filter(
-    (intern) =>
-        matches(intern.name) ||
-        matches(intern.team) ||
-        matches(intern.status)
-    );
-
-    const visibleMilestones = milestones.filter(
-    (item) =>
-        matches(item.projectName) ||
-        matches(item.team) ||
-        matches(item.type) ||
-        matches(item.targetDate)
-    );
-
-
-
-  const visibleTasks = tasks.filter(
-    (task) =>
-      matches(task.name) ||
-      matches(task.project) ||
-      matches(task.assignee)
+  const visibleTeams = teams.filter(
+    (team) => matches(team.name) || matches(team.lead) || matches(team.status)
   );
 
-  
-function jumpToMatch() {
-  if (!query) return;
+  const visibleInterns = interns.filter(
+    (intern) => matches(intern.name) || matches(intern.team) || matches(intern.status)
+  );
 
-  let target: HTMLElement | null = null;
+  const visibleMilestones = milestones.filter(
+    (item) =>
+      matches(item.projectName) ||
+      matches(item.team) ||
+      matches(item.type) ||
+      matches(item.targetDate)
+  );
 
-  if (visibleTeams.length > 0) {
-    target = teamResultRef.current;
-  } else if (visibleInterns.length > 0) {
-    target = internResultRef.current;
-  } else if (visibleMilestones.length > 0) {
-    target = milestoneResultRef.current;
-  } else if (visibleTasks.length > 0) {
-    target = taskResultRef.current;
+  const visibleTasks = tasks.filter(
+    (task) => matches(task.name) || matches(task.project) || matches(task.assignee)
+  );
+
+  function jumpToMatch() {
+    if (!query) return;
+
+    let target: HTMLElement | null = null;
+
+    if (visibleTeams.length > 0) {
+      target = teamResultRef.current;
+    } else if (visibleInterns.length > 0) {
+      target = internResultRef.current;
+    } else if (visibleMilestones.length > 0) {
+      target = milestoneResultRef.current;
+    } else if (visibleTasks.length > 0) {
+      target = taskResultRef.current;
+    }
+
+    target?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }
 
-  target?.scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-  });
-}
+  const highlightClass = query
+    ? "scroll-mt-4 rounded-lg ring-2 ring-[var(--fb-v2-accent)] ring-offset-4 ring-offset-[var(--fb-v2-page-bg)]"
+    : "scroll-mt-4";
 
-const highlightClass = query
-  ? "scroll-mt-4 rounded-lg ring-2 ring-[var(--fb-v2-accent)] ring-offset-4 ring-offset-[var(--fb-v2-page-bg)]"
-  : "scroll-mt-4";
-
-  
   const noResults =
     query.length > 0 &&
     visibleTeams.length === 0 &&
@@ -239,20 +240,22 @@ const highlightClass = query
   ];
 
   return (
-    <main className="min-h-screen bg-[var(--fb-v2-page-bg)] px-4 py-8 text-[var(--fb-v2-text)] sm:px-6">
-      <div className="mx-auto max-w-[1500px] space-y-7">
-        <h1 className="text-2xl font-bold text-[var(--fb-v2-heading)]">
-          Leadership Dashboard
-        </h1>
+    <main className="fb-v2-content">
+      <div className="fb-v2-lead-panel">
+        <PageHeader title="Leadership Dashboard" />
 
         {/* ACTION BUTTONS AND SEARCH */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-y border-[var(--fb-v2-border)] py-3">
+        <div className="fb-v2-toolbar">
           <div className="flex flex-wrap gap-2">
             <button type="button" className="fb-v2-btn-primary" onClick={() => openCreate("team")}>
               Create Team
             </button>
 
-            <button type="button" className="fb-v2-btn-primary" onClick={() => openCreate("project")}>
+            <button
+              type="button"
+              className="fb-v2-btn-primary"
+              onClick={() => openCreate("project")}
+            >
               Create Project
             </button>
 
@@ -261,40 +264,38 @@ const highlightClass = query
             </button>
           </div>
 
-          
-            <form
+          <form
             role="search"
             onSubmit={(event) => {
-                event.preventDefault();
-                jumpToMatch();
+              event.preventDefault();
+              jumpToMatch();
             }}
-            className="w-full sm:w-64"
-            >
-            <div className="flex items-center gap-2 rounded-md border border-[var(--fb-v2-input-border)] bg-[var(--fb-v2-input-bg)] px-3 focus-within:ring-2 focus-within:ring-[var(--fb-v2-accent)]">
-                <button
+            className="w-full sm:w-[234px]"
+          >
+            <div className="fb-v2-search">
+              <button
                 type="submit"
                 aria-label="Jump to search result"
                 title="Jump to search result"
-                className="shrink-0 cursor-pointer text-[var(--fb-v2-text-muted)]"
-                >
+                className="fb-v2-search-submit"
+              >
                 <Search size={16} />
-                </button>
+              </button>
 
-                <label htmlFor="leadership-search" className="sr-only">
+              <label htmlFor="leadership-search" className="sr-only">
                 Search by name
-                </label>
+              </label>
 
-                <input
+              <input
                 id="leadership-search"
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search by name"
-                className="min-w-0 w-full bg-transparent py-2 text-sm text-[var(--fb-v2-text)] outline-none placeholder:text-[var(--fb-v2-text-muted)]"
-                />
+                className="fb-v2-search-input"
+              />
             </div>
-            </form>
-
+          </form>
         </div>
 
         <p className="text-xs text-[var(--fb-v2-text-muted)]">
@@ -314,43 +315,34 @@ const highlightClass = query
         )}
 
         {/* KPI CARDS */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="fb-v2-metrics">
           {metrics.map((metric) => (
-            <MetricCard
-              key={metric.label}
-              label={metric.label}
-              value={metric.value}
-            />
+            <MetricCard key={metric.label} label={metric.label} value={metric.value} />
           ))}
         </div>
 
-        
-        
         {(!query || visibleTeams.length > 0) && (
-        <div ref={teamResultRef} className={highlightClass}>
+          <div ref={teamResultRef} className={highlightClass}>
             <TeamOverview teams={visibleTeams} />
-        </div>
+          </div>
         )}
 
         {(!query || visibleInterns.length > 0) && (
-        <div ref={internResultRef} className={highlightClass}>
+          <div ref={internResultRef} className={highlightClass}>
             <InternOverview interns={visibleInterns} />
-        </div>
+          </div>
         )}
 
         {(!query || visibleMilestones.length > 0) && (
-        <div ref={milestoneResultRef} className={highlightClass}>
+          <div ref={milestoneResultRef} className={highlightClass}>
             <DeadlinesMilestones milestones={visibleMilestones} />
-        </div>
+          </div>
         )}
-
 
         {/* SHOW NEWLY CREATED TASKS */}
         {visibleTasks.length > 0 && (
           <section ref={taskResultRef} className={highlightClass}>
-            <h2 className="mb-3 text-lg font-semibold">
-              NEW TASKS
-            </h2>
+            <h2 className="fb-v2-section-title">NEW TASKS</h2>
             <div className="fb-v2-card space-y-3">
               {visibleTasks.map((task) => (
                 <div
@@ -363,9 +355,7 @@ const highlightClass = query
                       {task.project} | Assigned to {task.assignee}
                     </p>
                   </div>
-                  <span className="text-sm text-[var(--fb-v2-text-muted)]">
-                    Pending
-                  </span>
+                  <StatusBadge variant="pending" label="Pending" />
                 </div>
               ))}
             </div>
@@ -377,11 +367,15 @@ const highlightClass = query
       <dialog
         ref={dialogRef}
         onClose={() => setMode(null)}
-        className="fb-v2-dialog w-[430px] max-w-[90vw] rounded-lg border border-[var(--fb-v2-border)] bg-[var(--fb-v2-surface)] p-6 text-[var(--fb-v2-text)] shadow-xl"
+        aria-labelledby="create-dialog-title"
+        className="fb-v2-dialog"
       >
         {mode && (
-          <form onSubmit={handleCreate} className="space-y-4">
-            <h2 className="text-xl font-semibold">
+          <form onSubmit={handleCreate} className="space-y-5">
+            <h2
+              id="create-dialog-title"
+              className="text-lg font-semibold text-[var(--fb-v2-heading)]"
+            >
               {mode === "team"
                 ? "Create Team"
                 : mode === "project"
@@ -391,11 +385,7 @@ const highlightClass = query
 
             <div>
               <label htmlFor="create-name" className="fb-v2-label">
-                {mode === "team"
-                  ? "Team name"
-                  : mode === "project"
-                    ? "Project name"
-                    : "Task title"}
+                {mode === "team" ? "Team name" : mode === "project" ? "Project name" : "Task title"}
               </label>
               <input
                 id="create-name"
@@ -513,7 +503,7 @@ const highlightClass = query
             <div className="flex justify-end gap-3 pt-3">
               <button
                 type="button"
-                className="rounded-md border border-[var(--fb-v2-border)] px-4 py-2 text-sm"
+                className="fb-v2-btn-ghost"
                 onClick={() => dialogRef.current?.close()}
               >
                 Cancel
