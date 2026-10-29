@@ -38,12 +38,15 @@ export default function Navbar() {
   const pathname = usePathname();
   const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
   const isDashboardRoute = pathname === "/dashboard";
+  const isTeamsRoute = pathname === "/teams" || pathname.startsWith("/teams/");
   const isHomeActive = pathname === "/";
 
   return (
     <header
       className={
-        isDashboardRoute
+        isTeamsRoute
+          ? "hidden"
+          : isDashboardRoute
           ? "hidden md:block"
           : isMemoryRoute
           ? "pointer-events-none fixed inset-x-0 top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
