@@ -311,7 +311,7 @@ export default function SidePanelsLayout({
   onSelectBuddy,
 }: SidePanelsLayoutProps) {
   return (
-    <div className="fb-lead-shell flex h-[calc(100dvh-var(--fb-navbar-h))] min-h-[560px] w-full gap-3 overflow-hidden p-3">
+    <div className="fb-lead-shell flex h-[calc(100dvh-var(--fb-navbar-h))] min-h-140 w-full gap-3 overflow-hidden p-3">
       <AppRail />
       <MeetingsPanel
         chatGroups={chatGroups}
