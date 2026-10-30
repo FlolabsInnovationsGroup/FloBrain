@@ -4,8 +4,8 @@
   "description": "API with JWT Authentication and Authorization",
   "main": "src/server.js",
   "scripts": {
-    "start": "node api.js && node src/server.js",
-    "dev": "node api.js && nodemon src/server.js",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "test": "jest",
     "db:migrate": "dotenv sequelize-cli db:migrate",
     "db:seed:all": "dotenv sequelize-cli db:seed:all"
