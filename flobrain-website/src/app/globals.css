@@ -12,6 +12,29 @@
 
 /* ─── Light theme (mockup palette — May 17 designs) ─── */
 .light {
+  --fb-v2-page-bg: #f4f4f5;
+  --fb-v2-sidebar-bg: #ffffff;
+  --fb-v2-surface: #ffffff;
+  --fb-v2-surface-raised: #f4f4f5;
+  --fb-v2-border: #d4d4d8;
+  --fb-v2-divider: #e4e4e7;
+  --fb-v2-text: #27272a;
+  --fb-v2-text-muted: #52525b;
+  --fb-v2-text-subtle: #71717a;
+  --fb-v2-heading: #18181b;
+  --fb-v2-accent: #2563eb;
+  --fb-v2-accent-hover: #1d4ed8;
+  --fb-v2-accent-subtle: rgba(37, 99, 235, 0.12);
+  --fb-v2-success: #16a34a;
+  --fb-v2-success-subtle: rgba(22, 163, 74, 0.14);
+  --fb-v2-warning: #d97706;
+  --fb-v2-error: #e11d48;
+  --fb-v2-buddy-cyan: #06b6d4;
+  --fb-v2-buddy-green: #22c55e;
+  --fb-v2-buddy-pink: #ec4899;
+  --fb-v2-buddy-orange: #f97316;
+  --fb-v2-buddy-purple: #8b5cf6;
+
   --fb-page-bg: #d8b4fe;
   --fb-page-bg-solid: #d8b4fe;
   --fb-home-bg: #d8b4fe;
@@ -338,6 +361,29 @@
 
 /* ─── Dark theme (current design — unchanged) ─── */
 .dark {
+  --fb-v2-page-bg: #363638;
+  --fb-v2-sidebar-bg: #48484a;
+  --fb-v2-surface: #414143;
+  --fb-v2-surface-raised: #4a4a4d;
+  --fb-v2-border: #5b5b5e;
+  --fb-v2-divider: #555558;
+  --fb-v2-text: #e8e8ea;
+  --fb-v2-text-muted: #c5c5c8;
+  --fb-v2-text-subtle: #a1a1a5;
+  --fb-v2-heading: #ffffff;
+  --fb-v2-accent: #2f67ff;
+  --fb-v2-accent-hover: #4b7cff;
+  --fb-v2-accent-subtle: rgba(47, 103, 255, 0.16);
+  --fb-v2-success: #16a34a;
+  --fb-v2-success-subtle: rgba(22, 163, 74, 0.2);
+  --fb-v2-warning: #f97316;
+  --fb-v2-error: #ec4899;
+  --fb-v2-buddy-cyan: #22d3ee;
+  --fb-v2-buddy-green: #34d399;
+  --fb-v2-buddy-pink: #f472b6;
+  --fb-v2-buddy-orange: #fb923c;
+  --fb-v2-buddy-purple: #a78bfa;
+
   --fb-page-bg: linear-gradient(90deg, #290036 0%, #070014 100%);
   --fb-page-bg-solid: #12041c;
   --fb-home-bg: #020617;
