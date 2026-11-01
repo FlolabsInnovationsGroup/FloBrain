@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { Search } from "lucide-react";
 
 import MetricCard from "./MetricCard";
@@ -10,7 +11,7 @@ import TeamOverview, { type Team } from "./TeamOverview";
 import InternOverview, { type Intern } from "./InternOverview";
 import DeadlinesMilestones, { type Milestone } from "./DeadlinesMilestones";
 
-type CreateMode = "team" | "project" | "task";
+type CreateMode = "project" | "task";
 
 type DemoTask = {
   id: number;
@@ -57,7 +58,6 @@ const initialMilestones: Milestone[] = [
 
 const emptyForm = {
   name: "",
-  lead: "",
   team: "",
   targetDate: "",
   project: "",
@@ -65,7 +65,7 @@ const emptyForm = {
 };
 
 export default function LeadershipDashboard() {
-  const [teams, setTeams] = useState<Team[]>(initialTeams);
+  const teams = initialTeams;
   const [interns, setInterns] = useState<Intern[]>(initialInterns);
   const [milestones, setMilestones] = useState<Milestone[]>(initialMilestones);
   const [tasks, setTasks] = useState<DemoTask[]>([]);
@@ -103,27 +103,6 @@ export default function LeadershipDashboard() {
     if (!name || !mode) {
       setError("Please enter a valid name.");
       return;
-    }
-
-    if (mode === "team") {
-      if (teams.some((team) => team.name.toLowerCase() === name.toLowerCase())) {
-        setError("This team already exists.");
-        return;
-      }
-
-      setTeams((previous) => [
-        ...previous,
-        {
-          id: Date.now(),
-          name,
-          lead: form.lead.trim(),
-          members: 0,
-          progress: 0,
-          status: "On track",
-        },
-      ]);
-
-      setNotice(`Team "${name}" created in the preview.`);
     }
 
     if (mode === "project") {
@@ -247,9 +226,9 @@ export default function LeadershipDashboard() {
         {/* ACTION BUTTONS AND SEARCH */}
         <div className="fb-v2-toolbar">
           <div className="flex flex-wrap gap-2">
-            <button type="button" className="fb-v2-btn-primary" onClick={() => openCreate("team")}>
+            <Link href="/teams/new" className="fb-v2-btn-primary">
               Create Team
-            </button>
+            </Link>
 
             <button
               type="button"
@@ -376,16 +355,12 @@ export default function LeadershipDashboard() {
               id="create-dialog-title"
               className="text-lg font-semibold text-[var(--fb-v2-heading)]"
             >
-              {mode === "team"
-                ? "Create Team"
-                : mode === "project"
-                  ? "Create Project"
-                  : "Create Task"}
+              {mode === "project" ? "Create Project" : "Create Task"}
             </h2>
 
             <div>
               <label htmlFor="create-name" className="fb-v2-label">
-                {mode === "team" ? "Team name" : mode === "project" ? "Project name" : "Task title"}
+                {mode === "project" ? "Project name" : "Task title"}
               </label>
               <input
                 id="create-name"
@@ -396,21 +371,6 @@ export default function LeadershipDashboard() {
                 maxLength={80}
               />
             </div>
-
-            {mode === "team" && (
-              <div>
-                <label htmlFor="create-lead" className="fb-v2-label">
-                  Team lead
-                </label>
-                <input
-                  id="create-lead"
-                  className="fb-v2-input"
-                  value={form.lead}
-                  onChange={(event) => updateField("lead", event.target.value)}
-                  required
-                />
-              </div>
-            )}
 
             {mode === "project" && (
               <>

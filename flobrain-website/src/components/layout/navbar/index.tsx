@@ -36,7 +36,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
-  const isLeadershipPreview = pathname === "/leadership-preview";
+  const isLeadershipPreview = pathname === "/leadership-preview" || pathname === "/teams/new";
   const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
   const isDashboardRoute = pathname === "/dashboard";
   const isHomeActive = pathname === "/";

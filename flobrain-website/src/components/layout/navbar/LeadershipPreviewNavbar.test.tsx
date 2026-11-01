@@ -62,6 +62,7 @@ describe("Shared V1 navbar on Leadership preview", () => {
     const { rerender } = render(<Navbar />);
     for (const [path, position, active] of [
       ["/", "sticky", "Home"],
+      ["/teams/new", "relative", null],
       ["/brain", "sticky", "Chat"],
       ["/dashboard", "hidden", "Dashboard"],
       ["/memory", "fixed", null],

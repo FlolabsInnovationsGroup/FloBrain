@@ -45,19 +45,17 @@ describe("Leadership preview behavior", () => {
     expect(screen.getAllByRole("table")).toHaveLength(3);
   });
 
-  it("creates a team, project and task while keeping KPI and intern updates", () => {
+  it("links Create Team to the dedicated Create Team page", () => {
     render(<LeadershipDashboard />);
-    fireEvent.click(screen.getByRole("button", { name: "Create Team" }));
-    field("Team name", "Experiment Team");
-    field("Team lead", "Maria");
-    submit();
-    expect(screen.getByRole("table", { name: "TEAM OVERVIEW" })).toHaveTextContent(
-      "Experiment Team"
-    );
+    expect(screen.getByRole("link", { name: "Create Team" })).toHaveAttribute("href", "/teams/new");
+    expect(screen.queryByRole("button", { name: "Create Team" })).not.toBeInTheDocument();
+  });
 
+  it("creates a project and task while keeping KPI and intern updates", () => {
+    render(<LeadershipDashboard />);
     fireEvent.click(screen.getByRole("button", { name: "Create Project" }));
     field("Project name", "Experiment Project");
-    field("Team", "Experiment Team");
+    field("Team", "Frontend");
     field("Target date", "2026-11-10");
     submit();
     expect(metric("Active Projects").getByText("9")).toBeInTheDocument();
@@ -82,11 +80,7 @@ describe("Leadership preview behavior", () => {
 
   it("keeps duplicate validation and cancel behavior", () => {
     render(<LeadershipDashboard />);
-    fireEvent.click(screen.getByRole("button", { name: "Create Team" }));
-    field("Team name", "frontend");
-    field("Team lead", "Maria");
-    submit();
-    expect(screen.getByRole("alert")).toHaveTextContent("This team already exists.");
+    fireEvent.click(screen.getByRole("button", { name: "Create Task" }));
     fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Create Project" }));
