@@ -17,14 +17,6 @@ export type Buddy = {
   color: string;
 };
 
-type RailApp = {
-  name: string;
-  icon: IconType;
-  color: string;
-  /** Render the icon white on a filled circle of `color` instead of as a bare glyph */
-  badge?: boolean;
-};
-
 export const defaultChatGroups: ChatGroup[] = [
   {
     heading: "GROUPS",
