@@ -53,7 +53,7 @@ export function ViewTasksScreen({
                 </option>
               ))}
             </select>
-            <ChevronDown size={14} aria-hidden="true" />
+            <ChevronDown size={12} aria-hidden="true" />
           </span>
         </label>
       </div>
@@ -61,13 +61,20 @@ export function ViewTasksScreen({
       <div className="fb-v2-tasks-table-wrap">
         <table className="fb-v2-tasks-table">
           <caption className="sr-only">Tasks for {projectLabel}</caption>
+          <colgroup>
+            <col className="fb-v2-tasks-col-task" />
+            <col className="fb-v2-tasks-col-created" />
+            <col className="fb-v2-tasks-col-assigned" />
+            <col className="fb-v2-tasks-col-status" />
+            <col className="fb-v2-tasks-col-due" />
+          </colgroup>
           <thead>
             <tr>
-              <th scope="col">Task</th>
-              <th scope="col">Created by</th>
-              <th scope="col">Assigned to</th>
-              <th scope="col">Status</th>
-              <th scope="col">Due date</th>
+              <th scope="col">TASK</th>
+              <th scope="col">Created by:</th>
+              <th scope="col">Assigned to:</th>
+              <th scope="col">STATUS</th>
+              <th scope="col">DUE DATE</th>
             </tr>
           </thead>
           <tbody>
@@ -80,20 +87,20 @@ export function ViewTasksScreen({
             ) : (
               visible.map((task) => (
                 <tr key={task.id}>
-                  <td data-label="Task">
+                  <td data-label="TASK">
                     <Link href={`/leadership/tasks/${task.id}`} className="fb-v2-tasks-name-link">
                       {task.title}
                     </Link>
                   </td>
-                  <td data-label="Created by">{task.createdBy.name}</td>
-                  <td data-label="Assigned to">{formatAssigneeList(task.assignedTo)}</td>
-                  <td data-label="Status">
+                  <td data-label="Created by:">{task.createdBy.name}</td>
+                  <td data-label="Assigned to:">{formatAssigneeList(task.assignedTo)}</td>
+                  <td data-label="STATUS">
                     <span className="fb-v2-tasks-status" data-tone={task.status}>
-                      {taskStatusLabel(task.status)}
-                      <ChevronDown size={12} aria-hidden="true" />
+                      <span>{taskStatusLabel(task.status)}</span>
+                      <ChevronDown size={10} aria-hidden="true" />
                     </span>
                   </td>
-                  <td data-label="Due date">{formatTaskListDate(task.dueDate)}</td>
+                  <td data-label="DUE DATE">{formatTaskListDate(task.dueDate)}</td>
                 </tr>
               ))
             )}

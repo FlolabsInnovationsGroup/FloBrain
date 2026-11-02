@@ -9,7 +9,7 @@ describe("ViewTasksScreen", () => {
     render(<ViewTasksScreen tasks={mockTasks} />);
 
     expect(screen.getByRole("heading", { name: /TASKS: FLOHEALTH/i })).toBeInTheDocument();
-    for (const label of ["Task", "Created by", "Assigned to", "Status", "Due date"]) {
+    for (const label of ["TASK", "Created by:", "Assigned to:", "STATUS", "DUE DATE"]) {
       expect(screen.getByRole("columnheader", { name: label })).toBeInTheDocument();
     }
 
