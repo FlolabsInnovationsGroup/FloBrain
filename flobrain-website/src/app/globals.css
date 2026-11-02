@@ -1525,10 +1525,15 @@ body {
 }
 
 /* ─── V2 Lead Controls shell ─── */
+.fb-v2-page {
+  background: var(--fb-v2-page-bg);
+  color: var(--fb-v2-text);
+}
+
 .fb-v2-shell {
   background: var(--fb-v2-page-bg);
   color: var(--fb-v2-text);
-  min-height: calc(100dvh - 7rem);
+  min-height: 100dvh;
   max-width: 100%;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
