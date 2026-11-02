@@ -54,34 +54,7 @@ export const defaultBuddies: Buddy[] = Array.from({ length: 9 }, (_, index) => (
   color: `var(--fb-v2-buddy-${index + 1})`,
 }));
 
-const railApps: RailApp[] = [
-  { name: "Figma", icon: SiFigma, color: "var(--fb-v2-rail-figma)" },
-  { name: "Canva", icon: SiCanva, color: "var(--fb-v2-rail-canva)", badge: true },
-  { name: "GitHub", icon: SiGithub, color: "var(--fb-v2-rail-github)", badge: true },
-  { name: "ClickUp", icon: SiClickup, color: "var(--fb-v2-rail-clickup)", badge: true },
-  { name: "Miro", icon: SiMiro, color: "var(--fb-v2-rail-miro)", badge: true },
-];
-
 const meetingMenus = ["Meeting Links", "Recordings", "Transcripts"];
-
-export function AppRail() {
-  return (
-    <aside className="fb-lead-rail hidden w-10 shrink-0 flex-col items-center gap-4 rounded-md py-4 lg:flex">
-      {railApps.map(({ name, icon: Icon, color, badge }) => (
-        <button
-          key={name}
-          type="button"
-          aria-label={`Open ${name}`}
-          title={name}
-          className="flex h-5 w-5 items-center justify-center rounded-full transition hover:scale-110"
-          style={badge ? { background: color, color: "#ffffff" } : { color }}
-        >
-          <Icon size={badge ? 11 : 15} />
-        </button>
-      ))}
-    </aside>
-  );
-}
 
 type MeetingsPanelProps = {
   chatGroups?: ChatGroup[];
@@ -312,7 +285,6 @@ export default function SidePanelsLayout({
 }: SidePanelsLayoutProps) {
   return (
     <div className="fb-lead-shell flex h-[calc(100dvh-var(--fb-navbar-h))] min-h-140 w-full gap-3 overflow-hidden p-3">
-      <AppRail />
       <MeetingsPanel
         chatGroups={chatGroups}
         activeRoom={activeRoom}
