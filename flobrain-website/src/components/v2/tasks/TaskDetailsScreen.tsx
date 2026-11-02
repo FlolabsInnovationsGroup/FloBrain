@@ -93,7 +93,10 @@ export function TaskDetailsScreen({ task }: TaskDetailsScreenProps) {
   const [actionsSlot, setActionsSlot] = useState<Element | null>(null);
 
   useEffect(() => {
-    setActionsSlot(document.querySelector('[data-slot="actions"]'));
+    // Defer setState to avoid synchronous setState in effect (react-hooks/set-state-in-effect)
+    queueMicrotask(() => {
+      setActionsSlot(document.querySelector('[data-slot="actions"]'));
+    });
   }, []);
 
   const backLink = <BackToTasksLink />;
