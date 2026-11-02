@@ -97,7 +97,7 @@ export function MemberPicker({ label, options, selectedIds, onChange }: MemberPi
           aria-labelledby={`${baseId}-label`}
           aria-autocomplete="list"
           className="fb-v2-task-input fb-v2-task-combobox-input"
-          placeholder="Search members"
+          placeholder="SEARCH MEMBERS"
           autoComplete="off"
           value={query}
           onFocus={() => setOpen(true)}

@@ -5,13 +5,20 @@ type FormFieldProps = {
   label: ReactNode;
   error?: string;
   children: ReactNode;
+  /** When true, keep the label’s casing (Figma uses sentence case for Task description). */
+  sentenceCaseLabel?: boolean;
 };
 
 /** Label, control slot and error message. Pair with `fieldControlProps` on the control. */
-export function FormField({ id, label, error, children }: FormFieldProps) {
+export function FormField({ id, label, error, children, sentenceCaseLabel }: FormFieldProps) {
   return (
     <div className="fb-v2-task-field">
-      <label htmlFor={id} className="fb-v2-task-label">
+      <label
+        htmlFor={id}
+        className={
+          sentenceCaseLabel ? "fb-v2-task-label fb-v2-task-label--sentence" : "fb-v2-task-label"
+        }
+      >
         {label}
       </label>
       {children}

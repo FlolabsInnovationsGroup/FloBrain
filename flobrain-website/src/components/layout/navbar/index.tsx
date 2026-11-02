@@ -47,9 +47,7 @@ export default function Navbar() {
           ? "hidden md:block"
           : isMemoryRoute
           ? "pointer-events-none fixed inset-x-0 top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
-          : pathname === "/leadership/tasks/new"
-           ? "relative z-[100] px-4 pt-4 md:px-6 md:pt-5"
-           : "sticky top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
+          : "sticky top-0 z-[100] px-4 pt-4 md:px-6 md:pt-5"
       }
     >
       <nav

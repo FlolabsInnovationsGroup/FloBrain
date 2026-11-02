@@ -26,7 +26,8 @@ export function CreateTaskScreen() {
   return (
     <div className="fb-v2-task-page">
       <div className="fb-v2-task-card">
-        <h2 className="fb-v2-task-heading">Create Task</h2>
+        {/* Figma form card has no inner title — Create Task is selected in the action row above. */}
+        <h2 className="sr-only">Create Task</h2>
         {notice ? (
           <p role="status" className="fb-v2-task-notice">
             {notice}
