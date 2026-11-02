@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   isLeadershipNavActive,
   isMainNavActive,
+  isV2ShellRoute,
   showLeadershipSearch,
 } from "./navigation";
 
@@ -27,5 +28,13 @@ describe("V2 navigation active state", () => {
     expect(showLeadershipSearch("/leadership/projects")).toBe(false);
     expect(showLeadershipSearch("/leadership/tasks")).toBe(false);
     expect(showLeadershipSearch("/my-docs")).toBe(false);
+  });
+
+  it("treats Lead Controls routes as V2 shell pages", () => {
+    expect(isV2ShellRoute("/leadership")).toBe(true);
+    expect(isV2ShellRoute("/leadership/teams")).toBe(true);
+    expect(isV2ShellRoute("/my-tasks")).toBe(true);
+    expect(isV2ShellRoute("/")).toBe(false);
+    expect(isV2ShellRoute("/dashboard")).toBe(false);
   });
 });
