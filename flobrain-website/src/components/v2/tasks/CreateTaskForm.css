@@ -66,10 +66,18 @@
   color-scheme: light;
 }
 
-/* Page and card */
+/* Page and card — grey canvas matches Lead Controls, not V1 marketing purple */
 .fb-v2-task-page {
+  --fb-v2-task-page-bg: #323131;
+  background: var(--fb-v2-task-page-bg);
+  box-sizing: border-box;
   color: var(--fb-v2-task-text);
+  min-height: calc(100dvh - 5.5rem);
   padding: 1rem;
+}
+
+.light .fb-v2-task-page {
+  --fb-v2-task-page-bg: #ececec;
 }
 
 .fb-v2-task-card {

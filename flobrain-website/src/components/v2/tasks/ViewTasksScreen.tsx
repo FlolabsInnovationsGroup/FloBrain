@@ -21,8 +21,7 @@ type ViewTasksScreenProps = {
 };
 
 /**
- * Leadership View Tasks table. Nav and Create buttons come from PageStructure —
- * this component only renders the list content from the Figma frame.
+ * Leadership View Tasks table content from the Figma frame (no shared nav/CTAs).
  */
 export function ViewTasksScreen({
   tasks = getMockTasks(),
