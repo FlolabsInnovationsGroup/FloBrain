@@ -1447,7 +1447,6 @@ body {
   /* Height of the sticky global navbar (md+), so the leadership shell fills exactly the rest of the viewport */
   --fb-navbar-h: 94px;
   --fb-v2-shell-bg: #2f2f2f;
-  --fb-v2-rail-bg: #3a3a3a;
   --fb-v2-meetings-bg: #505050;
   --fb-v2-panel-bg: #464444;
   --fb-v2-surface: #454545;
@@ -1471,12 +1470,6 @@ body {
   --fb-v2-timer-play: #222344;
   --fb-v2-dm: #36c5e9;
 
-  --fb-v2-rail-figma: #f24e1e;
-  --fb-v2-rail-canva: #00c4cc;
-  --fb-v2-rail-github: #f5a623;
-  --fb-v2-rail-clickup: #4f9cf9;
-  --fb-v2-rail-miro: #ffd02f;
-
   --fb-v2-buddy-1: #2dd4bf;
   --fb-v2-buddy-2: #34d399;
   --fb-v2-buddy-3: #fb7185;
@@ -1492,10 +1485,6 @@ body {
   background: var(--fb-v2-shell-bg);
   color: var(--fb-v2-text);
   font-family: "Inter", sans-serif;
-}
-
-.fb-lead-rail {
-  background: var(--fb-v2-rail-bg);
 }
 
 .fb-lead-meetings {

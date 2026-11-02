@@ -115,12 +115,12 @@ const interns: Intern[] = [
 const teams = ["All", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6", "Team 7"];
 
 const topNavigation = [
-  "MY TASKS",
-  "MY DOCS",
-  "MY CALENDAR",
-  "MY CHATS",
-  "MY TIME",
-  "MY VAULT",
+  "TASKS",
+  "DOCS",
+  "CALENDAR",
+  "CHATS",
+  "TIME",
+  "VAULT",
   "LEADERSHIP",
 ];
 
