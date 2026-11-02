@@ -259,6 +259,7 @@
   --fb-memory-btn: #c262e2;
   --fb-memory-btn-hover: #d081e8;
   --fb-memory-btn-soft: #c89ffe;
+  --fb-memory-btn-text: #ffffff;
   --fb-memory-nav-text: rgba(0, 0, 0, 0.62);
   --fb-memory-nav-hover: #610081;
   --fb-memory-nav-active-bg: rgba(194, 98, 226, 0.28);
@@ -619,6 +620,7 @@
   --fb-memory-btn: #7b5cff;
   --fb-memory-btn-hover: #8b6fff;
   --fb-memory-btn-soft: rgba(123, 92, 255, 0.18);
+  --fb-memory-btn-text: #ffffff;
   --fb-memory-nav-text: #a1a1aa;
   --fb-memory-nav-hover: #ffffff;
   --fb-memory-nav-active-bg: rgba(123, 92, 255, 0.18);
@@ -698,6 +700,7 @@ html:not(.light):not(.dark) {
   --fb-memory-accent: #7b5cff;
   --fb-memory-btn: #7b5cff;
   --fb-memory-btn-soft: rgba(123, 92, 255, 0.18);
+  --fb-memory-btn-text: #ffffff;
   --fb-memory-nav-text: #a1a1aa;
   --fb-memory-nav-hover: #ffffff;
   --fb-memory-nav-active-bg: rgba(123, 92, 255, 0.18);
