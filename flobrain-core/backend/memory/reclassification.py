@@ -9,7 +9,7 @@ from prometheus_client import Counter, Histogram, Gauge
 
 from .models import MemoryNode, TokenDictionary, MemoryLink
 from .tier_3 import migrate_to_cold_storage
-from .tier_2 import collection
+from .tier_2 import get_collection
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ def task_gc_deep_freeze() -> str:
                         node.tier_level = 3
                         node.save()
                         
-                        collection.delete(ids=[node.id])
+                        get_collection().delete(ids=[node.id])
                         
                         frozen_counter += 1
                         GC_MIGRATED_NODES.inc()
