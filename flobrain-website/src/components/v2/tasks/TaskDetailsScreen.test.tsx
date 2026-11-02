@@ -12,12 +12,13 @@ describe("TaskDetailsScreen", () => {
       "href",
       "/leadership/tasks"
     );
-    expect(screen.getByRole("heading", { name: "Update Product Structure" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Update Product Structure and Web Experience" })
+    ).toBeInTheDocument();
     expect(screen.getByText("Claudia L. + 1")).toBeInTheDocument();
-    expect(screen.getByText("Active")).toBeInTheDocument();
+    expect(screen.getByText("In Progress")).toBeInTheDocument();
     expect(screen.getByText("UX/UI Design")).toBeInTheDocument();
     expect(screen.getByText("FloHealth")).toBeInTheDocument();
-    expect(screen.getByText(/Restructure the product information/i)).toBeInTheDocument();
   });
 
   it("expands a detail section from Create Task", () => {
@@ -30,10 +31,12 @@ describe("TaskDetailsScreen", () => {
     expect(screen.getByText(/Ship a clearer product structure/i)).toBeVisible();
   });
 
-  it("renders placeholder collaboration panels for future backend work", () => {
+  it("renders placeholder collaboration panels and meeting details", () => {
     render(<TaskDetailsScreen task={mockTasks[0]} />);
     expect(screen.getByRole("button", { name: /Progress Updates \/ WIP/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Brainwriting/i })).toBeInTheDocument();
-    expect(screen.getAllByText("Coming soon").length).toBeGreaterThan(0);
+    expect(screen.getByText("Zoom Login")).toBeInTheDocument();
+    expect(screen.getByText("zoom.buddy@flolabsinnovations.com")).toBeInTheDocument();
+    expect(screen.getByText("7Usd4VR!2")).toBeInTheDocument();
   });
 });

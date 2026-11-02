@@ -43,3 +43,9 @@ export function formatAssigneeSummary(people: readonly TaskPerson[]): string {
 export function taskStatusLabel(status: TaskStatus): string {
   return TASK_STATUS_LABELS[status];
 }
+
+/** View Tasks Figma uses "In Progress" for active rows. */
+export function taskListStatusLabel(status: TaskStatus): string {
+  if (status === "active") return "In Progress";
+  return TASK_STATUS_LABELS[status];
+}

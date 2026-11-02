@@ -4,6 +4,7 @@ import {
   formatAssigneeList,
   formatAssigneeSummary,
   formatTaskListDate,
+  taskListStatusLabel,
   taskStatusLabel,
 } from "./taskDisplay";
 
@@ -34,5 +35,10 @@ describe("taskDisplay", () => {
   it("maps status labels consistently with Create Task", () => {
     expect(taskStatusLabel("active")).toBe("Active");
     expect(taskStatusLabel("pending")).toBe("Pending");
+  });
+
+  it("uses In Progress for active rows on View Tasks", () => {
+    expect(taskListStatusLabel("active")).toBe("In Progress");
+    expect(taskListStatusLabel("pending")).toBe("Pending");
   });
 });
