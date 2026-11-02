@@ -7,7 +7,7 @@ import type { Task } from "@/types/task";
 export const mockTasks: Task[] = [
   {
     id: "task-1",
-    title: "Update Product Structure",
+    title: "Update Product Structure and Web Experience",
     description: "Restructure the product information architecture for FloHealth.",
     project: { id: "project-flohealth", name: "FloHealth" },
     team: { id: "team-4", name: "UX/UI Design" },

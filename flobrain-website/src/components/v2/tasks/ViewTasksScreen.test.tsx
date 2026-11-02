@@ -13,10 +13,9 @@ describe("ViewTasksScreen", () => {
       expect(screen.getByRole("columnheader", { name: label })).toBeInTheDocument();
     }
 
-    expect(screen.getByRole("link", { name: "Update Product Structure" })).toHaveAttribute(
-      "href",
-      "/leadership/tasks/task-1"
-    );
+    expect(
+      screen.getByRole("link", { name: "Update Product Structure and Web Experience" })
+    ).toHaveAttribute("href", "/leadership/tasks/task-1");
     expect(screen.getByText("Mohamed A.")).toBeInTheDocument();
     expect(screen.getAllByText("Claudia L., Serina Z.").length).toBeGreaterThan(0);
   });
@@ -37,7 +36,7 @@ describe("ViewTasksScreen", () => {
 
     expect(screen.getByRole("link", { name: "Pending Review" })).toBeInTheDocument();
     expect(
-      screen.queryByRole("link", { name: "Update Product Structure" })
+      screen.queryByRole("link", { name: "Update Product Structure and Web Experience" })
     ).not.toBeInTheDocument();
   });
 
