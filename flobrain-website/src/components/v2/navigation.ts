@@ -41,6 +41,11 @@ export function isLeadershipSection(pathname: string): boolean {
   return isPathActive("/leadership", pathname);
 }
 
+/** True for any route that uses the FloBrain V2 shell (no V1 navbar/footer). */
+export function isV2ShellRoute(pathname: string): boolean {
+  return MAIN_NAV_ITEMS.some((item) => isPathActive(item.href, pathname));
+}
+
 /** Dashboard, View Teams, and View Interns show the leadership search field. */
 export function showLeadershipSearch(pathname: string): boolean {
   return (
