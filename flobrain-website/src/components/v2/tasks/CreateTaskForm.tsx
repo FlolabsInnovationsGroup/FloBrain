@@ -45,7 +45,7 @@ const DETAIL_SECTIONS: readonly {
   { field: "deliverables", title: "Deliverables", placeholder: "One deliverable per line" },
   {
     field: "acceptanceCriteria",
-    title: "Acceptance criteria",
+    title: "Acceptance Criteria",
     placeholder: "One criterion per line",
   },
 ];
@@ -190,11 +190,16 @@ export function CreateTaskForm({ options, onSubmit, onCancel }: CreateTaskFormPr
         </div>
       </FormField>
 
-      <FormField id="task-description" label="Description" error={errors.description}>
+      <FormField
+        id="task-description"
+        label="Task description"
+        error={errors.description}
+        sentenceCaseLabel
+      >
         <textarea
           {...control("description")}
           className="fb-v2-task-input fb-v2-task-textarea"
-          placeholder="Briefly describe the task"
+          placeholder="e.g. wearable team 1"
           rows={3}
           value={form.description}
           onChange={(event) => update("description", event.target.value)}

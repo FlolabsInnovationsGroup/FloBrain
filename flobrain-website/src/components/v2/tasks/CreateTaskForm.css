@@ -12,35 +12,37 @@
  * these tokens when rendered inside .fb-v2-task-form.
  */
 
-/* Dark is the default (V2 is dark-first). */
+/* Dark is the default (V2 is dark-first). Tokens match Lead Controls → create TASK. */
 .fb-v2-task-page,
-.fb-v2-task-form {
-  --fb-v2-task-surface: #464543;
-  --fb-v2-task-surface-raised: #52514f;
+.fb-v2-task-form,
+.fb-v2-task-detail {
+  --fb-v2-task-surface: #333333;
+  --fb-v2-task-surface-raised: #3f3f3f;
   --fb-v2-task-input-bg: transparent;
-  --fb-v2-task-border: #9c9b98;
-  --fb-v2-task-input-border: #b3b2af;
-  --fb-v2-task-divider: #8f8e8b;
+  --fb-v2-task-border: #d9d9d9;
+  --fb-v2-task-input-border: #d9d9d9;
+  --fb-v2-task-divider: #d9d9d9;
   --fb-v2-task-focus-ring: #60a5fa;
   --fb-v2-task-text: #f1f0ee;
-  --fb-v2-task-text-muted: #dcdbd8;
-  --fb-v2-task-text-subtle: #b9b8b4;
+  --fb-v2-task-text-muted: #d9d9d9;
+  --fb-v2-task-text-subtle: #d9d9d9;
   --fb-v2-task-heading: #ffffff;
   --fb-v2-task-accent: #60a5fa;
   --fb-v2-task-accent-subtle: rgba(96, 165, 250, 0.2);
   --fb-v2-task-on-fill: #ffffff;
   --fb-v2-task-on-fill-dark: #1c1b19;
-  --fb-v2-task-success: #4cc94c;
-  --fb-v2-task-warning: #d99a2b;
-  --fb-v2-task-warning-subtle: rgba(217, 154, 43, 0.15);
-  --fb-v2-task-error: #dc2f2f;
+  --fb-v2-task-success: #54ec29;
+  --fb-v2-task-warning: #fdb300;
+  --fb-v2-task-warning-subtle: rgba(253, 179, 0, 0.15);
+  --fb-v2-task-error: #dc2929;
   /* Lighter red for error text: --fb-v2-task-error on charcoal is only about 2.5:1. */
   --fb-v2-task-error-text: #ff9a94;
   color-scheme: dark;
 }
 
 .light .fb-v2-task-page,
-.light .fb-v2-task-form {
+.light .fb-v2-task-form,
+.light .fb-v2-task-detail {
   --fb-v2-task-surface: #f5f4f2;
   --fb-v2-task-surface-raised: #ebeae7;
   --fb-v2-task-input-bg: transparent;
@@ -73,9 +75,9 @@
 .fb-v2-task-card {
   background: var(--fb-v2-task-surface);
   border: 1px solid var(--fb-v2-task-border);
-  border-radius: 0.25rem;
+  border-radius: 5px;
   margin: 0 auto;
-  max-width: 42rem;
+  max-width: 45.5rem; /* ~729px form panel in Figma */
   padding: 1.25rem 1rem;
 }
 
@@ -119,11 +121,16 @@
 
 .fb-v2-task-label {
   color: var(--fb-v2-task-text-muted);
-  font-size: 0.75rem;
+  font-size: 0.875rem; /* 14px — Figma Inter Medium labels */
   font-weight: 500;
   letter-spacing: 0.02em;
   line-height: 1.25;
   text-transform: uppercase;
+}
+
+/* Figma uses sentence case for "Task description" only. */
+.fb-v2-task-label--sentence {
+  text-transform: none;
 }
 
 .fb-v2-task-error {
@@ -131,15 +138,15 @@
   font-size: 0.75rem;
 }
 
-/* Inputs: unfilled with a thin light outline, as in the Figma */
+/* Inputs: unfilled with a thin light outline, as in the Figma (38px / 5px radius) */
 .fb-v2-task-input {
   background: var(--fb-v2-task-input-bg);
   border: 1px solid var(--fb-v2-task-input-border);
-  border-radius: 0.25rem;
+  border-radius: 5px;
   color: var(--fb-v2-task-text);
   font-size: 0.8125rem;
   line-height: 1.4;
-  min-height: 2.25rem;
+  min-height: 2.375rem; /* 38px */
   padding: 0.375rem 0.75rem;
   transition:
     border-color 0.15s,
@@ -149,6 +156,7 @@
 
 .fb-v2-task-input::placeholder {
   color: var(--fb-v2-task-text-subtle);
+  font-size: 0.625rem; /* 10px placeholders in Figma */
 }
 
 .fb-v2-task-input:focus-visible {
@@ -162,6 +170,7 @@
 }
 
 .fb-v2-task-textarea {
+  min-height: 3.625rem; /* ~58px task description in Figma */
   resize: vertical;
 }
 
@@ -287,7 +296,7 @@
 /* Label centered above a narrow box with the value centered and the chevron on the right */
 .fb-v2-task-status {
   flex: none;
-  width: 6.5rem;
+  width: 7.1875rem; /* 115px in Figma */
 }
 
 .fb-v2-task-status .fb-v2-task-field {
@@ -300,7 +309,8 @@
 
 .fb-v2-task-status .fb-v2-task-input {
   border-color: var(--fb-v2-task-input-border);
-  min-height: 2rem;
+  border-radius: 5px;
+  min-height: 2.375rem;
   padding: 0.25rem 1.5rem;
   text-align: center;
   text-align-last: center;
@@ -341,19 +351,19 @@
 /* Outlined in the tone color with neutral text. The selected option is filled. */
 .fb-v2-task-choice {
   --tone: var(--fb-v2-task-input-border);
-  --on-tone: var(--fb-v2-task-on-fill-dark);
+  --on-tone: var(--fb-v2-task-on-fill);
   align-items: center;
   background: transparent;
   border: 1px solid var(--tone);
-  border-radius: 0.1875rem;
-  color: var(--fb-v2-task-text);
+  border-radius: 5px;
+  color: var(--fb-v2-task-text-muted);
   cursor: pointer;
   display: inline-flex;
-  font-size: 0.8125rem;
-  font-weight: 400;
+  font-size: 0.875rem;
+  font-weight: 500;
   justify-content: center;
-  min-height: 2rem;
-  min-width: 4.5rem;
+  min-height: 2.375rem; /* 38px */
+  min-width: 5.375rem; /* 86px */
   padding: 0.25rem 0.75rem;
   position: relative;
   transition:
@@ -587,14 +597,14 @@
 .fb-v2-task-btn {
   background: transparent;
   border: 1px solid var(--fb-v2-task-input-border);
-  border-radius: 0.25rem;
-  color: var(--fb-v2-task-text);
+  border-radius: 5px;
+  color: var(--fb-v2-task-text-muted);
   cursor: pointer;
-  font-size: 0.8125rem;
-  font-weight: 400;
+  font-size: 0.875rem;
+  font-weight: 500;
   letter-spacing: 0.03em;
-  min-height: 2.25rem;
-  min-width: 9.5rem;
+  min-height: 2.375rem; /* 38px */
+  min-width: 12.875rem; /* 206px action buttons in Figma */
   padding: 0.375rem 1.25rem;
   text-transform: uppercase;
   transition:

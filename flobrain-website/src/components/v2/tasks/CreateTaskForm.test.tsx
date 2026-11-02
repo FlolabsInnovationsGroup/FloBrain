@@ -23,7 +23,7 @@ function fillRequired() {
   change("Task name", "Build onboarding flow");
   change("Project", "project-1"); // prefills team and manager
   change("Target due date", "2099-12-31");
-  change("Description", "Design and build the first-run flow.");
+  change("Task description", "Design and build the first-run flow.");
 }
 
 describe("CreateTaskForm", () => {
@@ -35,7 +35,7 @@ describe("CreateTaskForm", () => {
       "Project manager",
       "Target due date",
       "Team",
-      "Description",
+      "Task description",
       "Status",
     ]) {
       expect(screen.getByLabelText(label)).toBeInTheDocument();
@@ -46,7 +46,7 @@ describe("CreateTaskForm", () => {
       "Requirements",
       "Steps",
       "Deliverables",
-      "Acceptance criteria",
+      "Acceptance Criteria",
     ]) {
       expect(screen.getByRole("button", { name: new RegExp(title) })).toBeInTheDocument();
     }
@@ -56,9 +56,9 @@ describe("CreateTaskForm", () => {
     expect(screen.getByRole("button", { name: "Create Task" })).toBeInTheDocument();
   });
 
-  it("defaults to medium priority and active status", () => {
+  it("defaults to high priority and active status", () => {
     setup();
-    expect(screen.getByRole("radio", { name: "Medium" })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "High" })).toBeChecked();
     expect(screen.getByLabelText("Status")).toHaveValue("active");
   });
 

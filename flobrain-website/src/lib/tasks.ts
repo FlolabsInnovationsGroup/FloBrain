@@ -78,7 +78,7 @@ export function emptyCreateTaskForm(): CreateTaskFormState {
     steps: "",
     deliverables: "",
     acceptanceCriteria: "",
-    priority: "medium",
+    priority: "high",
     status: "active",
     assigneeIds: [],
   };
