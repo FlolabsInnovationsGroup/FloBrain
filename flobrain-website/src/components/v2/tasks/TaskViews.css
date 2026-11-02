@@ -91,26 +91,42 @@
 
 .fb-v2-tasks-filter-control select {
   appearance: none;
-  background: transparent;
-  border: 0;
-  color: var(--fb-v2-tasks-text-muted);
+  background: var(--fb-v2-tasks-surface-raised);
+  border: 1px solid var(--fb-v2-tasks-border);
+  border-radius: 5px;
+  color: var(--fb-v2-tasks-heading);
   cursor: pointer;
-  font-size: 0.875rem;
-  padding: 0.25rem 1.25rem 0.25rem 0.125rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  min-height: 2rem;
+  min-width: 6.5rem;
+  padding: 0.25rem 1.75rem 0.25rem 0.65rem;
+}
+
+.fb-v2-tasks-filter-control select:hover {
+  border-color: var(--fb-v2-tasks-heading);
 }
 
 .fb-v2-tasks-filter-control select:focus-visible {
-  outline: 2px solid var(--fb-v2-tasks-focus);
-  outline-offset: 2px;
+  border-color: var(--fb-v2-tasks-focus);
+  box-shadow: 0 0 0 3px var(--fb-v2-tasks-accent-subtle);
+  outline: none;
+}
+
+.fb-v2-tasks-filter-control option {
+  background: var(--fb-v2-tasks-surface);
+  color: var(--fb-v2-tasks-heading);
 }
 
 .fb-v2-tasks-filter-control > svg {
   color: var(--fb-v2-tasks-text-muted);
+  height: 0.875rem;
   pointer-events: none;
   position: absolute;
-  right: 0;
+  right: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
+  width: 0.875rem;
 }
 
 .fb-v2-tasks-table-wrap {
