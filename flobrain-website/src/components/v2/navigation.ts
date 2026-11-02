@@ -4,12 +4,12 @@ export type V2NavItem = {
 };
 
 export const MAIN_NAV_ITEMS: readonly V2NavItem[] = [
-  { label: "My TASKS", href: "/my-tasks" },
-  { label: "My DOCS", href: "/my-docs" },
-  { label: "My CALENDAR", href: "/my-calendar" },
-  { label: "My CHATS", href: "/my-chats" },
-  { label: "My TIME", href: "/my-time" },
-  { label: "My VAULT", href: "/my-vault" },
+  { label: "TASKS", href: "/my-tasks" },
+  { label: "DOCS", href: "/my-docs" },
+  { label: "CALENDAR", href: "/my-calendar" },
+  { label: "CHATS", href: "/my-chats" },
+  { label: "TIME", href: "/my-time" },
+  { label: "VAULT", href: "/my-vault" },
   { label: "LEADERSHIP", href: "/leadership" },
 ];
 
@@ -39,4 +39,13 @@ export function isLeadershipNavActive(href: string, pathname: string): boolean {
 
 export function isLeadershipSection(pathname: string): boolean {
   return isPathActive("/leadership", pathname);
+}
+
+/** Dashboard, View Teams, and View Interns show the leadership search field. */
+export function showLeadershipSearch(pathname: string): boolean {
+  return (
+    pathname === "/leadership" ||
+    pathname === "/leadership/teams" ||
+    pathname === "/leadership/interns"
+  );
 }

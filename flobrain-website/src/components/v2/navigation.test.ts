@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { isLeadershipNavActive, isMainNavActive } from "./navigation";
+import {
+  isLeadershipNavActive,
+  isMainNavActive,
+  showLeadershipSearch,
+} from "./navigation";
 
 describe("V2 navigation active state", () => {
   it("marks the matching primary item and keeps Leadership active on nested routes", () => {
@@ -14,5 +18,14 @@ describe("V2 navigation active state", () => {
     expect(isLeadershipNavActive("/leadership", "/leadership/teams")).toBe(false);
     expect(isLeadershipNavActive("/leadership/teams", "/leadership/teams")).toBe(true);
     expect(isLeadershipNavActive("/leadership/activity", "/leadership/activity")).toBe(true);
+  });
+
+  it("shows search only on dashboard, teams, and interns", () => {
+    expect(showLeadershipSearch("/leadership")).toBe(true);
+    expect(showLeadershipSearch("/leadership/teams")).toBe(true);
+    expect(showLeadershipSearch("/leadership/interns")).toBe(true);
+    expect(showLeadershipSearch("/leadership/projects")).toBe(false);
+    expect(showLeadershipSearch("/leadership/tasks")).toBe(false);
+    expect(showLeadershipSearch("/my-docs")).toBe(false);
   });
 });
