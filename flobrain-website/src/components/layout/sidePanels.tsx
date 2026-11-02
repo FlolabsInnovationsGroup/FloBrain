@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { ChevronDown, MessageCircle, Pause, Play, Search, Video } from "lucide-react";
-import type { IconType } from "react-icons";
-import { SiCanva, SiClickup, SiFigma, SiGithub, SiMiro } from "react-icons/si";
 
 export type ChatGroup = {
   heading: string;
@@ -263,7 +261,7 @@ type SidePanelsLayoutProps = MeetingsPanelProps &
     children: ReactNode;
   };
 
-/** Rail + Meetings/Chat Rooms on the left, Buddies on the right, page content in between. */
+/** Meetings/Chat Rooms on the left, Buddies on the right, page content in between. */
 export default function SidePanelsLayout({
   children,
   chatGroups,
