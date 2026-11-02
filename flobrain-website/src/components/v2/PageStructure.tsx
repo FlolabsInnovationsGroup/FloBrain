@@ -39,6 +39,14 @@ export function PageStructure({
   const router = useRouter();
   const [pendingPath, setPendingPath] = useState<string | null>(null);
   const [createAction, setCreateAction] = useState<CreateActionId | null>(null);
+  const [seenPathname, setSeenPathname] = useState(pathname);
+
+  if (pathname !== seenPathname) {
+    setSeenPathname(pathname);
+    setPendingPath(null);
+    setCreateAction(null);
+  }
+
   const currentPath = pendingPath ?? pathname;
   const showLeadershipNav = isLeadershipSection(currentPath);
   const showSearch = showLeadershipSearch(currentPath);
@@ -48,11 +56,6 @@ export function PageStructure({
     LEADERSHIP_NAV_ITEMS.find((item) => isLeadershipNavActive(item.href, currentPath))?.label ??
     MAIN_NAV_ITEMS.find((item) => isMainNavActive(item.href, currentPath))?.label ??
     "FloBrain";
-
-  useEffect(() => {
-    setPendingPath(null);
-    setCreateAction(null);
-  }, [pathname]);
 
   useEffect(() => {
     for (const item of MAIN_NAV_ITEMS) router.prefetch(item.href);
