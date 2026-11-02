@@ -4,42 +4,46 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import {
+  CREATE_ACTIONS,
+  LeadershipToolbar,
+  type CreateActionId,
+} from "./LeadershipToolbar";
+import {
   LEADERSHIP_NAV_ITEMS,
   MAIN_NAV_ITEMS,
   isLeadershipNavActive,
   isLeadershipSection,
   isMainNavActive,
+  showLeadershipSearch,
 } from "./navigation";
 
 export type PageStructureProps = {
   children?: ReactNode;
-  /** Narrow icon rail at the far left of the Lead Controls shell. */
-  leftRail?: ReactNode;
   /** Meetings / chat column. Owned by the left-panel pages. */
   leftPanel?: ReactNode;
   /** Timer / buddies column. Owned by the right-panel pages. */
   rightPanel?: ReactNode;
-  /** Row under the Leadership navigation. Reserved for the three action buttons. */
-  actions?: ReactNode;
 };
 
 /**
  * Shared FloBrain V2 shell. It renders under the existing V1 navbar.
  * Page content goes in `children`. Side regions stay empty until the
- * panel pages pass `leftRail`, `leftPanel`, or `rightPanel`.
+ * panel pages pass `leftPanel` or `rightPanel`.
  */
 export function PageStructure({
   children,
-  leftRail,
   leftPanel,
   rightPanel,
-  actions,
 }: PageStructureProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [pendingPath, setPendingPath] = useState<string | null>(null);
+  const [createAction, setCreateAction] = useState<CreateActionId | null>(null);
   const currentPath = pendingPath ?? pathname;
   const showLeadershipNav = isLeadershipSection(currentPath);
+  const showSearch = showLeadershipSearch(currentPath);
+  const activeCreateLabel =
+    CREATE_ACTIONS.find((action) => action.id === createAction)?.label ?? null;
   const activeLabel =
     LEADERSHIP_NAV_ITEMS.find((item) => isLeadershipNavActive(item.href, currentPath))?.label ??
     MAIN_NAV_ITEMS.find((item) => isMainNavActive(item.href, currentPath))?.label ??
@@ -47,6 +51,7 @@ export function PageStructure({
 
   useEffect(() => {
     setPendingPath(null);
+    setCreateAction(null);
   }, [pathname]);
 
   useEffect(() => {
@@ -105,22 +110,27 @@ export function PageStructure({
         ) : null}
         {showLeadershipNav ? (
           <div className="fb-v2-actions" data-slot="actions">
-            {actions}
+            <LeadershipToolbar
+              showSearch={showSearch}
+              activeAction={createAction}
+              onActionClick={setCreateAction}
+            />
           </div>
         ) : null}
         <div className="fb-v2-content" data-slot="content">
-          {children}
+          {createAction ? (
+            <div
+              className="fb-v2-create-panel"
+              data-slot="create-panel"
+              data-create={createAction}
+              aria-label={activeCreateLabel ?? "Create"}
+            />
+          ) : (
+            children
+          )}
         </div>
       </section>
 
-      <aside
-        className={leftRail ? "fb-v2-rail" : "fb-v2-rail fb-v2-slot-empty"}
-        data-slot="left-rail"
-        aria-label={leftRail ? "Shortcuts" : undefined}
-        aria-hidden={leftRail ? undefined : true}
-      >
-        {leftRail}
-      </aside>
       <aside
         className={leftPanel ? "fb-v2-panel-left" : "fb-v2-panel-left fb-v2-slot-empty"}
         data-slot="left-panel"
