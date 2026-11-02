@@ -3,7 +3,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { AppChrome } from "@/components/layout/AppChrome";
+import Navbar from "@/components/layout/navbar";
+import Footer from "@/components/layout/footer";
+import { RootBackground } from "@/components/layout/RootBackground";
 import { AuthProviderWrapper } from "@/components/providers/AuthProviderWrapper";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { GA_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
@@ -51,7 +53,11 @@ export default function RootLayout({
         </noscript>
         <ThemeProvider>
           <AuthProviderWrapper>
-            <AppChrome>{children}</AppChrome>
+            <RootBackground>
+              <Navbar />
+              <div className="flex-1">{children}</div>
+              <Footer />
+            </RootBackground>
           </AuthProviderWrapper>
         </ThemeProvider>
         {GA_MEASUREMENT_ID ? (
