@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "My Docs",
+  title: "Vault",
 };
 
-export default function MyDocsPage() {
+export default function MyVaultPage() {
   return null;
 }

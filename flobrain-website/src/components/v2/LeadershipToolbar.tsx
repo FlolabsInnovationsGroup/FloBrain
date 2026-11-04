@@ -1,17 +1,11 @@
 "use client";
 
-export const CREATE_ACTIONS = [
-  { id: "team", label: "Create Team" },
-  { id: "project", label: "Create Project" },
-  { id: "task", label: "Create Task" },
-] as const;
-
-export type CreateActionId = (typeof CREATE_ACTIONS)[number]["id"];
+import Link from "next/link";
+import { CREATE_ACTION_ITEMS, isPathActive } from "./navigation";
 
 type LeadershipToolbarProps = {
+  pathname: string;
   showSearch?: boolean;
-  activeAction?: CreateActionId | null;
-  onActionClick?: (action: CreateActionId) => void;
 };
 
 function SearchIcon() {
@@ -37,25 +31,25 @@ function SearchIcon() {
  * Search appears on Dashboard, Teams, and Interns only.
  */
 export function LeadershipToolbar({
+  pathname,
   showSearch = false,
-  activeAction = null,
-  onActionClick,
 }: LeadershipToolbarProps) {
   return (
     <div className="fb-v2-toolbar">
       <div className="fb-v2-create-actions">
-        {CREATE_ACTIONS.map((action) => {
-          const isActive = activeAction === action.id;
+        {CREATE_ACTION_ITEMS.map((action) => {
+          const isActive = isPathActive(action.href, pathname);
           return (
-            <button
-              key={action.id}
-              type="button"
+            <Link
+              key={action.href}
+              href={action.href}
               className={isActive ? "fb-v2-btn-create fb-v2-btn-create-active" : "fb-v2-btn-create"}
-              aria-pressed={isActive}
-              onClick={() => onActionClick?.(action.id)}
+              aria-current={isActive ? "page" : undefined}
+              prefetch
+              scroll={false}
             >
               {action.label}
-            </button>
+            </Link>
           );
         })}
       </div>

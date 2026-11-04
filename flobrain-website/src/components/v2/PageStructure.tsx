@@ -3,12 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
+import { LeadershipToolbar } from "./LeadershipToolbar";
 import {
-  CREATE_ACTIONS,
-  LeadershipToolbar,
-  type CreateActionId,
-} from "./LeadershipToolbar";
-import {
+  CREATE_ACTION_ITEMS,
   LEADERSHIP_NAV_ITEMS,
   MAIN_NAV_ITEMS,
   isLeadershipNavActive,
@@ -38,21 +35,18 @@ export function PageStructure({
   const pathname = usePathname();
   const router = useRouter();
   const [pendingPath, setPendingPath] = useState<string | null>(null);
-  const [createAction, setCreateAction] = useState<CreateActionId | null>(null);
   const [seenPathname, setSeenPathname] = useState(pathname);
 
   if (pathname !== seenPathname) {
     setSeenPathname(pathname);
     setPendingPath(null);
-    setCreateAction(null);
   }
 
   const currentPath = pendingPath ?? pathname;
   const showLeadershipNav = isLeadershipSection(currentPath);
   const showSearch = showLeadershipSearch(currentPath);
-  const activeCreateLabel =
-    CREATE_ACTIONS.find((action) => action.id === createAction)?.label ?? null;
   const activeLabel =
+    CREATE_ACTION_ITEMS.find((item) => isLeadershipNavActive(item.href, currentPath))?.label ??
     LEADERSHIP_NAV_ITEMS.find((item) => isLeadershipNavActive(item.href, currentPath))?.label ??
     MAIN_NAV_ITEMS.find((item) => isMainNavActive(item.href, currentPath))?.label ??
     "FloBrain";
@@ -60,6 +54,7 @@ export function PageStructure({
   useEffect(() => {
     for (const item of MAIN_NAV_ITEMS) router.prefetch(item.href);
     for (const item of LEADERSHIP_NAV_ITEMS) router.prefetch(item.href);
+    for (const item of CREATE_ACTION_ITEMS) router.prefetch(item.href);
   }, [router]);
 
   return (
@@ -113,24 +108,11 @@ export function PageStructure({
         ) : null}
         {showLeadershipNav ? (
           <div className="fb-v2-actions" data-slot="actions">
-            <LeadershipToolbar
-              showSearch={showSearch}
-              activeAction={createAction}
-              onActionClick={setCreateAction}
-            />
+            <LeadershipToolbar pathname={currentPath} showSearch={showSearch} />
           </div>
         ) : null}
         <div className="fb-v2-content" data-slot="content">
-          {createAction ? (
-            <div
-              className="fb-v2-create-panel"
-              data-slot="create-panel"
-              data-create={createAction}
-              aria-label={activeCreateLabel ?? "Create"}
-            />
-          ) : (
-            children
-          )}
+          {children}
         </div>
       </section>
 
