@@ -11,15 +11,7 @@ type NavItem = {
   href?: string;
 };
 
-const topNavigation = [
-  "MY TASKS",
-  "MY DOCS",
-  "MY CALENDAR",
-  "MY CHATS",
-  "MY TIME",
-  "MY VAULT",
-  "LEADERSHIP",
-];
+const topNavigation = ["TASKS", "DOCS", "CALENDAR", "CHATS", "TIME", "VAULT", "LEADERSHIP"];
 
 const leadershipNavigation: NavItem[] = [
   { label: "DASHBOARD" },
