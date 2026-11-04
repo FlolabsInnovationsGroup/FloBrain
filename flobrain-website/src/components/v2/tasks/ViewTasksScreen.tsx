@@ -8,6 +8,7 @@ import type { Task, TaskStatus } from "@/types/task";
 import { CREATABLE_TASK_STATUSES } from "@/lib/tasks";
 import { formatAssigneeList, formatTaskListDate, taskListStatusLabel } from "@/lib/taskDisplay";
 import { getMockTasks } from "./mockTasks";
+import { DesignScrollbar } from "./DesignScrollbar";
 
 import "./TaskViews.css";
 
@@ -64,8 +65,10 @@ export function ViewTasksScreen({
           </label>
         </div>
 
-        <div className="fb-v2-tasks-table-shell">
-          <div className="fb-v2-tasks-table-wrap">
+        <DesignScrollbar
+          className="fb-v2-tasks-table-shell"
+          viewportClassName="fb-v2-tasks-table-wrap"
+        >
             <table className="fb-v2-tasks-table">
               <caption className="sr-only">Tasks for {projectLabel}</caption>
               <colgroup>
@@ -116,15 +119,7 @@ export function ViewTasksScreen({
                 )}
               </tbody>
             </table>
-          </div>
-
-          {/* Same height as the table panel — sibling of wrap, not the toolbar */}
-          <div className="fb-v2-tasks-scroll" aria-hidden="true">
-            <div className="fb-v2-tasks-scroll-track">
-              <div className="fb-v2-tasks-scroll-thumb" />
-            </div>
-          </div>
-        </div>
+        </DesignScrollbar>
       </div>
     </div>
   );

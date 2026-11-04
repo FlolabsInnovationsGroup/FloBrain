@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 
 import type { CreateTaskInput } from "@/types/task";
 import { CreateTaskForm } from "./CreateTaskForm";
+import { DesignScrollbar } from "./DesignScrollbar";
 import { mockTaskFormOptions } from "./mockTaskOptions";
+
+import "./CreateTaskForm.css";
 
 /**
  * Create Task page content. This is the only place that knows about routing and saving.
@@ -25,7 +28,7 @@ export function CreateTaskScreen() {
 
   return (
     <div className="fb-v2-task-page">
-      <div className="fb-v2-task-card">
+      <DesignScrollbar className="fb-v2-task-create-row" viewportClassName="fb-v2-task-card">
         {/* Figma form card has no inner title — Create Task is selected in the action row above. */}
         <h2 className="sr-only">Create Task</h2>
         {notice ? (
@@ -38,7 +41,7 @@ export function CreateTaskScreen() {
           onSubmit={handleSubmit}
           onCancel={() => router.back()}
         />
-      </div>
+      </DesignScrollbar>
     </div>
   );
 }

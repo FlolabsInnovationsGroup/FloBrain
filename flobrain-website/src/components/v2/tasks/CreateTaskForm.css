@@ -12,12 +12,12 @@
  * these tokens when rendered inside .fb-v2-task-form.
  */
 
-/* Dark is the default (V2 is dark-first). Tokens match Lead Controls → create TASK. */
+/* Dark is the default (V2 is dark-first). Surface matches the Lead Controls nav. */
 .fb-v2-task-page,
 .fb-v2-task-form,
 .fb-v2-task-detail {
-  --fb-v2-task-surface: #333333;
-  --fb-v2-task-surface-raised: #3f3f3f;
+  --fb-v2-task-surface: var(--fb-v2-surface);
+  --fb-v2-task-surface-raised: var(--fb-v2-surface-raised);
   --fb-v2-task-input-bg: transparent;
   --fb-v2-task-border: #d9d9d9;
   --fb-v2-task-input-border: #d9d9d9;
@@ -43,8 +43,8 @@
 .light .fb-v2-task-page,
 .light .fb-v2-task-form,
 .light .fb-v2-task-detail {
-  --fb-v2-task-surface: #f5f4f2;
-  --fb-v2-task-surface-raised: #ebeae7;
+  --fb-v2-task-surface: var(--fb-v2-surface);
+  --fb-v2-task-surface-raised: var(--fb-v2-surface-raised);
   --fb-v2-task-input-bg: transparent;
   --fb-v2-task-border: #8a8986;
   --fb-v2-task-input-border: #7d7c79;
@@ -68,7 +68,7 @@
 
 /* Page and card — grey canvas matches Lead Controls, not V1 marketing purple */
 .fb-v2-task-page {
-  --fb-v2-task-page-bg: #323131;
+  --fb-v2-task-page-bg: var(--fb-v2-surface);
   background: var(--fb-v2-task-page-bg);
   box-sizing: border-box;
   color: var(--fb-v2-task-text);
@@ -77,7 +77,7 @@
 }
 
 .light .fb-v2-task-page {
-  --fb-v2-task-page-bg: #ececec;
+  --fb-v2-task-page-bg: var(--fb-v2-surface);
 }
 
 .fb-v2-task-card {
@@ -87,6 +87,37 @@
   margin: 0 auto;
   max-width: 45.5rem; /* ~729px form panel in Figma */
   padding: 1.25rem 1rem;
+}
+
+.fb-v2-task-create-row {
+  align-items: flex-start;
+  margin-inline: auto;
+  max-width: calc(45.5rem + 0.75rem + 4px);
+}
+
+.fb-v2-task-page:has(.fb-v2-task-create-row) {
+  min-height: 0;
+}
+
+.fb-v2-task-card.fb-v2-design-scroll-viewport {
+  flex: 1 1 auto;
+  height: 593px;
+  margin: 0;
+  max-height: 593px;
+  max-width: 45.5rem;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.fb-v2-task-create-row .fb-v2-design-scroll-rail {
+  align-self: flex-start;
+  height: 593px;
+  width: 4px;
+}
+
+.fb-v2-task-create-row .fb-v2-design-scroll-track,
+.fb-v2-task-create-row .fb-v2-design-scroll-thumb {
+  width: 4px;
 }
 
 .fb-v2-task-heading {
@@ -630,6 +661,12 @@
 .fb-v2-task-btn:focus-visible {
   outline: 2px solid var(--fb-v2-task-focus-ring);
   outline-offset: 2px;
+}
+
+@media (max-width: 639px) {
+  .fb-v2-task-card.fb-v2-design-scroll-viewport {
+    height: auto;
+  }
 }
 
 /* Tablet and up */
