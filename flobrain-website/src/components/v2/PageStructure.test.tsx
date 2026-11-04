@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { usePathname } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PageStructure } from "./PageStructure";
@@ -16,20 +16,36 @@ describe("PageStructure", () => {
       "page",
     );
     expect(screen.getByRole("link", { name: "TEAMS" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "DASHBOARD" })).toHaveAttribute("href", "/leadership");
+    expect(screen.getByRole("link", { name: "LEADERSHIP" })).toHaveAttribute(
+      "href",
+      "/leadership/dashboard",
+    );
+    expect(screen.getByRole("link", { name: "DASHBOARD" })).toHaveAttribute(
+      "href",
+      "/leadership/dashboard",
+    );
     expect(screen.getByRole("link", { name: "ACTIVITY LOGS" })).toHaveAttribute(
       "href",
       "/leadership/activity",
     );
     expect(document.querySelector("[data-slot='actions']")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Create Team" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Create Project" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Create Task" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Create Team" })).toHaveAttribute(
+      "href",
+      "/leadership/teams/new",
+    );
+    expect(screen.getByRole("link", { name: "Create Project" })).toHaveAttribute(
+      "href",
+      "/leadership/projects/new",
+    );
+    expect(screen.getByRole("link", { name: "Create Task" })).toHaveAttribute(
+      "href",
+      "/leadership/tasks/new",
+    );
     expect(screen.getByPlaceholderText("Search by name")).toBeInTheDocument();
   });
 
   it("hides the leadership row outside leadership routes", () => {
-    vi.mocked(usePathname).mockReturnValue("/my-docs");
+    vi.mocked(usePathname).mockReturnValue("/docs");
     render(<PageStructure />);
 
     expect(screen.queryByRole("navigation", { name: "Leadership" })).not.toBeInTheDocument();
@@ -41,7 +57,7 @@ describe("PageStructure", () => {
     vi.mocked(usePathname).mockReturnValue("/leadership/projects");
     render(<PageStructure />);
 
-    expect(screen.getByRole("button", { name: "Create Team" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Create Team" })).toBeInTheDocument();
     expect(screen.queryByPlaceholderText("Search by name")).not.toBeInTheDocument();
   });
 
@@ -61,23 +77,20 @@ describe("PageStructure", () => {
     expect(screen.getByText("Main slot")).toBeInTheDocument();
   });
 
-  it("opens an empty create panel in the center content when a create button is clicked", () => {
+  it("marks the create action link active on its route", () => {
+    vi.mocked(usePathname).mockReturnValue("/leadership/projects/new");
     render(
       <PageStructure>
         <p>Main slot</p>
       </PageStructure>,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: "Create Project" }));
-
-    expect(screen.queryByText("Main slot")).not.toBeInTheDocument();
-    expect(document.querySelector("[data-slot='create-panel']")).toHaveAttribute(
-      "data-create",
-      "project",
+    expect(screen.getByText("Main slot")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Create Project" })).toHaveAttribute(
+      "aria-current",
+      "page",
     );
-    expect(screen.getByRole("button", { name: "Create Project" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+    expect(screen.getByRole("link", { name: "Create Team" })).not.toHaveAttribute("aria-current");
+    expect(screen.queryByPlaceholderText("Search by name")).not.toBeInTheDocument();
   });
 });
