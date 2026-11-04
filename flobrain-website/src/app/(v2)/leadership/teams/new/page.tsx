@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: "My Vault",
+  title: "Create Team",
 };
 
-export default function MyVaultPage() {
+export default function CreateTeamPage() {
   return null;
 }
