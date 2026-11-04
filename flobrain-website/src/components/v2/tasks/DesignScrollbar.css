@@ -1,0 +1,79 @@
+.fb-v2-design-scroll {
+  align-items: stretch;
+  display: flex;
+  gap: 1.35rem;
+  min-width: 0;
+  width: 100%;
+}
+
+.fb-v2-design-scroll-viewport {
+  min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.fb-v2-design-scroll-content {
+  min-width: 0;
+  width: 100%;
+}
+
+.fb-v2-design-scroll-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.fb-v2-design-scroll-rail {
+  flex: none;
+  width: 6px;
+}
+
+.fb-v2-design-scroll-track {
+  background: #d9d9d9;
+  border-radius: 999px;
+  cursor: pointer;
+  height: 100%;
+  position: relative;
+  touch-action: none;
+  width: 6px;
+}
+
+.fb-v2-design-scroll-thumb {
+  background: #323131;
+  border-radius: 999px;
+  cursor: grab;
+  left: 0;
+  position: absolute;
+  touch-action: none;
+  width: 6px;
+}
+
+.fb-v2-design-scroll-thumb:active {
+  cursor: grabbing;
+}
+
+@media (max-width: 639px) {
+  .fb-v2-design-scroll-rail {
+    display: none;
+  }
+
+  .fb-v2-design-scroll-viewport {
+    scrollbar-color: #323131 #d9d9d9;
+    scrollbar-width: thin;
+  }
+
+  .fb-v2-design-scroll-viewport::-webkit-scrollbar {
+    display: block;
+    width: 6px;
+  }
+
+  .fb-v2-design-scroll-viewport::-webkit-scrollbar-thumb {
+    background: #323131;
+    border-radius: 999px;
+  }
+
+  .fb-v2-design-scroll-viewport::-webkit-scrollbar-track {
+    background: #d9d9d9;
+  }
+}

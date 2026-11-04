@@ -9,6 +9,8 @@ import type { Task } from "@/types/task";
 import { CollapsibleSection } from "@/components/v2/form/CollapsibleSection";
 import { formatAssigneeSummary, taskListStatusLabel } from "@/lib/taskDisplay";
 
+import { DesignScrollbar } from "./DesignScrollbar";
+
 import "./TaskViews.css";
 import "./CreateTaskForm.css";
 
@@ -105,8 +107,10 @@ export function TaskDetailsScreen({ task }: TaskDetailsScreenProps) {
     <div className="fb-v2-task-detail" data-fb-v2-task-detail="">
       {actionsSlot ? createPortal(backLink, actionsSlot) : backLink}
 
-      <div className="fb-v2-task-detail-row">
-        <div className="fb-v2-task-detail-lead">
+      <DesignScrollbar
+        className="fb-v2-task-detail-row"
+        viewportClassName="fb-v2-task-detail-lead"
+      >
           <div className="fb-v2-task-detail-main">
             <h2 className="fb-v2-task-detail-title">{task.title}</h2>
 
@@ -180,15 +184,7 @@ export function TaskDetailsScreen({ task }: TaskDetailsScreenProps) {
               </p>
             </section>
           </div>
-        </div>
-
-        {/* Scroll axis outside the lead box */}
-        <div className="fb-v2-task-detail-scroll" aria-hidden="true">
-          <div className="fb-v2-task-detail-scroll-track">
-            <div className="fb-v2-task-detail-scroll-thumb" />
-          </div>
-        </div>
-      </div>
+      </DesignScrollbar>
     </div>
   );
 }

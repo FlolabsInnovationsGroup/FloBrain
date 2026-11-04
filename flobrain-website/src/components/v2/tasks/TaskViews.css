@@ -175,34 +175,15 @@
   height: 29rem; /* 464px */
   max-width: 45.5625rem;
   min-width: 0;
-  overflow: hidden;
   width: 100%;
 }
 
-.fb-v2-tasks-scroll {
-  /* Match table panel height exactly */
-  align-self: stretch;
-  flex: none;
-  height: 29rem;
-  padding: 0;
-  width: 6px;
-}
-
-.fb-v2-tasks-scroll-track {
-  background: #d9d9d9;
-  border-radius: 999px;
-  height: 100%;
-  position: relative;
-  width: 6px;
-}
-
-.fb-v2-tasks-scroll-thumb {
-  background: #323131;
-  border-radius: 999px;
-  height: 38%;
-  position: absolute;
-  top: 28%;
-  width: 6px;
+.fb-v2-tasks-table-wrap.fb-v2-design-scroll-viewport {
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
 }
 
 .fb-v2-tasks-table {
@@ -252,9 +233,12 @@
   letter-spacing: 0.01em;
   /* Hug the left edge of each column like Figma (not optically centered) */
   padding: 0 8px 0 10px;
+  position: sticky;
   text-align: left !important;
   text-transform: none;
+  top: 0;
   white-space: nowrap;
+  z-index: 1;
 }
 
 .fb-v2-tasks-table thead th:first-child {
@@ -338,10 +322,6 @@
 @media (max-width: 639px) {
   .fb-v2-tasks-table-shell {
     gap: 0;
-  }
-
-  .fb-v2-tasks-scroll {
-    display: none;
   }
 
   .fb-v2-tasks-table-wrap {
@@ -481,9 +461,11 @@
   border-radius: 5px;
   box-sizing: border-box;
   flex: 1 1 auto;
+  height: min(45.25rem, calc(100dvh - 12rem));
   max-width: 51rem; /* 816px LEAD CONTAINER — task content only */
-  min-height: 45.25rem;
+  min-height: 0;
   min-width: 0;
+  overscroll-behavior: contain;
   padding: 1.15rem 1rem 1.5rem;
   width: 100%;
 }
@@ -694,34 +676,9 @@
   color: #d9d9d9;
 }
 
-.fb-v2-task-detail-scroll {
-  align-self: center;
-  flex: none;
-  height: 454px;
-  padding: 0;
-  width: 6px;
-}
-
-.fb-v2-task-detail-scroll-track {
-  background: #d9d9d9;
-  border-radius: 999px;
-  height: 100%;
-  position: relative;
-  width: 6px;
-}
-
-.fb-v2-task-detail-scroll-thumb {
-  background: #323131;
-  border-radius: 999px;
-  height: 38%;
-  position: absolute;
-  top: 28%;
-  width: 6px;
-}
-
 @media (max-width: 639px) {
-  .fb-v2-task-detail-scroll {
-    display: none;
+  .fb-v2-task-detail-lead {
+    height: auto;
   }
 
   /* Keep 4 cols; allow tighter cell padding on narrow screens */
