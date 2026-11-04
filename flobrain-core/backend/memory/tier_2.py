@@ -1,20 +1,97 @@
 import logging
+import math
 import re
 import chromadb
 import numpy as np
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional, Tuple
-from datetime import datetime
 from pydantic import BaseModel, Field
-from rank_bm25 import BM25Okapi
+from django.conf import settings
 from django.db.models import Q
+from django.utils.module_loading import import_string
 
 from .models import MemoryNode, MemoryLink
 
 logger = logging.getLogger(__name__)
 
-chroma_client = chromadb.PersistentClient(path="/app/vector_db")
-collection = chroma_client.get_or_create_collection(name="flobrain_associative_memory")
+_collection = None
+
+
+def get_embedding_function():
+    """Server-side embedder for the memory collection (configurable for tests)."""
+    return import_string(settings.MEMORY_EMBEDDING_FUNCTION)()
+
+
+def get_collection():
+    global _collection
+    if _collection is None:
+        chroma_client = chromadb.PersistentClient(
+            path=settings.MEMORY_VECTOR_DB_PATH,
+            settings=chromadb.config.Settings(anonymized_telemetry=False),
+        )
+        _collection = chroma_client.get_or_create_collection(
+            name=settings.MEMORY_VECTOR_COLLECTION,
+            embedding_function=get_embedding_function(),
+            metadata={"hnsw:space": "cosine"},
+        )
+    return _collection
+
+
+def reset_vector_store():
+    global _collection
+    _collection = None
+
+
+def index_node(node: MemoryNode) -> bool:
+    """Embed the node's canonical content and upsert it; record index_status. Never raises."""
+    try:
+        if not node.content:
+            raise ValueError("node has no content to index")
+        get_collection().upsert(
+            ids=[node.id],
+            documents=[node.content],
+            metadatas=[{"o_id": node.owner_id, "memory_type": node.memory_type}],
+        )
+    except Exception as e:
+        logger.error(f"E_0x01: Failed to index memory node {node.id}: {e}", exc_info=True)
+        node.index_status, node.index_error = MemoryNode.INDEX_FAILED, str(e)[:1000]
+        MemoryNode.objects.filter(pk=node.pk).update(
+            index_status=node.index_status, index_error=node.index_error
+        )
+        return False
+
+    node.index_status, node.index_error = MemoryNode.INDEX_INDEXED, ""
+    MemoryNode.objects.filter(pk=node.pk).update(index_status=node.index_status, index_error="")
+    return True
+
+
+def delete_vectors(ids: Optional[List[str]] = None, owner_id: Optional[str] = None) -> bool:
+    """Delete vectors by node IDs and/or by owner. Never raises."""
+    try:
+        if ids:
+            get_collection().delete(ids=list(ids))
+        if owner_id:
+            get_collection().delete(where={"o_id": owner_id})
+        return True
+    except Exception as e:
+        logger.error(f"E_0x03: Failed to delete memory vectors: {e}", exc_info=True)
+        return False
+
+
+def query_owner_vectors(owner_id: str, query_text: str, n_results: int = 10) -> List[Tuple[str, float]]:
+    """Return (node_id, cosine distance) for the owner's nearest vectors."""
+    collection = get_collection()
+    count = collection.count()
+    if not count or not query_text:
+        return []
+    results = collection.query(
+        query_texts=[query_text],
+        n_results=min(n_results, count),
+        where={"o_id": owner_id},
+    )
+    if not results or not results["ids"] or not results["ids"][0]:
+        return []
+    return list(zip(results["ids"][0], results["distances"][0]))
 
 
 class BaseVectorTransformer(ABC):
@@ -31,16 +108,6 @@ class L2NormalizationTransformer(BaseVectorTransformer):
         if norm > 0:
             tensor = tensor / norm
         return tensor.tolist()
-
-
-def _apply_manifold_projection(embedding: List[float]) -> List[float]:
-    tensor = np.array(embedding, dtype=np.float32)
-    tensor = np.nan_to_num(tensor, nan=0.0, posinf=0.0, neginf=0.0)
-    norm = np.linalg.norm(tensor)
-    if norm > 0:
-        tensor = tensor / norm
-    tensor = tensor * (np.tanh(tensor) + 0.05)
-    return np.clip(tensor, -1.0, 1.0).astype(np.float16).tolist()
 
 
 class SearchCandidate(BaseModel):
@@ -75,112 +142,104 @@ def _tokenize(text: str) -> List[str]:
     return re.findall(r'\w+', text.lower())
 
 
-def hybrid_search(
-    query_text: str,
-    query_embedding: List[float],
+# Function words ignored by the lexical scorer so they cannot carry relevance.
+_STOPWORDS = frozenset(
+    "a an and are as at be but by do does did for from had has have how i if in into is it its "
+    "me my of on or our so that the their them then there these they this to us was we were what "
+    "when where which who why will with you your about".split()
+)
+
+
+def _query_terms(query_text: str) -> List[str]:
+    return list(dict.fromkeys(t for t in _tokenize(query_text) if t not in _STOPWORDS))
+
+
+def _eligible_rows(owner_id: str, exclude_ids: Optional[List[str]] = None):
+    """I2: the caller's own rows that are neither excluded nor superseded."""
+    rows = MemoryNode.objects.filter(owner_id=owner_id, is_excluded=False, superseded_by__isnull=True)
+    if exclude_ids:
+        rows = rows.exclude(id__in=list(exclude_ids))
+    return rows
+
+
+def _lexical_scores(owner_id: str, query_text: str, exclude_ids: Optional[List[str]] = None) -> Dict[str, float]:
+    """IDF-weighted share of the query's terms present in each eligible row's content (0..1).
+
+    rank_bm25's BM25Okapi scores one- and two-document corpora (common for a single user)
+    at zero or below, which makes a relevance floor meaningless, so coverage is used instead.
+    The corpus is bounded to the most recent MEMORY_LEXICAL_CORPUS_LIMIT rows (known scale limit).
+    """
+    terms = _query_terms(query_text)
+    if not terms:
+        return {}
+    rows = _eligible_rows(owner_id, exclude_ids).order_by('-updated_at').values_list('id', 'content')
+    docs = {nid: set(_tokenize(content or "")) for nid, content in rows[:settings.MEMORY_LEXICAL_CORPUS_LIMIT]}
+    if not docs:
+        return {}
+    n = len(docs)
+    idf = {t: math.log(1 + (n + 1) / (sum(t in tokens for tokens in docs.values()) + 0.5)) for t in terms}
+    total = sum(idf.values())
+    scores = {}
+    for nid, tokens in docs.items():
+        matched = sum(idf[t] for t in terms if t in tokens)
+        if matched:
+            scores[nid] = matched / total
+    return scores
+
+
+def retrieve_memories(
     owner_id: str,
-    top_n: int = 10,
-    active_context_ids: Optional[List[str]] = None
-) -> List[str]:
+    query_text: str,
+    limit: Optional[int] = None,
+    exclude_ids: Optional[List[str]] = None,
+) -> List[Tuple[str, str, float]]:
+    """Owner-scoped hybrid recall: [(node_id, content, score)], best first.
+
+    Vector and lexical scoring are failure-isolated; either alone still answers.
+    Scores are absolute (cosine similarity, term coverage), fused 0.6/0.4 when both
+    are available, and floored at MEMORY_MIN_RELEVANCE. Every candidate is re-joined
+    to SQL (I2) so stale or foreign vectors can only cause a miss.
+    """
+    limit = limit or settings.MEMORY_RETRIEVAL_LIMIT
+    if not query_text or not query_text.strip():
+        return []
+
+    vector_scores: Optional[Dict[str, float]] = None
     try:
-        projected_embedding = _apply_manifold_projection(query_embedding)
-        chroma_results = collection.query(
-            query_embeddings=[projected_embedding],
-            n_results=max(top_n * 3, 30),
-            where={"o_id": owner_id}
-        )
-
-        vector_candidates: Dict[str, float] = {}
-        if chroma_results and chroma_results['ids'] and chroma_results['ids'][0]:
-            ids = chroma_results['ids'][0]
-            distances = chroma_results['distances'][0]
-            for nid, dist in zip(ids, distances):
-                vector_candidates[nid] = 1.0 / (1.0 + dist)
-
-        db_nodes = MemoryNode.objects.filter(
-            owner_id=owner_id,
-            tier_level__in=[1, 2]
-        ).only('id', 'name')
-
-        node_map = {node.id: node for node in db_nodes}
-
-        candidate_ids = list(set(list(vector_candidates.keys()) + list(node_map.keys())))
-        if not candidate_ids:
-            return []
-
-        corpus_ids = []
-        corpus_tokens = []
-        for cid in candidate_ids:
-            if cid in node_map:
-                node_text = node_map[cid].name
-                corpus_ids.append(cid)
-                corpus_tokens.append(_tokenize(node_text))
-
-        bm25_scores: Dict[str, float] = {}
-        if corpus_tokens:
-            bm25_model = BM25Okapi(corpus_tokens)
-            query_tokens = _tokenize(query_text)
-            doc_scores = bm25_model.get_scores(query_tokens)
-            for cid, score in zip(corpus_ids, doc_scores):
-                bm25_scores[cid] = float(score)
-
-        max_v = max(vector_candidates.values()) if vector_candidates else 1.0
-        max_b = max(bm25_scores.values()) if bm25_scores else 1.0
-
-        stage1_ranked: List[Tuple[str, float]] = []
-        for cid in candidate_ids:
-            v_score = vector_candidates.get(cid, 0.0) / (max_v if max_v > 0 else 1.0)
-            b_score = bm25_scores.get(cid, 0.0) / (max_b if max_b > 0 else 1.0)
-            combined_score = (0.6 * v_score) + (0.4 * b_score)
-            stage1_ranked.append((cid, combined_score))
-
-        stage1_ranked.sort(key=lambda x: x[1], reverse=True)
-        intermediate_candidates = stage1_ranked[:max(top_n * 2, 15)]
-        intermediate_ids = [c[0] for c in intermediate_candidates]
-
-        adjacency_data = GraphGraphRelationService.get_adjacent_nodes(intermediate_ids)
-
-        final_scored_candidates = []
-        context_anchors = active_context_ids if active_context_ids else intermediate_ids[:3]
-
-        for cid, s1_score in intermediate_candidates:
-            hebbian_boost = 0.0
-            connected_relations = adjacency_data.get(cid, [])
-
-            for target_id, weight in connected_relations:
-                if target_id in context_anchors:
-                    hebbian_boost += weight
-
-            final_score = s1_score + (0.3 * hebbian_boost)
-            final_scored_candidates.append((cid, final_score))
-
-        final_scored_candidates.sort(key=lambda x: x[1], reverse=True)
-        return [candidate[0] for candidate in final_scored_candidates[:top_n]]
-
+        vector_scores = {
+            nid: max(0.0, 1.0 - distance)
+            for nid, distance in query_owner_vectors(owner_id, query_text, n_results=limit * 3)
+        }
     except Exception as e:
-        logger.error(f"E_0x02: Critical error in two-stage hybrid search pipeline: {e}", exc_info=True)
-        try:
-            return chroma_results['ids'][0][:top_n] if 'chroma_results' in locals() else []
-        except Exception:
-            return []
+        logger.warning(f"E_0x02: Vector recall unavailable, using lexical only: {e}")
 
-
-def save_to_associative_layer(node: MemoryNode, embedding: List[float]) -> bool:
+    lexical_scores: Optional[Dict[str, float]] = None
     try:
-        projected_tensor = _apply_manifold_projection(embedding)
-        collection.add(
-            ids=[node.id],
-            embeddings=[projected_tensor],
-            metadatas=[{
-                "o_id": getattr(node, 'owner_id', 'system'),
-                "q_flag": True,
-                "t_sync": datetime.now().isoformat()
-            }]
-        )
-        return True
+        lexical_scores = _lexical_scores(owner_id, query_text, exclude_ids)
     except Exception as e:
-        logger.error(f"E_0x01: Error saving to associative vector layer: {e}")
-        return False
+        logger.warning(f"E_0x02: Lexical recall unavailable, using vectors only: {e}")
+
+    if vector_scores is None and lexical_scores is None:
+        return []
+
+    candidate_ids = set(vector_scores or {}) | set(lexical_scores or {})
+    fused: Dict[str, float] = {}
+    for nid in candidate_ids:
+        if vector_scores is not None and lexical_scores is not None:
+            score = 0.6 * vector_scores.get(nid, 0.0) + 0.4 * lexical_scores.get(nid, 0.0)
+        elif vector_scores is not None:
+            score = vector_scores.get(nid, 0.0)
+        else:
+            score = lexical_scores.get(nid, 0.0)
+        if score >= settings.MEMORY_MIN_RELEVANCE:
+            fused[nid] = score
+    if not fused:
+        return []
+
+    contents = dict(_eligible_rows(owner_id, exclude_ids).filter(id__in=list(fused)).values_list('id', 'content'))
+    results = [(nid, contents[nid], score) for nid, score in fused.items() if nid in contents]
+    results.sort(key=lambda r: r[2], reverse=True)
+    return results[:limit]
 
 
 class AsyncAssociativeMemoryManager:
@@ -188,4 +247,4 @@ class AsyncAssociativeMemoryManager:
         self.transformer = transformer or L2NormalizationTransformer()
 
     def process_background_rerank(self, query_text: str, owner_id: str) -> List[str]:
-        return hybrid_search(query_text, [0.0] * 1536, owner_id, top_n=20)
+        return [nid for nid, _content, _score in retrieve_memories(owner_id, query_text, limit=20)]
