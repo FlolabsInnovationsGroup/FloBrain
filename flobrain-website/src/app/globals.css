@@ -1469,6 +1469,15 @@ body {
   --fb-v2-timer-ring-track: #b4c7ff;
   --fb-v2-timer-play: #222344;
   --fb-v2-dm: #36c5e9;
+  --fb-v2-table-head-bg: #262626;
+  --fb-v2-table-line: #6b6b6b;
+  --fb-v2-progress: #22c55e;
+  --fb-v2-progress-track: #8f8f8f;
+  --fb-v2-status-ok: #22c55e;
+  --fb-v2-status-warn: #f97316;
+  --fb-v2-priority-high: #e53935;
+  --fb-v2-priority-medium: #f5a623;
+  --fb-v2-priority-low: #4caf50;
 
   --fb-v2-buddy-1: #2dd4bf;
   --fb-v2-buddy-2: #34d399;
@@ -1655,4 +1664,89 @@ body {
 .fb-lead-avatar {
   background: #d8d8d8;
   color: #3a3a3a;
+}
+
+.fb-lead-btn-pressed {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.55);
+}
+
+/* Bordered data tables on the Projects and Activity Logs pages */
+.fb-lead-table {
+  border: 1px solid var(--fb-v2-border);
+}
+
+.fb-lead-table th,
+.fb-lead-table td {
+  border: 1px solid var(--fb-v2-table-line);
+}
+
+.fb-lead-table thead th {
+  background: var(--fb-v2-table-head-bg);
+}
+
+.fb-lead-progress {
+  background: var(--fb-v2-progress-track);
+}
+
+.fb-lead-progress-fill {
+  background: var(--fb-v2-progress);
+}
+
+.fb-lead-status-ok {
+  color: var(--fb-v2-status-ok);
+}
+
+.fb-lead-status-warn {
+  color: var(--fb-v2-status-warn);
+}
+
+/* Outlined inputs on the Create Project form */
+.fb-lead-field {
+  border: 1px solid var(--fb-v2-border);
+  background: transparent;
+  color-scheme: dark;
+}
+
+.fb-lead-field::placeholder,
+.fb-lead-field input::placeholder {
+  color: #bdbdbd;
+}
+
+.fb-lead-field:focus-visible,
+.fb-lead-field:focus-within {
+  outline: 2px solid var(--fb-v2-accent);
+  outline-offset: -1px;
+}
+
+.fb-lead-select {
+  color-scheme: dark;
+}
+
+.fb-lead-select option {
+  background: var(--fb-v2-surface);
+  color: var(--fb-v2-text);
+}
+
+/* Priority/status pills: outlined in their color, filled when selected */
+.fb-lead-pill {
+  border: 1px solid var(--fb-pill-color);
+  transition: background 150ms ease;
+}
+
+.fb-lead-pill:hover {
+  background: color-mix(in srgb, var(--fb-pill-color) 20%, transparent);
+}
+
+.fb-lead-pill[aria-pressed="true"] {
+  background: var(--fb-pill-color);
+  color: #ffffff;
+}
+
+.fb-lead-btn-outline {
+  border: 1px solid var(--fb-v2-border);
+  transition: background 150ms ease;
+}
+
+.fb-lead-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
