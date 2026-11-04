@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: "My Tasks",
+  title: "Dashboard",
 };
 
-export default function MyTasksPage() {
+export default function LeadershipDashboardPage() {
   return null;
 }
