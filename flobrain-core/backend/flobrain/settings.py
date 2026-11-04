@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "brain",
     "model_registry",
     "contact",
+    "teams",
 ]
 
 MIDDLEWARE = [
