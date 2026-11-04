@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "My Time",
+  title: "Calendar",
 };
 
-export default function MyTimePage() {
+export default function MyCalendarPage() {
   return null;
 }

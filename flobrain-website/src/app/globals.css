@@ -1607,6 +1607,7 @@ body {
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1;
+  text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
   transition: background 0.15s;

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "My Chats",
+  title: "Docs",
 };
 
-export default function MyChatsPage() {
+export default function MyDocsPage() {
   return null;
 }

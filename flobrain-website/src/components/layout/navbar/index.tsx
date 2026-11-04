@@ -9,6 +9,7 @@ import {
   Home,
   MessageCircle,
   LayoutDashboard,
+  Sparkles,
 } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
@@ -21,10 +22,15 @@ const activeLinkClass =
   "bg-white/10 text-white ring-1 ring-[#a855f7]/50";
 const inactiveLinkClass = "text-zinc-400 hover:text-white";
 
+/** V2 entry: AppChrome skips the V1 navbar/footer on these shell routes. */
+const V2_ENTRY_HREF = "/tasks";
+
+
 const AUTHED_NAV_ITEMS = [
   { label: "Home", href: "/", icon: Home },
   { label: "Chat", href: "/brain", icon: MessageCircle },
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "V2", href: V2_ENTRY_HREF, icon: Sparkles },
 ] as const;
 
 function isNavItemActive(href: string, pathname: string): boolean {
