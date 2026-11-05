@@ -101,13 +101,15 @@ export function DesignScrollbar({ children, className, viewportClassName }: Desi
     const { maxScroll, thumbPercent } = metricsRef.current;
     if (!viewport || !track || maxScroll === 0) return;
 
+    const scrollingViewport = viewport;
     const startY = event.clientY;
-    const startScroll = viewport.scrollTop;
+    const startScroll = scrollingViewport.scrollTop;
     const thumbPx = (thumbPercent / 100) * track.clientHeight;
     const travelPx = Math.max(track.clientHeight - thumbPx, 1);
 
     function onMove(moveEvent: PointerEvent) {
-      viewport.scrollTop = startScroll + ((moveEvent.clientY - startY) / travelPx) * maxScroll;
+      scrollingViewport.scrollTop =
+        startScroll + ((moveEvent.clientY - startY) / travelPx) * maxScroll;
     }
 
     function onUp() {
