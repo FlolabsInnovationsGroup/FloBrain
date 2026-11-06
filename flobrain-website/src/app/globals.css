@@ -1999,6 +1999,57 @@ body {
   background: var(--fb-v2-overlay);
 }
 
+/* Data colours shared by the preview and the V2 route. */
+.fb-v2-preview,
+.fb-v2-dashboard {
+  --fb-v2-table-header: #292929;
+  --fb-v2-table-column: #626060;
+  --fb-v2-table-hover: #747171;
+  --fb-v2-metric-bg: #3d3d3d;
+  --fb-v2-progress-track: #292929;
+  --fb-v2-progress-fill: #6fcf97;
+  --fb-v2-success: #86efac;
+  --fb-v2-warning: #fcd34d;
+  --fb-v2-error: #fca5a5;
+  --fb-v2-inactive: #e2e8f0;
+  --fb-v2-accent-subtle: rgba(147, 180, 255, 0.16);
+}
+
+.light .fb-v2-preview,
+.light .fb-v2-dashboard {
+  --fb-v2-table-header: #e4e2e2;
+  --fb-v2-table-column: #f1efef;
+  --fb-v2-table-hover: #dfe6f5;
+  --fb-v2-metric-bg: #f8f7f7;
+  --fb-v2-progress-track: #dedcdc;
+  --fb-v2-progress-fill: #15803d;
+  --fb-v2-success: #15803d;
+  --fb-v2-success-subtle: rgba(21, 128, 61, 0.12);
+  --fb-v2-warning: #92400e;
+  --fb-v2-warning-subtle: rgba(146, 64, 14, 0.12);
+  --fb-v2-error: #b91c1c;
+  --fb-v2-inactive: #475569;
+  --fb-v2-accent-subtle: rgba(29, 78, 216, 0.12);
+}
+
+/* Leadership Dashboard inside the V2 shell (/leadership/dashboard). */
+.fb-v2-dashboard {
+  container: fb-v2-dashboard / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+.fb-v2-dashboard .fb-v2-table-scroll:focus-visible { outline: 2px solid var(--fb-v2-focus-ring); outline-offset: 3px; }
+/* The center column is narrower than the viewport, so KPI columns follow its width. */
+@container fb-v2-dashboard (max-width: 36rem) {
+  .fb-v2-dashboard .fb-v2-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@container fb-v2-dashboard (max-width: 22rem) {
+  .fb-v2-dashboard .fb-v2-metrics { grid-template-columns: minmax(0, 1fr); }
+}
+
 /* Leadership preview experiment: scoped so V1 routes keep their existing styles. */
 .fb-v2-preview {
   --fb-v2-page-bg: #323131;
@@ -2015,17 +2066,6 @@ body {
   --fb-v2-focus-ring: #93b4ff;
   --fb-v2-input-bg: #3d3d3d;
   --fb-v2-input-border: #a29f9f;
-  --fb-v2-table-header: #292929;
-  --fb-v2-table-column: #626060;
-  --fb-v2-table-hover: #747171;
-  --fb-v2-metric-bg: #3d3d3d;
-  --fb-v2-progress-track: #292929;
-  --fb-v2-progress-fill: #6fcf97;
-  --fb-v2-success: #86efac;
-  --fb-v2-warning: #fcd34d;
-  --fb-v2-error: #fca5a5;
-  --fb-v2-inactive: #e2e8f0;
-  --fb-v2-accent-subtle: rgba(147, 180, 255, 0.16);
   color: var(--fb-v2-text);
   background: var(--fb-v2-page-bg);
   min-height: 100vh;
@@ -2046,19 +2086,6 @@ body {
   --fb-v2-focus-ring: #1d4ed8;
   --fb-v2-input-bg: #ffffff;
   --fb-v2-input-border: #858080;
-  --fb-v2-table-header: #e4e2e2;
-  --fb-v2-table-column: #f1efef;
-  --fb-v2-table-hover: #dfe6f5;
-  --fb-v2-metric-bg: #f8f7f7;
-  --fb-v2-progress-track: #dedcdc;
-  --fb-v2-progress-fill: #15803d;
-  --fb-v2-success: #15803d;
-  --fb-v2-success-subtle: rgba(21, 128, 61, 0.12);
-  --fb-v2-warning: #92400e;
-  --fb-v2-warning-subtle: rgba(146, 64, 14, 0.12);
-  --fb-v2-error: #b91c1c;
-  --fb-v2-inactive: #475569;
-  --fb-v2-accent-subtle: rgba(29, 78, 216, 0.12);
 }
 
 .fb-v2-preview .fb-v2-content { display: block; padding: 24px; }

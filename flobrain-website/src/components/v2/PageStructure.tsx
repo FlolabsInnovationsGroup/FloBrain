@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import type { DashboardResultsHandle } from "./DashboardOverview";
+import { LeadershipSearchContext } from "./LeadershipSearchContext";
 import { LeadershipToolbar } from "./LeadershipToolbar";
 import {
   CREATE_ACTION_ITEMS,
@@ -36,10 +38,14 @@ export function PageStructure({
   const router = useRouter();
   const [pendingPath, setPendingPath] = useState<string | null>(null);
   const [seenPathname, setSeenPathname] = useState(pathname);
+  const [searchQuery, setSearchQuery] = useState("");
+  const resultsRef = useRef<DashboardResultsHandle>(null);
+  const searchContext = useMemo(() => ({ query: searchQuery, resultsRef }), [searchQuery]);
 
   if (pathname !== seenPathname) {
     setSeenPathname(pathname);
     setPendingPath(null);
+    setSearchQuery("");
   }
 
   const currentPath = pendingPath ?? pathname;
@@ -108,11 +114,19 @@ export function PageStructure({
         ) : null}
         {showLeadershipNav ? (
           <div className="fb-v2-actions" data-slot="actions">
-            <LeadershipToolbar pathname={currentPath} showSearch={showSearch} />
+            <LeadershipToolbar
+              pathname={currentPath}
+              showSearch={showSearch}
+              searchValue={searchQuery}
+              onSearchChange={setSearchQuery}
+              onSearchSubmit={() => resultsRef.current?.jumpToMatch()}
+            />
           </div>
         ) : null}
         <div className="fb-v2-content" data-slot="content">
-          {children}
+          <LeadershipSearchContext.Provider value={searchContext}>
+            {children}
+          </LeadershipSearchContext.Provider>
         </div>
       </section>
 
