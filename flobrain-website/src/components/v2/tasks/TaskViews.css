@@ -433,7 +433,7 @@
 
 /* Fallback when shared actions slot is missing (standalone task branch preview) */
 .fb-v2-task-detail > .fb-v2-task-detail-back {
-  max-width: calc(51rem + 1.35rem + 6px);
+  max-width: calc(45.5rem + 1.35rem + 6px);
   width: 100%;
 }
 
@@ -450,7 +450,7 @@
   align-items: stretch;
   display: flex;
   gap: 1.35rem;
-  max-width: calc(51rem + 1.35rem + 6px);
+  max-width: calc(45.5rem + 1.35rem + 6px);
   min-width: 0;
   width: 100%;
 }
@@ -461,13 +461,20 @@
   border-radius: 5px;
   box-sizing: border-box;
   flex: 1 1 auto;
-  height: min(45.25rem, calc(100dvh - 12rem));
-  max-width: 51rem; /* 816px LEAD CONTAINER — task content only */
+  /* Same panel as Create Task (45.5rem × 593px) so the box is not clipped */
+  height: 593px;
+  max-height: 593px;
+  max-width: 45.5rem;
   min-height: 0;
   min-width: 0;
   overscroll-behavior: contain;
   padding: 1.15rem 1rem 1.5rem;
   width: 100%;
+}
+
+.fb-v2-task-detail-row .fb-v2-design-scroll-rail {
+  align-self: flex-start;
+  height: 593px;
 }
 
 .fb-v2-task-detail-main {
@@ -679,6 +686,7 @@
 @media (max-width: 639px) {
   .fb-v2-task-detail-lead {
     height: auto;
+    max-height: none;
   }
 
   /* Keep 4 cols; allow tighter cell padding on narrow screens */
