@@ -20,6 +20,7 @@ type DashboardOverviewProps = {
   tasks: DemoTask[];
   createdProjects: number;
   search: string;
+  showViewAll?: boolean;
   ref?: Ref<DashboardResultsHandle>;
 };
 
@@ -34,6 +35,7 @@ export default function DashboardOverview({
   tasks,
   createdProjects,
   search,
+  showViewAll,
   ref,
 }: DashboardOverviewProps) {
   const teamResultRef = useRef<HTMLDivElement>(null);
@@ -123,19 +125,19 @@ export default function DashboardOverview({
 
       {(!query || visibleTeams.length > 0) && (
         <div ref={teamResultRef} className={highlightClass}>
-          <TeamOverview teams={visibleTeams} />
+          <TeamOverview teams={visibleTeams} showViewAll={showViewAll} />
         </div>
       )}
 
       {(!query || visibleInterns.length > 0) && (
         <div ref={internResultRef} className={highlightClass}>
-          <InternOverview interns={visibleInterns} />
+          <InternOverview interns={visibleInterns} showViewAll={showViewAll} />
         </div>
       )}
 
       {(!query || visibleMilestones.length > 0) && (
         <div ref={milestoneResultRef} className={highlightClass}>
-          <DeadlinesMilestones milestones={visibleMilestones} />
+          <DeadlinesMilestones milestones={visibleMilestones} showViewAll={showViewAll} />
         </div>
       )}
 

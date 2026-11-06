@@ -13,6 +13,7 @@ export type Intern = {
 
 type InternOverviewProps = {
   interns: Intern[];
+  showViewAll?: boolean;
 };
 
 const statusVariants: Record<Intern["status"], StatusVariant> = {
@@ -21,9 +22,14 @@ const statusVariants: Record<Intern["status"], StatusVariant> = {
   "On leave": "inactive",
 };
 
-export default function InternOverview({ interns }: InternOverviewProps) {
+export default function InternOverview({ interns, showViewAll }: InternOverviewProps) {
   return (
-    <DataTable title="INTERN OVERVIEW" headings={["Intern", "Team", "Tasks", "Progress", "Status"]}>
+    <DataTable
+      title="INTERN OVERVIEW"
+      headings={["Intern", "Team", "Tasks", "Progress", "Status"]}
+      viewAllHref={showViewAll ? "/leadership/interns" : undefined}
+      viewAllLabel="View all interns"
+    >
       {interns.map((intern) => (
         <tr key={intern.id}>
           <td>{intern.name}</td>

@@ -2136,6 +2136,24 @@ body {
   line-height: 1.5;
   margin-bottom: 6px;
 }
+.fb-v2-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.fb-v2-section-heading .fb-v2-section-title { min-width: 0; margin: 0; }
+.fb-v2-view-all {
+  flex-shrink: 0;
+  color: var(--fb-v2-progress-fill);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.fb-v2-view-all:hover { text-decoration: underline; text-underline-offset: 2px; }
+.fb-v2-view-all:focus-visible { outline: 2px solid var(--fb-v2-focus-ring); outline-offset: 3px; border-radius: 2px; }
 .fb-v2-table-scroll {
   overflow-x: auto;
   border: 1px solid var(--fb-v2-border);

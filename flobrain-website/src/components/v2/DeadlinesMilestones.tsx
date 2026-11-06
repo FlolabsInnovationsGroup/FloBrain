@@ -10,13 +10,16 @@ export type Milestone = {
 
 type DeadlinesMilestonesProps = {
   milestones: Milestone[];
+  showViewAll?: boolean;
 };
 
-export default function DeadlinesMilestones({ milestones }: DeadlinesMilestonesProps) {
+export default function DeadlinesMilestones({ milestones, showViewAll }: DeadlinesMilestonesProps) {
   return (
     <DataTable
       title="DEADLINES / MILESTONES"
       headings={["Project Name", "Type", "Team", "Target Date"]}
+      viewAllHref={showViewAll ? "/leadership/projects" : undefined}
+      viewAllLabel="View all projects"
     >
       {milestones.map((milestone) => (
         <tr key={milestone.id}>

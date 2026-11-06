@@ -13,6 +13,7 @@ export type Team = {
 
 type TeamOverviewProps = {
   teams: Team[];
+  showViewAll?: boolean;
 };
 
 const statusVariants: Record<Team["status"], StatusVariant> = {
@@ -21,9 +22,14 @@ const statusVariants: Record<Team["status"], StatusVariant> = {
   Blocked: "blocked",
 };
 
-export default function TeamOverview({ teams }: TeamOverviewProps) {
+export default function TeamOverview({ teams, showViewAll }: TeamOverviewProps) {
   return (
-    <DataTable title="TEAM OVERVIEW" headings={["Teams", "Lead", "Members", "Progress", "Status"]}>
+    <DataTable
+      title="TEAM OVERVIEW"
+      headings={["Teams", "Lead", "Members", "Progress", "Status"]}
+      viewAllHref={showViewAll ? "/leadership/teams" : undefined}
+      viewAllLabel="View all teams"
+    >
       {teams.map((team) => (
         <tr key={team.id}>
           <td>{team.name}</td>
