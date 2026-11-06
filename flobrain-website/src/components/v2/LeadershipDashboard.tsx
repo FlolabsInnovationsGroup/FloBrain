@@ -3,57 +3,19 @@
 import { useRef, useState, type FormEvent } from "react";
 import { Search } from "lucide-react";
 
-import MetricCard from "./MetricCard";
+import DashboardOverview, { type DashboardResultsHandle } from "./DashboardOverview";
 import PageHeader from "./PageHeader";
-import StatusBadge from "./StatusBadge";
-import TeamOverview, { type Team } from "./TeamOverview";
-import InternOverview, { type Intern } from "./InternOverview";
-import DeadlinesMilestones, { type Milestone } from "./DeadlinesMilestones";
+import type { Team } from "./TeamOverview";
+import type { Intern } from "./InternOverview";
+import type { Milestone } from "./DeadlinesMilestones";
+import {
+  initialInterns,
+  initialMilestones,
+  initialTeams,
+  type DemoTask,
+} from "./dashboardMockData";
 
 type CreateMode = "team" | "project" | "task";
-
-type DemoTask = {
-  id: number;
-  name: string;
-  project: string;
-  assignee: string;
-};
-
-const initialTeams: Team[] = [
-  { id: 1, name: "Frontend", lead: "Maria", members: 6, progress: 75, status: "On track" },
-  { id: 2, name: "Backend", lead: "Ofon", members: 8, progress: 60, status: "At risk" },
-  { id: 3, name: "Design", lead: "Ceren", members: 4, progress: 90, status: "On track" },
-];
-
-const initialInterns: Intern[] = [
-  { id: 1, name: "Demo Intern A", team: "Frontend", tasks: 4, progress: 70, status: "Active" },
-  { id: 2, name: "Demo Intern B", team: "Backend", tasks: 3, progress: 45, status: "Away" },
-  { id: 3, name: "Demo Intern C", team: "Design", tasks: 5, progress: 90, status: "Active" },
-];
-
-const initialMilestones: Milestone[] = [
-  {
-    id: 1,
-    projectName: "FloBrain V2 Dashboard",
-    type: "Milestone",
-    team: "Frontend",
-    targetDate: "Oct 28, 2026",
-  },
-  {
-    id: 2,
-    projectName: "User Authentication",
-    type: "Deadline",
-    team: "Backend",
-    targetDate: "Nov 2, 2026",
-  },
-  {
-    id: 3,
-    projectName: "UI Design Review",
-    type: "Milestone",
-    team: "Design",
-    targetDate: "Nov 5, 2026",
-  },
-];
 
 const emptyForm = {
   name: "",
@@ -79,10 +41,7 @@ export default function LeadershipDashboard() {
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const teamResultRef = useRef<HTMLDivElement>(null);
-  const internResultRef = useRef<HTMLDivElement>(null);
-  const milestoneResultRef = useRef<HTMLDivElement>(null);
-  const taskResultRef = useRef<HTMLElement>(null);
+  const resultsRef = useRef<DashboardResultsHandle>(null);
 
   function updateField(field: keyof typeof emptyForm, value: string) {
     setForm((previous) => ({ ...previous, [field]: value }));
@@ -176,69 +135,6 @@ export default function LeadershipDashboard() {
     dialogRef.current?.close();
   }
 
-  const query = search.trim().toLowerCase();
-  const matches = (value: string) => value.toLowerCase().includes(query);
-
-  const visibleTeams = teams.filter(
-    (team) => matches(team.name) || matches(team.lead) || matches(team.status)
-  );
-
-  const visibleInterns = interns.filter(
-    (intern) => matches(intern.name) || matches(intern.team) || matches(intern.status)
-  );
-
-  const visibleMilestones = milestones.filter(
-    (item) =>
-      matches(item.projectName) ||
-      matches(item.team) ||
-      matches(item.type) ||
-      matches(item.targetDate)
-  );
-
-  const visibleTasks = tasks.filter(
-    (task) => matches(task.name) || matches(task.project) || matches(task.assignee)
-  );
-
-  function jumpToMatch() {
-    if (!query) return;
-
-    let target: HTMLElement | null = null;
-
-    if (visibleTeams.length > 0) {
-      target = teamResultRef.current;
-    } else if (visibleInterns.length > 0) {
-      target = internResultRef.current;
-    } else if (visibleMilestones.length > 0) {
-      target = milestoneResultRef.current;
-    } else if (visibleTasks.length > 0) {
-      target = taskResultRef.current;
-    }
-
-    target?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }
-
-  const highlightClass = query
-    ? "scroll-mt-4 rounded-lg ring-2 ring-[var(--fb-v2-accent)] ring-offset-4 ring-offset-[var(--fb-v2-page-bg)]"
-    : "scroll-mt-4";
-
-  const noResults =
-    query.length > 0 &&
-    visibleTeams.length === 0 &&
-    visibleInterns.length === 0 &&
-    visibleMilestones.length === 0 &&
-    visibleTasks.length === 0;
-
-  const metrics = [
-    { label: "Total Interns", value: 24 },
-    { label: "Active Projects", value: 8 + createdProjects },
-    { label: "Tasks Completed This Week", value: 37 },
-    { label: "Pending Tasks", value: 12 + tasks.length },
-    { label: "Project Blockers", value: 3 },
-  ];
-
   return (
     <main className="fb-v2-content">
       <div className="fb-v2-lead-panel">
@@ -268,7 +164,7 @@ export default function LeadershipDashboard() {
             role="search"
             onSubmit={(event) => {
               event.preventDefault();
-              jumpToMatch();
+              resultsRef.current?.jumpToMatch();
             }}
             className="w-full sm:w-[234px]"
           >
@@ -308,59 +204,15 @@ export default function LeadershipDashboard() {
           </p>
         )}
 
-        {noResults && (
-          <p role="status" className="text-sm text-[var(--fb-v2-text-muted)]">
-            No matches found for &quot;{search}&quot;.
-          </p>
-        )}
-
-        {/* KPI CARDS */}
-        <div className="fb-v2-metrics">
-          {metrics.map((metric) => (
-            <MetricCard key={metric.label} label={metric.label} value={metric.value} />
-          ))}
-        </div>
-
-        {(!query || visibleTeams.length > 0) && (
-          <div ref={teamResultRef} className={highlightClass}>
-            <TeamOverview teams={visibleTeams} />
-          </div>
-        )}
-
-        {(!query || visibleInterns.length > 0) && (
-          <div ref={internResultRef} className={highlightClass}>
-            <InternOverview interns={visibleInterns} />
-          </div>
-        )}
-
-        {(!query || visibleMilestones.length > 0) && (
-          <div ref={milestoneResultRef} className={highlightClass}>
-            <DeadlinesMilestones milestones={visibleMilestones} />
-          </div>
-        )}
-
-        {/* SHOW NEWLY CREATED TASKS */}
-        {visibleTasks.length > 0 && (
-          <section ref={taskResultRef} className={highlightClass}>
-            <h2 className="fb-v2-section-title">NEW TASKS</h2>
-            <div className="fb-v2-card space-y-3">
-              {visibleTasks.map((task) => (
-                <div
-                  key={task.id}
-                  className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--fb-v2-border)] pb-3 last:border-0 last:pb-0"
-                >
-                  <div>
-                    <p className="font-medium">{task.name}</p>
-                    <p className="text-xs text-[var(--fb-v2-text-muted)]">
-                      {task.project} | Assigned to {task.assignee}
-                    </p>
-                  </div>
-                  <StatusBadge variant="pending" label="Pending" />
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        <DashboardOverview
+          ref={resultsRef}
+          teams={teams}
+          interns={interns}
+          milestones={milestones}
+          tasks={tasks}
+          createdProjects={createdProjects}
+          search={search}
+        />
       </div>
 
       {/* REUSABLE CREATE DIALOG */}
