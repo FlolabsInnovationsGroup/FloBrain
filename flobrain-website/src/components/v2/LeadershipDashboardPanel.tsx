@@ -17,10 +17,6 @@ export default function LeadershipDashboardPanel() {
 
   return (
     <div className="fb-v2-dashboard">
-      <p className="text-xs text-[var(--fb-v2-text-muted)]">
-        Demo mode: This page shows mock data.
-      </p>
-
       <DashboardOverview
         ref={resultsRef}
         teams={initialTeams}
@@ -29,6 +25,7 @@ export default function LeadershipDashboardPanel() {
         tasks={noTasks}
         createdProjects={0}
         search={query}
+        showViewAll
       />
     </div>
   );

@@ -1,15 +1,31 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 type DataTableProps = {
   title: string;
   headings: string[];
   children: ReactNode;
+  viewAllHref?: string;
+  viewAllLabel?: string;
 };
 
-export default function DataTable({ title, headings, children }: DataTableProps) {
+export default function DataTable({
+  title,
+  headings,
+  children,
+  viewAllHref,
+  viewAllLabel,
+}: DataTableProps) {
   return (
     <section className="fb-v2-table-section">
-      <h2 className="fb-v2-section-title">{title}</h2>
+      <div className="fb-v2-section-heading">
+        <h2 className="fb-v2-section-title">{title}</h2>
+        {viewAllHref && (
+          <Link href={viewAllHref} aria-label={viewAllLabel} className="fb-v2-view-all">
+            VIEW ALL
+          </Link>
+        )}
+      </div>
       <div
         className="fb-v2-table-scroll"
         role="region"
