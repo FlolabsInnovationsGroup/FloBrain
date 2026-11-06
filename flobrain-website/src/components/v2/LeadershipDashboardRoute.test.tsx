@@ -23,6 +23,10 @@ function table(name: string) {
   return screen.queryByRole("table", { name });
 }
 
+function section(title: string) {
+  return within(screen.getByRole("heading", { level: 2, name: title }).closest("section")!);
+}
+
 beforeEach(() => {
   scrollIntoView.mockClear();
   HTMLElement.prototype.scrollIntoView = scrollIntoView;
@@ -78,6 +82,27 @@ describe("Leadership Dashboard in the V2 shell", () => {
     expect(screen.getAllByRole("searchbox")).toHaveLength(1);
     expect(document.querySelector("dialog")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Jump to search result" })).not.toBeInTheDocument();
+  });
+
+  it("does not show the demo banner", () => {
+    renderRoute();
+
+    expect(screen.queryByText(/demo mode/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/mock data/i)).not.toBeInTheDocument();
+  });
+
+  it("links each section's VIEW ALL to its full page", () => {
+    renderRoute();
+
+    for (const [title, name, href] of [
+      ["TEAM OVERVIEW", "View all teams", "/leadership/teams"],
+      ["INTERN OVERVIEW", "View all interns", "/leadership/interns"],
+      ["DEADLINES / MILESTONES", "View all projects", "/leadership/projects"],
+    ]) {
+      const link = section(title).getByRole("link", { name });
+      expect(link).toHaveTextContent("VIEW ALL");
+      expect(link).toHaveAttribute("href", href);
+    }
   });
 
   it("keeps Leadership and Dashboard selected in the shared navigation", () => {
@@ -179,5 +204,13 @@ describe("Leadership preview compatibility", () => {
     expect(screen.getByRole("button", { name: "Jump to search result" })).toBeInTheDocument();
     expect(document.querySelectorAll("dialog")).toHaveLength(1);
     expect(screen.getAllByRole("table")).toHaveLength(3);
+  });
+
+  it("keeps its demo notice and has no VIEW ALL links", () => {
+    vi.mocked(usePathname).mockReturnValue("/leadership-preview");
+    render(<LeadershipPreview />);
+
+    expect(screen.getByText(/demo mode: changes use mock data/i)).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /view all/i })).not.toBeInTheDocument();
   });
 });
