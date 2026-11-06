@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "brain",
     "model_registry",
     "contact",
+    "teams",
 ]
 
 MIDDLEWARE = [
@@ -186,3 +187,33 @@ MULTIMODAL_SERVICE_URL = os.environ.get(
 ).rstrip("/")
 MULTIMODAL_API_KEY = os.environ.get("MULTIMODAL_API_KEY", "")
 MULTIMODAL_SERVICE_TIMEOUT = int(os.environ.get("MULTIMODAL_SERVICE_TIMEOUT", "60"))
+
+# Memory stores. Clients are created on first use, never at import.
+MEMORY_VECTOR_DB_PATH = os.environ.get("MEMORY_VECTOR_DB_PATH", "/app/vector_db")
+# Versioned collection embedded server-side; the legacy "flobrain_associative_memory"
+# collection (client-supplied vectors) is no longer read or written.
+MEMORY_VECTOR_COLLECTION = os.environ.get("MEMORY_VECTOR_COLLECTION", "flobrain_memory_v1")
+# Chroma's built-in all-MiniLM-L6-v2 (ONNX); the model downloads on first use (D3).
+MEMORY_EMBEDDING_FUNCTION = os.environ.get(
+    "MEMORY_EMBEDDING_FUNCTION", "chromadb.utils.embedding_functions.DefaultEmbeddingFunction"
+)
+# Recall: owner-scoped hybrid retrieval and the budgeted memory block sent to the LLM.
+MEMORY_RETRIEVAL_LIMIT = int(os.environ.get("MEMORY_RETRIEVAL_LIMIT", "5"))
+MEMORY_MIN_RELEVANCE = float(os.environ.get("MEMORY_MIN_RELEVANCE", "0.2"))
+MEMORY_LEXICAL_CORPUS_LIMIT = int(os.environ.get("MEMORY_LEXICAL_CORPUS_LIMIT", "500"))
+MEMORY_CONTEXT_TOKEN_BUDGET = int(os.environ.get("MEMORY_CONTEXT_TOKEN_BUDGET", "800"))
+# Kill switch for injecting recalled memory into chat requests (rollback for T08).
+MEMORY_RECALL_ENABLED = os.environ.get("MEMORY_RECALL_ENABLED", "True") == "True"
+# Capture of user-authored chat messages as `interaction` memories (D1). On by default
+# only when DEBUG is on; set explicitly elsewhere. Assistant text is never captured.
+MEMORY_AUTO_CAPTURE = os.environ.get("MEMORY_AUTO_CAPTURE", str(DEBUG)) == "True"
+MEMORY_CAPTURE_MIN_CHARS = int(os.environ.get("MEMORY_CAPTURE_MIN_CHARS", "20"))
+# Chat history sent to the LLM: most recent turns within this many tokens (latest always kept).
+# The external model's real context limit is unknown, so this is a setting.
+CHAT_HISTORY_TOKEN_BUDGET = int(os.environ.get("CHAT_HISTORY_TOKEN_BUDGET", "6000"))
+# "estimate" (offline, conservative) or "tiktoken" (cl100k_base; may download on first use).
+MEMORY_TOKENIZER = os.environ.get("MEMORY_TOKENIZER", "estimate")
+# Cold (S3) archive is opt-in and refuses to run without a 64-hex-character key.
+MEMORY_COLD_STORAGE_ENABLED = os.environ.get("MEMORY_COLD_STORAGE_ENABLED", "False") == "True"
+MEMORY_COLD_STORAGE_BUCKET = os.environ.get("S3_VAULT_BUCKET", "flobrain-cold-vault")
+MEMORY_COLD_STORAGE_KEY = os.environ.get("AES_MASTER_KEY", "")
