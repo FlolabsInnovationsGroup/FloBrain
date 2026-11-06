@@ -120,6 +120,23 @@
   width: 4px;
 }
 
+/* Inside the shared center, the form card fills the middle the same way the tasks table does. */
+.fb-v2-content .fb-v2-task-page {
+  min-height: 0;
+  padding: 0.35rem 0 0.5rem;
+}
+
+.fb-v2-content .fb-v2-task-create-row {
+  margin-inline: 0;
+  max-width: none;
+  width: 100%;
+}
+
+.fb-v2-content .fb-v2-task-card,
+.fb-v2-content .fb-v2-task-card.fb-v2-design-scroll-viewport {
+  max-width: none;
+}
+
 .fb-v2-task-heading {
   color: var(--fb-v2-task-heading);
   font-size: 1rem;

@@ -178,6 +178,31 @@
   width: 100%;
 }
 
+/* Inside the shared center, drop the 729px cap and the extra page padding so the table fills the middle. */
+.fb-v2-content .fb-v2-tasks-view {
+  min-height: 0;
+  padding: 0.35rem 0 0.5rem;
+}
+
+.fb-v2-content .fb-v2-tasks-main,
+.fb-v2-content .fb-v2-tasks-table-wrap,
+.fb-v2-content .fb-v2-task-detail-row,
+.fb-v2-content .fb-v2-task-detail-lead,
+.fb-v2-content .fb-v2-task-detail > .fb-v2-task-detail-back {
+  max-width: none;
+}
+
+/* Filter by ends on the table edge, not the scrollbar beside it. */
+.fb-v2-content .fb-v2-tasks-view-toolbar {
+  max-width: none;
+  width: calc(100% - 1.35rem - 6px);
+}
+
+.fb-v2-content .fb-v2-task-detail {
+  min-height: 0;
+  padding: 0.35rem 0 0.5rem;
+}
+
 .fb-v2-tasks-table-wrap.fb-v2-design-scroll-viewport {
   min-height: 0;
   overflow-x: hidden;
@@ -322,6 +347,10 @@
 @media (max-width: 639px) {
   .fb-v2-tasks-table-shell {
     gap: 0;
+  }
+
+  .fb-v2-content .fb-v2-tasks-view-toolbar {
+    width: 100%;
   }
 
   .fb-v2-tasks-table-wrap {
