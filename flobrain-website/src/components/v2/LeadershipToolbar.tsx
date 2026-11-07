@@ -6,6 +6,9 @@ import { CREATE_ACTION_ITEMS, isPathActive } from "./navigation";
 type LeadershipToolbarProps = {
   pathname: string;
   showSearch?: boolean;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+  onSearchSubmit: () => void;
 };
 
 function SearchIcon() {
@@ -33,6 +36,9 @@ function SearchIcon() {
 export function LeadershipToolbar({
   pathname,
   showSearch = false,
+  searchValue,
+  onSearchChange,
+  onSearchSubmit,
 }: LeadershipToolbarProps) {
   return (
     <div className="fb-v2-toolbar">
@@ -65,6 +71,13 @@ export function LeadershipToolbar({
             className="fb-v2-search-input"
             placeholder="Search by name"
             autoComplete="off"
+            value={searchValue}
+            onChange={(event) => onSearchChange(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.nativeEvent.isComposing) return;
+              if (event.key === "Enter") onSearchSubmit();
+              if (event.key === "Escape") onSearchChange("");
+            }}
           />
         </label>
       ) : null}
