@@ -9,6 +9,7 @@ import {
   Home,
   MessageCircle,
   LayoutDashboard,
+  Sparkles,
 } from "lucide-react";
 import FlolabsLogo from "@/assets/images/flolabs-logo.svg";
 import Image from "next/image";
@@ -21,10 +22,15 @@ const activeLinkClass =
   "bg-white/10 text-white ring-1 ring-[#a855f7]/50";
 const inactiveLinkClass = "text-zinc-400 hover:text-white";
 
+/** V2 entry: AppChrome skips the V1 navbar/footer on these shell routes. */
+const V2_ENTRY_HREF = "/tasks";
+
+
 const AUTHED_NAV_ITEMS = [
   { label: "Home", href: "/", icon: Home },
   { label: "Chat", href: "/brain", icon: MessageCircle },
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "V2", href: V2_ENTRY_HREF, icon: Sparkles },
 ] as const;
 
 function isNavItemActive(href: string, pathname: string): boolean {
@@ -36,6 +42,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
+  const isLeadershipPreview = pathname === "/leadership-preview";
   const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
   const isDashboardRoute = pathname === "/dashboard";
   const isTeamsRoute = pathname === "/teams" || pathname.startsWith("/teams/");
@@ -46,6 +53,8 @@ export default function Navbar() {
       className={
         isTeamsRoute
           ? "hidden"
+          : isLeadershipPreview
+          ? "relative z-10 px-4 pt-4 md:px-6 md:pt-5"
           : isDashboardRoute
           ? "hidden md:block"
           : isMemoryRoute
