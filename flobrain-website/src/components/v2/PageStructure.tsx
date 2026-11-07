@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { useState, type ReactNode } from "react";
 import { LeadershipToolbar } from "./LeadershipToolbar";
 import {
   CREATE_ACTION_ITEMS,
@@ -33,7 +33,6 @@ export function PageStructure({
   rightPanel,
 }: PageStructureProps) {
   const pathname = usePathname();
-  const router = useRouter();
   const [pendingPath, setPendingPath] = useState<string | null>(null);
   const [seenPathname, setSeenPathname] = useState(pathname);
 
@@ -50,12 +49,6 @@ export function PageStructure({
     LEADERSHIP_NAV_ITEMS.find((item) => isLeadershipNavActive(item.href, currentPath))?.label ??
     MAIN_NAV_ITEMS.find((item) => isMainNavActive(item.href, currentPath))?.label ??
     "FloBrain";
-
-  useEffect(() => {
-    for (const item of MAIN_NAV_ITEMS) router.prefetch(item.href);
-    for (const item of LEADERSHIP_NAV_ITEMS) router.prefetch(item.href);
-    for (const item of CREATE_ACTION_ITEMS) router.prefetch(item.href);
-  }, [router]);
 
   return (
     <div className="fb-v2-shell">
