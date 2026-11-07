@@ -28,7 +28,7 @@ vi.mock("./constants", () => ({
 
 vi.mock("next/image", () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @next/next/no-img-element
-  default: (props: any) => <img alt="" {...props} />,
+  default: ({ priority: _priority, ...props }: any) => <img alt="" {...props} />,
 }));
 
 vi.mock("../../../../../assets/images/brain.svg", () => ({
