@@ -10,7 +10,12 @@ export function AppChrome({ children }: { children: React.ReactNode }) {
   const isV2 = isV2ShellRoute(pathname);
 
   if (isV2) {
-    return <div className="min-h-screen flex flex-col fb-v2-page">{children}</div>;
+    return (
+      <div className="min-h-screen flex flex-col fb-v2-page">
+        <Navbar />
+        {children}
+      </div>
+    );
   }
 
   return (

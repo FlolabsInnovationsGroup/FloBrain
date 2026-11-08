@@ -49,8 +49,10 @@ export function PageStructure({
   }
 
   const currentPath = pendingPath ?? pathname;
-  const showLeadershipNav = isLeadershipSection(currentPath);
-  const showSearch = showLeadershipSearch(currentPath);
+  // Use actual pathname (not pending) so leadership sub-nav and search bar only
+  // appear/disappear after navigation completes — prevents content/nav mismatch glitch.
+  const showLeadershipNav = isLeadershipSection(pathname);
+  const showSearch = showLeadershipSearch(pathname);
   const activeLabel =
     CREATE_ACTION_ITEMS.find((item) => isLeadershipNavActive(item.href, currentPath))?.label ??
     LEADERSHIP_NAV_ITEMS.find((item) => isLeadershipNavActive(item.href, currentPath))?.label ??
