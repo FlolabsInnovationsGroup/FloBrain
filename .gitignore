@@ -9,14 +9,12 @@ venv/
 env/
 # Node + project ignores
 node_modules/
-temp_auto_push.bat
 .env
 .env.*
+.vscode/
 dist/
 coverage/
 logs/
 *.log
 .DS_Store
 
-.gitignore
-branch_structure.json
