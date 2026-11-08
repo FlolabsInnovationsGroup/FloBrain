@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "rest_framework.authtoken",
     "users",
+    "teams",
     "memory",
     "dashboard",
     "brain",
