@@ -93,4 +93,18 @@ describe("PageStructure", () => {
     expect(screen.getByRole("link", { name: "Create Team" })).not.toHaveAttribute("aria-current");
     expect(screen.queryByPlaceholderText("Search by name")).not.toBeInTheDocument();
   });
+
+  it("marks Create Team and Teams active on the Create Team route", () => {
+    vi.mocked(usePathname).mockReturnValue("/leadership/teams/new");
+    render(<PageStructure />);
+
+    expect(screen.getByRole("link", { name: "Create Team" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(screen.getByRole("link", { name: "Create Project" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "TEAMS" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "DASHBOARD" })).not.toHaveAttribute("aria-current");
+    expect(screen.queryByPlaceholderText("Search by name")).not.toBeInTheDocument();
+  });
 });

@@ -23,6 +23,12 @@ describe("V2 navigation active state", () => {
     expect(isLeadershipNavActive("/leadership/activity", "/leadership/activity")).toBe(true);
   });
 
+  it("keeps Teams selected on Create Team without the search field", () => {
+    expect(isLeadershipNavActive("/leadership/teams", "/leadership/teams/new")).toBe(true);
+    expect(isLeadershipNavActive("/leadership/dashboard", "/leadership/teams/new")).toBe(false);
+    expect(showLeadershipSearch("/leadership/teams/new")).toBe(false);
+  });
+
   it("shows search only on dashboard, teams, and interns", () => {
     expect(showLeadershipSearch("/leadership/dashboard")).toBe(true);
     expect(showLeadershipSearch("/leadership/teams")).toBe(true);
