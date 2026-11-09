@@ -3,11 +3,8 @@ node_modules/
 .env
 .env.*
 dist/
-temp_auto_push.bat
 coverage/
 logs/
 *.log
 .DS_Store
 package-lock.json
-.gitignore
-branch_structure.json
