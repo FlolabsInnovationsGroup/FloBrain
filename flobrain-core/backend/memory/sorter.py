@@ -14,6 +14,23 @@ from .models import MemoryNode, MemoryLink
 
 logger = logging.getLogger(__name__)
 
+TITLE_MAX_CHARS = 80
+
+
+def normalize_content(content: str) -> str:
+    """Case- and whitespace-insensitive form used for content dedup."""
+    return " ".join((content or "").split()).lower()
+
+
+def content_hash_for(content: str) -> str:
+    return hashlib.sha256(normalize_content(content).encode('utf-8')).hexdigest()
+
+
+def _default_title(content: str) -> str:
+    title = " ".join(content.split())
+    return title if len(title) <= TITLE_MAX_CHARS else title[:TITLE_MAX_CHARS - 1] + "…"
+
+
 class BaseTierRouter(ABC):
     
     @abstractmethod
@@ -138,44 +155,38 @@ class MemoryDistributionService:
         return next_index
 
     def distribute_to_tiers(self, data_payload: Dict[str, Any]) -> MemoryNode:
-        node_id = data_payload.get('id', uuid.uuid4().hex)
-        owner_id = data_payload.get('owner_id', 'system')
-        raw_name = data_payload.get('name', 'untitled')
+        """Create (or reuse) the owner's node for this content.
 
-        incoming_signature = self._compute_minhash_signature(raw_name)
-        incoming_hash = hashlib.sha256(raw_name.encode('utf-8')).hexdigest()
+        IDs are always server-generated. Dedup is exact on normalized content per
+        owner, so different facts under the same title stay distinct. A reused
+        node is returned with `deduplicated = True`.
+        """
+        node_id = uuid.uuid4().hex
+        owner_id = data_payload['owner_id']
+        content = data_payload['content']
+        raw_name = data_payload.get('name') or _default_title(content)
+
+        incoming_signature = self._compute_minhash_signature(normalize_content(content))
+        incoming_hash = content_hash_for(content)
 
         duplicate_node = MemoryNode.objects.filter(
             owner_id=owner_id,
-            content_hash=incoming_hash
+            content_hash=incoming_hash,
+            superseded_by__isnull=True,
         ).order_by('-updated_at').first()
 
-        if not duplicate_node:
-            past_nodes = MemoryNode.objects.filter(owner_id=owner_id).order_by('-created_at')[:50]
-
-            for old_node in past_nodes:
-                old_signature = old_node.metadata.get('minhash_signature')
-                if not old_signature:
-                    old_signature = self._compute_minhash_signature(old_node.name)
-
-                similarity = self._calculate_jaccard_similarity(incoming_signature, old_signature)
-                
-                if similarity >= 0.90:
-                    duplicate_node = old_node
-                    break
-
         if duplicate_node:
-            logger.info(f"[MinHash Deduplication] Duplicate thought. Merging {node_id} -> {duplicate_node.id}")
-            
+            logger.info(f"[Sorter] Duplicate content. Reusing node {duplicate_node.id}")
+
             try:
                 with transaction.atomic():
                     MemoryNode.objects.filter(id=duplicate_node.id).update(
                         relevance=F('relevance') + 0.05,
                         updated_at=timezone.now()
                     )
-                    
+
                     session_id = data_payload.get('current_session_id') or data_payload.get('session_id')
-                    if session_id and MemoryNode.objects.filter(id=session_id).exists():
+                    if session_id and MemoryNode.objects.filter(id=session_id, owner_id=owner_id).exists():
                         link, created = MemoryLink.objects.get_or_create(
                             source_id=session_id,
                             target_id=duplicate_node.id,
@@ -186,6 +197,7 @@ class MemoryDistributionService:
                             link.save()
                     
                     duplicate_node.refresh_from_db()
+                    duplicate_node.deduplicated = True
                     return duplicate_node
                     
             except Exception as e:
@@ -205,14 +217,19 @@ class MemoryDistributionService:
                     id=node_id,
                     owner_id=owner_id,
                     name=raw_name,
+                    content=content,
+                    memory_type=data_payload.get('memory_type', 'chunk'),
+                    source_chat_id=data_payload.get('source_chat_id'),
+                    source_message_id=data_payload.get('source_message_id'),
                     binary_index=next_index,
                     tier_level=target_tier,
                     relevance=float(data_payload.get('importance', 0.5)),
                     content_hash=incoming_hash,
                     metadata=metadata
                 )
-                
+
                 logger.info(f"[Sorter] New unique node {new_node.id} routed to Tier {target_tier}")
+                new_node.deduplicated = False
                 return new_node
                 
         except Exception as e:
