@@ -9,6 +9,7 @@ import boto3
 from botocore.exceptions import ClientError, BotoCoreError
 from typing import Dict, Any, Optional
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -84,6 +85,24 @@ class S3StorageBackend:
         key = uri.replace(f"s3://{self.bucket_name}/", "")
         response = self.s3_client.get_object(Bucket=self.bucket_name, Key=key)
         return response['Body'].read()
+
+    @retry_on_network_error(max_retries=4, initial_delay=0.5)
+    def delete_object(self, uri: str) -> None:
+        if not uri.startswith(f"s3://{self.bucket_name}/"):
+            raise ValueError(f"Invalid S3 URI: {uri}")
+
+        key = uri.replace(f"s3://{self.bucket_name}/", "")
+        self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
+
+    def list_uris(self, prefix: str = "archive/") -> list:
+        uris = []
+        kwargs = {"Bucket": self.bucket_name, "Prefix": prefix}
+        while True:
+            page = self.s3_client.list_objects_v2(**kwargs)
+            uris.extend(f"s3://{self.bucket_name}/{obj['Key']}" for obj in page.get("Contents", []))
+            if not page.get("IsTruncated"):
+                return uris
+            kwargs["ContinuationToken"] = page["NextContinuationToken"]
 
 
 class Tier3ColdStorageManager:
@@ -204,18 +223,50 @@ class Tier3ColdStorageManager:
         return self.retrieve_from_cold_storage(vault_uri)
 
 
-_s3_bucket = os.getenv("S3_VAULT_BUCKET", "flobrain-cold-vault")
-_aes_hex_key = os.getenv("AES_MASTER_KEY", "0" * 64)
+_cold_storage_service = None
 
-_storage_backend = S3StorageBackend(bucket_name=_s3_bucket)
-_cipher = SecureCipher(hex_key=_aes_hex_key)
 
-cold_storage_service = Tier3ColdStorageManager(storage=_storage_backend, cipher=_cipher)
+def _is_valid_aes_key(hex_key: str) -> bool:
+    if len(hex_key) != 64:
+        return False
+    try:
+        bytes.fromhex(hex_key)
+    except ValueError:
+        return False
+    return True
+
+
+def get_cold_storage_service() -> Optional[Tier3ColdStorageManager]:
+    """Return the archive service, or None when archival is disabled or misconfigured."""
+    global _cold_storage_service
+    if not settings.MEMORY_COLD_STORAGE_ENABLED:
+        return None
+    if _cold_storage_service is None:
+        aes_hex_key = settings.MEMORY_COLD_STORAGE_KEY or ""
+        if not _is_valid_aes_key(aes_hex_key):
+            logger.error(
+                "[Tier 3] Cold archival is enabled but AES_MASTER_KEY is missing or not 64 hex "
+                "characters. Refusing to archive."
+            )
+            return None
+        _cold_storage_service = Tier3ColdStorageManager(
+            storage=S3StorageBackend(bucket_name=settings.MEMORY_COLD_STORAGE_BUCKET),
+            cipher=SecureCipher(hex_key=aes_hex_key),
+        )
+    return _cold_storage_service
+
+
+def reset_cold_storage():
+    global _cold_storage_service
+    _cold_storage_service = None
 
 
 def migrate_to_cold_storage(node) -> bool:
     try:
-        return cold_storage_service.migrate_node(node)
+        service = get_cold_storage_service()
+        if service is None:
+            return False
+        return service.migrate_node(node)
     except Exception as e:
         logger.error(f"[Tier 3 Adapter] Critical migration error for node {getattr(node, 'id', 'unknown')}: {e}")
         return False
@@ -225,7 +276,38 @@ def retrieve_from_cold_storage(vault_uri: str) -> dict:
     if not vault_uri:
         return {}
     try:
-        return cold_storage_service.retrieve_node(vault_uri)
+        service = get_cold_storage_service()
+        if service is None:
+            return {}
+        return service.retrieve_node(vault_uri)
     except Exception as e:
         logger.error(f"[Tier 3 Adapter] Critical retrieval error for URI {vault_uri}: {e}")
         return {}
+
+
+def delete_from_cold_storage(vault_uri: str) -> bool:
+    """Delete an archived blob. Never raises; False when nothing could be deleted."""
+    if not vault_uri:
+        return False
+    try:
+        service = get_cold_storage_service()
+        if service is None:
+            logger.warning(f"[Tier 3 Adapter] Archive disabled or misconfigured; blob {vault_uri} not deleted.")
+            return False
+        service.storage.delete_object(vault_uri)
+        return True
+    except Exception as e:
+        logger.error(f"[Tier 3 Adapter] Critical delete error for URI {vault_uri}: {e}")
+        return False
+
+
+def list_archived_uris() -> Optional[list]:
+    """All archive object URIs, or None when archival is disabled/misconfigured or listing fails."""
+    try:
+        service = get_cold_storage_service()
+        if service is None:
+            return None
+        return service.storage.list_uris()
+    except Exception as e:
+        logger.error(f"[Tier 3 Adapter] Critical list error: {e}")
+        return None
