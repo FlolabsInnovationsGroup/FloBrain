@@ -90,8 +90,8 @@ describe("Navbar Component", () => {
       ["Home", "/"],
       ["Chat", "/brain"],
       ["Dashboard", "/dashboard"],
-      ["Activity", "/home"],
-      ["Memory", "/memory"],
+      ["V2", "/tasks"],
+
     ];
 
     for (const [label, href] of expected) {
@@ -110,11 +110,12 @@ describe("Navbar Component", () => {
     // Wait on an authed-only link: "Home" also renders in the signed-out branch,
     // so waiting on it would resolve before AuthProvider settles.
     await waitFor(() => {
-      expect(screen.getByRole("link", { name: "Activity" })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: "V2" })).toBeInTheDocument();
     });
 
-    // usePathname is mocked to "/" — Home is active, Activity ("/home") is not.
+    // usePathname is mocked to "/" — Home is active, V2 ("/tasks") is not.
+
     expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Activity" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "V2" })).not.toHaveAttribute("aria-current");
   });
 });
