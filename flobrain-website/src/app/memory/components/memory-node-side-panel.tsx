@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Calendar, Eye, EyeOff, Pencil, Target, Trash2, X } from "lucide-react";
-import type { ApiResult, MemoryNodeApi, MemoryNodeUpdate } from "@/lib/api";
+import { useEffect, useMemo } from "react";
+import { Calendar, EyeOff, Pencil, Target, Trash2, X } from "lucide-react";
+import type { MemoryNodeApi } from "@/lib/api";
 import { api } from "@/lib/api";
-import { useMutation, useQuery, useQueryClient } from "@/hooks/useApi";
+import { useQuery } from "@/hooks/useApi";
 import {
   categoryCssVar,
   nodeToCategory,
@@ -66,15 +66,6 @@ function formatCreatedRelative(iso?: string | null): string {
   return `${diffDays} days ago`;
 }
 
-/** Resolve an ApiResult or throw its error, so mutations surface failures. */
-async function unwrap<T>(request: Promise<ApiResult<T>>): Promise<T | undefined> {
-  const result = await request;
-  if (result.error || result.status === 0 || result.status >= 400) {
-    throw new Error(result.error ?? "Request failed");
-  }
-  return result.data;
-}
-
 /** Stable short numeric id for titles/footer (graph ids are often opaque strings). */
 function displayNodeNumber(id: string | number | undefined): string {
   if (id == null) return "—";
@@ -129,50 +120,8 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
   const relevancePercent = Math.round(rawRelevance * 100);
   const relevanceTier = getRelevanceTier(relevancePercent);
 
-  // Raw Text is the memory's canonical content; `name` is only a display title
   const rawText: string =
-    nodeDetail?.content ?? (node?.content as string | undefined) ?? "";
-  const isExcluded = nodeDetail?.is_excluded ?? false;
-  const canAct = !!nodeId && !isPlaceholder && !!nodeDetail;
-
-  const queryClient = useQueryClient();
-  // Keyed by node id so switching nodes never carries an open editor or confirmation over
-  const [editingFor, setEditingFor] = useState<string | null>(null);
-  const [draft, setDraft] = useState("");
-  const [confirmingDeleteFor, setConfirmingDeleteFor] = useState<string | null>(null);
-  const [actionError, setActionError] = useState<{ nodeId: string | null; message: string } | null>(null);
-  const editing = editingFor !== null && editingFor === nodeId;
-  const confirmingDelete = confirmingDeleteFor !== null && confirmingDeleteFor === nodeId;
-  const errorMessage = actionError && actionError.nodeId === nodeId ? actionError.message : null;
-  const showError = (err: Error) => setActionError({ nodeId, message: err.message });
-
-  const updateMutation = useMutation({
-    mutationFn: (body: MemoryNodeUpdate) => unwrap(api.updateMemoryNode(nodeId!, body)),
-    onSuccess: async () => {
-      setEditingFor(null);
-      setActionError(null);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["memory", "graph"] }),
-        queryClient.invalidateQueries({ queryKey: ["memory", "node", nodeId] }),
-      ]);
-    },
-    onError: showError,
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: () => unwrap(api.deleteMemoryNode(nodeId!)),
-    onSuccess: async () => {
-      setConfirmingDeleteFor(null);
-      setActionError(null);
-      onOpenChange(false);
-      // The node no longer exists, so drop its detail instead of refetching a 404
-      queryClient.removeQueries({ queryKey: ["memory", "node", nodeId] });
-      await queryClient.invalidateQueries({ queryKey: ["memory", "graph"] });
-    },
-    onError: showError,
-  });
-
-  const busy = updateMutation.isPending || deleteMutation.isPending;
+    nodeDetail?.name ?? (node?.name as string | undefined) ?? "";
 
   const allConnections = [
     ...(nodeDetail?.connections.outgoing ?? []),
@@ -313,55 +262,15 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
                     aria-hidden
                   />
                 </div>
-                {editing ? (
-                  <div className="space-y-2">
-                    <textarea
-                      aria-label="Memory content"
-                      className="min-h-28 w-full rounded-xl border px-3.5 py-3 text-sm leading-relaxed text-[var(--fb-memory-heading)] outline-none focus:border-[var(--fb-memory-accent)]"
-                      style={{
-                        borderColor: "var(--fb-memory-surface-border)",
-                        background: "var(--fb-memory-raw-bg)",
-                      }}
-                      value={draft}
-                      maxLength={10000}
-                      onChange={(e) => setDraft(e.target.value)}
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        className="flex-1 rounded-lg border border-[var(--fb-memory-surface-border)] bg-[var(--fb-memory-surface-bg)] px-3 py-2 text-xs font-medium text-[var(--fb-memory-heading)] transition hover:bg-[var(--fb-memory-btn-soft)] sm:text-sm"
-                        onClick={() => setEditingFor(null)}
-                        disabled={busy}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        className="flex-1 rounded-lg px-3 py-2 text-xs font-medium transition hover:opacity-90 disabled:opacity-50 sm:text-sm"
-                        style={{ background: "var(--fb-memory-btn)", color: "var(--fb-memory-btn-text)" }}
-                        onClick={() => updateMutation.mutate({ content: draft })}
-                        disabled={busy || !draft.trim() || draft === rawText}
-                      >
-                        Save
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="rounded-xl border px-3.5 py-3 text-sm leading-relaxed text-[var(--fb-memory-text-muted)]"
-                    style={{
-                      borderColor: "var(--fb-memory-surface-border)",
-                      background: "var(--fb-memory-raw-bg)",
-                    }}
-                  >
-                    {rawText || <span className="italic opacity-60">No content</span>}
-                  </div>
-                )}
-                {isExcluded && (
-                  <p className="text-[10px] text-[var(--fb-memory-text-subtle)] sm:text-xs">
-                    Excluded: kept, but never used in future chats.
-                  </p>
-                )}
+                <div
+                  className="rounded-xl border px-3.5 py-3 text-sm leading-relaxed text-[var(--fb-memory-text-muted)]"
+                  style={{
+                    borderColor: "var(--fb-memory-surface-border)",
+                    background: "var(--fb-memory-raw-bg)",
+                  }}
+                >
+                  {rawText || <span className="italic opacity-60">No content</span>}
+                </div>
               </section>
 
               <section className="mt-5 space-y-2.5 sm:mt-8 sm:space-y-3">
@@ -405,11 +314,6 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
                     type="button"
                     className="flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-xs font-medium text-white transition hover:opacity-90 sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
                     style={{ background: "var(--fb-memory-btn)", color: "#ffffff" }}
-                    disabled={!canAct || busy}
-                    onClick={() => {
-                      setDraft(rawText);
-                      setEditingFor(nodeId);
-                    }}
                   >
                     <Pencil className="size-3.5 shrink-0 sm:size-4" strokeWidth={1.75} aria-hidden />
                     Edit Context
@@ -417,66 +321,22 @@ export function MemoryNodeSidePanel({ open, onOpenChange, node }: MemoryNodeSide
                   <button
                     type="button"
                     className="flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--fb-memory-surface-border)] bg-[var(--fb-memory-surface-bg)] px-3 py-2.5 text-xs font-medium text-[var(--fb-memory-heading)] transition hover:bg-[var(--fb-memory-btn-soft)] sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
-                    disabled={!canAct || busy}
-                    onClick={() => updateMutation.mutate({ is_excluded: !isExcluded })}
                   >
-                    {isExcluded ? (
-                      <Eye className="size-3.5 shrink-0 sm:size-4" strokeWidth={1.75} aria-hidden />
-                    ) : (
-                      <EyeOff className="size-3.5 shrink-0 sm:size-4" strokeWidth={1.75} aria-hidden />
-                    )}
-                    {isExcluded ? "Include in Future" : "Exclude from Future"}
+                    <EyeOff className="size-3.5 shrink-0 sm:size-4" strokeWidth={1.75} aria-hidden />
+                    Exclude from Future
                   </button>
-                  {confirmingDelete ? (
-                    <div className="space-y-2">
-                      <p className="text-xs text-[var(--fb-memory-text-muted)] sm:text-sm">
-                        Delete this memory permanently? It will no longer be used in chats.
-                      </p>
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          className="flex-1 rounded-lg border border-[var(--fb-memory-surface-border)] bg-[var(--fb-memory-surface-bg)] px-3 py-2 text-xs font-medium text-[var(--fb-memory-heading)] transition hover:bg-[var(--fb-memory-btn-soft)] sm:text-sm"
-                          disabled={busy}
-                          onClick={() => setConfirmingDeleteFor(null)}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="button"
-                          className="flex-1 rounded-lg border px-3 py-2 text-xs font-medium transition disabled:opacity-50 sm:text-sm"
-                          style={{
-                            background: "var(--fb-memory-danger-btn-bg)",
-                            borderColor: "var(--fb-memory-danger-btn-border)",
-                            color: "var(--fb-memory-danger-btn-text)",
-                          }}
-                          disabled={busy}
-                          onClick={() => deleteMutation.mutate()}
-                        >
-                          Confirm delete
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      className="flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-xs font-medium transition sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
-                      style={{
-                        background: "var(--fb-memory-danger-btn-bg)",
-                        borderColor: "var(--fb-memory-danger-btn-border)",
-                        color: "var(--fb-memory-danger-btn-text)",
-                      }}
-                      disabled={!canAct || busy}
-                      onClick={() => setConfirmingDeleteFor(nodeId)}
-                    >
-                      <Trash2 className="size-3.5 shrink-0 sm:size-4" strokeWidth={1.75} aria-hidden />
-                      Delete Node
-                    </button>
-                  )}
-                  {errorMessage && (
-                    <p role="alert" className="text-xs text-[var(--fb-memory-error)] sm:text-sm">
-                      {errorMessage}
-                    </p>
-                  )}
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-xs font-medium transition sm:rounded-xl sm:px-4 sm:py-3 sm:text-sm"
+                    style={{
+                      background: "var(--fb-memory-danger-btn-bg)",
+                      borderColor: "var(--fb-memory-danger-btn-border)",
+                      color: "var(--fb-memory-danger-btn-text)",
+                    }}
+                  >
+                    <Trash2 className="size-3.5 shrink-0 sm:size-4" strokeWidth={1.75} aria-hidden />
+                    Delete Node
+                  </button>
                 </div>
               </section>
 

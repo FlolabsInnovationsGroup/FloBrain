@@ -314,15 +314,3 @@ def save_to_active_buffer(node) -> bool:
 
 def load_from_active_buffer(node_id: str) -> Optional[Dict[str, Any]]:
     return active_memory_service.load_node(node_id)
-
-
-def evict_from_active_buffer(node_id: str) -> bool:
-    """Drop the cached copy of a node (it is never authoritative). Never raises."""
-    try:
-        cache_key = f"{active_memory_service.NODE_PREFIX}{node_id}"
-        cache.delete(cache_key)
-        active_memory_service.eviction_controller.remove_key(cache_key)
-        return True
-    except Exception as e:
-        logger.error(f"[Tier 1 Adapter] Error while evicting {node_id} from buffer: {e}", exc_info=True)
-        return False

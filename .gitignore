@@ -1,6 +1,3 @@
-# Blocked malicious file — do not re-add
-public/fonts/fa-solid-600.eot
-
 __pycache__/
 db.sqlite3
 .env

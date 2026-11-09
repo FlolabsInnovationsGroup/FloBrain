@@ -186,17 +186,6 @@ export const api = {
     return this.request<MemoryNodeDetailApi>(`/api/memory/nodes/${id}/`);
   },
 
-  async updateMemoryNode(id: string, body: MemoryNodeUpdate) {
-    return this.request<MemoryNodeApi>(`/api/memory/nodes/${id}/`, {
-      method: "PATCH",
-      json: body,
-    });
-  },
-
-  async deleteMemoryNode(id: string) {
-    return this.request<void>(`/api/memory/nodes/${id}/`, { method: "DELETE" });
-  },
-
   // --- Dashboard (health unauthenticated; memory-activity requires auth) ---
 
   async getDashboardHealth() {
@@ -274,16 +263,6 @@ export type MemoryNodeApi = {
   memory_type?: string;
   relevance?: number;
   created_at?: string | null;
-  /** Canonical memory text (detail and PATCH responses). */
-  content?: string;
-  /** Excluded memories are kept but never recalled into chat. */
-  is_excluded?: boolean;
-  index_status?: "pending" | "indexed" | "failed";
-};
-
-export type MemoryNodeUpdate = {
-  content?: string;
-  is_excluded?: boolean;
 };
 
 export type MemoryNodeConnectionEntry = {

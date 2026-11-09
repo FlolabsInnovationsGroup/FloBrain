@@ -5,15 +5,13 @@ from typing import cast, Optional
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import DatabaseError, IntegrityError, transaction
+from django.db import DatabaseError, IntegrityError
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
-from memory.services import purge_owner_memories
 
 from .jwt_utils import decode_token, make_access_token, make_refresh_token
 from .models import User, UserPreferences, PresetPreferences, BlacklistedRefreshToken
@@ -303,11 +301,7 @@ class DeleteAccountView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user_id = str(user.id)
-        with transaction.atomic():
-            # Memory rows go with the account; derived stores are cleaned after commit
-            cleanup_memories = purge_owner_memories(user_id)
-            user.delete()
-            transaction.on_commit(cleanup_memories)
+        user.delete()
         logger.info("User account deleted: %s", user_id)
         return Response({"message": "Account deleted successfully"})
 
