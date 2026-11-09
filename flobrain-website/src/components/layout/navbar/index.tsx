@@ -45,12 +45,15 @@ export default function Navbar() {
   const isLeadershipPreview = pathname === "/leadership-preview";
   const isMemoryRoute = pathname === "/memory" || pathname.startsWith("/memory/");
   const isDashboardRoute = pathname === "/dashboard";
+  const isTeamsRoute = pathname === "/teams" || pathname.startsWith("/teams/");
   const isHomeActive = pathname === "/";
 
   return (
     <header
       className={
-        isLeadershipPreview
+        isTeamsRoute
+          ? "hidden"
+          : isLeadershipPreview
           ? "relative z-10 px-4 pt-4 md:px-6 md:pt-5"
           : isDashboardRoute
           ? "hidden md:block"
