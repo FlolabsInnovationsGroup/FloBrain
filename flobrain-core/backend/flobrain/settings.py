@@ -56,7 +56,12 @@ INSTALLED_APPS = [
     "brain",
     "model_registry",
     "contact",
+<<<<<<< HEAD
     "teams",
+=======
+    "teams.apps.TeamsConfig",
+    "tasks.apps.TasksConfig",
+>>>>>>> 952fa3c2 (Implement personal Kanban task API)
 ]
 
 MIDDLEWARE = [
