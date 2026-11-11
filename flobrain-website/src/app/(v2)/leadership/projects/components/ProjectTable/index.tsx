@@ -90,11 +90,11 @@ function MilestoneProgress({ completed, total }: { completed: number; total: num
 
 function ProjectStatus({ blockers }: { blockers: number }) {
   if (blockers === 0) {
-    return <span className="font-semibold text-[var(--fb-v2-success)]">ON TRACK</span>;
+    return <span className="font-semibold text-(--fb-v2-success)">ON TRACK</span>;
   }
 
   return (
-    <span className="text-[var(--fb-v2-warning)]">
+    <span className="text-(--fb-v2-warning)">
       {blockers} {blockers === 1 ? "Blocker" : "Blockers"}
     </span>
   );
@@ -169,7 +169,7 @@ export function ProjectTable() {
       </div>
 
       {filteredProjects.length === 0 && (
-        <p className="py-6 text-center text-sm text-[var(--fb-v2-text-muted)]">
+        <p className="py-6 text-center text-sm text-(--fb-v2-text-muted)">
           No projects match this filter.
         </p>
       )}

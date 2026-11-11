@@ -134,7 +134,7 @@ export function ActivityLog() {
         </dl>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-2 border-y border-[var(--fb-v2-border)] py-2 sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-2 gap-2 border-y border-(--fb-v2-border) py-2 sm:grid-cols-4">
         {filterOptions.map(({ key, allLabel, options }) => (
           <div key={key} className="flex justify-center">
             <FilterSelect
@@ -182,7 +182,7 @@ export function ActivityLog() {
         </table>
 
         {pageActivities.length === 0 && (
-          <p className="py-6 text-center text-sm text-[var(--fb-v2-text-muted)]">
+          <p className="py-6 text-center text-sm text-(--fb-v2-text-muted)">
             No activities match these filters.
           </p>
         )}
@@ -202,7 +202,7 @@ export function ActivityLog() {
             type="button"
             onClick={() => setPage((current) => current - 1)}
             disabled={page === 1}
-            className="flex items-center gap-1 hover:text-[var(--fb-v2-accent)] disabled:opacity-40"
+            className="flex items-center gap-1 hover:text-(--fb-v2-accent) disabled:opacity-40"
           >
             <ArrowLeft size={11} /> Prev
           </button>
@@ -213,7 +213,7 @@ export function ActivityLog() {
                 type="button"
                 aria-current={item === page ? "page" : undefined}
                 onClick={() => setPage(item)}
-                className={`min-w-3 ${item === page ? "font-bold text-[var(--fb-v2-accent)]" : "hover:text-[var(--fb-v2-accent)]"}`}
+                className={`min-w-3 ${item === page ? "font-bold text-(--fb-v2-accent)" : "hover:text-(--fb-v2-accent)"}`}
               >
                 {item}
               </button>
@@ -227,7 +227,7 @@ export function ActivityLog() {
             type="button"
             onClick={() => setPage((current) => current + 1)}
             disabled={page === totalPages}
-            className="flex items-center gap-1 hover:text-[var(--fb-v2-accent)] disabled:opacity-40"
+            className="flex items-center gap-1 hover:text-(--fb-v2-accent) disabled:opacity-40"
           >
             Next <ArrowRight size={11} />
           </button>

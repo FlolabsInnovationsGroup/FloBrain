@@ -224,8 +224,8 @@ export function CreateProjectForm() {
                   }}
                   className={`px-0.75 text-[8px] ${
                     memberLetter === letter
-                      ? "font-bold text-[var(--fb-v2-accent)]"
-                      : "hover:text-[var(--fb-v2-accent)]"
+                      ? "font-bold text-(--fb-v2-accent)"
+                      : "hover:text-(--fb-v2-accent)"
                   }`}
                 >
                   {letter}
@@ -251,7 +251,7 @@ export function CreateProjectForm() {
                 onFocus={() => setIsMemberListOpen(true)}
                 onBlur={() => setIsMemberListOpen(false)}
                 placeholder="SEARCH MEMBERS"
-                className="w-full min-w-0 bg-transparent text-xs outline-none placeholder:text-[var(--fb-v2-text-subtle)]"
+                className="w-full min-w-0 bg-transparent text-xs outline-none placeholder:text-(--fb-v2-text-subtle)"
               />
               <button
                 type="button"
@@ -278,13 +278,13 @@ export function CreateProjectForm() {
                       aria-selected={false}
                       onMouseDown={(event) => event.preventDefault()}
                       onClick={() => addMember(member)}
-                      className="cursor-pointer px-3 py-1.5 hover:bg-[var(--fb-v2-surface-raised)]"
+                      className="cursor-pointer px-3 py-1.5 hover:bg-(--fb-v2-surface-raised)"
                     >
                       {member}
                     </li>
                   ))
                 ) : (
-                  <li className="px-3 py-1.5 text-[var(--fb-v2-text-muted)]">No members found</li>
+                  <li className="px-3 py-1.5 text-(--fb-v2-text-muted)">No members found</li>
                 )}
               </ul>
             )}
@@ -295,14 +295,14 @@ export function CreateProjectForm() {
               {selectedMembers.map((member) => (
                 <li
                   key={member}
-                  className="flex items-center gap-1 rounded-full border border-[var(--fb-v2-border)] py-0.5 pl-2.5 pr-1 text-[10px]"
+                  className="flex items-center gap-1 rounded-full border border-(--fb-v2-border) py-0.5 pl-2.5 pr-1 text-[10px]"
                 >
                   {member}
                   <button
                     type="button"
                     aria-label={`Remove ${member}`}
                     onClick={() => removeMember(member)}
-                    className="rounded-full p-0.5 hover:bg-[var(--fb-v2-surface-raised)]"
+                    className="rounded-full p-0.5 hover:bg-(--fb-v2-surface-raised)"
                   >
                     <X size={10} />
                   </button>

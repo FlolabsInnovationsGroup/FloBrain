@@ -143,7 +143,7 @@ function InternCard({ intern }: { intern: Intern }) {
         </dl>
       </div>
 
-      <div className="mx-1 border-t border-[var(--fb-v2-border)] px-2 pb-2.5 pt-1.5">
+      <div className="mx-1 border-t border-(--fb-v2-border) px-2 pb-2.5 pt-1.5">
         <p className="text-[9px]">Specialization</p>
         <p className="mt-1 wrap-break-word text-[11px] leading-4">{intern.specialization}</p>
       </div>
@@ -197,7 +197,7 @@ export function InternsOverview() {
         ))}
       </div>
 
-      <div className="shrink-0 border-t border-[var(--fb-v2-border)] px-1 py-2">
+      <div className="shrink-0 border-t border-(--fb-v2-border) px-1 py-2">
         <p className="text-xs font-semibold sm:text-sm" aria-live="polite">
           {filteredInterns.length} {filteredInterns.length === 1 ? "intern" : "interns"}
         </p>
@@ -210,7 +210,7 @@ export function InternsOverview() {
           ))}
         </div>
       ) : (
-        <p className="py-10 text-center text-sm text-[var(--fb-v2-text-muted)]">
+        <p className="py-10 text-center text-sm text-(--fb-v2-text-muted)">
           No interns found. Try another search or team.
         </p>
       )}
