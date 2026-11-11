@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "model_registry",
     "contact",
     "teams",
+    "usage",
 ]
 
 MIDDLEWARE = [
