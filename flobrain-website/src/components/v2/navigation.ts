@@ -18,7 +18,7 @@ export const LEADERSHIP_NAV_ITEMS: readonly V2NavItem[] = [
   { label: "DASHBOARD", href: "/leadership/dashboard" },
   { label: "INTERNS", href: "/leadership/interns" },
   { label: "TEAMS", href: "/leadership/teams" },
-  { label: "PROJECT", href: "/leadership/projects" },
+  { label: "PROJECTS", href: "/leadership/projects" },
   { label: "TASKS", href: "/leadership/tasks" },
   { label: "SCORECARD", href: "/leadership/scorecard" },
   { label: "ACTIVITY LOGS", href: "/leadership/activity" },

@@ -364,6 +364,7 @@
   --fb-v2-tab-light-bg: #e5e5e5;
   --fb-v2-tab-active-bg: #ffffff;
   --fb-v2-tab-active-text: #1a1a1a;
+  --fb-v2-outline: #a3a3a3;
 
   --color-brain: #9333ea;
   --color-memory: #1a0a2e;
@@ -724,6 +725,7 @@
   --fb-v2-tab-light-bg: #d9d9d9;
   --fb-v2-tab-active-bg: #e6e6e6;
   --fb-v2-tab-active-text: #2b2b2b;
+  --fb-v2-outline: #c8c8c8;
 
   --color-brain: #a855f7;
   --color-memory: #000000;
@@ -842,6 +844,7 @@ html:not(.light):not(.dark) {
   --fb-v2-tab-light-bg: #d9d9d9;
   --fb-v2-tab-active-bg: #e6e6e6;
   --fb-v2-tab-active-text: #2b2b2b;
+  --fb-v2-outline: #c8c8c8;
 }
 
 body {
@@ -2128,7 +2131,7 @@ body {
 /* ─── V2 Leadership pages (Interns, Projects, Create Project, Activity Logs) ─── */
 .fb-v2-tile {
   background: var(--fb-v2-surface);
-  border: 1px solid var(--fb-v2-border);
+  border: 1px solid var(--fb-v2-outline);
   border-radius: 0.375rem;
 }
 
@@ -2176,13 +2179,20 @@ body {
 }
 
 /* Bordered data tables on the Projects and Activity Logs pages */
-.fb-v2-table,
-.fb-v2-table th,
-.fb-v2-table td {
-  border: 1px solid var(--fb-v2-border);
+.fb-v2-table {
+  border: 1px solid var(--fb-v2-outline);
 }
 
+.fb-v2-table th,
+.fb-v2-table td {
+  border: 1px solid var(--fb-v2-input-border);
+}
+
+/* Header row stays visible while the rows scroll */
 .fb-v2-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   background: var(--fb-v2-table-head-bg);
 }
 
@@ -2243,4 +2253,27 @@ html:not(.light):not(.dark) .fb-v2-input {
 .fb-lead-shell .fb-v2-content {
   min-height: 0;
   overflow-y: auto;
+}
+
+/* Light outlines from the Leadership mockups: form fields, form card and the Cancel button */
+.fb-v2-outlined {
+  border-color: var(--fb-v2-outline);
+}
+
+.fb-v2-input.fb-v2-outlined {
+  background: transparent;
+}
+
+.fb-v2-input.fb-v2-outlined:focus,
+.fb-v2-input.fb-v2-outlined:focus-within {
+  border-color: var(--fb-v2-focus-ring);
+}
+
+.fb-v2-btn-ghost.fb-v2-outlined {
+  color: var(--fb-v2-text);
+}
+
+/* Form labels in full text color instead of muted */
+.fb-v2-label.fb-v2-label-strong {
+  color: var(--fb-v2-text);
 }

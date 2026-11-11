@@ -15,7 +15,7 @@ export default function Error({ error, reset }: ErrorProps) {
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a0033] via-[#2a1a4a] to-[#0f0f23] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-[#1a0033] via-[#2a1a4a] to-[#0f0f23] flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-8 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/10 mb-6">
@@ -29,7 +29,7 @@ export default function Error({ error, reset }: ErrorProps) {
 
           {error.message && (
             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6 text-left">
-              <p className="text-sm text-red-300 font-mono break-words">{error.message}</p>
+              <p className="text-sm text-red-300 font-mono wrap-break-word">{error.message}</p>
             </div>
           )}
 

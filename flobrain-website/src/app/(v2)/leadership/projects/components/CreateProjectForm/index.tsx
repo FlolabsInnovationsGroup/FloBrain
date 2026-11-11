@@ -36,7 +36,7 @@ const statuses = ["Active", "On Hold", "Completed"];
 
 const alphabet = Array.from({ length: 26 }, (_, index) => String.fromCharCode(65 + index));
 
-const labelClass = "fb-v2-label mb-1.5";
+const labelClass = "fb-v2-label fb-v2-label-strong mb-1.5";
 
 export function CreateProjectForm() {
   const router = useRouter();
@@ -77,7 +77,7 @@ export function CreateProjectForm() {
     <form
       onSubmit={handleSubmit}
       aria-label="Create project"
-      className="fb-v2-card mx-auto w-full max-w-3xl"
+      className="fb-v2-card fb-v2-outlined mx-auto w-full max-w-3xl"
     >
       <div className="space-y-4">
         <div>
@@ -89,7 +89,7 @@ export function CreateProjectForm() {
             name="name"
             required
             placeholder="e.g. wearable team 1"
-            className="fb-v2-input"
+            className="fb-v2-input fb-v2-outlined"
           />
         </div>
 
@@ -103,7 +103,7 @@ export function CreateProjectForm() {
             required
             list="project-team-options"
             placeholder="e.g. Design Team"
-            className="fb-v2-input"
+            className="fb-v2-input fb-v2-outlined"
           />
           <datalist id="project-team-options">
             {teams.map((team) => (
@@ -121,7 +121,7 @@ export function CreateProjectForm() {
             name="description"
             rows={3}
             placeholder="What is this project about?"
-            className="fb-v2-input resize-none"
+            className="fb-v2-input fb-v2-outlined resize-none"
           />
         </div>
 
@@ -136,7 +136,7 @@ export function CreateProjectForm() {
                 name="manager"
                 required
                 defaultValue=""
-                className="fb-v2-input fb-v2-select appearance-none"
+                className="fb-v2-input fb-v2-outlined fb-v2-select appearance-none"
               >
                 <option value="" disabled>
                   Select a manager
@@ -163,7 +163,7 @@ export function CreateProjectForm() {
               name="dueDate"
               type="date"
               required
-              className="fb-v2-input"
+              className="fb-v2-input fb-v2-outlined"
             />
           </div>
         </div>
@@ -209,7 +209,7 @@ export function CreateProjectForm() {
 
         <div className="pt-4">
           <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
-            <label htmlFor="project-members" className="fb-v2-label">
+            <label htmlFor="project-members" className="fb-v2-label fb-v2-label-strong">
               ADD MEMBERS
             </label>
             <div role="group" aria-label="Filter members by first letter" className="flex">
@@ -235,7 +235,7 @@ export function CreateProjectForm() {
           </div>
 
           <div className="relative">
-            <div className="fb-v2-input flex items-center gap-2">
+            <div className="fb-v2-input fb-v2-outlined flex items-center gap-2">
               <input
                 id="project-members"
                 type="search"
@@ -314,7 +314,10 @@ export function CreateProjectForm() {
       </div>
 
       <div className="mt-8 flex flex-wrap justify-between gap-3">
-        <Link href={PROJECTS_PATH} className="fb-v2-btn-ghost w-40 whitespace-nowrap text-center">
+        <Link
+          href={PROJECTS_PATH}
+          className="fb-v2-btn-ghost fb-v2-outlined w-40 whitespace-nowrap text-center"
+        >
           CANCEL
         </Link>
         <button type="submit" className="fb-v2-btn-primary w-40 whitespace-nowrap">

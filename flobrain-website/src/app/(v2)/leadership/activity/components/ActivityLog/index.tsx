@@ -118,7 +118,8 @@ export function ActivityLog() {
   };
 
   return (
-    <div className="flex min-w-0 flex-col">
+    // Fills the content area: the table scrolls on its own and the pagination stays in view
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
       <div>
         <h2 className="text-xs font-medium sm:text-sm">TIME &amp; ACTIVITY LOG</h2>
 
@@ -146,7 +147,7 @@ export function ActivityLog() {
         ))}
       </div>
 
-      <div className="overflow-x-auto pt-4">
+      <div className="mt-4 min-h-48 flex-1 overflow-auto">
         <table className="fb-v2-table w-full min-w-140 border-collapse text-left text-[9px]">
           <thead>
             <tr>
@@ -187,7 +188,7 @@ export function ActivityLog() {
         )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-4 text-[9px]">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 pt-4 text-[9px]">
         <p aria-live="polite">
           {filteredActivities.length === 0
             ? "Showing 0 activities"
