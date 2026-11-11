@@ -56,8 +56,8 @@ INSTALLED_APPS = [
     "brain",
     "model_registry",
     "contact",
-    "teams.apps.TeamsConfig",
-    "tasks.apps.TasksConfig",
+    "teams",
+    "usage",
 ]
 
 MIDDLEWARE = [
