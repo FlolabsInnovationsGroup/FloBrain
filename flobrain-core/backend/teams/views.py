@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from .models import Team, TeamMember
 from .serializers import (
     TeamListSerializer,
@@ -22,10 +23,11 @@ class TeamListCreateView(APIView):
         user = get_user_from_request(request)
         if not user:
             return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
+        # Teams where the user is a member OR the creator, without duplicates.
         teams = Team.objects.filter(
-            members__user=user
-        ).distinct() | Team.objects.filter(created_by=user).distinct()
-        serializer = TeamListSerializer(teams.distinct(), many=True)
+            Q(members__user=user) | Q(created_by=user)
+        ).distinct()
+        serializer = TeamListSerializer(teams, many=True)
         return Response(serializer.data)
 
     def post(self, request):
