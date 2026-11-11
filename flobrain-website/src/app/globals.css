@@ -358,6 +358,12 @@
   --fb-v2-error: #dc2626;
   --fb-v2-error-subtle: rgba(220, 38, 38, 0.12);
   --fb-v2-inactive: #737373;
+  --fb-v2-table-head-bg: #e5e5e5;
+  --fb-v2-tab-bg: #a3a3a3;
+  --fb-v2-tab-text: #ffffff;
+  --fb-v2-tab-light-bg: #e5e5e5;
+  --fb-v2-tab-active-bg: #ffffff;
+  --fb-v2-tab-active-text: #1a1a1a;
 
   --color-brain: #9333ea;
   --color-memory: #1a0a2e;
@@ -712,6 +718,12 @@
   --fb-v2-error: #ef4444;
   --fb-v2-error-subtle: rgba(239, 68, 68, 0.12);
   --fb-v2-inactive: #a3a1a1;
+  --fb-v2-table-head-bg: #262626;
+  --fb-v2-tab-bg: #8f8f8f;
+  --fb-v2-tab-text: #f2f2f2;
+  --fb-v2-tab-light-bg: #d9d9d9;
+  --fb-v2-tab-active-bg: #e6e6e6;
+  --fb-v2-tab-active-text: #2b2b2b;
 
   --color-brain: #a855f7;
   --color-memory: #000000;
@@ -824,6 +836,12 @@ html:not(.light):not(.dark) {
   --fb-v2-error: #ef4444;
   --fb-v2-error-subtle: rgba(239, 68, 68, 0.12);
   --fb-v2-inactive: #a3a1a1;
+  --fb-v2-table-head-bg: #262626;
+  --fb-v2-tab-bg: #8f8f8f;
+  --fb-v2-tab-text: #f2f2f2;
+  --fb-v2-tab-light-bg: #d9d9d9;
+  --fb-v2-tab-active-bg: #e6e6e6;
+  --fb-v2-tab-active-text: #2b2b2b;
 }
 
 body {
@@ -1528,42 +1546,25 @@ body {
 
 }
 
-/* FloBrain V2 - Leadership shell (side panels + Interns overview): Figma-inspired palette */
+/* Leadership side panels (meetings/chat rooms + buddies), not yet wired into the V2 shell.
+   Panel colors use their own tokens so they never override the themed --fb-v2-* page tokens. */
 :root {
   /* Height of the sticky global navbar (md+), so the leadership shell fills exactly the rest of the viewport */
   --fb-navbar-h: 94px;
   --fb-v2-shell-bg: #2f2f2f;
   --fb-v2-meetings-bg: #505050;
   --fb-v2-panel-bg: #464444;
-  --fb-v2-surface: #454545;
-  --fb-v2-surface-raised: #4d4d4d;
-  --fb-v2-border: #c8c8c8;
-  --fb-v2-divider: rgba(255, 255, 255, 0.25);
-  --fb-v2-text: #f5f5f5;
-  --fb-v2-text-muted: #cfcfcf;
-  --fb-v2-accent: #2962ff;
-  --fb-v2-accent-hover: #1e50df;
+  --fb-v2-panel-text: #f5f5f5;
+  --fb-v2-panel-text-muted: #cfcfcf;
+  --fb-v2-panel-divider: rgba(255, 255, 255, 0.25);
   --fb-v2-link-hover: #67e8f9;
   --fb-v2-danger: #f87171;
-  --fb-v2-tab-bg: #8f8f8f;
-  --fb-v2-tab-light-bg: #d9d9d9;
-  --fb-v2-tab-active-bg: #e6e6e6;
-  --fb-v2-tab-active-text: #2b2b2b;
   --fb-v2-timer-bg: #dedede;
   --fb-v2-timer-text: #171717;
   --fb-v2-timer-ring: #3293ff;
   --fb-v2-timer-ring-track: #b4c7ff;
   --fb-v2-timer-play: #222344;
   --fb-v2-dm: #36c5e9;
-  --fb-v2-table-head-bg: #262626;
-  --fb-v2-table-line: #6b6b6b;
-  --fb-v2-progress: #22c55e;
-  --fb-v2-progress-track: #8f8f8f;
-  --fb-v2-status-ok: #22c55e;
-  --fb-v2-status-warn: #f97316;
-  --fb-v2-priority-high: #e53935;
-  --fb-v2-priority-medium: #f5a623;
-  --fb-v2-priority-low: #4caf50;
 
   --fb-v2-buddy-1: #2dd4bf;
   --fb-v2-buddy-2: #34d399;
@@ -1578,7 +1579,7 @@ body {
 
 .fb-lead-shell {
   background: var(--fb-v2-shell-bg);
-  color: var(--fb-v2-text);
+  color: var(--fb-v2-panel-text);
   font-family: "Inter", sans-serif;
 }
 
@@ -1591,16 +1592,12 @@ body {
   background: var(--fb-v2-panel-bg);
 }
 
-.fb-lead-surface {
-  background: var(--fb-v2-surface);
-}
-
 .fb-lead-divider {
-  border-color: var(--fb-v2-divider);
+  border-color: var(--fb-v2-panel-divider);
 }
 
 .fb-lead-muted {
-  color: var(--fb-v2-text-muted);
+  color: var(--fb-v2-panel-text-muted);
 }
 
 .fb-lead-link-hover {
@@ -1613,7 +1610,7 @@ body {
 }
 
 .fb-lead-input {
-  border: 1px solid var(--fb-v2-divider);
+  border: 1px solid var(--fb-v2-panel-divider);
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -1656,7 +1653,7 @@ body {
   background: #666666;
 }
 
-/* Thin light scrollbar used by the chat list, buddies list and intern grid */
+/* Thin light scrollbar used by the chat list and buddies list */
 .fb-lead-scroll {
   scrollbar-width: thin;
   scrollbar-color: #d0d0d0 transparent;
@@ -1674,167 +1671,6 @@ body {
 .fb-lead-buddy[aria-pressed="true"] {
   background: color-mix(in srgb, var(--fb-buddy-color) 22%, transparent);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--fb-buddy-color) 45%, transparent);
-}
-
-.fb-lead-tab-active {
-  border-bottom: 2px solid var(--fb-v2-accent);
-  color: #ffffff;
-}
-
-.fb-lead-btn-primary {
-  background: var(--fb-v2-accent);
-  color: #ffffff;
-  transition: background 150ms ease;
-}
-
-.fb-lead-btn-primary:hover {
-  background: var(--fb-v2-accent-hover);
-}
-
-.fb-lead-search {
-  border: 2px solid var(--fb-v2-border);
-}
-
-.fb-lead-search input::placeholder {
-  color: #bdbdbd;
-}
-
-/* Folder-style team tabs: inactive tabs alternate dark/light, the active tab rises above the row */
-.fb-lead-teamtab {
-  height: 17px;
-  min-width: 74px;
-  margin-left: -6px;
-  border-radius: 9px 9px 0 0;
-  box-shadow: -1px 0 2px rgba(0, 0, 0, 0.25);
-  transition: height 180ms ease, background 150ms ease, color 150ms ease;
-}
-
-.fb-lead-teamtab:first-child {
-  margin-left: 0;
-}
-
-.fb-lead-teamtab-dark {
-  background: var(--fb-v2-tab-bg);
-  color: #f2f2f2;
-}
-
-.fb-lead-teamtab-light {
-  background: var(--fb-v2-tab-light-bg);
-  color: var(--fb-v2-tab-active-text);
-}
-
-.fb-lead-teamtab:hover {
-  height: 19px;
-}
-
-.fb-lead-teamtab-active,
-.fb-lead-teamtab-active:hover {
-  position: relative;
-  z-index: 1;
-  height: 26px;
-  min-width: 86px;
-  background: var(--fb-v2-tab-active-bg);
-  color: var(--fb-v2-tab-active-text);
-  font-weight: 600;
-}
-
-.fb-lead-card {
-  border: 1px solid var(--fb-v2-border);
-  background: var(--fb-v2-surface);
-}
-
-.fb-lead-card-divider {
-  border-color: var(--fb-v2-border);
-}
-
-.fb-lead-avatar {
-  background: #d8d8d8;
-  color: #3a3a3a;
-}
-
-.fb-lead-btn-pressed {
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.55);
-}
-
-/* Bordered data tables on the Projects and Activity Logs pages */
-.fb-lead-table {
-  border: 1px solid var(--fb-v2-border);
-}
-
-.fb-lead-table th,
-.fb-lead-table td {
-  border: 1px solid var(--fb-v2-table-line);
-}
-
-.fb-lead-table thead th {
-  background: var(--fb-v2-table-head-bg);
-}
-
-.fb-lead-progress {
-  background: var(--fb-v2-progress-track);
-}
-
-.fb-lead-progress-fill {
-  background: var(--fb-v2-progress);
-}
-
-.fb-lead-status-ok {
-  color: var(--fb-v2-status-ok);
-}
-
-.fb-lead-status-warn {
-  color: var(--fb-v2-status-warn);
-}
-
-/* Outlined inputs on the Create Project form */
-.fb-lead-field {
-  border: 1px solid var(--fb-v2-border);
-  background: transparent;
-  color-scheme: dark;
-}
-
-.fb-lead-field::placeholder,
-.fb-lead-field input::placeholder {
-  color: #bdbdbd;
-}
-
-.fb-lead-field:focus-visible,
-.fb-lead-field:focus-within {
-  outline: 2px solid var(--fb-v2-accent);
-  outline-offset: -1px;
-}
-
-.fb-lead-select {
-  color-scheme: dark;
-}
-
-.fb-lead-select option {
-  background: var(--fb-v2-surface);
-  color: var(--fb-v2-text);
-}
-
-/* Priority/status pills: outlined in their color, filled when selected */
-.fb-lead-pill {
-  border: 1px solid var(--fb-pill-color);
-  transition: background 150ms ease;
-}
-
-.fb-lead-pill:hover {
-  background: color-mix(in srgb, var(--fb-pill-color) 20%, transparent);
-}
-
-.fb-lead-pill[aria-pressed="true"] {
-  background: var(--fb-pill-color);
-  color: #ffffff;
-}
-
-.fb-lead-btn-outline {
-  border: 1px solid var(--fb-v2-border);
-  transition: background 150ms ease;
-}
-
-.fb-lead-btn-outline:hover {
-  background: rgba(255, 255, 255, 0.08);
 }
 
 /* ─── V2 Lead Controls shell ─── */
@@ -2287,4 +2123,124 @@ body {
   .fb-v2-content {
     padding-inline: 1.5rem;
   }
+}
+
+/* ─── V2 Leadership pages (Interns, Projects, Create Project, Activity Logs) ─── */
+.fb-v2-tile {
+  background: var(--fb-v2-surface);
+  border: 1px solid var(--fb-v2-border);
+  border-radius: 0.375rem;
+}
+
+.fb-v2-avatar {
+  background: var(--fb-v2-text-muted);
+}
+
+/* Folder-style team tabs: inactive tabs alternate dark/light, the active tab rises above the row */
+.fb-v2-folder-tab {
+  height: 17px;
+  min-width: 74px;
+  margin-left: -6px;
+  border-radius: 9px 9px 0 0;
+  box-shadow: -1px 0 2px color-mix(in srgb, var(--fb-v2-shadow) 25%, transparent);
+  transition: height 180ms ease, background 150ms ease, color 150ms ease;
+}
+
+.fb-v2-folder-tab:first-child {
+  margin-left: 0;
+}
+
+.fb-v2-folder-tab-dark {
+  background: var(--fb-v2-tab-bg);
+  color: var(--fb-v2-tab-text);
+}
+
+.fb-v2-folder-tab-light {
+  background: var(--fb-v2-tab-light-bg);
+  color: var(--fb-v2-tab-active-text);
+}
+
+.fb-v2-folder-tab:hover {
+  height: 19px;
+}
+
+.fb-v2-folder-tab-active,
+.fb-v2-folder-tab-active:hover {
+  position: relative;
+  z-index: 1;
+  height: 26px;
+  min-width: 86px;
+  background: var(--fb-v2-tab-active-bg);
+  color: var(--fb-v2-tab-active-text);
+  font-weight: 600;
+}
+
+/* Bordered data tables on the Projects and Activity Logs pages */
+.fb-v2-table,
+.fb-v2-table th,
+.fb-v2-table td {
+  border: 1px solid var(--fb-v2-border);
+}
+
+.fb-v2-table thead th {
+  background: var(--fb-v2-table-head-bg);
+}
+
+.fb-v2-progress {
+  background: var(--fb-v2-input-border);
+}
+
+.fb-v2-progress-fill {
+  background: var(--fb-v2-success);
+}
+
+.fb-v2-progress-tick {
+  background: var(--fb-v2-text-muted);
+}
+
+.fb-v2-select option {
+  background: var(--fb-v2-surface);
+  color: var(--fb-v2-text);
+}
+
+/* .fb-v2-input used as a wrapper around an input plus an icon button */
+.fb-v2-input:focus-within {
+  border-color: var(--fb-v2-focus-ring);
+  box-shadow: 0 0 0 3px var(--fb-v2-accent-subtle);
+}
+
+.dark .fb-v2-input,
+html:not(.light):not(.dark) .fb-v2-input {
+  color-scheme: dark;
+}
+
+/* Priority/status pills: outlined in their color, filled when selected */
+.fb-v2-pill {
+  border: 1px solid var(--fb-pill-color);
+  transition: background 150ms ease;
+}
+
+.fb-v2-pill:hover {
+  background: color-mix(in srgb, var(--fb-pill-color) 20%, transparent);
+}
+
+.fb-v2-pill[aria-pressed="true"] {
+  background: var(--fb-pill-color);
+  color: var(--fb-v2-on-accent);
+}
+
+/* The V2 shell sits inside the fixed-height side-panel layout: navs keep their size, content scrolls */
+.fb-v2-main-nav,
+.fb-v2-leadership-nav,
+.fb-v2-actions {
+  flex-shrink: 0;
+}
+
+.fb-lead-shell .fb-v2-center {
+  min-height: 0;
+}
+
+.fb-lead-shell .fb-v2-content {
+  min-height: 0;
+  overflow-y: auto;
 }

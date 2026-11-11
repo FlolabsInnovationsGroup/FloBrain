@@ -259,6 +259,8 @@ export function BuddiesPanel({
 type SidePanelsLayoutProps = MeetingsPanelProps &
   BuddiesPanelProps & {
     children: ReactNode;
+    /** Fill the whole viewport, for pages rendered without the V1 navbar */
+    fullHeight?: boolean;
   };
 
 /** Meetings/Chat Rooms on the left, Buddies on the right, page content in between. */
@@ -272,9 +274,14 @@ export default function SidePanelsLayout({
   buddies,
   activeBuddyId,
   onSelectBuddy,
+  fullHeight = false,
 }: SidePanelsLayoutProps) {
   return (
-    <div className="fb-lead-shell flex h-[calc(100dvh-var(--fb-navbar-h))] min-h-140 w-full gap-3 overflow-hidden p-3">
+    <div
+      className={`fb-lead-shell flex min-h-140 w-full gap-3 overflow-hidden p-3 ${
+        fullHeight ? "h-dvh" : "h-[calc(100dvh-var(--fb-navbar-h))]"
+      }`}
+    >
       <MeetingsPanel
         chatGroups={chatGroups}
         activeRoom={activeRoom}

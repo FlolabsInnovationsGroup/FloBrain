@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronDown } from "lucide-react";
-import LeadershipShell from "@/components/layout/leadershipShell";
+import { FilterSelect } from "@/components/v2/FilterSelect";
 
 type Project = {
   id: number;
@@ -45,7 +44,11 @@ const projects: Project[] = [
   },
 ];
 
-const statusFilters: StatusFilter[] = ["All", "On Track", "Blocked"];
+const statusFilterOptions: { value: StatusFilter; label: string }[] = [
+  { value: "All", label: "Filter by" },
+  { value: "On Track", label: "On Track" },
+  { value: "Blocked", label: "Blocked" },
+];
 
 const columns = [
   "PROJECT",
@@ -70,14 +73,14 @@ function MilestoneProgress({ completed, total }: { completed: number; total: num
       aria-valuemin={0}
       aria-valuemax={total}
       aria-valuenow={completed}
-      className="fb-lead-progress relative h-1 w-full min-w-24 rounded-full"
+      className="fb-v2-progress relative h-1 w-full min-w-24 rounded-full"
     >
-      <div className="fb-lead-progress-fill h-full rounded-full" style={{ width: `${percent}%` }} />
+      <div className="fb-v2-progress-fill h-full rounded-full" style={{ width: `${percent}%` }} />
       {Array.from({ length: total }, (_, index) => (
         <span
           key={index}
           aria-hidden
-          className="absolute top-1/2 h-2 w-0.5 -translate-y-1/2 rounded-full bg-[#d9d9d9]"
+          className="fb-v2-progress-tick absolute top-1/2 h-2 w-0.5 -translate-y-1/2 rounded-full"
           style={{ left: `calc(${((index + 1) / total) * 100}% - 1px)` }}
         />
       ))}
@@ -87,17 +90,17 @@ function MilestoneProgress({ completed, total }: { completed: number; total: num
 
 function ProjectStatus({ blockers }: { blockers: number }) {
   if (blockers === 0) {
-    return <span className="fb-lead-status-ok font-semibold">ON TRACK</span>;
+    return <span className="font-semibold text-[var(--fb-v2-success)]">ON TRACK</span>;
   }
 
   return (
-    <span className="fb-lead-status-warn">
+    <span className="text-[var(--fb-v2-warning)]">
       {blockers} {blockers === 1 ? "Blocker" : "Blockers"}
     </span>
   );
 }
 
-export default function ProjectsPage() {
+export function ProjectTable() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
 
   const filteredProjects = useMemo(
@@ -112,29 +115,20 @@ export default function ProjectsPage() {
   const emptyRows = Math.max(0, MIN_TABLE_ROWS - filteredProjects.length);
 
   return (
-    <LeadershipShell>
-      <div className="flex shrink-0 items-center justify-between gap-4 px-6 py-2">
-        <h1 className="text-xs font-medium sm:text-sm">PROJECTS</h1>
+    <div className="flex min-w-0 flex-col">
+      <div className="flex shrink-0 items-center justify-between gap-4 pb-2">
+        <h2 className="text-xs font-medium sm:text-sm">PROJECTS</h2>
 
-        <label className="relative flex items-center text-[11px]">
-          <span className="sr-only">Filter projects by status</span>
-          <select
-            value={statusFilter}
-            onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
-            className="fb-lead-select cursor-pointer appearance-none bg-transparent py-1 pl-2 pr-7 outline-none"
-          >
-            {statusFilters.map((filter) => (
-              <option key={filter} value={filter}>
-                {filter === "All" ? "Filter by" : filter}
-              </option>
-            ))}
-          </select>
-          <ChevronDown size={14} className="pointer-events-none absolute right-1 opacity-80" />
-        </label>
+        <FilterSelect
+          label="Filter projects by status"
+          value={statusFilter}
+          options={statusFilterOptions}
+          onChange={(value) => setStatusFilter(value as StatusFilter)}
+        />
       </div>
 
-      <div className="fb-lead-scroll mr-2 min-h-0 flex-1 overflow-auto pb-4 pl-5 pr-4">
-        <table className="fb-lead-table w-full min-w-170 border-collapse text-left text-[10px]">
+      <div className="overflow-x-auto">
+        <table className="fb-v2-table w-full min-w-170 border-collapse text-left text-[10px]">
           <thead>
             <tr>
               {columns.map((column) => (
@@ -172,11 +166,13 @@ export default function ProjectsPage() {
             ))}
           </tbody>
         </table>
-
-        {filteredProjects.length === 0 && (
-          <p className="fb-lead-muted py-6 text-center text-sm">No projects match this filter.</p>
-        )}
       </div>
-    </LeadershipShell>
+
+      {filteredProjects.length === 0 && (
+        <p className="py-6 text-center text-sm text-[var(--fb-v2-text-muted)]">
+          No projects match this filter.
+        </p>
+      )}
+    </div>
   );
 }

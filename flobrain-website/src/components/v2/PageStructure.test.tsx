@@ -1,7 +1,13 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { usePathname } from "next/navigation";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useLeadershipSearch } from "./LeadershipSearch";
 import { PageStructure } from "./PageStructure";
+
+function SearchQuery() {
+  const { query } = useLeadershipSearch();
+  return <p>Query: {query}</p>;
+}
 
 describe("PageStructure", () => {
   beforeEach(() => {
@@ -92,5 +98,20 @@ describe("PageStructure", () => {
     );
     expect(screen.getByRole("link", { name: "Create Team" })).not.toHaveAttribute("aria-current");
     expect(screen.queryByPlaceholderText("Search by name")).not.toBeInTheDocument();
+  });
+
+  it("shares the toolbar search with the page content", () => {
+    vi.mocked(usePathname).mockReturnValue("/leadership/interns");
+    render(
+      <PageStructure>
+        <SearchQuery />
+      </PageStructure>,
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Search by name"), {
+      target: { value: "claudia" },
+    });
+
+    expect(screen.getByText("Query: claudia")).toBeInTheDocument();
   });
 });

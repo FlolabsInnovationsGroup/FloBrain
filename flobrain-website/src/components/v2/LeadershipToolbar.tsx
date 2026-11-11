@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLeadershipSearch } from "./LeadershipSearch";
 import { CREATE_ACTION_ITEMS, isPathActive } from "./navigation";
 
 type LeadershipToolbarProps = {
@@ -30,10 +31,9 @@ function SearchIcon() {
  * Leadership action row under the secondary nav.
  * Search appears on Dashboard, Teams, and Interns only.
  */
-export function LeadershipToolbar({
-  pathname,
-  showSearch = false,
-}: LeadershipToolbarProps) {
+export function LeadershipToolbar({ pathname, showSearch = false }: LeadershipToolbarProps) {
+  const { query, setQuery } = useLeadershipSearch();
+
   return (
     <div className="fb-v2-toolbar">
       <div className="fb-v2-create-actions">
@@ -65,6 +65,8 @@ export function LeadershipToolbar({
             className="fb-v2-search-input"
             placeholder="Search by name"
             autoComplete="off"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
           />
         </label>
       ) : null}

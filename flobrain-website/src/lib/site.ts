@@ -38,9 +38,7 @@ export const DISALLOWED_ROUTE_PREFIXES = [
   "/profile",
   "/settings",
   "/brain",
-  "/interns",
-  "/projects",
-  "/activity-logs",
+  "/leadership",
   "/payment",
   "/checkout",
 ] as const;
