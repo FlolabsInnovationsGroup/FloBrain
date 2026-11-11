@@ -1,3 +1,12 @@
+# Blocked malicious file — do not re-add
+public/fonts/fa-solid-600.eot
+
+__pycache__/
+db.sqlite3
+.env
+.venv/
+venv/
+env/
 # Node + project ignores
 node_modules/
 .env
@@ -8,3 +17,4 @@ coverage/
 logs/
 *.log
 .DS_Store
+
