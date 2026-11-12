@@ -166,3 +166,102 @@ class TeamListCreateViewTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertIn("name", response.json()["details"])
+
+   
+class TeamDetailViewTests(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+
+        self.user = User.objects.create(
+            email="detail@example.com",
+            password_hash="x"
+        )
+        self.other_user = User.objects.create(
+            email="other-detail@example.com",
+            password_hash="x"
+        )
+
+        self.token = make_access_token(str(self.user.id))
+
+        self.team = Team.objects.create(
+            name="Development Team",
+            description="Backend development team",
+            created_by=self.other_user
+        )
+
+        TeamMember.objects.create(
+            team=self.team,
+            user=self.user,
+            role="member"
+        )
+
+        TeamMember.objects.create(
+            team=self.team,
+            user=self.other_user,
+            role="lead"
+        )
+
+    def auth(self, token=None):
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Bearer {token or self.token}"
+        )
+
+    def test_get_without_token_returns_401(self):
+        response = self.client.get(f"/api/teams/{self.team.id}/")
+        self.assertEqual(response.status_code, 401)
+
+    def test_get_with_invalid_token_returns_401(self):
+        self.auth("invalid-token")
+        response = self.client.get(f"/api/teams/{self.team.id}/")
+        self.assertEqual(response.status_code, 401)
+
+    def test_team_member_can_view_team_details(self):
+        self.auth()
+        response = self.client.get(f"/api/teams/{self.team.id}/")
+
+        self.assertEqual(response.status_code, 200)
+
+        data = response.json()
+
+        self.assertEqual(data["id"], self.team.id)
+        self.assertEqual(data["name"], "Development Team")
+        self.assertEqual(data["description"], "Backend development team")
+
+        self.assertIn("created_by", data)
+        self.assertIn("members", data)
+        self.assertIn("created_at", data)
+        self.assertIn("updated_at", data)
+
+    def test_response_includes_member_details(self):
+        self.auth()
+        response = self.client.get(f"/api/teams/{self.team.id}/")
+
+        self.assertEqual(response.status_code, 200)
+
+        members = response.json()["members"]
+        self.assertEqual(len(members), 2)
+
+        user_ids = {member["user_id"] for member in members}
+        self.assertIn(str(self.user.id), user_ids)
+        self.assertIn(str(self.other_user.id), user_ids)
+
+    def test_non_member_cannot_view_team(self):
+        outsider = User.objects.create(
+            email="outsider@example.com",
+            password_hash="x"
+        )
+
+        self.auth(make_access_token(str(outsider.id)))
+
+        response = self.client.get(f"/api/teams/{self.team.id}/")
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_nonexistent_team_returns_404(self):
+        self.auth()
+
+        response = self.client.get("/api/teams/999999/")
+
+        self.assertEqual(response.status_code, 404)
+     

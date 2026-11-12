@@ -56,15 +56,39 @@ class TeamListCreateView(APIView):
         )
 
 
+
 class TeamDetailView(APIView):
 
     def get(self, request, team_id):
+        # Authenticate the user
         user = get_user_from_request(request)
+
         if not user:
-            return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
-        team = get_object_or_404(Team, id=team_id)
+            return Response(
+                {"error": "Authentication required"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        # Check that the user belongs to the requested team
+        team = Team.objects.filter(
+            id=team_id,
+            members__user=user
+        ).distinct().first()
+
+        # Return 404 if the team doesn't exist or user isn't a member
+        if not team:
+            return Response(
+                {"error": "Team not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Serialize and return full team details
         serializer = TeamDetailSerializer(team)
-        return Response(serializer.data)
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
 
 
 class TeamMemberView(APIView):
