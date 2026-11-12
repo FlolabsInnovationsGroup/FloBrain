@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     "model_registry",
     "contact",
     "teams",
-    "tasks"
+    "tasks",
     "usage",
 ]
 
