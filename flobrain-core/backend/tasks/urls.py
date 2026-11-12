@@ -13,4 +13,20 @@ urlpatterns = [
         views.personal_task_detail,
         name="personal-task-detail",
     ),
+    # B4: Assignment API
+    path(
+        "<int:task_id>/assign/",
+        views.task_assign,
+        name="task-assign",
+    ),
+    path(
+        "assigned-to-me/",
+        views.tasks_assigned_to_me,
+        name="tasks-assigned-to-me",
+    ),
+    path(
+        "created-by-me/",
+        views.tasks_created_by_me,
+        name="tasks-created-by-me",
+    ),
 ]
