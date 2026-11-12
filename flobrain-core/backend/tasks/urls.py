@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import comment_views, views
 
 urlpatterns = [
     path("personal/", views.personal_board, name="personal-board"),
@@ -28,5 +28,16 @@ urlpatterns = [
         "created-by-me/",
         views.tasks_created_by_me,
         name="tasks-created-by-me",
+    ),
+    # B6: Task Comments API
+    path(
+        "<int:task_id>/comments/",
+        comment_views.task_comments,
+        name="task-comments",
+    ),
+    path(
+        "<int:task_id>/comments/<int:comment_id>/",
+        comment_views.task_comment_detail,
+        name="task-comment-detail",
     ),
 ]
