@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+
 from django.contrib import admin
 from django.urls import include, path
 
@@ -35,19 +36,20 @@ urlpatterns = [
     path("", include("model_registry.urls")),
     path("", include("contact.urls")),
 
+    # Personal Kanban task routes
+    path("api/tasks/", include("tasks.urls")),
+
     # Swagger / API docs
     path(
         "api/schema/",
         SpectacularAPIView.as_view(),
         name="schema"
     ),
-
     path(
         "api/swagger/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui"
     ),
-
     path(
         "api/redoc/",
         SpectacularRedocView.as_view(url_name="schema"),
