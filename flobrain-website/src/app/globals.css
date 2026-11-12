@@ -1,9 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -2205,7 +2201,11 @@ body {
 }
 
 .fb-v2-progress-tick {
-  background: var(--fb-v2-text-muted);
+  background: var(--fb-v2-text);
+}
+
+.fb-v2-progress-blocker {
+  background: var(--fb-v2-warning);
 }
 
 .fb-v2-select option {
