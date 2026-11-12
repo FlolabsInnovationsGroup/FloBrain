@@ -31,12 +31,30 @@ describe("TaskDetailsScreen", () => {
     expect(screen.getByText(/Ship a clearer product structure/i)).toBeVisible();
   });
 
-  it("renders placeholder collaboration panels and meeting details", () => {
+  it("renders collaboration panels and meeting details", () => {
     render(<TaskDetailsScreen task={mockTasks[0]} />);
     expect(screen.getByRole("button", { name: /Progress Updates \/ WIP/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Brainwriting/i })).toBeInTheDocument();
     expect(screen.getByText("Zoom Login")).toBeInTheDocument();
     expect(screen.getByText("zoom.buddy@flolabsinnovations.com")).toBeInTheDocument();
     expect(screen.getByText("7Usd4VR!2")).toBeInTheDocument();
+  });
+
+  it("toggles collaboration panels between + and − with input fields", () => {
+    render(<TaskDetailsScreen task={mockTasks[0]} />);
+    const toggle = screen.getByRole("button", { name: /Progress Updates \/ WIP/i });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveTextContent("+");
+
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(toggle).toHaveTextContent("−");
+    expect(screen.getByLabelText("Files / links")).toBeVisible();
+    expect(screen.getByLabelText("Progress")).toBeVisible();
+    expect(screen.getByLabelText("Next steps")).toBeVisible();
+
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveTextContent("+");
   });
 });

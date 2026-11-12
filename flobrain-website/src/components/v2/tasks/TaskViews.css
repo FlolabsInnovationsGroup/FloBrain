@@ -643,14 +643,21 @@
 }
 
 .fb-v2-task-detail-panel {
-  align-items: center;
   background: #29292980;
-  border: 0;
-  border-radius: 0;
   color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8125rem;
+  width: 100%;
+}
+
+.fb-v2-task-detail-panel-toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
   cursor: pointer;
   display: flex;
-  font-size: 0.8125rem;
   justify-content: space-between;
   min-height: 2.7rem; /* ~43px Figma bars */
   padding: 0.65rem 1rem;
@@ -658,14 +665,15 @@
   width: 100%;
 }
 
-.fb-v2-task-detail-panel:hover {
+.fb-v2-task-detail-panel:hover,
+.fb-v2-task-detail-panel[data-open="true"] {
   background: #292929b3;
   color: #ffffff;
 }
 
-.fb-v2-task-detail-panel:focus-visible {
+.fb-v2-task-detail-panel-toggle:focus-visible {
   outline: 2px solid var(--fb-v2-tasks-focus);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 .fb-v2-task-detail-panel-label {
@@ -689,6 +697,39 @@
   font-size: 1.15rem;
   font-weight: 400;
   line-height: 1;
+  min-width: 0.85rem;
+  text-align: center;
+}
+
+.fb-v2-task-detail-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 1rem 0.95rem;
+}
+
+.fb-v2-task-detail-panel-body[hidden] {
+  display: none;
+}
+
+.fb-v2-task-detail-panel-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.fb-v2-task-detail-panel-field-label {
+  color: #d9d9d9;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.fb-v2-task-detail-panel .fb-v2-task-input {
+  color: #ffffff;
+}
+
+.fb-v2-task-detail-panel .fb-v2-task-input::placeholder {
+  color: #9a9a9a;
 }
 
 .fb-v2-task-detail-meeting {
