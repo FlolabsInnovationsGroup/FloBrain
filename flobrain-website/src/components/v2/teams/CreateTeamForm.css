@@ -1,0 +1,277 @@
+/* ─── Create Team form inside the V2 shell (/leadership/teams/new) ─── */
+/* Everything is scoped to .fb-v2-create-team so the generic form class names stay on this page. */
+.fb-v2-create-team {
+  /* Readable error and highlight colours on the dark surface; light values below. */
+  --fb-v2-error: #fca5a5;
+  --fb-v2-form-highlight: #93b4ff;
+  /* Figma draws fields unfilled on the card surface, so inputs and dropdowns are transparent. */
+  --fb-v2-input-bg: transparent;
+  /* Figma's field border (~#615e5e) and placeholder (~#666) are under 1.5:1, so these reuse the
+     dashboard's V2 input values to reach WCAG 3:1 (border) and 4.5:1 (placeholder) on the card. */
+  --fb-v2-input-border: #a29f9f;
+  --fb-v2-form-placeholder: #c4c1c1;
+  --fb-v2-form-card-border: #706e6e;
+  /* Sampled from the Figma Cancel button outline. */
+  --fb-v2-form-cancel-border: #c8c8c8;
+  container: fb-v2-create-team / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.light .fb-v2-create-team {
+  --fb-v2-error: #b91c1c;
+  --fb-v2-form-highlight: #1d4ed8;
+  --fb-v2-input-border: #858080;
+  --fb-v2-form-placeholder: #737373;
+  --fb-v2-form-card-border: #c4c4c4;
+  --fb-v2-form-cancel-border: #8f8f8f;
+}
+.fb-v2-create-team .fb-v2-form-title {
+  color: var(--fb-v2-heading);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+.fb-v2-create-team .fb-v2-form-card {
+  width: 100%;
+  padding: 24px 28px;
+  border: 1px solid var(--fb-v2-form-card-border);
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.fb-v2-create-team .fb-v2-form-label {
+  margin-bottom: 4px;
+  color: var(--fb-v2-text);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.fb-v2-create-team .fb-v2-form-input {
+  min-height: 36px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+.fb-v2-create-team .fb-v2-form-input::placeholder {
+  color: var(--fb-v2-form-placeholder);
+}
+.fb-v2-create-team .fb-v2-form-input[aria-invalid="true"] {
+  border-color: var(--fb-v2-error);
+}
+.fb-v2-create-team .fb-v2-textarea {
+  display: block;
+  min-height: 64px;
+  resize: vertical;
+}
+.fb-v2-create-team .fb-v2-field-error {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--fb-v2-error);
+}
+.fb-v2-create-team .fb-v2-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 32px;
+}
+.fb-v2-create-team .fb-v2-select,
+.fb-v2-create-team .fb-v2-combobox {
+  position: relative;
+}
+.fb-v2-create-team .fb-v2-select-input {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: none;
+  padding-right: 36px;
+}
+.fb-v2-create-team .fb-v2-select-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: var(--fb-v2-text-muted);
+  pointer-events: none;
+}
+/* Pinned to the 36px input row because the open list sits inside .fb-v2-combobox. */
+.fb-v2-create-team .fb-v2-combobox-toggle {
+  top: 0;
+  height: 36px;
+  transform: none;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.fb-v2-create-team .fb-v2-member-label-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px 16px;
+  margin-bottom: 4px;
+}
+.fb-v2-create-team .fb-v2-member-label-row .fb-v2-form-label {
+  margin-bottom: 0;
+}
+.fb-v2-create-team .fb-v2-letters {
+  display: flex;
+  flex-wrap: wrap;
+}
+.fb-v2-create-team .fb-v2-letter {
+  min-width: 11px;
+  min-height: 16px;
+  border-radius: 2px;
+  font-size: 8px;
+  line-height: 1;
+  color: var(--fb-v2-text-muted);
+  cursor: pointer;
+}
+.fb-v2-create-team .fb-v2-letter:hover {
+  color: var(--fb-v2-text);
+}
+.fb-v2-create-team .fb-v2-letter[aria-pressed="true"] {
+  color: var(--fb-v2-form-highlight);
+  font-weight: 700;
+  text-decoration: underline;
+}
+/* In normal flow: .fb-v2-center clips overflow, so an absolute list would be cut off
+   when the side panels stack and the center is only as tall as the form. */
+.fb-v2-create-team .fb-v2-listbox {
+  margin-top: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 4px;
+  border: 1px solid var(--fb-v2-border);
+  border-radius: 5px;
+  background: var(--fb-v2-surface-raised);
+  color: var(--fb-v2-text);
+}
+.fb-v2-create-team .fb-v2-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 3px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.fb-v2-create-team .fb-v2-option[data-active="true"] {
+  background: var(--fb-v2-accent-subtle);
+}
+.fb-v2-create-team .fb-v2-option-empty {
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--fb-v2-text-muted);
+}
+.fb-v2-create-team .fb-v2-option-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  border: 1px solid var(--fb-v2-input-border);
+  border-radius: 3px;
+}
+.fb-v2-create-team .fb-v2-option[aria-selected="true"] .fb-v2-option-check {
+  border-color: var(--fb-v2-accent);
+  background: var(--fb-v2-accent);
+  color: var(--fb-v2-on-accent);
+}
+.fb-v2-create-team .fb-v2-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.fb-v2-create-team .fb-v2-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px 4px 10px;
+  border: 1px solid var(--fb-v2-border);
+  border-radius: 999px;
+  background: var(--fb-v2-surface-raised);
+  font-size: 12px;
+}
+.fb-v2-create-team .fb-v2-chip-remove {
+  display: flex;
+  padding: 3px;
+  border-radius: 999px;
+  color: var(--fb-v2-text-muted);
+  cursor: pointer;
+}
+.fb-v2-create-team .fb-v2-chip-remove:hover {
+  color: var(--fb-v2-text);
+  background: var(--fb-v2-accent-subtle);
+}
+.fb-v2-create-team :is(.fb-v2-letter, .fb-v2-chip-remove):focus-visible {
+  outline: 2px solid var(--fb-v2-form-highlight);
+  outline-offset: 2px;
+}
+.fb-v2-create-team .fb-v2-form-notice {
+  padding: 10px 12px;
+  border: 1px solid var(--fb-v2-form-highlight);
+  border-radius: 5px;
+  background: var(--fb-v2-accent-subtle);
+  font-size: 13px;
+}
+.fb-v2-create-team .fb-v2-form-actions {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding-top: 28px;
+}
+.fb-v2-create-team .fb-v2-form-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 200px;
+  min-height: 36px;
+  padding: 8px 16px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+/* Figma's Cancel uses full-strength text, not the muted ghost colour. Background, hover and focus
+   still come from the shared .fb-v2-btn-ghost. */
+.fb-v2-create-team .fb-v2-btn-ghost.fb-v2-form-button {
+  border-color: var(--fb-v2-form-cancel-border);
+  color: var(--fb-v2-text);
+}
+/* Follows the center column, not the viewport: side panels narrow it on desktop. */
+@container fb-v2-create-team (max-width: 36rem) {
+  .fb-v2-create-team .fb-v2-form-card {
+    padding: 20px 16px;
+  }
+  .fb-v2-create-team .fb-v2-field-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fb-v2-create-team .fb-v2-letter {
+    min-width: 16px;
+    min-height: 24px;
+    font-size: 10px;
+  }
+  .fb-v2-create-team .fb-v2-form-actions {
+    flex-direction: column-reverse;
+    padding-top: 12px;
+  }
+  .fb-v2-create-team .fb-v2-form-button {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fb-v2-create-team * {
+    transition: none !important;
+  }
+}
