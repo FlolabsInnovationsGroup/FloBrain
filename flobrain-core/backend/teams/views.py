@@ -1,9 +1,10 @@
+import uuid
+
 from django.shortcuts import render
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from .models import Team, TeamMember
 from .serializers import (
@@ -11,7 +12,6 @@ from .serializers import (
     TeamDetailSerializer,
     TeamCreateSerializer,
     TeamAddMemberSerializer,
-    TeamMemberSerializer,
 )
 from users.views import get_user_from_request
 from users.models import User
@@ -101,7 +101,12 @@ class TeamMemberView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
 
-        team = get_object_or_404(Team, id=team_id)
+        team = Team.objects.filter(id=team_id).first()
+        if not team:
+            return Response(
+                {"error": "Team not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         if not TeamMember.objects.filter(
             team=team, user=user, role="lead"
@@ -111,16 +116,48 @@ class TeamMemberView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
+        # Reject an existing membership before creating another one.
+        # Invalid UUIDs fall through to the serializer.
+        requested_user_id = request.data.get("user_id") if hasattr(request.data, "get") else None
+        if requested_user_id:
+            try:
+                parsed_user_id = uuid.UUID(str(requested_user_id))
+            except (ValueError, TypeError, AttributeError):
+                parsed_user_id = None
+
+            if (
+                parsed_user_id is not None
+                and TeamMember.objects.filter(
+                    team=team,
+                    user_id=parsed_user_id,
+                ).exists()
+            ):
+                return Response(
+                    {"error": "User is already a member of this team"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
         serializer = TeamAddMemberSerializer(
             data=request.data,
             context={"team": team}
         )
 
         if serializer.is_valid():
-            member = serializer.save()
+            serializer.save()
+            team = Team.objects.get(id=team.id)
             return Response(
-                TeamMemberSerializer(member).data,
-                status=status.HTTP_201_CREATED
+                TeamDetailSerializer(team).data,
+                status=status.HTTP_200_OK
+            )
+
+        non_field_errors = serializer.errors.get("non_field_errors", [])
+        if any(
+            "already a member of this team" in str(error)
+            for error in non_field_errors
+        ):
+            return Response(
+                {"error": "User is already a member of this team"},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
         return Response(
@@ -131,10 +168,38 @@ class TeamMemberView(APIView):
     def delete(self, request, team_id, user_id):
         user = get_user_from_request(request)
         if not user:
-            return Response({"error": "Authentication required"}, status=status.HTTP_401_UNAUTHORIZED)
-        team = get_object_or_404(Team, id=team_id)
-        if not TeamMember.objects.filter(team=team, user=user, role="lead").exists():
-            return Response({"error": "Only team leads can remove members"}, status=status.HTTP_403_FORBIDDEN)
-        member = get_object_or_404(TeamMember, team=team, user__id=user_id)
+            return Response(
+                {"error": "Authentication required"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        team = Team.objects.filter(id=team_id).first()
+        if not team:
+            return Response(
+                {"error": "Team not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        if not TeamMember.objects.filter(
+            team=team, user=user, role="lead"
+        ).exists():
+            return Response(
+                {"error": "Only team leads can remove members"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        if user_id == user.id:
+            return Response(
+                {"error": "Team lead cannot remove themselves"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        member = TeamMember.objects.filter(team=team, user_id=user_id).first()
+        if not member:
+            return Response(
+                {"error": "Member not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         member.delete()
-        return Response({"message": "Member removed successfully"}, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
