@@ -58,4 +58,5 @@ urlpatterns = [
 
     path("api/teams/", include("teams.urls")),
     path("api/usage/", include("usage.urls")),
+    path("", include("keys.urls")),
 ]
