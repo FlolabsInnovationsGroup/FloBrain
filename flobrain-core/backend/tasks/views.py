@@ -1,6 +1,7 @@
 
 from django.db.models import F, Q
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -109,6 +110,8 @@ def personal_task_detail(request, task_id):
         )
 
     if request.method == "PATCH":
+        old_status = task.status
+
         serializer = TaskUpdateSerializer(
             task,
             data=request.data,
@@ -116,7 +119,28 @@ def personal_task_detail(request, task_id):
         )
 
         if serializer.is_valid():
-            serializer.save()
+            task = serializer.save()
+
+            if (
+                old_status != Task.STATUS_DONE
+                and task.status == Task.STATUS_DONE
+            ):
+                task.completed_by = user
+                task.completed_at = timezone.now()
+                task.save(
+                    update_fields=["completed_by", "completed_at"]
+                )
+
+            elif (
+                old_status == Task.STATUS_DONE
+                and task.status != Task.STATUS_DONE
+            ):
+                task.completed_by = None
+                task.completed_at = None
+                task.save(
+                    update_fields=["completed_by", "completed_at"]
+                )
+
             return Response(TaskSerializer(task).data)
 
         return Response(
@@ -193,7 +217,10 @@ def task_assign(request, task_id):
             detail = "Only the task creator can change its assignment."
         else:
             detail = "Only a team lead can change task assignments."
-        return Response({"detail": detail}, status=status.HTTP_403_FORBIDDEN)
+        return Response(
+            {"detail": detail},
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
     if request.method == "DELETE":
         task.assigned_to = None
@@ -210,6 +237,7 @@ def task_assign(request, task_id):
     assignee = User.objects.filter(
         id=input_serializer.validated_data["user_id"]
     ).first()
+
     if assignee is None:
         return Response(
             {"user_id": ["User not found."]},
@@ -244,6 +272,7 @@ def tasks_assigned_to_me(request):
         F("due_date").asc(nulls_last=True),
         "id",
     )
+
     return Response(AssignmentTaskSerializer(tasks, many=True).data)
 
 
@@ -258,4 +287,5 @@ def tasks_created_by_me(request):
         "-created_at",
         "-id",
     )
+
     return Response(AssignmentTaskSerializer(tasks, many=True).data)

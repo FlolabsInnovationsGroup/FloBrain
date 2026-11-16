@@ -102,6 +102,18 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    completed_by = models.ForeignKey(
+        "users.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="completed_tasks",
+    )
+    completed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
     class Meta:
         db_table = "tasks"
         ordering = ["-created_at"]

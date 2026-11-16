@@ -38,6 +38,7 @@ urlpatterns = [
 
     # Personal Kanban task routes
     path("api/tasks/", include("tasks.urls")),
+    path("api/reports/", include("tasks.report_urls")),
 
     # Swagger / API docs
     path(
