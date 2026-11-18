@@ -55,4 +55,5 @@ urlpatterns = [
     ),
 
     path("api/teams/", include("teams.urls")),
+    path("api/tasks/", include("tasks.urls")),
 ]
