@@ -13,4 +13,19 @@ urlpatterns = [
         views.personal_task_detail,
         name="personal-task-detail",
     ),
+    path(
+        "teams/<int:team_id>/",
+        views.team_board,
+        name="team-board",
+    ),
+    path(
+    "teams/<int:team_id>/tasks/",
+    views.create_team_task,
+    name="create-team-task",
+    ),
+    path(
+        "teams/<int:team_id>/tasks/<int:task_id>/",
+        views.team_task_detail,
+        name="team-task-detail",
+    ),
 ]
