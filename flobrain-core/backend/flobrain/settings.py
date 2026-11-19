@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,9 +24,23 @@ load_dotenv(BASE_DIR / ".env")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-local-development-only")
-
+# DEBUG must be known before SECRET_KEY, because whether a missing SECRET_KEY is
+# fatal depends on it: convenient (insecure) fallback in local dev, hard failure
+# in anything that runs with DEBUG=False (CI, staging, production).
 DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+SECRET_KEY = os.environ.get("SECRET_KEY")
+if not SECRET_KEY:
+    if DEBUG:
+        # Local development only. Never reached when DEBUG=False.
+        SECRET_KEY = "django-insecure-local-development-only"
+    else:
+        # Fail fast and loud rather than silently booting with a guessable key.
+        raise ImproperlyConfigured(
+            "SECRET_KEY environment variable is required when DEBUG=False "
+            "(production/staging/CI). Set it in the environment or .env file; "
+            "see .env.example."
+        )
 
 # Avoid W042 on models that don't define an explicit primary key (e.g. UserGroup, UserRole)
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -148,8 +163,82 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-# CORS: allow frontend (Next.js) to call this API
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS: allow only the confirmed frontend origin(s) to call this API.
+# Team-confirmed (see backend security report): the only approved origin right
+# now is https://flobrain.ai. Do NOT add www/staging/other origins without a
+# separate confirmation - CORS_ALLOWED_ORIGINS below is env-driven precisely so
+# that can happen later without another code change.
+CORS_ALLOW_ALL_ORIGINS = False
+
+# Comma-separated list of allowed origins, e.g.
+#   CORS_ALLOWED_ORIGINS=https://flobrain.ai
+# Production/staging env files must only ever list confirmed origins - never
+# localhost. Local development adds localhost separately below, only when
+# DEBUG=True, so a misconfigured production env can't accidentally inherit a
+# dev-only origin.
+_cors_env_origins = [
+    o.strip()
+    for o in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
+    if o.strip()
+]
+CORS_ALLOWED_ORIGINS = _cors_env_origins
+if DEBUG:
+    # Dev-only convenience for the local Next.js frontend; never present when
+    # DEBUG=False, so this can't leak into a production CORS_ALLOWED_ORIGINS.
+    CORS_ALLOWED_ORIGINS = list(
+        dict.fromkeys(
+            _cors_env_origins + ["http://localhost:3000", "http://127.0.0.1:3000"]
+        )
+    )
+
+# --- AWS Application Load Balancer / HTTPS ---
+# Confirmed architecture: clients -> ALB (TLS terminated on the ALB's HTTPS
+# listener, cert attached there) -> Django over plain HTTP. Django itself never
+# terminates TLS and never directly sees an HTTPS connection.
+#
+# Everything below defaults to the OFF/safe state and must be opted into via
+# environment variables only after DevOps confirms the items in the backend
+# security report (ALB always sets X-Forwarded-Proto on forwarded requests;
+# Django is not reachable except through the ALB; the target group health
+# check is exempt from any HTTPS redirect). Flipping SECURE_SSL_REDIRECT on
+# without that confirmation can create a redirect loop and fail ALB health
+# checks, because Django cannot tell a request was HTTPS without
+# SECURE_PROXY_SSL_HEADER, and health-check probes do not necessarily carry
+# that header at all.
+#
+# TRUST_ALB_FORWARDED_PROTO: set to "True" only once DevOps confirms the ALB
+# (and nothing else reachable from outside it) sets X-Forwarded-Proto on every
+# request forwarded to this service.
+if os.environ.get("TRUST_ALB_FORWARDED_PROTO", "False") == "True":
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# USE_X_FORWARDED_HOST: only relevant if the ALB (or something in front of it,
+# e.g. CloudFront) rewrites Host; off by default to avoid trusting a header we
+# have not confirmed is set exclusively by trusted infrastructure.
+USE_X_FORWARDED_HOST = os.environ.get("USE_X_FORWARDED_HOST", "False") == "True"
+
+# SECURE_SSL_REDIRECT: off by default. Only enable once TRUST_ALB_FORWARDED_PROTO
+# is confirmed safe AND the ALB health check path/behaviour has been verified to
+# not be affected (see backend security report "AWS ALB compatibility review").
+SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "False") == "True"
+
+# HSTS: meaningless/risky to enable before SECURE_SSL_REDIRECT is safely on, so
+# this defaults to 0 (disabled). Do not enable HSTS preload without DevOps
+# sign-off; it is very hard to safely reverse once browsers have cached it.
+SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "0"))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = (
+    os.environ.get("SECURE_HSTS_INCLUDE_SUBDOMAINS", "False") == "True"
+)
+SECURE_HSTS_PRELOAD = os.environ.get("SECURE_HSTS_PRELOAD", "False") == "True"
+
+# Cookies: unlike SECURE_SSL_REDIRECT, these are safe to default on whenever
+# DEBUG is False, independent of whether Django trusts the forwarded-proto
+# header above - they only instruct the *browser* never to send the cookie over
+# a plain-HTTP connection, and real end users only ever reach this app over the
+# ALB's HTTPS listener. Both remain overridable via env for any environment
+# that genuinely needs otherwise (e.g. an internal non-TLS staging box).
+SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", str(not DEBUG)) == "True"
+CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE_SECURE", str(not DEBUG)) == "True"
 
 # REST framework
 REST_FRAMEWORK = {

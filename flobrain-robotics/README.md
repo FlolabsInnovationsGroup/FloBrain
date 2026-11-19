@@ -10,3 +10,7 @@ Controls locomotion, perception modules, and drives servos/motors.
 
 ## Status
 Planned. Previous firmware archived in `legacy/`.
+
+See [`docs/ROBOTICS_ASSESSMENT.md`](../docs/ROBOTICS_ASSESSMENT.md) for the full
+technical assessment (implementation status, hardware/BOM review, gaps, and a
+5-milestone roadmap).

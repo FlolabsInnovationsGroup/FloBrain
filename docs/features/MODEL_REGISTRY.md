@@ -24,7 +24,7 @@ The combination of provider name and model name is unique. API validation also p
 
 ## API
 
-Every endpoint requires the existing `Authorization: Bearer <access-token>` header.
+Every endpoint requires the existing `Authorization: Bearer <access-token>` header. Write methods (`POST`/`PATCH`/`DELETE`) additionally require the authenticated user to hold the `admin` role (see "Authorization" below); `GET` endpoints have no role check and remain open to any authenticated user.
 
 | Method   | Endpoint                    | Purpose                   |
 | -------- | --------------------------- | ------------------------- |
@@ -99,4 +99,8 @@ docker compose exec web python manage.py check
 docker compose exec web python manage.py makemigrations --check --dry-run
 ```
 
-The current authorization model has no administrator role. Consequently, all authenticated users can read and mutate registry records, matching existing API conventions. Restrict mutation endpoints when a role/permission policy is introduced.
+## Authorization
+
+Only authenticated users holding the `admin` role (checked via the `users.permissions.IsAdmin` DRF permission, which reads the `UserRole` join table) may `POST`, `PATCH`, or `DELETE` registry entries. Any authenticated user may read (`GET`) the registry or model-names endpoint - no role check applies to reads. Unauthenticated requests receive `401`; authenticated non-admin requests to write endpoints receive `403`.
+
+There is no role-assignment API or UI. Roles are assigned by an administrator through Django Admin's `User role` list (`UserRole`), which creates the user/role link; the `admin` `Role` row itself is seeded idempotently by `users/migrations/0002_create_admin_role.py`. See `users/permissions.py` for the permission class and `model_registry/tests.py::ModelRegistryPermissionsTestCase` for the behavioral test coverage (401/200/403/success across GET/POST/PATCH/DELETE for unauthenticated, regular, and admin users).
