@@ -10,7 +10,7 @@ from .models import AIModel
 def grant_role(user, role_name):
     """Test helper: assign `role_name` to `user` via the real UserRole join
     table (the only mechanism that exists - there is no role-assignment API).
-    get_or_create on Role mirrors users/migrations/0002_create_admin_role.py,
+    get_or_create on Role mirrors users/migrations/0003_create_admin_role.py,
     so this works whether or not that migration has already seeded the row.
     """
     role, _ = Role.objects.get_or_create(name=role_name)
@@ -34,6 +34,10 @@ class ModelRegistryAPITestCase(TestCase):
         # so the shared test user is granted the admin role it now needs to
         # reach POST/PATCH/DELETE.
         grant_role(self.user, "admin")
+        # Clear rows seeded by model_registry.0002_seed_openai_models so each
+        # test starts from a known empty registry (those tests assert counts
+        # and exact name lists).
+        AIModel.objects.all().delete()
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Bearer {make_access_token(str(self.user.id))}"
         )

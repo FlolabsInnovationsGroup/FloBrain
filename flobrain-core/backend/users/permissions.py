@@ -61,7 +61,7 @@ class HasRole(BasePermission):
 
 class IsAdmin(HasRole):
     """Shortcut for the one role this app currently defines a permission
-    for: `required_role = "admin"` (see users/migrations/0002_create_admin_role.py).
+    for: `required_role = "admin"` (see users/migrations/0003_create_admin_role.py).
     """
 
     required_role = "admin"

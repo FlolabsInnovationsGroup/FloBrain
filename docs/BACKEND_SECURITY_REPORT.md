@@ -136,9 +136,11 @@ Confirmed requirements, implemented and verified:
   `AIModelDetailView` now override `get_permissions()` to apply `IsAdmin()`
   only to `POST` / `PATCH`+`DELETE` respectively; `GET` is unaffected.
   `AIModelNamesView` (`GET`-only) is untouched.
-- `users/migrations/0002_create_admin_role.py` (new) - idempotent
+- `users/migrations/0003_create_admin_role.py` (new) - idempotent
   `RunPython` migration that `get_or_create`s the `admin` `Role` row with a
-  description. Reverse operation removes that row (no-op if already absent).
+  description. Depends on `0002_initial_fix` (already on main) so the
+  users app has a single migration leaf. Reverse operation removes that
+  row (no-op if already absent).
 - `users/admin.py` - `UserRole` registered in Django Admin (approved by
   Ofon). Finding: `User.roles` is a `ManyToManyField` with a custom
   `through=UserRole` model, so Django's default `User` admin form silently
@@ -223,7 +225,7 @@ role via `UserRole`, confirmed by Ofon).
 | `flobrain-core/backend/flobrain/test_cors.py` | New - 12 CORS settings/middleware tests |
 | `flobrain-core/backend/users/permissions.py` | New - `HasRole`/`IsAdmin` DRF permission |
 | `flobrain-core/backend/users/admin.py` | `UserRole` registered in Django Admin |
-| `flobrain-core/backend/users/migrations/0002_create_admin_role.py` | New - seeds the `admin` `Role` |
+| `flobrain-core/backend/users/migrations/0003_create_admin_role.py` | New - seeds the `admin` `Role` (after `0002_initial_fix`) |
 | `flobrain-core/backend/model_registry/views.py` | Admin-only `get_permissions()` on write methods |
 | `flobrain-core/backend/model_registry/tests.py` | 18 new permission tests; existing test user granted `admin` |
 | `docs/features/MODEL_REGISTRY.md` | Authorization section updated to reflect the admin-role gate |

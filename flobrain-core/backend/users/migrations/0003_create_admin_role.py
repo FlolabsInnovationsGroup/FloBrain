@@ -41,7 +41,9 @@ def remove_admin_role(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("users", "0001_initial"),
+        # Must follow 0002_initial_fix (already on main) so the users app
+        # has a single migration leaf instead of two competing 0002_* nodes.
+        ("users", "0002_initial_fix"),
     ]
 
     operations = [
