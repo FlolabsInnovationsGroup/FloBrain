@@ -72,6 +72,9 @@ INSTALLED_APPS = [
     "model_registry",
     "contact",
     "teams",
+    "tasks",
+    "usage",
+    "keys",
 ]
 
 MIDDLEWARE = [
@@ -276,6 +279,23 @@ MULTIMODAL_SERVICE_URL = os.environ.get(
 ).rstrip("/")
 MULTIMODAL_API_KEY = os.environ.get("MULTIMODAL_API_KEY", "")
 MULTIMODAL_SERVICE_TIMEOUT = int(os.environ.get("MULTIMODAL_SERVICE_TIMEOUT", "60"))
+
+# M2 credentialed LLM path (B-7). Set USE_CREDENTIALED_LLM=true to route
+# requests through /invoke instead of /process.
+USE_CREDENTIALED_LLM = os.environ.get("USE_CREDENTIALED_LLM", "false").lower() == "true"
+
+# Shared secret the multimodal service sends when calling internal endpoints.
+# Generate: python -c "import secrets; print(secrets.token_urlsafe(32))"
+MULTIMODAL_SERVICE_SECRET = os.environ.get("MULTIMODAL_SERVICE_SECRET", "")
+
+# ES256 private key (PEM) used to sign request tokens (B-1).
+# Generate: see keys/token_service.py docstring.
+CREDENTIAL_JWT_PRIVATE_KEY = os.environ.get("CREDENTIAL_JWT_PRIVATE_KEY", "")
+CREDENTIAL_JWT_KID = os.environ.get("CREDENTIAL_JWT_KID", "key-1")
+
+# AES-256-GCM key for encrypting stored API keys (B-3).
+# Generate: python -c "import secrets,base64; print(base64.urlsafe_b64encode(secrets.token_bytes(32)).decode())"
+CREDENTIAL_ENCRYPTION_KEY = os.environ.get("CREDENTIAL_ENCRYPTION_KEY", "")
 
 # Memory stores. Clients are created on first use, never at import.
 MEMORY_VECTOR_DB_PATH = os.environ.get("MEMORY_VECTOR_DB_PATH", "/app/vector_db")

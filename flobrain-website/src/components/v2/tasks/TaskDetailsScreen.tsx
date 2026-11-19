@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState, type ChangeEvent } from "react";
 import { createPortal } from "react-dom";
 
 import type { Task } from "@/types/task";
@@ -26,23 +26,104 @@ const DETAIL_SECTIONS: readonly {
   { key: "acceptanceCriteria", title: "Acceptance Criteria" },
 ];
 
-/** Figma collaboration rows — placeholders until backend exists. */
-const PLACEHOLDER_PANELS = [
+type CollaborationPanelConfig = {
+  id: string;
+  title: string;
+  hint: string | null;
+  fields: readonly {
+    key: string;
+    label: string;
+    placeholder: string;
+    multiline?: boolean;
+  }[];
+};
+
+/** Figma collaboration rows — local inputs until backend exists. */
+const COLLABORATION_PANELS: readonly CollaborationPanelConfig[] = [
   {
+    id: "progress",
     title: "Progress Updates / WIP",
     hint: "(files, progress, next steps)",
+    fields: [
+      {
+        key: "files",
+        label: "Files / links",
+        placeholder: "Paste file names or links",
+      },
+      {
+        key: "progress",
+        label: "Progress",
+        placeholder: "What moved forward?",
+        multiline: true,
+      },
+      {
+        key: "nextSteps",
+        label: "Next steps",
+        placeholder: "What comes next?",
+        multiline: true,
+      },
+    ],
   },
   {
+    id: "comments",
     title: "Team/Task Comments",
     hint: "(feedback, questions, blockers)",
+    fields: [
+      {
+        key: "feedback",
+        label: "Feedback",
+        placeholder: "Share feedback",
+        multiline: true,
+      },
+      {
+        key: "questions",
+        label: "Questions",
+        placeholder: "Ask a question",
+        multiline: true,
+      },
+      {
+        key: "blockers",
+        label: "Blockers",
+        placeholder: "Call out blockers",
+        multiline: true,
+      },
+    ],
   },
   {
+    id: "resources",
     title: "Related Resources",
     hint: "(docs, specs, reports, designs)",
+    fields: [
+      {
+        key: "title",
+        label: "Resource title",
+        placeholder: "Doc, spec, report, or design name",
+      },
+      {
+        key: "url",
+        label: "Link",
+        placeholder: "https://",
+      },
+      {
+        key: "notes",
+        label: "Notes",
+        placeholder: "Why this resource matters",
+        multiline: true,
+      },
+    ],
   },
   {
+    id: "brainwriting",
     title: "Brainwriting",
     hint: null,
+    fields: [
+      {
+        key: "idea",
+        label: "Idea",
+        placeholder: "Capture an idea for the team",
+        multiline: true,
+      },
+    ],
   },
 ] as const;
 
@@ -82,6 +163,74 @@ function BackToTasksLink() {
       <ChevronLeft size={12} strokeWidth={2.5} aria-hidden="true" />
       Back to tasks
     </Link>
+  );
+}
+
+function CollaborationPanel({ panel }: { panel: CollaborationPanelConfig }) {
+  const [open, setOpen] = useState(false);
+  const [values, setValues] = useState<Record<string, string>>(() =>
+    Object.fromEntries(panel.fields.map((field) => [field.key, ""]))
+  );
+  const regionId = useId();
+  const toggleLabel = panel.hint ? `${panel.title} ${panel.hint}` : panel.title;
+
+  return (
+    <div className="fb-v2-task-detail-panel" data-open={open ? "true" : undefined}>
+      <button
+        type="button"
+        className="fb-v2-task-detail-panel-toggle"
+        aria-expanded={open}
+        aria-controls={regionId}
+        aria-label={toggleLabel}
+        onClick={() => setOpen((previous) => !previous)}
+      >
+        <span className="fb-v2-task-detail-panel-label">
+          <span className="fb-v2-task-detail-panel-title">{panel.title}</span>
+          {panel.hint ? (
+            <span className="fb-v2-task-detail-panel-hint"> {panel.hint}</span>
+          ) : null}
+        </span>
+        <span className="fb-v2-task-detail-panel-add" aria-hidden="true">
+          {open ? "−" : "+"}
+        </span>
+      </button>
+
+      <div
+        id={regionId}
+        className="fb-v2-task-detail-panel-body"
+        role="region"
+        aria-label={panel.title}
+        hidden={!open}
+      >
+        {panel.fields.map((field) => {
+          const fieldId = `${panel.id}-${field.key}`;
+          const sharedProps = {
+            id: fieldId,
+            name: fieldId,
+            className: field.multiline
+              ? "fb-v2-task-input fb-v2-task-textarea"
+              : "fb-v2-task-input",
+            placeholder: field.placeholder,
+            value: values[field.key] ?? "",
+            onChange: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+              const nextValue = event.target.value;
+              setValues((previous) => ({ ...previous, [field.key]: nextValue }));
+            },
+          };
+
+          return (
+            <label key={field.key} className="fb-v2-task-detail-panel-field" htmlFor={fieldId}>
+              <span className="fb-v2-task-detail-panel-field-label">{field.label}</span>
+              {field.multiline ? (
+                <textarea {...sharedProps} rows={3} />
+              ) : (
+                <input type="text" {...sharedProps} />
+              )}
+            </label>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -149,23 +298,8 @@ export function TaskDetailsScreen({ task }: TaskDetailsScreenProps) {
             </div>
 
             <div className="fb-v2-task-detail-panels">
-              {PLACEHOLDER_PANELS.map((panel) => (
-                <button
-                  key={panel.title}
-                  type="button"
-                  className="fb-v2-task-detail-panel"
-                  aria-label={panel.hint ? `${panel.title} ${panel.hint}` : panel.title}
-                >
-                  <span className="fb-v2-task-detail-panel-label">
-                    <span className="fb-v2-task-detail-panel-title">{panel.title}</span>
-                    {panel.hint ? (
-                      <span className="fb-v2-task-detail-panel-hint"> {panel.hint}</span>
-                    ) : null}
-                  </span>
-                  <span className="fb-v2-task-detail-panel-add" aria-hidden="true">
-                    +
-                  </span>
-                </button>
+              {COLLABORATION_PANELS.map((panel) => (
+                <CollaborationPanel key={panel.id} panel={panel} />
               ))}
             </div>
 
