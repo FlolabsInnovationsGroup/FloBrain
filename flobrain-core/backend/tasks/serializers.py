@@ -73,9 +73,13 @@ class TaskDetailSerializer(serializers.ModelSerializer):
             "due_date",
             "created_at",
             "updated_at",
+            "completed_at",
+            "completed_by",
             "comments",
         ]
-        read_only_fields = ["id", "created_at", "updated_at", "comments"]
+        read_only_fields = [
+            "id", "created_at", "updated_at", "completed_at", "completed_by", "comments"
+        ]
 
 
 class TaskCreateSerializer(serializers.ModelSerializer):

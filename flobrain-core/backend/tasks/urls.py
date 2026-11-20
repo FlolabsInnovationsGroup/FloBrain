@@ -19,13 +19,40 @@ urlpatterns = [
         name="team-board",
     ),
     path(
-    "teams/<int:team_id>/tasks/",
-    views.create_team_task,
-    name="create-team-task",
+        "teams/<int:team_id>/tasks/",
+        views.create_team_task,
+        name="create-team-task",
     ),
     path(
         "teams/<int:team_id>/tasks/<int:task_id>/",
         views.team_task_detail,
         name="team-task-detail",
+    ),
+    # B4: Assignment API
+    path(
+        "<int:task_id>/assign/",
+        views.task_assign,
+        name="task-assign",
+    ),
+    path(
+        "assigned-to-me/",
+        views.tasks_assigned_to_me,
+        name="tasks-assigned-to-me",
+    ),
+    path(
+        "created-by-me/",
+        views.tasks_created_by_me,
+        name="tasks-created-by-me",
+    ),
+    # B6: Task Comments API
+    path(
+        "<int:task_id>/comments/",
+        comment_views.task_comments,
+        name="task-comments",
+    ),
+    path(
+        "<int:task_id>/comments/<int:comment_id>/",
+        comment_views.task_comment_detail,
+        name="task-comment-detail",
     ),
 ]
