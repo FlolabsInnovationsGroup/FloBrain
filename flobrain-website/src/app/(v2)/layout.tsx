@@ -1,3 +1,4 @@
+
 "use client";
 
 import { usePathname } from "next/navigation";
@@ -8,12 +9,16 @@ import { ProjectRightPanel } from "./leadership/projects/components/ProjectRight
 
 export default function V2Layout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isProjectsPage = pathname === "/leadership/projects";
+
+  const showSidebars =
+    pathname.startsWith("/leadership/projects") ||
+    pathname.startsWith("/calendar") ||
+    pathname.startsWith("/docs");
 
   return (
     <PageStructure
-      leftPanel={isProjectsPage ? <ProjectLeftPanel /> : undefined}
-      rightPanel={isProjectsPage ? <ProjectRightPanel /> : undefined}
+      leftPanel={showSidebars ? <ProjectLeftPanel /> : undefined}
+      rightPanel={showSidebars ? <ProjectRightPanel /> : undefined}
     >
       {children}
     </PageStructure>
