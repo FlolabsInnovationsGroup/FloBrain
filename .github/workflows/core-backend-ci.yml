@@ -54,5 +54,9 @@ jobs:
     - name: Migrations are up to date
       run: python manage.py makemigrations --check --dry-run
 
-    - name: Test (memory, brain, users)
-      run: python manage.py test memory brain users --noinput
+    - name: Test (all apps)
+      # Previously limited to "memory brain users"; teams and model_registry had
+      # their own passing test suites that CI silently never ran. Running the
+      # full discovered suite picks those up (and any future app's tests)
+      # automatically. Verified locally: 153/153 tests pass with this command.
+      run: python manage.py test --noinput

@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from users.permissions import IsAdmin
 from users.views import get_user_from_request
 
 from .models import AIModel
@@ -30,7 +31,15 @@ def _validation_error(serializer):
 
 
 class AIModelListCreateView(APIView):
-    """List registered models or add a model to the shared registry."""
+    """List registered models (any authenticated user) or add a model to the
+    shared registry (admin role required)."""
+
+    def get_permissions(self):
+        # GET stays open to every authenticated user (checked manually below,
+        # same as before); only the write operation requires the admin role.
+        if self.request.method == "POST":
+            return [IsAdmin()]
+        return []
 
     def get(self, request):
         auth_error = _authentication_error(request)
@@ -82,7 +91,16 @@ class AIModelNamesView(APIView):
 
 
 class AIModelDetailView(APIView):
-    """Retrieve, update, or delete one registered model."""
+    """Retrieve one registered model (any authenticated user), or update /
+    delete it (admin role required). Note: this view has never implemented
+    PUT, only PATCH - that is pre-existing and unrelated to this change."""
+
+    def get_permissions(self):
+        # GET stays open to every authenticated user (checked manually below,
+        # same as before); PATCH/DELETE require the admin role.
+        if self.request.method in ("PATCH", "DELETE"):
+            return [IsAdmin()]
+        return []
 
     @staticmethod
     def _get_model(pk):
