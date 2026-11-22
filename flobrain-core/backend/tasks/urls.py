@@ -44,6 +44,11 @@ urlpatterns = [
         views.tasks_created_by_me,
         name="tasks-created-by-me",
     ),
+    path(
+        "<int:task_id>/",
+        views.task_by_id,
+        name="task-by-id",
+    ),
     # B6: Task Comments API
     path(
         "<int:task_id>/comments/",

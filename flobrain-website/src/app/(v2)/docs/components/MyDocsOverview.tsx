@@ -1,5 +1,7 @@
+"use client";
 
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import {
   FileText,
   Paperclip,
@@ -9,33 +11,7 @@ import {
   Upload,
   ChevronRight,
 } from "lucide-react";
-
-const recentActivities = [
-  {
-    title: "Project Documentation",
-    description: "Document created",
-    date: "Today",
-    type: "document",
-  },
-  {
-    title: "Design Reference",
-    description: "Attachment uploaded",
-    date: "Yesterday",
-    type: "attachment",
-  },
-  {
-    title: "Team Meeting Notes",
-    description: "Document updated",
-    date: "Nov 18, 2026",
-    type: "document",
-  },
-  {
-    title: "Project Requirements",
-    description: "Attachment uploaded",
-    date: "Nov 17, 2026",
-    type: "attachment",
-  },
-];
+import { fetchDocsRecent, v2Keys, formatIsoDate } from "@/lib/v2-api";
 
 const actions = [
   {
@@ -59,6 +35,18 @@ const actions = [
 ];
 
 export function MyDocsOverview() {
+  const { data: recentData, isLoading } = useQuery({
+    queryKey: v2Keys.docsRecent,
+    queryFn: fetchDocsRecent,
+  });
+
+  const recentActivities = (recentData ?? []).map((item) => ({
+    title: item.title,
+    description: item.type === "document" ? "Document" : "Attachment uploaded",
+    date: formatIsoDate(item.date),
+    type: item.type,
+  }));
+
   return (
     <div
       className="flex min-h-full flex-col gap-6 p-5 sm:p-6"
@@ -168,49 +156,58 @@ export function MyDocsOverview() {
         </div>
 
         <div className="divide-y" style={{ borderColor: "var(--fb-v2-border)" }}>
-          {recentActivities.map((activity) => {
-            const Icon =
-              activity.type === "document" ? FileText : Paperclip;
+          {isLoading ? (
+            <div className="px-5 py-6 text-center text-sm" style={{ color: "var(--fb-v2-text-muted)" }}>
+              Loading recent activity…
+            </div>
+          ) : recentActivities.length === 0 ? (
+            <div className="px-5 py-6 text-center text-sm" style={{ color: "var(--fb-v2-text-muted)" }}>
+              No recent activity yet.
+            </div>
+          ) : (
+            recentActivities.map((activity, index) => {
+              const Icon = activity.type === "document" ? FileText : Paperclip;
 
-            return (
-              <div
-                key={activity.title}
-                className="flex items-center justify-between gap-3 px-5 py-4 transition-colors hover:bg-white/[0.03]"
-              >
-                <div className="flex min-w-0 items-center gap-3">
-                  <div
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
-                    style={{
-                      background: "var(--fb-v2-page-bg)",
-                      color: "var(--fb-v2-accent)",
-                    }}
-                  >
-                    <Icon size={18} />
-                  </div>
-                  <div className="min-w-0">
-                    <h3
-                      className="truncate text-sm font-medium"
-                      style={{ color: "var(--fb-v2-heading)" }}
-                    >
-                      {activity.title}
-                    </h3>
-                    <p
-                      className="mt-1 text-xs"
-                      style={{ color: "var(--fb-v2-text-muted)" }}
-                    >
-                      {activity.description}
-                    </p>
-                  </div>
-                </div>
-                <span
-                  className="shrink-0 text-xs"
-                  style={{ color: "var(--fb-v2-text-subtle)" }}
+              return (
+                <div
+                  key={index}
+                  className="flex items-center justify-between gap-3 px-5 py-4 transition-colors hover:bg-white/[0.03]"
                 >
-                  {activity.date}
-                </span>
-              </div>
-            );
-          })}
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+                      style={{
+                        background: "var(--fb-v2-page-bg)",
+                        color: "var(--fb-v2-accent)",
+                      }}
+                    >
+                      <Icon size={18} />
+                    </div>
+                    <div className="min-w-0">
+                      <h3
+                        className="truncate text-sm font-medium"
+                        style={{ color: "var(--fb-v2-heading)" }}
+                      >
+                        {activity.title}
+                      </h3>
+                      <p
+                        className="mt-1 text-xs"
+                        style={{ color: "var(--fb-v2-text-muted)" }}
+                      >
+                        {activity.description}
+                      </p>
+                    </div>
+                  </div>
+                  <span
+                    className="shrink-0 text-xs"
+                    style={{ color: "var(--fb-v2-text-subtle)" }}
+                  >
+                    {activity.date}
+                  </span>
+                </div>
+              );
+            })
+          )}
         </div>
       </section>
     </div>

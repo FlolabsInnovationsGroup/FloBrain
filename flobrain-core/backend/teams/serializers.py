@@ -2,6 +2,15 @@ from rest_framework import serializers
 from django.db import transaction
 from .models import Team, TeamMember
 from users.models import User
+from tasks.models import Task
+from projects.serializers import TeamProjectSerializer
+
+
+def _lead_name(team):
+    lead_member = team.members.filter(role="lead").select_related("user").first()
+    if lead_member:
+        return getattr(lead_member.user, "full_name", None) or lead_member.user.email
+    return getattr(team.created_by, "full_name", None) or team.created_by.email
 
 
 class TeamMemberSerializer(serializers.ModelSerializer):
@@ -19,15 +28,39 @@ class TeamMemberSerializer(serializers.ModelSerializer):
 
 
 class TeamListSerializer(serializers.ModelSerializer):
+    lead = serializers.SerializerMethodField()
     member_count = serializers.SerializerMethodField()
+    progress = serializers.SerializerMethodField()
+    completed_tasks = serializers.SerializerMethodField()
+    total_tasks = serializers.SerializerMethodField()
+
+    def get_lead(self, obj):
+        return _lead_name(obj)
 
     def get_member_count(self, obj):
         return obj.members.count()
 
+    def get_progress(self, obj):
+        total = Task.objects.filter(board__team=obj).count()
+        if total == 0:
+            return 0
+        done = Task.objects.filter(board__team=obj, status=Task.STATUS_DONE).count()
+        return round(done / total * 100)
+
+    def get_completed_tasks(self, obj):
+        return Task.objects.filter(board__team=obj, status=Task.STATUS_DONE).count()
+
+    def get_total_tasks(self, obj):
+        return Task.objects.filter(board__team=obj).count()
+
     class Meta:
         model = Team
-        fields = ["id", "name", "member_count", "created_at"]
-        read_only_fields = ["id", "name", "member_count", "created_at"]
+        fields = [
+            "id", "name", "description", "lead",
+            "member_count", "progress", "completed_tasks", "total_tasks",
+            "created_at",
+        ]
+        read_only_fields = fields
 
 
 class TeamCreatorSerializer(serializers.ModelSerializer):
@@ -85,6 +118,47 @@ class TeamAddMemberSerializer(serializers.ModelSerializer):
 class TeamDetailSerializer(serializers.ModelSerializer):
     created_by = TeamCreatorSerializer(read_only=True)
     members = TeamMemberSerializer(many=True, read_only=True)
+    lead = serializers.SerializerMethodField()
+    member_count = serializers.SerializerMethodField()
+    progress = serializers.SerializerMethodField()
+    completed_tasks = serializers.SerializerMethodField()
+    total_tasks = serializers.SerializerMethodField()
+    blockers = serializers.SerializerMethodField()
+    active_interns = serializers.SerializerMethodField()
+    active_projects = serializers.SerializerMethodField()
+    projects = serializers.SerializerMethodField()
+
+    def get_lead(self, obj):
+        return _lead_name(obj)
+
+    def get_member_count(self, obj):
+        return obj.members.count()
+
+    def get_progress(self, obj):
+        total = Task.objects.filter(board__team=obj).count()
+        if total == 0:
+            return 0
+        done = Task.objects.filter(board__team=obj, status=Task.STATUS_DONE).count()
+        return round(done / total * 100)
+
+    def get_completed_tasks(self, obj):
+        return Task.objects.filter(board__team=obj, status=Task.STATUS_DONE).count()
+
+    def get_total_tasks(self, obj):
+        return Task.objects.filter(board__team=obj).count()
+
+    def get_blockers(self, obj):
+        return Task.objects.filter(board__team=obj, status=Task.STATUS_BLOCKED).count()
+
+    def get_active_interns(self, obj):
+        return obj.members.filter(role="intern").count()
+
+    def get_active_projects(self, obj):
+        return obj.team_projects.exclude(status="completed").count()
+
+    def get_projects(self, obj):
+        projects = obj.team_projects.select_related("team").all()
+        return TeamProjectSerializer(projects, many=True).data
 
     class Meta:
         model = Team
@@ -92,8 +166,17 @@ class TeamDetailSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "description",
+            "lead",
             "created_by",
             "members",
+            "member_count",
+            "progress",
+            "completed_tasks",
+            "total_tasks",
+            "blockers",
+            "active_interns",
+            "active_projects",
+            "projects",
             "created_at",
             "updated_at",
         ]

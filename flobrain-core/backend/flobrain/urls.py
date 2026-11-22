@@ -16,6 +16,8 @@ Including another URLconf
 """
 
 
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
@@ -60,4 +62,7 @@ urlpatterns = [
     path("api/teams/", include("teams.urls")),
     path("api/usage/", include("usage.urls")),
     path("", include("keys.urls")),
-]
+    path("api/projects/", include("projects.urls")),
+    path("api/docs/", include("docs.urls")),
+    path("api/calendar/", include("calendar_app.urls")),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,28 +1,56 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Users } from "lucide-react";
 import { EmptyState } from "@/components/states";
 import { InternCard } from "./InternCard";
-import { mockInterns } from "./mockData";
+import { fetchInterns, v2Keys } from "@/lib/v2-api";
 
 export function InternsHome() {
   const [activeTeam, setActiveTeam] = useState("All");
 
+  const { data, isLoading, isError } = useQuery({
+    queryKey: v2Keys.interns,
+    queryFn: fetchInterns,
+  });
+
+  const interns = data ?? [];
+
   const teams = useMemo(
-    () => ["All", ...Array.from(new Set(mockInterns.map((intern) => intern.team))).filter(Boolean)],
-    []
+    () => ["All", ...Array.from(new Set(interns.map((intern) => intern.team))).filter(Boolean)],
+    [interns]
   );
 
   const filteredInterns = useMemo(
     () =>
       activeTeam === "All"
-        ? mockInterns
-        : mockInterns.filter((intern) => intern.team === activeTeam),
-    [activeTeam]
+        ? interns
+        : interns.filter((intern) => intern.team === activeTeam),
+    [interns, activeTeam]
   );
 
-  if (mockInterns.length === 0) {
+  if (isLoading) {
+    return (
+      <main className="h-full w-full px-6 py-6 md:py-8 lg:px-[72px]">
+        <p className="text-sm text-center" style={{ color: "var(--fb-v2-text-muted)" }}>
+          Loading interns…
+        </p>
+      </main>
+    );
+  }
+
+  if (isError) {
+    return (
+      <main className="h-full w-full px-6 py-6 md:py-8 lg:px-[72px]">
+        <p className="text-sm text-center" style={{ color: "var(--fb-v2-error)" }}>
+          Failed to load interns. Please try again.
+        </p>
+      </main>
+    );
+  }
+
+  if (interns.length === 0) {
     return (
       <main className="h-full w-full px-6 py-6 md:py-8 lg:px-[72px]">
         <div className="mx-auto w-full max-w-[1200px]">
@@ -66,14 +94,12 @@ export function InternsHome() {
       </div>
 
       <div className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-6 md:py-8 lg:px-[72px]">
-        {/* Intern Count */}
         <div className="mb-4">
           <h2 className="text-sm font-semibold text-[var(--fb-v2-text)]">
             {filteredInterns.length} interns
           </h2>
         </div>
 
-        {/* Intern Cards */}
         <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3">
           {filteredInterns.map((intern) => (
             <InternCard key={intern.id} intern={intern} />

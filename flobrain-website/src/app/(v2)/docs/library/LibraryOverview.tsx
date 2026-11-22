@@ -1,8 +1,8 @@
-
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   FileText,
@@ -10,60 +10,96 @@ import {
   Star,
   Clock3,
 } from "lucide-react";
+import { fetchDocs, fetchAttachments, v2Keys, formatIsoDate } from "@/lib/v2-api";
+import { apiClient } from "@/lib/axios";
 
 type LibraryItem = {
   id: number;
   name: string;
   modified: string;
   favorite: boolean;
+  type: "document" | "attachment";
 };
 
-const initialDocuments: LibraryItem[] = [
-  { id: 1, name: "Project Documentation", modified: "Nov 20, 2026", favorite: true },
-  { id: 2, name: "Team Meeting Notes", modified: "Nov 18, 2026", favorite: false },
-  { id: 3, name: "Project Requirements", modified: "Nov 17, 2026", favorite: false },
-];
-
-const initialAttachments: LibraryItem[] = [
-  { id: 4, name: "Design Reference.pdf", modified: "Nov 19, 2026", favorite: true },
-  { id: 5, name: "Project Assets.zip", modified: "Nov 16, 2026", favorite: false },
-];
-
 export function LibraryOverview() {
-  const [documents, setDocuments] = useState(initialDocuments);
-  const [attachments, setAttachments] = useState(initialAttachments);
+  const queryClient = useQueryClient();
   const [showFavorites, setShowFavorites] = useState(false);
+
+  const { data: docsData, isLoading: docsLoading } = useQuery({
+    queryKey: v2Keys.docs,
+    queryFn: fetchDocs,
+  });
+
+  const { data: attachmentsData, isLoading: attachmentsLoading } = useQuery({
+    queryKey: v2Keys.attachments,
+    queryFn: fetchAttachments,
+  });
+
+  const documents: LibraryItem[] = useMemo(
+    () =>
+      (docsData ?? []).map((d) => ({
+        id: d.id,
+        name: d.title,
+        modified: formatIsoDate(d.updated_at),
+        favorite: d.is_favorite,
+        type: "document" as const,
+      })),
+    [docsData]
+  );
+
+  const attachments: LibraryItem[] = useMemo(
+    () =>
+      (attachmentsData ?? []).map((a) => ({
+        id: a.id,
+        name: a.name,
+        modified: formatIsoDate(a.created_at),
+        favorite: a.is_favorite,
+        type: "attachment" as const,
+      })),
+    [attachmentsData]
+  );
+
+  const toggleDocFavoriteMutation = useMutation({
+    mutationFn: ({ id, favorite }: { id: number; favorite: boolean }) =>
+      apiClient.patch(`/api/docs/${id}/`, { is_favorite: favorite }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: v2Keys.docs }),
+  });
+
+  const toggleAttachmentFavoriteMutation = useMutation({
+    mutationFn: ({ id, favorite }: { id: number; favorite: boolean }) =>
+      apiClient.patch(`/api/docs/attachments/${id}/`, { is_favorite: favorite }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: v2Keys.attachments }),
+  });
 
   function toggleFavorite(id: number, type: "document" | "attachment") {
     if (type === "document") {
-      setDocuments((current) =>
-        current.map((item) =>
-          item.id === id ? { ...item, favorite: !item.favorite } : item,
-        ),
-      );
+      const item = documents.find((d) => d.id === id);
+      if (item) toggleDocFavoriteMutation.mutate({ id, favorite: !item.favorite });
     } else {
-      setAttachments((current) =>
-        current.map((item) =>
-          item.id === id ? { ...item, favorite: !item.favorite } : item,
-        ),
-      );
+      const item = attachments.find((a) => a.id === id);
+      if (item) toggleAttachmentFavoriteMutation.mutate({ id, favorite: !item.favorite });
     }
   }
 
-  const visibleDocuments = showFavorites
-    ? documents.filter((item) => item.favorite)
-    : documents;
-
-  const visibleAttachments = showFavorites
-    ? attachments.filter((item) => item.favorite)
-    : attachments;
-
+  const visibleDocuments = showFavorites ? documents.filter((item) => item.favorite) : documents;
+  const visibleAttachments = showFavorites ? attachments.filter((item) => item.favorite) : attachments;
   const favoriteCount =
     documents.filter((item) => item.favorite).length +
     attachments.filter((item) => item.favorite).length;
 
   function renderItems(items: LibraryItem[], type: "document" | "attachment") {
     const Icon = type === "document" ? FileText : Paperclip;
+    const isLoading = type === "document" ? docsLoading : attachmentsLoading;
+
+    if (isLoading) {
+      return (
+        <div className="px-5 py-8 text-center">
+          <p className="text-sm" style={{ color: "var(--fb-v2-text-muted)" }}>
+            Loading…
+          </p>
+        </div>
+      );
+    }
 
     if (items.length === 0) {
       return (
@@ -84,19 +120,13 @@ export function LibraryOverview() {
         <div className="flex min-w-0 items-center gap-3">
           <div
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
-            style={{
-              background: "var(--fb-v2-page-bg)",
-              color: "var(--fb-v2-accent)",
-            }}
+            style={{ background: "var(--fb-v2-page-bg)", color: "var(--fb-v2-accent)" }}
           >
             <Icon size={19} />
           </div>
 
           <div className="min-w-0">
-            <h3
-              className="truncate text-sm font-medium"
-              style={{ color: "var(--fb-v2-heading)" }}
-            >
+            <h3 className="truncate text-sm font-medium" style={{ color: "var(--fb-v2-heading)" }}>
               {item.name}
             </h3>
             <div
@@ -131,7 +161,6 @@ export function LibraryOverview() {
       className="flex min-h-full flex-col gap-6 p-5 sm:p-6"
       style={{ color: "var(--fb-v2-text)" }}
     >
-      {/* Header */}
       <div>
         <Link
           href="/docs"
@@ -144,16 +173,10 @@ export function LibraryOverview() {
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1
-              className="text-2xl font-semibold"
-              style={{ color: "var(--fb-v2-heading)" }}
-            >
+            <h1 className="text-2xl font-semibold" style={{ color: "var(--fb-v2-heading)" }}>
               Library
             </h1>
-            <p
-              className="mt-1 text-sm"
-              style={{ color: "var(--fb-v2-text-muted)" }}
-            >
+            <p className="mt-1 text-sm" style={{ color: "var(--fb-v2-text-muted)" }}>
               Browse and manage your documents and attachments.
             </p>
           </div>
@@ -164,7 +187,6 @@ export function LibraryOverview() {
         </div>
       </div>
 
-      {/* Favorites filter */}
       <button
         type="button"
         onClick={() => setShowFavorites((current) => !current)}
@@ -184,30 +206,20 @@ export function LibraryOverview() {
         Favorites
         <span
           className="rounded-full px-2 py-0.5 text-xs"
-          style={{
-            background: "var(--fb-v2-page-bg)",
-            color: "var(--fb-v2-text-muted)",
-          }}
+          style={{ background: "var(--fb-v2-page-bg)", color: "var(--fb-v2-text-muted)" }}
         >
           {favoriteCount}
         </span>
       </button>
 
-      {/* Recent Documents */}
       <section
         className="overflow-hidden rounded-xl border"
-        style={{
-          background: "var(--fb-v2-surface)",
-          borderColor: "var(--fb-v2-border)",
-        }}
+        style={{ background: "var(--fb-v2-surface)", borderColor: "var(--fb-v2-border)" }}
       >
         <div className="flex items-center justify-between gap-3 px-5 py-4">
           <div className="flex items-center gap-2">
             <FileText size={18} style={{ color: "var(--fb-v2-accent)" }} />
-            <h2
-              className="text-base font-semibold"
-              style={{ color: "var(--fb-v2-heading)" }}
-            >
+            <h2 className="text-base font-semibold" style={{ color: "var(--fb-v2-heading)" }}>
               Recent Documents
             </h2>
           </div>
@@ -215,25 +227,17 @@ export function LibraryOverview() {
             {visibleDocuments.length} items
           </span>
         </div>
-
         {renderItems(visibleDocuments, "document")}
       </section>
 
-      {/* Recent Attachments */}
       <section
         className="overflow-hidden rounded-xl border"
-        style={{
-          background: "var(--fb-v2-surface)",
-          borderColor: "var(--fb-v2-border)",
-        }}
+        style={{ background: "var(--fb-v2-surface)", borderColor: "var(--fb-v2-border)" }}
       >
         <div className="flex items-center justify-between gap-3 px-5 py-4">
           <div className="flex items-center gap-2">
             <Paperclip size={18} style={{ color: "var(--fb-v2-accent)" }} />
-            <h2
-              className="text-base font-semibold"
-              style={{ color: "var(--fb-v2-heading)" }}
-            >
+            <h2 className="text-base font-semibold" style={{ color: "var(--fb-v2-heading)" }}>
               Recent Attachments
             </h2>
           </div>
@@ -241,7 +245,6 @@ export function LibraryOverview() {
             {visibleAttachments.length} items
           </span>
         </div>
-
         {renderItems(visibleAttachments, "attachment")}
       </section>
     </div>
