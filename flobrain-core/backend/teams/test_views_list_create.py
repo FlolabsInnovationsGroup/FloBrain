@@ -105,7 +105,10 @@ class TeamListCreateViewTests(TestCase):
         response = self.client.get(URL)
 
         item = response.json()[0]
-        self.assertEqual(set(item.keys()), {"id", "name", "member_count", "created_at"})
+        self.assertEqual(
+            set(item.keys()),
+            {"id", "name", "description", "lead", "member_count", "progress", "completed_tasks", "total_tasks", "created_at"},
+        )
         self.assertEqual(item["name"], "Fields")
         self.assertEqual(item["member_count"], 2)
 
