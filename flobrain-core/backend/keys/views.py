@@ -1,5 +1,8 @@
+import json
 import logging
 import os
+import urllib.error
+import urllib.request
 
 import jwt
 from django.conf import settings
@@ -12,7 +15,7 @@ from rest_framework.views import APIView
 from users.views import get_user_from_request
 
 from .crypto import decrypt_key, encrypt_key
-from .models import CredentialVersion, ProviderCredential, TokenReplayGuard
+from .models import CredentialValidation, CredentialVersion, ProviderCredential, TokenReplayGuard
 from .serializers import (
     CredentialResolveSerializer,
     UserKeyCreateSerializer,
@@ -246,6 +249,126 @@ class UserKeyDetailView(APIView):
         ).update(state=CredentialVersion.STATE_DELETED, disabled_at=now)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class UserKeyValidateView(APIView):
+    """
+    POST /api/keys/{credential_id}/validate/
+
+    Triggers validation of the user's pending credential against the provider.
+    Issues a validate-kind JWT, calls multimodal /validate, stores the result,
+    and transitions the version PENDING → ACTIVE if the check passes.
+
+    C-2: a result is stored only for the specific version the token names.
+    If that version is no longer the latest pending version when the result
+    arrives, the state is NOT updated (but the result is still stored for audit).
+    """
+
+    def post(self, request, credential_id):
+        user = get_user_from_request(request)
+        if not user:
+            return Response({"error": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            cred = ProviderCredential.objects.get(
+                id=credential_id, user=user, source=ProviderCredential.SOURCE_CUSTOMER
+            )
+        except ProviderCredential.DoesNotExist:
+            return Response({"error": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        version_obj = (
+            CredentialVersion.objects
+            .filter(credential=cred)
+            .exclude(state=CredentialVersion.STATE_DELETED)
+            .order_by("-version")
+            .first()
+        )
+        if not version_obj:
+            return Response({"error": "No credential version available."}, status=status.HTTP_409_CONFLICT)
+        if version_obj.state not in (CredentialVersion.STATE_PENDING, CredentialVersion.STATE_ACTIVE):
+            return Response(
+                {"error": "Credential is not in a validatable state."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        try:
+            token = token_service.issue_token(
+                scope_id=cred.scope_id,
+                credential_ref=str(cred.id),
+                credential_version=version_obj.version,
+                credential_source=cred.source,
+                provider=cred.provider,
+                kind="validate",
+                targets=version_obj.permitted_targets,
+            )
+        except RuntimeError as exc:
+            logger.error("Validate token issue failed for credential %s: %s", credential_id, exc)
+            return Response({"error": "Service configuration error."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        base_url = (
+            getattr(settings, "MULTIMODAL_SERVICE_URL", "") or os.environ.get("MULTIMODAL_SERVICE_URL", "")
+        ).rstrip("/")
+        if not base_url:
+            return Response({"error": "Multimodal service not configured."}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        url = f"{base_url}/validate"
+        payload_bytes = json.dumps({}).encode("utf-8")
+        req = urllib.request.Request(
+            url,
+            data=payload_bytes,
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+            method="POST",
+        )
+        timeout = int(getattr(settings, "MULTIMODAL_SERVICE_TIMEOUT", 0) or os.environ.get("MULTIMODAL_SERVICE_TIMEOUT", "60"))
+
+        val_status = CredentialValidation.STATUS_INDETERMINATE
+        reason_code = ""
+        provider_request_id = None
+
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                result_data = json.loads(resp.read().decode("utf-8"))
+            val_status = result_data.get("status", CredentialValidation.STATUS_INDETERMINATE)
+            reason_code = result_data.get("reason_code", "")
+            provider_request_id = result_data.get("provider_request_id")
+        except urllib.error.HTTPError as exc:
+            reason_code = f"http_{exc.code}"
+        except urllib.error.URLError as exc:
+            reason_code = "service_unavailable"
+            return Response(
+                {"error": "Validation service unavailable.", "reason_code": reason_code},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        # Store result and conditionally activate (C-2: only if still the latest version)
+        with transaction.atomic():
+            CredentialValidation.objects.create(
+                credential_version=version_obj,
+                status=val_status,
+                reason_code=reason_code,
+                provider_request_id=provider_request_id or "",
+                checked_at=timezone.now(),
+            )
+
+            if val_status == CredentialValidation.STATUS_VALID and version_obj.state == CredentialVersion.STATE_PENDING:
+                latest = (
+                    CredentialVersion.objects
+                    .filter(credential=cred)
+                    .exclude(state=CredentialVersion.STATE_DELETED)
+                    .order_by("-version")
+                    .first()
+                )
+                if latest and latest.pk == version_obj.pk:
+                    version_obj.state = CredentialVersion.STATE_ACTIVE
+                    version_obj.activated_at = timezone.now()
+                    version_obj.save(update_fields=["state", "activated_at"])
+
+        return Response({
+            "status": val_status,
+            "reason_code": reason_code,
+            "version": version_obj.version,
+            "state": version_obj.state,
+        })
 
 
 def _default_targets(provider: str) -> list[dict]:
