@@ -1,0 +1,11 @@
+.git
+.env
+.env.*
+.venv/
+venv/
+flobrain-backend-venv/
+__pycache__/
+*.py[cod]
+*.log
+db.sqlite3
+vector_db/

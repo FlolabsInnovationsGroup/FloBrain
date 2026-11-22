@@ -1,0 +1,61 @@
+/* Contact page: CSS-only entrance (no Framer) — compositor-friendly, runs once */
+
+@media (prefers-reduced-motion: no-preference) {
+  .contact-page .contact-hero-title {
+    animation: contact-in-up 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .contact-page .contact-hero-desc {
+    animation: contact-in-fade 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.07s both;
+  }
+
+  .contact-page .contact-col-left {
+    animation: contact-in-left 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+  }
+
+  .contact-page .contact-col-right {
+    animation: contact-in-right 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+  }
+}
+
+@keyframes contact-in-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes contact-in-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contact-in-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-28px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes contact-in-right {
+  from {
+    opacity: 0;
+    transform: translate3d(28px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}

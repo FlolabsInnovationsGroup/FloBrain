@@ -1,0 +1,20 @@
+# Codes owners of the repository
+# These owners will be automatically requested for review when code is modified
+
+# Global default
+*       @flomad-labs/core-team
+
+# Backend
+/flobrain-cloud/   @flomad-labs/backend-team
+/flobrain-core/    @flomad-labs/backend-team
+
+# Frontend
+/flobrain-website/ @flomad-labs/frontend-team
+
+# Hardware & Firmware
+/flobrain-robotics/ @flomad-labs/hardware-team
+/flobrain-hal/      @flomad-labs/hardware-team
+/hardware/          @flomad-labs/hardware-team
+
+# Documentation
+/docs/              @flomad-labs/docs-team

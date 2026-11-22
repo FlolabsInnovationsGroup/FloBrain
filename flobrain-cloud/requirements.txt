@@ -1,0 +1,22 @@
+# File: requirements.txt
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-multipart
+sqlalchemy
+# Add whisper when you get to that task
+# openai-whisper
+openai
+elevenlabs
+faiss-cpu
+numpy
+python-dotenv
+tenacity
+
+# Dev / CI
+pytest
+ruff
+mypy
+black
+httpx

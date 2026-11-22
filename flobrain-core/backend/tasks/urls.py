@@ -1,0 +1,63 @@
+from django.urls import path
+from . import comment_views, views
+
+urlpatterns = [
+    path("personal/", views.personal_board, name="personal-board"),
+    path(
+        "personal/tasks/",
+        views.create_personal_task,
+        name="create-personal-task",
+    ),
+    path(
+        "personal/tasks/<int:task_id>/",
+        views.personal_task_detail,
+        name="personal-task-detail",
+    ),
+    path(
+        "teams/<int:team_id>/",
+        views.team_board,
+        name="team-board",
+    ),
+    path(
+        "teams/<int:team_id>/tasks/",
+        views.create_team_task,
+        name="create-team-task",
+    ),
+    path(
+        "teams/<int:team_id>/tasks/<int:task_id>/",
+        views.team_task_detail,
+        name="team-task-detail",
+    ),
+    # B4: Assignment API
+    path(
+        "<int:task_id>/assign/",
+        views.task_assign,
+        name="task-assign",
+    ),
+    path(
+        "assigned-to-me/",
+        views.tasks_assigned_to_me,
+        name="tasks-assigned-to-me",
+    ),
+    path(
+        "created-by-me/",
+        views.tasks_created_by_me,
+        name="tasks-created-by-me",
+    ),
+    path(
+        "<int:task_id>/",
+        views.task_by_id,
+        name="task-by-id",
+    ),
+    # B6: Task Comments API
+    path(
+        "<int:task_id>/comments/",
+        comment_views.task_comments,
+        name="task-comments",
+    ),
+    path(
+        "<int:task_id>/comments/<int:comment_id>/",
+        comment_views.task_comment_detail,
+        name="task-comment-detail",
+    ),
+]

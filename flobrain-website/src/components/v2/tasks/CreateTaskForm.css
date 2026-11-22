@@ -1,0 +1,729 @@
+/*
+ * Create Task styles, scoped to .fb-v2-task-* and --fb-v2-task-*.
+ *
+ * The values follow the Create Task Figma, a neutral charcoal palette with unfilled inputs and
+ * thin light-gray outlines, rather than the navy defaults in the flobrain-v2-ui skill. Only the
+ * values differ: the token names still line up with the skill's --fb-v2-* roles. They live here,
+ * not in globals.css, because the shared V2 layout branch adds --fb-v2-* tokens to globals.css
+ * and would conflict. Once that layout is on main, alias these tokens to the shared ones where
+ * the design agrees and keep the Create Task overrides here.
+ *
+ * The generic form pieces in components/v2/form/ use the same class names, so they pick up
+ * these tokens when rendered inside .fb-v2-task-form.
+ */
+
+/* Dark is the default (V2 is dark-first). Surface matches the Lead Controls nav. */
+.fb-v2-task-page,
+.fb-v2-task-form,
+.fb-v2-task-detail {
+  --fb-v2-task-surface: var(--fb-v2-surface);
+  --fb-v2-task-surface-raised: var(--fb-v2-surface-raised);
+  --fb-v2-task-input-bg: transparent;
+  --fb-v2-task-border: #d9d9d9;
+  --fb-v2-task-input-border: #d9d9d9;
+  --fb-v2-task-divider: #d9d9d9;
+  --fb-v2-task-focus-ring: #60a5fa;
+  --fb-v2-task-text: #f1f0ee;
+  --fb-v2-task-text-muted: #d9d9d9;
+  --fb-v2-task-text-subtle: #d9d9d9;
+  --fb-v2-task-heading: #ffffff;
+  --fb-v2-task-accent: #60a5fa;
+  --fb-v2-task-accent-subtle: rgba(96, 165, 250, 0.2);
+  --fb-v2-task-on-fill: #ffffff;
+  --fb-v2-task-on-fill-dark: #1c1b19;
+  --fb-v2-task-success: #54ec29;
+  --fb-v2-task-warning: #fdb300;
+  --fb-v2-task-warning-subtle: rgba(253, 179, 0, 0.15);
+  --fb-v2-task-error: #dc2929;
+  /* Lighter red for error text: --fb-v2-task-error on charcoal is only about 2.5:1. */
+  --fb-v2-task-error-text: #ff9a94;
+  color-scheme: dark;
+}
+
+.light .fb-v2-task-page,
+.light .fb-v2-task-form,
+.light .fb-v2-task-detail {
+  --fb-v2-task-surface: var(--fb-v2-surface);
+  --fb-v2-task-surface-raised: var(--fb-v2-surface-raised);
+  --fb-v2-task-input-bg: transparent;
+  --fb-v2-task-border: #8a8986;
+  --fb-v2-task-input-border: #7d7c79;
+  --fb-v2-task-divider: #a3a29f;
+  --fb-v2-task-focus-ring: #2563eb;
+  --fb-v2-task-text: #1f1e1c;
+  --fb-v2-task-text-muted: #33322f;
+  --fb-v2-task-text-subtle: #6b6a66;
+  --fb-v2-task-heading: #111110;
+  --fb-v2-task-accent: #2563eb;
+  --fb-v2-task-accent-subtle: rgba(37, 99, 235, 0.14);
+  --fb-v2-task-on-fill: #ffffff;
+  --fb-v2-task-on-fill-dark: #1c1b19;
+  --fb-v2-task-success: #2f9e44;
+  --fb-v2-task-warning: #b7791f;
+  --fb-v2-task-warning-subtle: rgba(183, 121, 31, 0.12);
+  --fb-v2-task-error: #d42a2a;
+  --fb-v2-task-error-text: #b42318;
+  color-scheme: light;
+}
+
+/* Page and card — grey canvas matches Lead Controls, not V1 marketing purple */
+.fb-v2-task-page {
+  --fb-v2-task-page-bg: var(--fb-v2-surface);
+  background: var(--fb-v2-task-page-bg);
+  box-sizing: border-box;
+  color: var(--fb-v2-task-text);
+  min-height: calc(100dvh - 5.5rem);
+  padding: 1rem;
+}
+
+.light .fb-v2-task-page {
+  --fb-v2-task-page-bg: var(--fb-v2-surface);
+}
+
+.fb-v2-task-card {
+  background: var(--fb-v2-task-surface);
+  border: 1px solid var(--fb-v2-task-border);
+  border-radius: 5px;
+  margin: 0 auto;
+  max-width: 45.5rem; /* ~729px form panel in Figma */
+  padding: 1.25rem 1rem;
+}
+
+.fb-v2-task-create-row {
+  align-items: flex-start;
+  margin-inline: auto;
+  max-width: calc(45.5rem + 0.75rem + 4px);
+}
+
+.fb-v2-task-page:has(.fb-v2-task-create-row) {
+  min-height: 0;
+}
+
+.fb-v2-task-card.fb-v2-design-scroll-viewport {
+  flex: 1 1 auto;
+  height: 593px;
+  margin: 0;
+  max-height: 593px;
+  max-width: 45.5rem;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.fb-v2-task-create-row .fb-v2-design-scroll-rail {
+  align-self: flex-start;
+  height: 593px;
+  width: 4px;
+}
+
+.fb-v2-task-create-row .fb-v2-design-scroll-track,
+.fb-v2-task-create-row .fb-v2-design-scroll-thumb {
+  width: 4px;
+}
+
+/* Inside the shared center, the form card fills the middle the same way the tasks table does. */
+.fb-v2-content .fb-v2-task-page {
+  min-height: 0;
+  padding: 0.35rem 0 0.5rem;
+}
+
+.fb-v2-content .fb-v2-task-create-row {
+  margin-inline: 0;
+  max-width: none;
+  width: 100%;
+}
+
+.fb-v2-content .fb-v2-task-card,
+.fb-v2-content .fb-v2-task-card.fb-v2-design-scroll-viewport {
+  max-width: none;
+}
+
+.fb-v2-task-heading {
+  color: var(--fb-v2-task-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.fb-v2-task-notice {
+  background: var(--fb-v2-task-warning-subtle);
+  border: 1px solid var(--fb-v2-task-warning);
+  border-radius: 0.25rem;
+  color: var(--fb-v2-task-text);
+  font-size: 0.8125rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Form layout */
+.fb-v2-task-form {
+  color: var(--fb-v2-task-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.fb-v2-task-row {
+  display: grid;
+  gap: 0.875rem 2rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.fb-v2-task-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem;
+  min-width: 0;
+}
+
+.fb-v2-task-label {
+  color: var(--fb-v2-task-text-muted);
+  font-size: 0.875rem; /* 14px — Figma Inter Medium labels */
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+/* Figma uses sentence case for "Task description" only. */
+.fb-v2-task-label--sentence {
+  text-transform: none;
+}
+
+.fb-v2-task-error {
+  color: var(--fb-v2-task-error-text);
+  font-size: 0.75rem;
+}
+
+/* Inputs: unfilled with a thin light outline, as in the Figma (38px / 5px radius) */
+.fb-v2-task-input {
+  background: var(--fb-v2-task-input-bg);
+  border: 1px solid var(--fb-v2-task-input-border);
+  border-radius: 5px;
+  color: var(--fb-v2-task-text);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  min-height: 2.375rem; /* 38px */
+  padding: 0.375rem 0.75rem;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  width: 100%;
+}
+
+.fb-v2-task-input::placeholder {
+  color: var(--fb-v2-task-text-subtle);
+  font-size: 0.625rem; /* 10px placeholders in Figma */
+}
+
+.fb-v2-task-input:focus-visible {
+  border-color: var(--fb-v2-task-focus-ring);
+  box-shadow: 0 0 0 3px var(--fb-v2-task-accent-subtle);
+  outline: none;
+}
+
+.fb-v2-task-input[aria-invalid="true"] {
+  border-color: var(--fb-v2-task-error-text);
+}
+
+.fb-v2-task-textarea {
+  min-height: 3.625rem; /* ~58px task description in Figma */
+  resize: vertical;
+}
+
+.fb-v2-task-input[type="date"] {
+  text-transform: uppercase;
+}
+
+/* Chromium and Safari render the MM/DD/YYYY placeholder inside this pseudo-element. */
+.fb-v2-task-input[type="date"]::-webkit-datetime-edit {
+  text-transform: uppercase;
+}
+
+/* Dim the empty date like a placeholder. Firefox draws its own placeholder text. */
+.fb-v2-task-input[type="date"][data-empty="true"] {
+  color: var(--fb-v2-task-text-subtle);
+}
+
+/* Native select with our own chevron */
+.fb-v2-task-select {
+  position: relative;
+}
+
+.fb-v2-task-select select {
+  appearance: none;
+  padding-right: 2.25rem;
+}
+
+/* "Choose a ..." prompt reads as a placeholder until a value is picked. */
+.fb-v2-task-select select:has(option[value=""]:checked) {
+  color: var(--fb-v2-task-text-subtle);
+}
+
+.fb-v2-task-select option {
+  background: var(--fb-v2-task-surface);
+  color: var(--fb-v2-task-text);
+}
+
+.fb-v2-task-select > svg {
+  color: var(--fb-v2-task-text-muted);
+  height: 0.875rem;
+  pointer-events: none;
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.875rem;
+}
+
+/* Collapsible sections: compact rows, one thin underline each */
+.fb-v2-task-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.375rem;
+}
+
+.fb-v2-task-section {
+  border-bottom: 1px solid var(--fb-v2-task-divider);
+}
+
+.fb-v2-task-section-toggle {
+  align-items: center;
+  background: transparent;
+  border-radius: 0.125rem;
+  color: var(--fb-v2-task-text);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  justify-content: space-between;
+  min-height: 2.125rem;
+  padding: 0.25rem 0.125rem;
+  text-align: left;
+  width: 100%;
+}
+
+.fb-v2-task-section-toggle:hover {
+  color: var(--fb-v2-task-heading);
+}
+
+.fb-v2-task-section-toggle:focus-visible {
+  box-shadow: 0 0 0 3px var(--fb-v2-task-accent-subtle);
+  outline: 1px solid var(--fb-v2-task-focus-ring);
+}
+
+.fb-v2-task-section-title {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.fb-v2-task-section-filled {
+  background: var(--fb-v2-task-accent);
+  border-radius: 9999px;
+  height: 0.375rem;
+  width: 0.375rem;
+}
+
+.fb-v2-task-section-chevron {
+  color: var(--fb-v2-task-text-muted);
+  height: 0.875rem;
+  transition: transform 0.15s;
+  width: 0.875rem;
+}
+
+.fb-v2-task-section[data-open="true"] .fb-v2-task-section-chevron {
+  transform: rotate(180deg);
+}
+
+.fb-v2-task-section-body {
+  padding: 0.125rem 0 0.625rem;
+}
+
+/* Priority and status row: priority left, compact status on the far right */
+.fb-v2-task-row--meta {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  margin-top: 1rem;
+}
+
+/* Label centered above a narrow box with the value centered and the chevron on the right */
+.fb-v2-task-status {
+  flex: none;
+  width: 7.1875rem; /* 115px in Figma */
+}
+
+.fb-v2-task-status .fb-v2-task-field {
+  align-items: center;
+}
+
+.fb-v2-task-status .fb-v2-task-select {
+  width: 100%;
+}
+
+.fb-v2-task-status .fb-v2-task-input {
+  border-color: var(--fb-v2-task-input-border);
+  border-radius: 5px;
+  min-height: 2.375rem;
+  padding: 0.25rem 1.5rem;
+  text-align: center;
+  text-align-last: center;
+}
+
+.fb-v2-task-status .fb-v2-task-input[data-tone="active"] {
+  border-color: var(--fb-v2-task-success);
+}
+
+.fb-v2-task-status .fb-v2-task-input[data-tone="pending"] {
+  border-color: var(--fb-v2-task-warning);
+}
+
+.fb-v2-task-status .fb-v2-task-select > svg {
+  right: 0.5rem;
+}
+
+/* Priority choice */
+.fb-v2-task-fieldset {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.fb-v2-task-fieldset .fb-v2-task-label {
+  display: block;
+  margin-bottom: 0.3125rem;
+  padding: 0;
+}
+
+.fb-v2-task-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+/* Outlined in the tone color with neutral text. The selected option is filled. */
+.fb-v2-task-choice {
+  --tone: var(--fb-v2-task-input-border);
+  --on-tone: var(--fb-v2-task-on-fill);
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--tone);
+  border-radius: 5px;
+  color: var(--fb-v2-task-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 500;
+  justify-content: center;
+  min-height: 2.375rem; /* 38px */
+  min-width: 5.375rem; /* 86px */
+  padding: 0.25rem 0.75rem;
+  position: relative;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.fb-v2-task-choice[data-tone="high"] {
+  --tone: var(--fb-v2-task-error);
+  --on-tone: var(--fb-v2-task-on-fill);
+}
+
+.fb-v2-task-choice[data-tone="medium"] {
+  --tone: var(--fb-v2-task-warning);
+}
+
+.fb-v2-task-choice[data-tone="low"] {
+  --tone: var(--fb-v2-task-success);
+}
+
+.fb-v2-task-choice input {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
+.fb-v2-task-choice:hover {
+  background: var(--fb-v2-task-surface-raised);
+}
+
+.fb-v2-task-choice:has(input:checked) {
+  background: var(--tone);
+  color: var(--on-tone);
+  font-weight: 500;
+}
+
+.fb-v2-task-choice:has(input:focus-visible) {
+  outline: 2px solid var(--fb-v2-task-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Member picker */
+.fb-v2-task-members {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3125rem;
+  margin-top: 0.5rem;
+  position: relative;
+}
+
+/* Mobile: A-Z gets its own left-aligned row under the label. From 640px: label left, A-Z right. */
+.fb-v2-task-members-head {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem 0.75rem;
+  justify-content: space-between;
+}
+
+.fb-v2-task-letters {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  width: 100%;
+}
+
+.fb-v2-task-letter {
+  background: transparent;
+  border-radius: 0.125rem;
+  color: var(--fb-v2-task-text-muted);
+  cursor: pointer;
+  font-size: 0.6875rem;
+  height: 1.375rem;
+  line-height: 1;
+  min-width: 1rem;
+  padding: 0;
+}
+
+.fb-v2-task-letter:hover:not(:disabled) {
+  background: var(--fb-v2-task-surface-raised);
+  color: var(--fb-v2-task-heading);
+}
+
+.fb-v2-task-letter[aria-pressed="true"] {
+  background: var(--fb-v2-task-accent);
+  color: var(--fb-v2-task-on-fill-dark);
+}
+
+.fb-v2-task-letter:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.fb-v2-task-letter:focus-visible {
+  outline: 2px solid var(--fb-v2-task-focus-ring);
+}
+
+.fb-v2-task-combobox {
+  position: relative;
+}
+
+/* The Figma's search field has no icon. */
+.fb-v2-task-combobox-icon {
+  display: none;
+}
+
+.fb-v2-task-combobox-input {
+  padding-right: 2.5rem;
+}
+
+.fb-v2-task-combobox-input::placeholder {
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.fb-v2-task-combobox-toggle {
+  align-items: center;
+  background: transparent;
+  border-radius: 0.125rem;
+  color: var(--fb-v2-task-text-muted);
+  cursor: pointer;
+  display: flex;
+  height: 1.75rem;
+  justify-content: center;
+  position: absolute;
+  right: 0.375rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.75rem;
+}
+
+.fb-v2-task-combobox-toggle svg {
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.fb-v2-task-combobox-toggle:focus-visible {
+  outline: 2px solid var(--fb-v2-task-focus-ring);
+}
+
+.fb-v2-task-listbox {
+  background: var(--fb-v2-task-surface-raised);
+  border: 1px solid var(--fb-v2-task-input-border);
+  border-radius: 0.25rem;
+  max-height: 13rem;
+  overflow-y: auto;
+}
+
+.fb-v2-task-listbox[hidden] {
+  display: none;
+}
+
+.fb-v2-task-listbox-empty {
+  color: var(--fb-v2-task-text-muted);
+  font-size: 0.8125rem;
+  padding: 0.625rem 0.75rem;
+}
+
+.fb-v2-task-option {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-size: 0.8125rem;
+  gap: 0.625rem;
+  min-height: 2.25rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.fb-v2-task-option:hover {
+  background: var(--fb-v2-task-accent-subtle);
+}
+
+.fb-v2-task-option input {
+  accent-color: var(--fb-v2-task-accent);
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.fb-v2-task-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  list-style: none;
+  margin: 0.125rem 0 0;
+  padding: 0;
+}
+
+.fb-v2-task-chip {
+  align-items: center;
+  border: 1px solid var(--fb-v2-task-input-border);
+  border-radius: 9999px;
+  color: var(--fb-v2-task-text);
+  display: inline-flex;
+  font-size: 0.75rem;
+  gap: 0.25rem;
+  padding: 0.125rem 0.25rem 0.125rem 0.625rem;
+}
+
+.fb-v2-task-chip button {
+  align-items: center;
+  background: transparent;
+  border-radius: 9999px;
+  color: var(--fb-v2-task-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 1.25rem;
+  justify-content: center;
+  width: 1.25rem;
+}
+
+.fb-v2-task-chip button:hover {
+  color: var(--fb-v2-task-error-text);
+}
+
+.fb-v2-task-chip button:focus-visible {
+  outline: 2px solid var(--fb-v2-task-focus-ring);
+}
+
+/* Buttons: both outlined and transparent, matching size, as in the Figma */
+.fb-v2-task-actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.625rem;
+  margin-top: 0.75rem;
+}
+
+.fb-v2-task-btn {
+  background: transparent;
+  border: 1px solid var(--fb-v2-task-input-border);
+  border-radius: 5px;
+  color: var(--fb-v2-task-text-muted);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  min-height: 2.375rem; /* 38px */
+  min-width: 12.875rem; /* 206px action buttons in Figma */
+  padding: 0.375rem 1.25rem;
+  text-transform: uppercase;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.fb-v2-task-btn:hover {
+  background: var(--fb-v2-task-surface-raised);
+  border-color: var(--fb-v2-task-text);
+  color: var(--fb-v2-task-heading);
+}
+
+.fb-v2-task-btn:focus-visible {
+  outline: 2px solid var(--fb-v2-task-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (max-width: 639px) {
+  .fb-v2-task-card.fb-v2-design-scroll-viewport {
+    height: auto;
+  }
+}
+
+/* Tablet and up */
+@media (min-width: 640px) {
+  .fb-v2-task-page {
+    padding: 1.5rem;
+  }
+
+  .fb-v2-task-card {
+    padding: 1.5rem 1.75rem;
+  }
+
+  .fb-v2-task-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fb-v2-task-row--meta {
+    align-items: flex-end;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .fb-v2-task-letters {
+    justify-content: flex-end;
+    margin-left: auto;
+    width: auto;
+  }
+
+  /* Cancel on the far left, Create Task on the far right. */
+  .fb-v2-task-actions {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-v2-task-input,
+  .fb-v2-task-choice,
+  .fb-v2-task-btn,
+  .fb-v2-task-section-chevron {
+    transition: none;
+  }
+}
