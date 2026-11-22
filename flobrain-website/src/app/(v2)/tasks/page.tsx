@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-
-import { MyTasksScreen } from "@/components/v2/tasks/MyTasksScreen";
+import { MyTasksView } from "./MyTasksView";
 
 export const metadata: Metadata = {
   title: "Tasks",
 };
 
 export default function MyTasksPage() {
-  return <MyTasksScreen />;
+  return <MyTasksView />;
 }

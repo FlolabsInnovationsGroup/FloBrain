@@ -10,6 +10,7 @@ from .views import (
     home,
     UserPreferencesListCreateView,
     PresetPreferencesListView,
+    InternListView,
 )
 
 urlpatterns = [
@@ -24,4 +25,5 @@ urlpatterns = [
     path("api/settings/preferences/", UserPreferencesListCreateView.as_view(), name="user-preferences"),
     path("api/settings/preferences/<uuid:pk>/", UserPreferencesListCreateView.as_view(), name="user-preference-detail"),
     path("api/settings/presets/", PresetPreferencesListView.as_view(), name="preset-preferences"),
+    path("api/interns/", InternListView.as_view(), name="intern-list"),
 ]

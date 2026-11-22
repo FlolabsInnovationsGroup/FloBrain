@@ -14,9 +14,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from memory.services import purge_owner_memories
+from teams.models import TeamMember
 
 from .jwt_utils import decode_token, make_access_token, make_refresh_token
-from .models import User, UserPreferences, PresetPreferences, BlacklistedRefreshToken
+from .models import User, UserPreferences, PresetPreferences, BlacklistedRefreshToken, UserRole
 from .serializers import (
     ChangePasswordSerializer,
     DeleteAccountSerializer,
@@ -425,3 +426,52 @@ class PresetPreferencesListView(APIView):
                 {"error": "Failed to fetch presets", "details": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class InternListView(APIView):
+    """
+    GET /api/interns/
+    Returns all users who are TeamMembers with role="intern", one entry per
+    team membership. Fields that require future models (project, hours,
+    specialization) are returned as empty/zero placeholders.
+    """
+
+    def get(self, request):
+        user = get_user_from_request(request)
+        if not user:
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        memberships = list(
+            TeamMember.objects
+            .filter(role="intern")
+            .select_related("user", "team")
+            .order_by("team__name", "user__username")
+        )
+
+        # Fetch the most specific role name for each intern user in one query
+        intern_user_ids = [m.user_id for m in memberships]
+        role_map: dict = {}
+        for ur in (
+            UserRole.objects
+            .filter(user_id__in=intern_user_ids)
+            .select_related("role")
+        ):
+            role_map.setdefault(ur.user_id, ur.role.name)
+
+        data = []
+        for membership in memberships:
+            u = membership.user
+            data.append({
+                "id": str(u.id),
+                "name": u.username or u.email,
+                "designation": role_map.get(u.id, "Intern"),
+                "team": membership.team.name,
+                "project": "",        # Populated once Project model is introduced
+                "hours": 0,           # Populated once time tracking is introduced
+                "specialization": "", # Populated once intern profile is introduced
+            })
+
+        return Response(data)

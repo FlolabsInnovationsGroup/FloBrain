@@ -16,7 +16,7 @@ from .assignment_serializers import (
     AssignTaskInputSerializer,
 )
 from .models import Board, Task
-from .serializers import TaskSerializer, TaskUpdateSerializer
+from .serializers import TaskSerializer, TaskDetailSerializer, TaskUpdateSerializer
 
 
 def get_personal_board(user):
@@ -443,3 +443,19 @@ def tasks_created_by_me(request):
     )
 
     return Response(AssignmentTaskSerializer(tasks, many=True).data)
+
+
+@api_view(["GET"])
+def task_by_id(request, task_id):
+    """
+    GET /api/tasks/{task_id}/
+    Fetch a single task by ID regardless of board type.
+    Returns 404 for tasks the requesting user cannot access.
+    """
+    user = get_user_from_request(request)
+
+    if not user:
+        return _unauthorized()
+
+    task = get_object_or_404(accessible_tasks_for(user), id=task_id)
+    return Response(TaskDetailSerializer(task).data)

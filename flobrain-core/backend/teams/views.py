@@ -26,7 +26,7 @@ class TeamListCreateView(APIView):
         # Teams where the user is a member OR the creator, without duplicates.
         teams = Team.objects.filter(
             Q(members__user=user) | Q(created_by=user)
-        ).distinct()
+        ).select_related("created_by").distinct()
         serializer = TeamListSerializer(teams, many=True)
         return Response(serializer.data)
 
@@ -73,7 +73,7 @@ class TeamDetailView(APIView):
         team = Team.objects.filter(
             id=team_id,
             members__user=user
-        ).distinct().first()
+        ).select_related("created_by").distinct().first()
 
         # Return 404 if the team doesn't exist or user isn't a member
         if not team:

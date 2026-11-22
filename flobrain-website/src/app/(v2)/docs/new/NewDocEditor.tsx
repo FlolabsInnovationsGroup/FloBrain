@@ -1,8 +1,8 @@
-
 "use client";
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowLeft,
   Bold,
@@ -17,16 +17,34 @@ import {
   Redo2,
   Save,
 } from "lucide-react";
+import { apiClient } from "@/lib/axios";
+import { v2Keys } from "@/lib/v2-api";
 
 export function NewDocEditor() {
   const editorRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
   const [title, setTitle] = useState("Untitled Document");
-  const [saved, setSaved] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+
+  const saveMutation = useMutation({
+    mutationFn: (body: { title: string; content: string }) =>
+      apiClient.post("/api/docs/", body),
+    onMutate: () => setSaveStatus("saving"),
+    onSuccess: () => {
+      setSaveStatus("saved");
+      setIsDirty(false);
+      queryClient.invalidateQueries({ queryKey: v2Keys.docs });
+      queryClient.invalidateQueries({ queryKey: v2Keys.docsRecent });
+    },
+    onError: () => setSaveStatus("error"),
+  });
 
   function applyFormat(command: string, value?: string) {
     editorRef.current?.focus();
     document.execCommand(command, false, value);
-    setSaved(false);
+    setIsDirty(true);
+    setSaveStatus("idle");
   }
 
   function applyBlockFormat(tag: "H1" | "H2" | "P") {
@@ -34,12 +52,25 @@ export function NewDocEditor() {
   }
 
   function handleContentChange() {
-    setSaved(false);
+    setIsDirty(true);
+    setSaveStatus("idle");
   }
 
   function saveDocument() {
-    setSaved(true);
+    const content = editorRef.current?.innerHTML ?? "";
+    saveMutation.mutate({ title: title.trim() || "Untitled Document", content });
   }
+
+  const statusLabel =
+    saveStatus === "saving"
+      ? "Saving…"
+      : saveStatus === "saved"
+        ? "Saved"
+        : saveStatus === "error"
+          ? "Save failed — try again"
+          : isDirty
+            ? "Unsaved changes"
+            : "No changes";
 
   const toolbarButton =
     "flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-md px-2 text-sm transition-colors hover:bg-white/10 active:scale-95";
@@ -49,7 +80,6 @@ export function NewDocEditor() {
       className="flex min-h-full flex-col gap-5 p-5 sm:p-6"
       style={{ color: "var(--fb-v2-text)" }}
     >
-      {/* Back navigation and save */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link
           href="/docs"
@@ -63,45 +93,37 @@ export function NewDocEditor() {
         <button
           type="button"
           onClick={saveDocument}
-          className="flex cursor-pointer items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700"
+          disabled={saveMutation.isPending}
+          className="flex cursor-pointer items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-60"
         >
           <Save size={15} />
-          Save
+          {saveMutation.isPending ? "Saving…" : "Save"}
         </button>
       </div>
 
-      {/* Document title */}
       <div>
         <input
           value={title}
           onChange={(event) => {
             setTitle(event.target.value);
-            setSaved(false);
+            setIsDirty(true);
+            setSaveStatus("idle");
           }}
           placeholder="Document title"
           aria-label="Document title"
           className="w-full border-b bg-transparent pb-3 text-2xl font-semibold outline-none transition-colors focus:border-blue-500"
-          style={{
-            color: "var(--fb-v2-heading)",
-            borderColor: "var(--fb-v2-border)",
-          }}
+          style={{ color: "var(--fb-v2-heading)", borderColor: "var(--fb-v2-border)" }}
         />
       </div>
 
-      {/* Formatting toolbar */}
       <div
         className="flex flex-wrap items-center gap-1 rounded-lg border p-2"
-        style={{
-          background: "var(--fb-v2-surface)",
-          borderColor: "var(--fb-v2-border)",
-        }}
+        style={{ background: "var(--fb-v2-surface)", borderColor: "var(--fb-v2-border)" }}
       >
         <select
           aria-label="Text style"
           defaultValue="P"
-          onChange={(event) =>
-            applyBlockFormat(event.target.value as "H1" | "H2" | "P")
-          }
+          onChange={(event) => applyBlockFormat(event.target.value as "H1" | "H2" | "P")}
           className="h-8 cursor-pointer rounded-md border bg-transparent px-2 text-xs outline-none"
           style={{ borderColor: "var(--fb-v2-border)", color: "var(--fb-v2-text)" }}
         >
@@ -153,13 +175,9 @@ export function NewDocEditor() {
         </button>
       </div>
 
-      {/* Document writing area */}
       <div
         className="min-h-[500px] flex-1 rounded-lg border p-6 sm:p-8"
-        style={{
-          background: "var(--fb-v2-surface)",
-          borderColor: "var(--fb-v2-border)",
-        }}
+        style={{ background: "var(--fb-v2-surface)", borderColor: "var(--fb-v2-border)" }}
       >
         <div
           ref={editorRef}
@@ -176,12 +194,19 @@ export function NewDocEditor() {
       </div>
 
       <div className="flex items-center justify-between text-xs">
-        <span style={{ color: "var(--fb-v2-text-muted)" }}>
-          {saved ? "Saved locally for this session" : "Unsaved changes"}
+        <span
+          style={{
+            color:
+              saveStatus === "error"
+                ? "var(--fb-v2-error)"
+                : saveStatus === "saved"
+                  ? "var(--fb-v2-success)"
+                  : "var(--fb-v2-text-muted)",
+          }}
+        >
+          {statusLabel}
         </span>
-        <span style={{ color: "var(--fb-v2-text-subtle)" }}>
-          Your document
-        </span>
+        <span style={{ color: "var(--fb-v2-text-subtle)" }}>Your document</span>
       </div>
     </div>
   );

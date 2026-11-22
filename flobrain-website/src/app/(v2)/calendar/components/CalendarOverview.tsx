@@ -14,6 +14,15 @@ import {
   Trash2,
   Pencil,
 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  fetchCalendarEvents,
+  fetchTodos,
+  v2Keys,
+  type CalendarEventApi,
+  type TodoApi,
+} from "@/lib/v2-api";
+import { apiClient } from "@/lib/axios";
 
 type CalendarEvent = {
   id: number;
@@ -29,22 +38,6 @@ type Todo = {
   completed: boolean;
 };
 
-const initialTodos: Todo[] = [
-  { id: 1, title: "Send Kendra HealthBuddy content", completed: false },
-  { id: 2, title: "Forward file to Ceren for feedback", completed: false },
-  { id: 3, title: "Connect my Claude to my GitHub", completed: false },
-];
-
-const initialEvents: CalendarEvent[] = [
-  {
-    id: 1,
-    title: "Permission tile updates due",
-    date: "2026-06-17",
-    startTime: "09:00",
-    endTime: "10:00",
-  },
-];
-
 const monthNames = [
   "January", "February", "March", "April",
   "May", "June", "July", "August",
@@ -55,30 +48,95 @@ function formatDate(date: Date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-
   return `${year}-${month}-${day}`;
 }
 
+function mapEvent(e: CalendarEventApi): CalendarEvent {
+  return { id: e.id, title: e.title, date: e.date, startTime: e.start_time, endTime: e.end_time };
+}
+
+function mapTodo(t: TodoApi): Todo {
+  return { id: t.id, title: t.title, completed: t.completed };
+}
+
 export function CalendarOverview() {
+  const queryClient = useQueryClient();
+
+  const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(
-    new Date(2026, 5, 1),
+    new Date(today.getFullYear(), today.getMonth(), 1),
   );
-
-  const [selectedDate, setSelectedDate] = useState("2026-06-18");
-
-  const [events, setEvents] = useState<CalendarEvent[]>(initialEvents);
-  const [todos, setTodos] = useState<Todo[]>(initialTodos);
-
+  const [selectedDate, setSelectedDate] = useState(formatDate(today));
   const [showEventModal, setShowEventModal] = useState(false);
   const [editingEventId, setEditingEventId] = useState<number | null>(null);
 
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null);
   const [todoDraft, setTodoDraft] = useState("");
+  const [isAddingTodo, setIsAddingTodo] = useState(false);
+  const [newTodoDraft, setNewTodoDraft] = useState("");
 
   const [eventName, setEventName] = useState("");
-  const [eventDate, setEventDate] = useState("2026-06-18");
+  const [eventDate, setEventDate] = useState(formatDate(today));
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("10:00");
+
+  const { data: eventsData } = useQuery({
+    queryKey: v2Keys.calendarEvents,
+    queryFn: fetchCalendarEvents,
+  });
+
+  const { data: todosData } = useQuery({
+    queryKey: v2Keys.todos,
+    queryFn: fetchTodos,
+  });
+
+  const events: CalendarEvent[] = useMemo(
+    () => (eventsData ?? []).map(mapEvent),
+    [eventsData],
+  );
+
+  const todos: Todo[] = useMemo(
+    () => (todosData ?? []).map(mapTodo),
+    [todosData],
+  );
+
+  // ----- Event mutations -----
+
+  const createEventMutation = useMutation({
+    mutationFn: (body: { title: string; date: string; start_time: string; end_time: string }) =>
+      apiClient.post("/api/calendar/events/", body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: v2Keys.calendarEvents }),
+  });
+
+  const updateEventMutation = useMutation({
+    mutationFn: ({ id, ...body }: { id: number; title: string; date: string; start_time: string; end_time: string }) =>
+      apiClient.patch(`/api/calendar/events/${id}/`, body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: v2Keys.calendarEvents }),
+  });
+
+  const deleteEventMutation = useMutation({
+    mutationFn: (id: number) => apiClient.delete(`/api/calendar/events/${id}/`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: v2Keys.calendarEvents }),
+  });
+
+  // ----- Todo mutations -----
+
+  const createTodoMutation = useMutation({
+    mutationFn: (title: string) =>
+      apiClient.post("/api/calendar/todos/", { title, completed: false }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: v2Keys.todos }),
+  });
+
+  const updateTodoMutation = useMutation({
+    mutationFn: ({ id, ...body }: { id: number; title?: string; completed?: boolean }) =>
+      apiClient.patch(`/api/calendar/todos/${id}/`, body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: v2Keys.todos }),
+  });
+
+  const deleteTodoMutation = useMutation({
+    mutationFn: (id: number) => apiClient.delete(`/api/calendar/todos/${id}/`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: v2Keys.todos }),
+  });
 
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
@@ -101,13 +159,8 @@ export function CalendarOverview() {
   // ---------------- TODO FUNCTIONS ----------------
 
   function toggleTodo(id: number) {
-    setTodos((previous) =>
-      previous.map((todo) =>
-        todo.id === id
-          ? { ...todo, completed: !todo.completed }
-          : todo,
-      ),
-    );
+    const todo = todos.find((t) => t.id === id);
+    if (todo) updateTodoMutation.mutate({ id, completed: !todo.completed });
   }
 
   function startEditingTodo(todo: Todo) {
@@ -117,19 +170,11 @@ export function CalendarOverview() {
 
   function saveTodoEdit(id: number) {
     const trimmedTitle = todoDraft.trim();
-
     if (!trimmedTitle) {
-      setTodos((previous) => previous.filter((todo) => todo.id !== id));
+      deleteTodoMutation.mutate(id);
     } else {
-      setTodos((previous) =>
-        previous.map((todo) =>
-          todo.id === id
-            ? { ...todo, title: trimmedTitle }
-            : todo,
-        ),
-      );
+      updateTodoMutation.mutate({ id, title: trimmedTitle });
     }
-
     setEditingTodoId(null);
     setTodoDraft("");
   }
@@ -139,39 +184,36 @@ export function CalendarOverview() {
     setTodoDraft("");
   }
 
-  function handleTodoKeyDown(
-    event: KeyboardEvent<HTMLInputElement>,
-    id: number,
-  ) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      saveTodoEdit(id);
-    }
-
-    if (event.key === "Escape") {
-      event.preventDefault();
-      cancelTodoEdit();
-    }
+  function handleTodoKeyDown(event: KeyboardEvent<HTMLInputElement>, id: number) {
+    if (event.key === "Enter") { event.preventDefault(); saveTodoEdit(id); }
+    if (event.key === "Escape") { event.preventDefault(); cancelTodoEdit(); }
   }
 
   function addTodo() {
-    const newTodo: Todo = {
-      id: Date.now(),
-      title: "",
-      completed: false,
-    };
+    setIsAddingTodo(true);
+    setNewTodoDraft("");
+  }
 
-    setTodos((previous) => [...previous, newTodo]);
-    setEditingTodoId(newTodo.id);
-    setTodoDraft("");
+  function saveNewTodo() {
+    const trimmedTitle = newTodoDraft.trim();
+    if (trimmedTitle) createTodoMutation.mutate(trimmedTitle);
+    setIsAddingTodo(false);
+    setNewTodoDraft("");
+  }
+
+  function cancelNewTodo() {
+    setIsAddingTodo(false);
+    setNewTodoDraft("");
+  }
+
+  function handleNewTodoKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter") { event.preventDefault(); saveNewTodo(); }
+    if (event.key === "Escape") { event.preventDefault(); cancelNewTodo(); }
   }
 
   function deleteTodo(id: number) {
-    setTodos((previous) => previous.filter((todo) => todo.id !== id));
-
-    if (editingTodoId === id) {
-      cancelTodoEdit();
-    }
+    deleteTodoMutation.mutate(id);
+    if (editingTodoId === id) cancelTodoEdit();
   }
 
   // ---------------- EVENT FUNCTIONS ----------------
@@ -202,61 +244,36 @@ export function CalendarOverview() {
 
   function saveEvent(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     if (!eventName.trim()) return;
-
     if (endTime <= startTime) {
       window.alert("End time must be later than start time.");
       return;
     }
 
-    if (editingEventId !== null) {
-      setEvents((previous) =>
-        previous.map((item) =>
-          item.id === editingEventId
-            ? {
-                ...item,
-                title: eventName.trim(),
-                date: eventDate,
-                startTime,
-                endTime,
-              }
-            : item,
-        ),
-      );
-    } else {
-      const newEvent: CalendarEvent = {
-        id: Date.now(),
-        title: eventName.trim(),
-        date: eventDate,
-        startTime,
-        endTime,
-      };
+    const body = {
+      title: eventName.trim(),
+      date: eventDate,
+      start_time: startTime,
+      end_time: endTime,
+    };
 
-      setEvents((previous) => [...previous, newEvent]);
+    if (editingEventId !== null) {
+      updateEventMutation.mutate({ id: editingEventId, ...body });
+    } else {
+      createEventMutation.mutate(body);
     }
 
     setSelectedDate(eventDate);
-
     const [eventYear, eventMonth] = eventDate.split("-").map(Number);
     setCurrentMonth(new Date(eventYear, eventMonth - 1, 1));
-
     closeEventModal();
   }
 
   function deleteEvent() {
     if (editingEventId === null) return;
-
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this event?",
-    );
-
+    const confirmed = window.confirm("Are you sure you want to delete this event?");
     if (!confirmed) return;
-
-    setEvents((previous) =>
-      previous.filter((item) => item.id !== editingEventId),
-    );
-
+    deleteEventMutation.mutate(editingEventId);
     closeEventModal();
   }
 
@@ -480,11 +497,11 @@ export function CalendarOverview() {
                 ) : (
                   <span
                     className={`min-w-0 flex-1 text-left text-[12px] ${
-                        todo.completed ? "line-through opacity-50" : ""
+                      todo.completed ? "line-through opacity-50" : ""
                     }`}
-                    >
+                  >
                     {todo.title}
-                    </span>
+                  </span>
                 )}
 
                 <button
@@ -519,7 +536,49 @@ export function CalendarOverview() {
               </div>
             ))}
 
-            {todos.length === 0 && (
+            {/* Inline new-todo input */}
+            {isAddingTodo && (
+              <div
+                className="flex items-center gap-2 border-b px-3 py-3"
+                style={{ borderColor: "var(--fb-v2-border)" }}
+              >
+                <input
+                  type="checkbox"
+                  disabled
+                  className="mt-0.5 h-4 w-4 shrink-0 opacity-30"
+                />
+                <input
+                  autoFocus
+                  value={newTodoDraft}
+                  onChange={(event) => setNewTodoDraft(event.target.value)}
+                  onKeyDown={handleNewTodoKeyDown}
+                  onBlur={saveNewTodo}
+                  placeholder="Enter task name"
+                  aria-label="New task name"
+                  className="min-w-0 flex-1 rounded border border-blue-500 bg-[#292929] px-2 py-1 text-xs text-white outline-none focus:ring-1 focus:ring-blue-500"
+                />
+                <button
+                  type="button"
+                  onClick={saveNewTodo}
+                  aria-label="Save new task"
+                  title="Save"
+                  className="shrink-0 cursor-pointer rounded p-1 text-gray-400 transition-all duration-200 hover:bg-blue-500/20 hover:text-blue-300 active:scale-95"
+                >
+                  <Check size={14} />
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelNewTodo}
+                  aria-label="Cancel new task"
+                  title="Cancel"
+                  className="shrink-0 cursor-pointer rounded p-1 text-gray-400 transition-all duration-200 hover:bg-red-500/20 hover:text-red-300 active:scale-95"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            )}
+
+            {todos.length === 0 && !isAddingTodo && (
               <p className="px-3 py-6 text-center text-xs text-gray-400">
                 No tasks yet. Click + to add a task.
               </p>
