@@ -2116,20 +2116,29 @@ body {
   padding-bottom: 16px;
   border-bottom: 1px solid var(--fb-v2-divider);
 }
-.fb-v2-metrics { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+
+.fb-v2-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
 .fb-v2-metric-card {
   background: var(--fb-v2-metric-bg);
-  border: 1px solid var(--fb-v2-border);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 5px;
-  min-height: 117px;
-  padding: 16px 8px;
+  min-height: 76px;
+  padding: 10px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   text-align: center;
 }
+
+
+
 .fb-v2-section-title {
   color: var(--fb-v2-heading);
   font-size: 12px;
@@ -2223,4 +2232,62 @@ body {
 }
 @media (prefers-reduced-motion: reduce) {
   .fb-v2-preview *, .fb-v2-preview *::before, .fb-v2-preview *::after { scroll-behavior: auto !important; transition: none !important; }
+}
+
+
+Leadership Activity Log 
+.fb-v2-activity-log {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fb-v2-activity-log .fb-v2-card {
+  background: #474646;
+  border: 1px solid #5e5c5c;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.fb-v2-activity-log .fb-v2-metric-card {
+  background: #474646;
+  border: 1px solid #5e5c5c;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.fb-v2-activity-log table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fb-v2-activity-log th,
+.fb-v2-activity-log td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #5e5c5c;
+}
+
+.fb-v2-activity-log th {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.fb-v2-activity-log td {
+  color: #e5e5e5;
+}
+
+
+.fb-v2-activity-log select,
+.fb-v2-activity-log .fb-activity-filter {
+  appearance: auto;
+  
+  color: #ffffff;
+  border: 1px solid #5e5c5c !important;
+  border-radius: 6px;
+  padding: 10px 12px;
+  width: 100%;
+  box-shadow: none;
+  outline: none;
 }
