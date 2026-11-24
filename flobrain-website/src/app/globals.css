@@ -156,6 +156,7 @@
   --fb-auth-social-border: #610081;
   --fb-auth-social-text: #000000;
   --fb-auth-link: #702acd;
+  --fb-auth-forgot: #702acd;
   --fb-auth-link-hover: #610081;
   --fb-auth-divider: #610081;
   --fb-auth-error: #d70000;
@@ -507,6 +508,7 @@
   --fb-auth-social-border: rgba(255, 255, 255, 0.12);
   --fb-auth-social-text: #ffffff;
   --fb-auth-link: #a855f7;
+  --fb-auth-forgot: #a855f7;
   --fb-auth-link-hover: #c084fc;
   --fb-auth-divider: rgba(255, 255, 255, 0.1);
   --fb-auth-error: #f87171;
@@ -1041,6 +1043,10 @@ body {
 
 .fb-auth-link {
   color: var(--fb-auth-link);
+}
+
+.fb-auth-text-link {
+  color: var(--fb-auth-forgot);
 }
 
 .fb-auth-link:hover {

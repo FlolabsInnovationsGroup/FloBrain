@@ -1,122 +1,162 @@
 "use client";
 
-import { memo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { ForgotPasswordModal } from "@/components/auth/ForgotPasswordModal";
+import {
+  REMEMBERED_USERNAME_KEY,
+} from "@/components/auth/activationDraft";
+import { AuthLogo, AuthShell, AuthSubmit, FieldError } from "@/components/auth/AuthChrome";
+import { PasswordField } from "@/components/auth/AuthFields";
+import { isEmail } from "@/components/auth/passwordRules";
 
-export const SignInCard = memo(function SignInCard() {
+const ROLES = [
+  { id: "system-owner", label: "System Owner" },
+  { id: "admin", label: "Admin" },
+  { id: "lead", label: "Lead" },
+  { id: "intern", label: "Intern" },
+] as const;
+
+type RoleId = (typeof ROLES)[number]["id"];
+
+const CREDENTIAL_ERROR = "The email or password you entered is incorrect. Please try again.";
+
+export function SignInCard() {
   const router = useRouter();
   const { login } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [role, setRole] = useState<RoleId>("lead");
+  const [remember, setRemember] = useState(false);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
+  useEffect(() => {
+    const saved = localStorage.getItem(REMEMBERED_USERNAME_KEY);
+    if (saved) {
+      setUsername(saved);
+      setRemember(true);
+    }
+  }, []);
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    const nextUsername = username.trim();
+    let nextUsernameError: string | null = null;
+    let nextPasswordError: string | null = null;
+
+    if (!nextUsername) nextUsernameError = "Email is required.";
+    else if (!isEmail(nextUsername)) nextUsernameError = "Enter a valid email address.";
+    if (!password) nextPasswordError = "Password is required.";
+
+    setUsernameError(nextUsernameError);
+    setPasswordError(nextPasswordError);
+    if (nextUsernameError || nextPasswordError) return;
+
     setLoading(true);
     try {
-      const result = await login(email, password);
+      const result = await login(nextUsername, password);
+      if (remember) localStorage.setItem(REMEMBERED_USERNAME_KEY, nextUsername);
+      else localStorage.removeItem(REMEMBERED_USERNAME_KEY);
       if (result.ok) {
         router.push("/dashboard");
         return;
       }
-      setError(result.error ?? "Sign in failed");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong. Try again.");
+      setPasswordError(CREDENTIAL_ERROR);
+    } catch {
+      setPasswordError(CREDENTIAL_ERROR);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <>
-      <div className="fb-auth-card flex w-full flex-col gap-5 rounded-2xl p-5 sm:p-6">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {error && (
-            <p className="fb-auth-error rounded-lg border px-3 py-2 text-sm">
-              {error}
-            </p>
-          )}
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="email" className="fb-auth-label text-sm font-medium">
-              Email
-            </label>
-            <div className="relative">
-              <Mail className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
-              <input
-                id="email"
-                type="email"
-                placeholder="johndoe@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-4 text-sm outline-none"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="password" className="fb-auth-label text-sm font-medium">
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="fb-auth-icon absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-                className="fb-auth-input h-12 w-full rounded-xl border pl-10 pr-12 text-sm outline-none"
-              />
-              <button
-                type="button"
-                className="fb-auth-icon absolute right-3 top-1/2 -translate-y-1/2 transition-opacity hover:opacity-80"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            <div className="mt-1 flex items-center justify-end">
-              <button
-                type="button"
-                onClick={() => setForgotPasswordOpen(true)}
-                className="fb-auth-link text-[13px] font-medium transition-colors"
-              >
-                Forgot password?
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="submit"
+    <AuthShell>
+      <AuthLogo centered />
+      <p className="fb-auth-welcome">Welcome to Flobabs Innovations</p>
+      <form className="fb-auth-form" onSubmit={handleSubmit} noValidate>
+        <div className="fb-auth-field">
+          <label className="fb-auth-label" htmlFor="username">
+            Email
+          </label>
+          <input
+            id="username"
+            className={`fb-auth-input${usernameError ? " is-invalid" : ""}`}
+            type="email"
+            name="username"
+            autoComplete="username"
+            placeholder="you@flobrain.com"
+            value={username}
             disabled={loading}
-            className="fb-auth-btn mt-1 flex h-12 w-full cursor-pointer items-center justify-center gap-2 rounded-xl text-[15px] font-semibold transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {loading ? "Signing in…" : "Sign In"}
-            {!loading && <span className="text-base">→</span>}
-          </button>
-        </form>
+            aria-invalid={Boolean(usernameError)}
+            onChange={(event) => {
+              setUsername(event.target.value);
+              setUsernameError(null);
+            }}
+          />
+          {usernameError ? <FieldError>{usernameError}</FieldError> : null}
+        </div>
 
-        <p className="fb-auth-muted text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="fb-auth-link font-semibold transition-colors">
-            Sign up
+        <PasswordField
+          id="password"
+          label="Password"
+          autoComplete="current-password"
+          value={password}
+          disabled={loading}
+          error={passwordError}
+          onChange={(value) => {
+            setPassword(value);
+            setPasswordError(null);
+          }}
+        />
+
+        <fieldset className="fb-auth-field fb-auth-fieldset">
+          <legend className="fb-auth-label">Sign In As</legend>
+          <div className="fb-auth-roles">
+            {ROLES.map((item) => {
+              const selected = role === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`fb-auth-role${selected ? " is-selected" : ""}`}
+                  aria-pressed={selected}
+                  onClick={() => setRole(item.id)}
+                >
+                  <span className="fb-auth-role-dot" aria-hidden="true" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+
+        <AuthSubmit loading={loading} login>
+          LOG IN
+        </AuthSubmit>
+
+        <div className="fb-auth-meta-row">
+          <label className="fb-auth-check">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(event) => setRemember(event.target.checked)}
+            />
+            Remember me
+          </label>
+          <Link href="/forgot-password" className="fb-auth-text-link">
+            Forgot password?
           </Link>
-        </p>
-      </div>
+        </div>
 
-      <ForgotPasswordModal open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen} />
-    </>
+        <div className="fb-auth-or">OR</div>
+        <p className="fb-auth-invite">
+          Have an invite? <Link href="/register">Activate your account</Link>
+        </p>
+        <p className="fb-auth-legal">© FloBrain. Sign in to your member workspace.</p>
+      </form>
+    </AuthShell>
   );
-});
+}

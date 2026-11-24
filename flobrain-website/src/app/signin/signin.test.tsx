@@ -3,6 +3,22 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { SignInCard } from "./signin-card";
 import { AuthProvider } from "@/contexts/AuthContext";
 
+const { signIn } = vi.hoisted(() => ({
+  signIn: vi.fn(async (_email: string, _password: string) => ({
+    error: "Invalid credentials",
+    status: 401,
+  })),
+}));
+
+vi.mock("@/lib/api", () => ({
+  api: {
+    signIn,
+    register: vi.fn(),
+    signOut: vi.fn(),
+    refreshToken: vi.fn(),
+  },
+}));
+
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: vi.fn(),
@@ -25,6 +41,7 @@ function renderWithAuth(ui: React.ReactElement) {
 describe("Login Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   it("should render all form fields correctly", () => {
@@ -32,7 +49,9 @@ describe("Login Component", () => {
 
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("johndoe@gmail.com")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("you@flobrain.com")).toBeInTheDocument();
+    expect(screen.getByText("Welcome to Flobabs Innovations")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Lead" })).toHaveAttribute("aria-pressed", "true");
   });
 
   it("should hide social login buttons", () => {
@@ -42,121 +61,68 @@ describe("Login Component", () => {
     expect(screen.queryByText("Continue with Apple")).not.toBeInTheDocument();
   });
 
-  it("should update email input value when user types", () => {
+  it("should update username and password when the user types", () => {
     renderWithAuth(<SignInCard />);
 
-    const emailInput = screen.getByPlaceholderText("johndoe@gmail.com");
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    const username = screen.getByLabelText("Email");
+    const password = screen.getByLabelText("Password");
+    fireEvent.change(username, { target: { value: "test@example.com" } });
+    fireEvent.change(password, { target: { value: "password123" } });
 
-    expect(emailInput).toHaveValue("test@example.com");
-  });
-
-  it("should update password input value when user types", () => {
-    renderWithAuth(<SignInCard />);
-
-    const passwordInput = screen.getByPlaceholderText("••••••••");
-    fireEvent.change(passwordInput, { target: { value: "password123" } });
-
-    expect(passwordInput).toHaveValue("password123");
+    expect(username).toHaveValue("test@example.com");
+    expect(password).toHaveValue("password123");
   });
 
   it("should toggle password visibility when eye icon is clicked", () => {
     renderWithAuth(<SignInCard />);
 
-    const passwordInput = screen.getByPlaceholderText("••••••••");
+    const passwordInput = screen.getByLabelText("Password");
     const toggleButton = screen.getByRole("button", { name: /show password/i });
 
     expect(passwordInput).toHaveAttribute("type", "password");
-
     fireEvent.click(toggleButton);
     expect(passwordInput).toHaveAttribute("type", "text");
-
     fireEvent.click(screen.getByRole("button", { name: /hide password/i }));
     expect(passwordInput).toHaveAttribute("type", "password");
   });
 
-  it("should render forgot password button", () => {
+  it("should render forgot password and activate links", () => {
     renderWithAuth(<SignInCard />);
 
-    expect(screen.getByText("Forgot password?")).toBeInTheDocument();
+    expect(screen.getByText("Forgot password?")).toHaveAttribute("href", "/forgot-password");
+    expect(screen.getByText("Activate your account")).toHaveAttribute("href", "/register");
+    expect(screen.getByText(/Have an invite\?/i)).toBeInTheDocument();
   });
 
-  it("should render register link", () => {
+  it("should render the log in button", () => {
     renderWithAuth(<SignInCard />);
 
-    const registerLink = screen.getByText("Sign up");
-    expect(registerLink).toHaveAttribute("href", "/register");
-    expect(screen.getByText(/Don't have an account?/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "LOG IN" })).toHaveClass("w-full");
   });
 
-  it("should render sign in button", () => {
+  it("should show validation when the form is empty", () => {
     renderWithAuth(<SignInCard />);
 
-    const submitButton = screen.getByRole("button", { name: /Sign In/i });
-    expect(submitButton).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "LOG IN" }));
+
+    expect(screen.getByText("Email is required.")).toBeInTheDocument();
+    expect(screen.getByText("Password is required.")).toBeInTheDocument();
+    expect(signIn).not.toHaveBeenCalled();
   });
 
-  it("should handle both inputs filled correctly", () => {
+  it("should show the designed credential error when sign in fails", async () => {
     renderWithAuth(<SignInCard />);
 
-    const emailInput = screen.getByPlaceholderText("johndoe@gmail.com");
-    const passwordInput = screen.getByPlaceholderText("••••••••");
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "you@flobrain.com" },
+    });
+    fireEvent.change(screen.getByLabelText("Password"), {
+      target: { value: "wrong-password" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "LOG IN" }));
 
-    fireEvent.change(emailInput, { target: { value: "user@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "SecurePass123!" } });
-
-    expect(emailInput).toHaveValue("user@example.com");
-    expect(passwordInput).toHaveValue("SecurePass123!");
-  });
-
-  it("should render auth card", () => {
-    const { container } = renderWithAuth(<SignInCard />);
-
-    const card = container.querySelector(".rounded-2xl");
-    expect(card).toBeInTheDocument();
-    expect(card?.className).toContain("fb-auth-card");
-  });
-
-  it("should display icons for form inputs", () => {
-    const { container } = renderWithAuth(<SignInCard />);
-
-    const icons = container.querySelectorAll("svg");
-    expect(icons.length).toBeGreaterThan(0);
-  });
-
-  it("should handle empty form submission", () => {
-    renderWithAuth(<SignInCard />);
-
-    const submitButton = screen.getByRole("button", { name: /Sign In/i });
-    fireEvent.click(submitButton);
-
-    expect(screen.getByPlaceholderText("johndoe@gmail.com")).toHaveValue("");
-    expect(screen.getByPlaceholderText("••••••••")).toHaveValue("");
-  });
-
-  it("should handle email input blur event", () => {
-    renderWithAuth(<SignInCard />);
-
-    const emailInput = screen.getByPlaceholderText("johndoe@gmail.com");
-    fireEvent.change(emailInput, { target: { value: "test@email.com" } });
-    fireEvent.blur(emailInput);
-
-    expect(emailInput).toHaveValue("test@email.com");
-  });
-
-  it("should handle password input blur event", () => {
-    renderWithAuth(<SignInCard />);
-
-    const passwordInput = screen.getByPlaceholderText("••••••••");
-    fireEvent.change(passwordInput, { target: { value: "mypassword" } });
-    fireEvent.blur(passwordInput);
-
-    expect(passwordInput).toHaveValue("mypassword");
-  });
-
-  it("should render submit button with full width", () => {
-    renderWithAuth(<SignInCard />);
-
-    expect(screen.getByRole("button", { name: /Sign In/i })).toHaveClass("w-full");
+    expect(
+      await screen.findByText("The email or password you entered is incorrect. Please try again.")
+    ).toBeInTheDocument();
   });
 });
