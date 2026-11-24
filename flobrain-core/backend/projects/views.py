@@ -1,23 +1,37 @@
+
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from teams.models import TeamMember
+from teams.models import TeamMember, TeamActivity
 from users.views import get_user_from_request
 
 from .models import Project
-from .serializers import ProjectCreateSerializer, ProjectListSerializer, ProjectUpdateSerializer
+from .serializers import (
+    ProjectCreateSerializer,
+    ProjectListSerializer,
+    ProjectUpdateSerializer,
+)
 
 
 def _accessible_projects(user):
     """Projects on teams the user is a member of."""
-    team_ids = TeamMember.objects.filter(user=user).values_list("team_id", flat=True)
-    return Project.objects.filter(team_id__in=team_ids).select_related("team", "team_lead")
+    team_ids = TeamMember.objects.filter(
+        user=user
+    ).values_list("team_id", flat=True)
+
+    return Project.objects.filter(
+        team_id__in=team_ids
+    ).select_related("team", "team_lead")
 
 
 def _is_team_lead(user, team):
-    return TeamMember.objects.filter(team=team, user=user, role="lead").exists()
+    return TeamMember.objects.filter(
+        team=team,
+        user=user,
+        role="lead",
+    ).exists()
 
 
 class ProjectListCreateView(APIView):
@@ -28,22 +42,38 @@ class ProjectListCreateView(APIView):
 
     def get(self, request):
         user = get_user_from_request(request)
+
         if not user:
-            return Response({"detail": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
         projects = _accessible_projects(user)
-        return Response(ProjectListSerializer(projects, many=True).data)
+
+        return Response(
+            ProjectListSerializer(projects, many=True).data
+        )
 
     def post(self, request):
         user = get_user_from_request(request)
+
         if not user:
-            return Response({"detail": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
 
         serializer = ProjectCreateSerializer(data=request.data)
+
         if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         team = serializer._team
+
         if not _is_team_lead(user, team):
             return Response(
                 {"detail": "Only team leads can create projects."},
@@ -51,7 +81,11 @@ class ProjectListCreateView(APIView):
             )
 
         project = serializer.save(created_by=user)
-        return Response(ProjectListSerializer(project).data, status=status.HTTP_201_CREATED)
+
+        return Response(
+            ProjectListSerializer(project).data,
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class ProjectDetailView(APIView):
@@ -63,37 +97,88 @@ class ProjectDetailView(APIView):
 
     def get(self, request, project_id):
         user = get_user_from_request(request)
-        if not user:
-            return Response({"detail": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
 
-        project = get_object_or_404(_accessible_projects(user), id=project_id)
+        if not user:
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        project = get_object_or_404(
+            _accessible_projects(user),
+            id=project_id,
+        )
+
         return Response(ProjectListSerializer(project).data)
 
     def patch(self, request, project_id):
         user = get_user_from_request(request)
-        if not user:
-            return Response({"detail": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
 
-        project = get_object_or_404(_accessible_projects(user), id=project_id)
+        if not user:
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        project = get_object_or_404(
+            _accessible_projects(user),
+            id=project_id,
+        )
+
         if not _is_team_lead(user, project.team):
             return Response(
                 {"detail": "Only team leads can update projects."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = ProjectUpdateSerializer(project, data=request.data, partial=True)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ProjectUpdateSerializer(
+            project,
+            data=request.data,
+            partial=True,
+        )
 
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        old_status = project.status
         project = serializer.save()
+
+        if old_status != project.status:
+            TeamActivity.objects.create(
+                team=project.team,
+                actor=user,
+                event_type="project_status_changed",
+                description=(
+                    f'Project "{project.name}" status changed '
+                    f'from {old_status} to {project.status}.'
+                ),
+                metadata={
+                    "project_id": project.id,
+                    "project_name": project.name,
+                    "old_status": old_status,
+                    "new_status": project.status,
+                },
+            )
+
         return Response(ProjectListSerializer(project).data)
 
     def delete(self, request, project_id):
         user = get_user_from_request(request)
-        if not user:
-            return Response({"detail": "Authentication required."}, status=status.HTTP_401_UNAUTHORIZED)
 
-        project = get_object_or_404(_accessible_projects(user), id=project_id)
+        if not user:
+            return Response(
+                {"detail": "Authentication required."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        project = get_object_or_404(
+            _accessible_projects(user),
+            id=project_id,
+        )
+
         if not _is_team_lead(user, project.team):
             return Response(
                 {"detail": "Only team leads can delete projects."},
@@ -101,4 +186,5 @@ class ProjectDetailView(APIView):
             )
 
         project.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)

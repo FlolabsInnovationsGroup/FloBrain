@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from teams.models import Team, TeamMember
+from teams.models import Team, TeamMember, TeamActivity
 from users.models import User
 from users.views import get_user_from_request
 
@@ -292,7 +292,42 @@ def team_task_detail(request, team_id, task_id):
         )
 
         if serializer.is_valid():
-            serializer.save()
+            old_status = task.status
+            task = serializer.save()
+
+            if (
+                old_status != Task.STATUS_DONE
+                and task.status == Task.STATUS_DONE
+            ):
+                task.completed_by = user
+                task.completed_at = timezone.now()
+                task.save(
+                    update_fields=["completed_by", "completed_at"]
+                )
+
+                task_title = getattr(task, "title", str(task.id))
+
+                TeamActivity.objects.create(
+                    team=team,
+                    actor=user,
+                    event_type="task_completed",
+                    description=f'Task "{task_title}" was completed.',
+                    metadata={
+                        "task_id": task.id,
+                        "task_title": task_title,
+                    },
+                )
+
+            elif (
+                old_status == Task.STATUS_DONE
+                and task.status != Task.STATUS_DONE
+            ):
+                task.completed_by = None
+                task.completed_at = None
+                task.save(
+                    update_fields=["completed_by", "completed_at"]
+                )
+
             return Response(TaskSerializer(task).data)
 
         return Response(
@@ -362,8 +397,6 @@ def task_assign(request, task_id):
     if not user:
         return _unauthorized()
 
-    # 404 both when the task does not exist and when it is on a board
-    # the user cannot access, so task IDs are not leaked.
     task = get_object_or_404(accessible_tasks_for(user), id=task_id)
 
     if not _can_manage_assignment(user, task):
