@@ -36,7 +36,6 @@ export function CountrySelect({
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
-  const searchRef = useRef<HTMLInputElement>(null);
   const selected = findCountry(value);
 
   const results = useMemo(() => {
@@ -59,14 +58,12 @@ export function CountrySelect({
     return () => document.removeEventListener("mousedown", onPointerDown);
   }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
+  function openMenu() {
     setQuery("");
     const selectedIndex = COUNTRIES.findIndex((item) => item.code === selected.code);
     setActive(selectedIndex >= 0 ? selectedIndex : 0);
-    const frame = requestAnimationFrame(() => searchRef.current?.focus());
-    return () => cancelAnimationFrame(frame);
-  }, [open, selected.code]);
+    setOpen(true);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -104,7 +101,7 @@ export function CountrySelect({
         aria-haspopup="listbox"
         aria-expanded={open}
         disabled={disabled}
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => (open ? setOpen(false) : openMenu())}
       >
         <CountryFlag code={selected.code} />
         <span className="fb-auth-country-value">
@@ -115,7 +112,7 @@ export function CountrySelect({
       {open ? (
         <div className="fb-auth-country-menu">
           <input
-            ref={searchRef}
+            autoFocus
             className="fb-auth-country-search"
             placeholder="Search country"
             value={query}
