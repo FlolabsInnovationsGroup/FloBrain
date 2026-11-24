@@ -40,3 +40,49 @@ class TeamMember(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.team} ({self.role})"
+
+
+class TeamActivity(models.Model):
+    EVENT_TYPES = [
+        ("task_completed", "Task Completed"),
+        ("member_joined", "Member Joined"),
+        ("project_status_changed", "Project Status Changed"),
+        ("document_uploaded", "Document Uploaded"),
+    ]
+
+    team = models.ForeignKey(
+        Team,
+        on_delete=models.CASCADE,
+        related_name="activities",
+    )
+
+    actor = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="team_activities",
+    )
+
+    event_type = models.CharField(
+        max_length=50,
+        choices=EVENT_TYPES,
+    )
+
+    description = models.TextField()
+
+    metadata = models.JSONField(default=dict, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "team_activities"
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["team", "-created_at"]),
+            models.Index(fields=["event_type"]),
+        ]
+
+    def __str__(self):
+        return f"{self.event_type} - {self.team.name}"
+

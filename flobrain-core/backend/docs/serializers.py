@@ -59,6 +59,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
 class AttachmentCreateSerializer(serializers.Serializer):
     file = serializers.FileField()
     name = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    team_id = serializers.IntegerField(required=False, write_only=True)
 
     def validate(self, attrs):
         if not attrs.get("name"):
