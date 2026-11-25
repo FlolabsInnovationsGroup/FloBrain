@@ -358,6 +358,21 @@
   --fb-v2-error: #dc2626;
   --fb-v2-error-subtle: rgba(220, 38, 38, 0.12);
   --fb-v2-inactive: #737373;
+  /* V2 chat flow. The Figma has no light frames, so these are light equivalents. */
+  --fb-v2-chat-sidebar-bg: #f1f0ee;
+  --fb-v2-chat-panel-bg: #fafafa;
+  --fb-v2-chat-card: #ffffff;
+  --fb-v2-chat-card-hover: #f0efed;
+  --fb-v2-chat-raised: #e8e7e5;
+  --fb-v2-chat-border: #d4d4d4;
+  --fb-v2-chat-dashed: #a3a3a3;
+  --fb-v2-chat-text: #1a1a1a;
+  --fb-v2-chat-muted: #4a4a4a;
+  --fb-v2-chat-subtle: #6b6b6b;
+  --fb-v2-chat-accent: #2962ff;
+  --fb-v2-chat-accent-hover: #1e4fd7;
+  --fb-v2-chat-on-accent: #ffffff;
+  --fb-v2-chat-recording: #dc2626;
 
   --color-brain: #9333ea;
   --color-memory: #1a0a2e;
@@ -712,6 +727,21 @@
   --fb-v2-error: #ef4444;
   --fb-v2-error-subtle: rgba(239, 68, 68, 0.12);
   --fb-v2-inactive: #a3a1a1;
+  /* V2 chat flow (sampled from the flobrain-dashboard Figma chat frames) */
+  --fb-v2-chat-sidebar-bg: #534f4f;
+  --fb-v2-chat-panel-bg: #555555;
+  --fb-v2-chat-card: #606060;
+  --fb-v2-chat-card-hover: #666565;
+  --fb-v2-chat-raised: #6b6b6b;
+  --fb-v2-chat-border: #5e5d5d;
+  --fb-v2-chat-dashed: #8a8888;
+  --fb-v2-chat-text: #ffffff;
+  --fb-v2-chat-muted: #d6d5d5;
+  --fb-v2-chat-subtle: #b9b9b9;
+  --fb-v2-chat-accent: #2962ff;
+  --fb-v2-chat-accent-hover: #1e4fd7;
+  --fb-v2-chat-on-accent: #ffffff;
+  --fb-v2-chat-recording: #ef4444;
 
   --color-brain: #a855f7;
   --color-memory: #000000;
@@ -824,6 +854,21 @@ html:not(.light):not(.dark) {
   --fb-v2-error: #ef4444;
   --fb-v2-error-subtle: rgba(239, 68, 68, 0.12);
   --fb-v2-inactive: #a3a1a1;
+  /* V2 chat flow (sampled from the flobrain-dashboard Figma chat frames) */
+  --fb-v2-chat-sidebar-bg: #534f4f;
+  --fb-v2-chat-panel-bg: #555555;
+  --fb-v2-chat-card: #606060;
+  --fb-v2-chat-card-hover: #666565;
+  --fb-v2-chat-raised: #6b6b6b;
+  --fb-v2-chat-border: #5e5d5d;
+  --fb-v2-chat-dashed: #8a8888;
+  --fb-v2-chat-text: #ffffff;
+  --fb-v2-chat-muted: #d6d5d5;
+  --fb-v2-chat-subtle: #b9b9b9;
+  --fb-v2-chat-accent: #2962ff;
+  --fb-v2-chat-accent-hover: #1e4fd7;
+  --fb-v2-chat-on-accent: #ffffff;
+  --fb-v2-chat-recording: #ef4444;
 }
 
 body {
