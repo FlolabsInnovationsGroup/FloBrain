@@ -58,106 +58,103 @@ const activities = [
 
 export default function LeadershipActivityLogPanel() {
   return (
-    <div className="fb-v2-dashboard fb-v2-activity-log space-y-6">
-      <h2 className="text-lg font-semibold">
+    <div className="fb-v2-dashboard fb-v2-activity-log">
+      <h2 className="fb-activity-title">
         TIME & ACTIVITY LOG
       </h2>
 
-      <div className="fb-v2-metrics">
+      {/* Activity summary cards */}
+      <div className="fb-v2-metrics fb-activity-metrics">
         <MetricCard
-          label="Total Activities"
+          label="TOTAL ACTIVITIES"
           value={250}
           description="All time activities"
         />
+
         <MetricCard
-          label="Today's Activities"
+          label="TODAY'S ACTIVITIES"
           value="08"
           description="Activities today"
         />
+
         <MetricCard
-          label="Users Active"
+          label="USERS ACTIVE"
           value={12}
           description="Active users today"
         />
       </div>
 
-      <section className="fb-v2-card space-y-4 border-t border-white/40 pt-4">
-        {/* Filters */}
-        <div className="grid grid-cols-1 gap-3 border-b border-white/40 px-3 py-3 sm:grid-cols-4">
-          <select className="fb-activity-filter">
+      {/* Activity filters and table */}
+      <section className="fb-activity-content">
+        <div className="fb-activity-filters">
+          <select className="fb-activity-filter" aria-label="Filter by intern">
             <option value="">All Interns</option>
           </select>
 
-          <select className="fb-activity-filter">
+          <select className="fb-activity-filter" aria-label="Filter by activity">
             <option value="">All Activities</option>
           </select>
 
-          <select className="fb-activity-filter">
+          <select className="fb-activity-filter" aria-label="Filter by project">
             <option value="">All Projects</option>
           </select>
 
-          <select className="fb-activity-filter">
+          <select className="fb-activity-filter" aria-label="Filter by team">
             <option value="">All Teams</option>
           </select>
         </div>
 
         {/* Activity table */}
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-0 table-fixed text-left text-xs">
-            <thead className="bg-[#323131]">
-              <tr className="border-b border-white/30 text-white">
-                <th className="p-3">TIME</th>
-                <th className="p-3">USER</th>
-                <th className="p-3">ACTIVITY TYPE</th>
-                <th className="p-3">DETAILS</th>
-                <th className="p-3">TIME SPENT</th>
+        <div className="fb-activity-table-wrap">
+          <table className="fb-activity-table">
+            <thead>
+              <tr>
+                <th>TIME</th>
+                <th>USER</th>
+                <th>ACTIVITY TYPE</th>
+                <th>DETAILS</th>
+                <th>TIME SPENT</th>
               </tr>
             </thead>
 
             <tbody>
               {activities.map((activity) => (
-                <tr
-                  key={activity.id}
-                  className="border-b border-white/20"
-                >
-                  <td className="p-3">
-                    <div>{activity.time}</div>
-                    <div className="mt-1 text-[10px] text-[var(--fb-v2-text-muted)]">
-                      {activity.date}
-                    </div>
-                  </td>
+                <tr key={activity.id}>
+                  <td>{activity.date}</td>
 
-                  <td className="p-3">
+                  <td>
                     <div>{activity.user}</div>
-                    <div className="mt-1 text-[10px] text-[var(--fb-v2-text-muted)]">
+                    <div className="fb-activity-secondary">
                       ({activity.role})
                     </div>
                   </td>
 
-                  <td className="p-3">{activity.type}</td>
-                  <td className="p-3">{activity.details}</td>
-                  <td className="p-3">{activity.duration}</td>
+                  <td>{activity.type}</td>
+
+                  <td>{activity.details}</td>
+
+                  <td>{activity.duration}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-[var(--fb-v2-text-muted)]">
+        {/* Pagination display */}
+        <div className="fb-activity-pagination">
+          <span className="fb-activity-pagination-info">
             Showing 1 to {activities.length} of 50 activities
           </span>
 
-          <div className="flex items-center gap-3">
-            <button className="px-2 py-1">← Prev</button>
-            <span>1</span>
+          <div className="fb-activity-pagination-controls">
+            <button type="button" disabled>← Prev</button>
+            <span className="fb-activity-current-page">1</span>
             <span>2</span>
             <span>3</span>
             <span>4</span>
             <span>...</span>
             <span>8</span>
-            <button className="px-2 py-1">Next →</button>
+            <button type="button">Next →</button>
           </div>
         </div>
       </section>
