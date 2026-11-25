@@ -1,8 +1,8 @@
-
 "use client";
 
 import { usePathname } from "next/navigation";
 import { PageStructure } from "@/components/v2/PageStructure";
+import { ChatSidebar } from "@/components/v2/chats/ChatSidebar";
 import type { ReactNode } from "react";
 import { ProjectLeftPanel } from "./leadership/projects/components/ProjectLeftPanel";
 import { ProjectRightPanel } from "./leadership/projects/components/ProjectRightPanel";
@@ -15,9 +15,13 @@ export default function V2Layout({ children }: { children: ReactNode }) {
     pathname.startsWith("/calendar") ||
     pathname.startsWith("/docs");
 
+  const showChatSidebar = pathname === "/chats" || pathname.startsWith("/chats/");
+
   return (
     <PageStructure
-      leftPanel={showSidebars ? <ProjectLeftPanel /> : undefined}
+      leftPanel={
+        showChatSidebar ? <ChatSidebar /> : showSidebars ? <ProjectLeftPanel /> : undefined
+      }
       rightPanel={showSidebars ? <ProjectRightPanel /> : undefined}
     >
       {children}
