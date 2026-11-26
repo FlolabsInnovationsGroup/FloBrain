@@ -6,6 +6,7 @@ from django.test import TransactionTestCase
 
 from flobrain.asgi import application
 from users.jwt_utils import make_access_token
+from unittest.mock import patch
 from users.models import User
 
 from .models import ChatRoom, ChatRoomMember, Message
@@ -158,6 +159,62 @@ class ChatRoomWebSocketTests(TransactionTestCase):
 
             if bob_connected:
                 await bob.disconnect()
+    def test_normal_message_does_not_trigger_flobrain(self):
+        with patch(
+            "chat.consumers.generate_flobrain_response.delay"
+        ) as mock_task:
+            async_to_sync(self._send_test_message)("Hello everyone!")
+
+            mock_task.assert_not_called()
+
+    def test_flobrain_mention_triggers_task(self):
+        with patch(
+            "chat.consumers.generate_flobrain_response.delay"
+        ) as mock_task:
+            async_to_sync(self._send_test_message)(
+                "Hey @flobrain, help me!"
+            )
+
+            mock_task.assert_called_once_with(
+                self.room.id,
+                str(self.user.id),
+            )
+
+    def test_flobrain_mention_is_case_insensitive(self):
+        with patch(
+            "chat.consumers.generate_flobrain_response.delay"
+        ) as mock_task:
+            async_to_sync(self._send_test_message)(
+                "Hey @FloBrain, explain this."
+            )
+
+            mock_task.assert_called_once_with(
+                self.room.id,
+                str(self.user.id),
+            )
+
+    async def _send_test_message(self, message):
+        communicator = self.create_communicator(self.user_token)
+
+        connected, close_code = await communicator.connect()
+
+        self.assertTrue(
+            connected,
+            f"Connection failed with close code: {close_code}",
+        )
+
+        try:
+            await communicator.send_json_to({
+                "content": message,
+            })
+
+            response = await communicator.receive_json_from(timeout=5)
+
+            self.assertEqual(response["content"], message)
+
+        finally:
+            await communicator.disconnect()
+
 
     @database_sync_to_async
     def message_exists(self):

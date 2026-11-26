@@ -1,4 +1,6 @@
 
+import logging
+import re
 from urllib.parse import parse_qs
 
 from channels.db import database_sync_to_async
@@ -8,6 +10,10 @@ from users.jwt_utils import decode_token
 from users.models import User
 
 from .models import ChatRoom, Message
+from .tasks import generate_flobrain_response
+
+
+logger = logging.getLogger(__name__)
 
 
 class ChatRoomConsumer(AsyncJsonWebsocketConsumer):
@@ -116,6 +122,27 @@ class ChatRoomConsumer(AsyncJsonWebsocketConsumer):
             },
         )
 
+        # Trigger FloBrain when explicitly mentioned.
+        if re.search(
+            r"(?<!\w)@flobrain\b",
+            message_content,
+            re.IGNORECASE,
+        ):
+            try:
+                generate_flobrain_response.delay(
+                    self.room_id,
+                    self.user_id,
+                )
+            except Exception:
+                logger.exception(
+                    "Failed to queue FloBrain response for room %s",
+                    self.room_id,
+                )
+
+                await self.send_json({
+                    "error": "FloBrain could not be reached right now.",
+                })
+
     async def chat_message(self, event):
         """
         Send a broadcast message to the WebSocket client.
@@ -162,6 +189,7 @@ class ChatRoomConsumer(AsyncJsonWebsocketConsumer):
 
         sender_name = (
             getattr(user, "full_name", None)
+            or user.username
             or user.email
         )
 
