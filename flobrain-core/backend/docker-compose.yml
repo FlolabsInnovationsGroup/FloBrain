@@ -79,6 +79,30 @@ services:
       timeout: 5s
       retries: 10
 
+  celery:
+    build: .
+    container_name: flobrain_backend_celery
+    restart: always
+    command: celery -A flobrain worker --loglevel=info
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=flobrain_db
+      - DB_USER=flo_user
+      - DB_PASS=flo_password
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
   postgres_data:
   mongo_data:

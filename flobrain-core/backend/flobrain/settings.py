@@ -1,3 +1,4 @@
+
 """
 Django settings for flobrain project.
 
@@ -55,6 +56,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -65,6 +67,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "rest_framework.authtoken",
+
+    "channels",
+
     "users",
     "memory",
     "dashboard",
@@ -78,6 +83,7 @@ INSTALLED_APPS = [
     "projects",
     "docs",
     "calendar_app",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -109,6 +115,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "flobrain.wsgi.application"
+ASGI_APPLICATION = "flobrain.asgi.application"
 
 
 # Database
@@ -133,6 +140,7 @@ else:
             "PORT": os.environ.get("DB_PORT", "5432"),
         }
     }
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -242,7 +250,7 @@ SECURE_HSTS_PRELOAD = os.environ.get("SECURE_HSTS_PRELOAD", "False") == "True"
 
 # Cookies: unlike SECURE_SSL_REDIRECT, these are safe to default on whenever
 # DEBUG is False, independent of whether Django trusts the forwarded-proto
-# header above - they only instruct the *browser* never to send the cookie over
+# header above - they only instruct the browser never to send the cookie over
 # a plain-HTTP connection, and real end users only ever reach this app over the
 # ALB's HTTPS listener. Both remain overridable via env for any environment
 # that genuinely needs otherwise (e.g. an internal non-TLS staging box).
@@ -332,3 +340,35 @@ MEMORY_TOKENIZER = os.environ.get("MEMORY_TOKENIZER", "estimate")
 MEMORY_COLD_STORAGE_ENABLED = os.environ.get("MEMORY_COLD_STORAGE_ENABLED", "False") == "True"
 MEMORY_COLD_STORAGE_BUCKET = os.environ.get("S3_VAULT_BUCKET", "flobrain-cold-vault")
 MEMORY_COLD_STORAGE_KEY = os.environ.get("AES_MASTER_KEY", "")
+
+
+# Django Channels - Redis Configuration
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [
+                os.environ.get(
+                    "REDIS_URL",
+                    "redis://redis:6379/0",
+                )
+],
+        },
+    },
+}
+
+# Celery Configuration
+CELERY_BROKER_URL = os.environ.get(
+    "CELERY_BROKER_URL",
+    os.environ.get("REDIS_URL", "redis://redis:6379/0"),
+)
+
+CELERY_RESULT_BACKEND = os.environ.get(
+    "CELERY_RESULT_BACKEND",
+    "redis://redis:6379/1",
+)
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE

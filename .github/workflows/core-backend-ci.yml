@@ -20,9 +20,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Offline by design: SQLite, no service containers. The tests fake Mongo, S3,
-    # the embedding function and the multimodal service; these hosts are unroutable
-    # so anything unfaked fails fast instead of reaching a real service.
+    # Redis service required by Django Channels and Celery.
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Offline by design: SQLite, Redis for Channels and Celery.
+    # Other external services are isolated or mocked during tests.
     env:
       DB_ENGINE: sqlite
       DEBUG: "False"
@@ -32,6 +43,8 @@ jobs:
       MEMORY_AUTO_CAPTURE: "False"
       MEMORY_TOKENIZER: estimate
       ANONYMIZED_TELEMETRY: "False"
+      REDIS_URL: redis://localhost:6379/0
+      CELERY_RESULT_BACKEND: redis://localhost:6379/1
 
     steps:
     - uses: actions/checkout@v4
@@ -55,8 +68,4 @@ jobs:
       run: python manage.py makemigrations --check --dry-run
 
     - name: Test (all apps)
-      # Previously limited to "memory brain users"; teams and model_registry had
-      # their own passing test suites that CI silently never ran. Running the
-      # full discovered suite picks those up (and any future app's tests)
-      # automatically. Verified locally: 153/153 tests pass with this command.
       run: python manage.py test --noinput
