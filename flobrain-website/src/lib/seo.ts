@@ -5,6 +5,19 @@ export const SITE_TAGLINE = "The Intelligence Layer for AI-Enabled Devices and A
 export const SITE_DESCRIPTION =
   "FloBrain is the intelligence layer for AI-enabled devices and apps. Build smarter products with workflow orchestration, persistent memory, and privacy-first AI.";
 
+/**
+ * The image served by src/app/opengraph-image.tsx. Next.js only applies a file-based OG image to
+ * segments that do not set their own `openGraph`, so pages built with buildPageMetadata reference
+ * it explicitly. twitter:image is inherited from openGraph.images.
+ */
+export const OG_IMAGE = {
+  url: "/opengraph-image",
+  width: 1200,
+  height: 630,
+  alt: "FloBrain: the intelligence layer for every device",
+  type: "image/png",
+};
+
 type PageMetadataInput = {
   /** Route path, e.g. "/pricing". Used for the canonical and og:url. */
   path: string;
@@ -41,6 +54,7 @@ export function buildPageMetadata({
       url: path,
       title: fullTitle,
       description,
+      images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
