@@ -1,4 +1,3 @@
-
 from django.db.models import F, Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -111,7 +110,6 @@ def personal_task_detail(request, task_id):
 
     if request.method == "PATCH":
         old_status = task.status
-
         serializer = TaskUpdateSerializer(
             task,
             data=request.data,
@@ -121,25 +119,14 @@ def personal_task_detail(request, task_id):
         if serializer.is_valid():
             task = serializer.save()
 
-            if (
-                old_status != Task.STATUS_DONE
-                and task.status == Task.STATUS_DONE
-            ):
+            if old_status != Task.STATUS_DONE and task.status == Task.STATUS_DONE:
                 task.completed_by = user
                 task.completed_at = timezone.now()
-                task.save(
-                    update_fields=["completed_by", "completed_at"]
-                )
-
-            elif (
-                old_status == Task.STATUS_DONE
-                and task.status != Task.STATUS_DONE
-            ):
+                task.save(update_fields=["completed_by", "completed_at"])
+            elif old_status == Task.STATUS_DONE and task.status != Task.STATUS_DONE:
                 task.completed_by = None
                 task.completed_at = None
-                task.save(
-                    update_fields=["completed_by", "completed_at"]
-                )
+                task.save(update_fields=["completed_by", "completed_at"])
 
             return Response(TaskSerializer(task).data)
 
@@ -151,8 +138,6 @@ def personal_task_detail(request, task_id):
     task.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-# B3: Team Kanban Board API
 
 @api_view(["GET"])
 def team_board(request, team_id):
@@ -285,6 +270,7 @@ def team_task_detail(request, team_id, task_id):
     )
 
     if request.method == "PATCH":
+        old_status = task.status
         serializer = TaskUpdateSerializer(
             task,
             data=request.data,
@@ -292,7 +278,17 @@ def team_task_detail(request, team_id, task_id):
         )
 
         if serializer.is_valid():
-            serializer.save()
+            task = serializer.save()
+
+            if old_status != Task.STATUS_DONE and task.status == Task.STATUS_DONE:
+                task.completed_by = user
+                task.completed_at = timezone.now()
+                task.save(update_fields=["completed_by", "completed_at"])
+            elif old_status == Task.STATUS_DONE and task.status != Task.STATUS_DONE:
+                task.completed_by = None
+                task.completed_at = None
+                task.save(update_fields=["completed_by", "completed_at"])
+
             return Response(TaskSerializer(task).data)
 
         return Response(
