@@ -1,9 +1,22 @@
+import type { Metadata } from "next";
 import "./contact.css";
 import { ContactForm } from "./contact-form";
 import { ContactSidebar } from "./contact-sidebar";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { contactSchema } from "@/lib/schema";
+import { buildPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = buildPageMetadata({
+  path: "/contact",
+  title: "Contact Sales & Engineering",
+  description:
+    "Talk to the FloBrain team about integrations, enterprise plans, partnerships or press. Reach technical support, partnerships and media contacts directly.",
+});
 
 export default function Contact() {
   return (
+    <>
+    <JsonLd data={contactSchema()} />
     <div className="contact-page fb-contact-page relative min-h-screen">
       <section className="relative z-10 pt-12 pb-10 sm:pt-16 sm:pb-12 md:pt-20 md:pb-16">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-8">
@@ -30,5 +43,6 @@ export default function Contact() {
         </div>
       </main>
     </div>
+    </>
   );
 }

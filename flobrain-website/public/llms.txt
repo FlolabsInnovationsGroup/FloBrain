@@ -1,0 +1,16 @@
+# FloBrain
+
+> FloBrain is the intelligence layer for AI-enabled devices and apps, built by FloLabs Innovations Group. It lets teams build smarter products with workflow orchestration, persistent memory, and real-time, privacy-first AI, and integrates with wearables, mobile apps, web platforms, robotics, IoT devices, and enterprise systems through a unified API.
+
+## Pages
+
+- [Home](https://www.flobrain.ai/): What FloBrain is, its core features, and the devices and platforms it integrates with.
+- [Pricing](https://www.flobrain.ai/pricing): Plans and limits. Personal is free (1 device, 100 calls/month, 100 MB storage, 10 workflows/day). Pro is $20/month or $240/year (5 devices, 500K calls/month, 5 GB storage, 100 workflows/day, teams of up to 5). Enterprise has custom pricing (unlimited devices, calls, and workflows; contact sales).
+- [Contact](https://www.flobrain.ai/contact): Contact form plus direct contacts: technical support support@flobrain.ai, partnerships hr@flobrain.ai, press and media media@flobrain.ai.
+- [Create an account](https://www.flobrain.ai/register): Sign up for FloBrain.
+
+## Company
+
+- [FloLabs Innovations Group](https://www.flolabsinnovations.com/): Parent organization.
+- [YouTube](https://www.youtube.com/@flolabsinnovation)
+- [LinkedIn](https://www.linkedin.com/company/flolabs-innovation/)

@@ -26,10 +26,17 @@ describe("HeroSection Component", () => {
     expect(screen.getByText(/FloBrain is the central intelligence layer/i)).toBeDefined();
   });
 
-  it("should render the hero image with correct alt text", () => {
+  it("should render a single h1 with the full tagline", () => {
     render(<HeroSection />);
-    const image = screen.getByAltText("FloBrain");
-    expect(image).toBeDefined();
-    expect(image.getAttribute("src")).toBeDefined();
+    const headings = screen.getAllByRole("heading", { level: 1 });
+    expect(headings).toHaveLength(1);
+    expect(headings[0].textContent).toBe("The Intelligence Layer for Every Device");
+  });
+
+  it("should render the decorative hero image with empty alt text", () => {
+    const { container } = render(<HeroSection />);
+    const image = container.querySelector('img[alt=""]');
+    expect(image).not.toBeNull();
+    expect(image?.getAttribute("src")).toBeTruthy();
   });
 });

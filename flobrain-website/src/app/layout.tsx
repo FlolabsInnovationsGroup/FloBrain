@@ -8,17 +8,32 @@ import { AuthProviderWrapper } from "@/components/providers/AuthProviderWrapper"
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { GA_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 import { getSiteUrl } from "@/lib/site";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { siteSchema } from "@/lib/schema";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "FloBrain",
-    template: "%s | FloBrain",
+    default: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    template: `%s | ${SITE_NAME}`,
   },
-  description:
-    "FloBrain is the intelligence layer for AI-enabled devices and apps. Build smarter products with workflow orchestration, persistent memory, and privacy-first AI.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} | ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+  },
   verification: {
     google: "G8JDTcqVrR_edIFkDi0mPJrxG03v81M0A07-7Q6k_4c",
   },
@@ -49,6 +64,7 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
+        <JsonLd data={siteSchema()} />
         <ThemeProvider>
           <AuthProviderWrapper>
             <AppChrome>{children}</AppChrome>
